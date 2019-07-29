@@ -31,7 +31,6 @@
 
 # Installation
 - `git clone https://github.com/Satont/twobit && cd twobit`
-- `cd twobit`
 - `npm i`
 - `rename .env.example to .env, or create .env`
 - `fill .env with you data`
