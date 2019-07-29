@@ -28,6 +28,7 @@
 	- [ ] donationalerts
 	- [ ] qiwi donate
 - [ ] Make user online time counting
+- [ ] Make user tips, bits counting
 
 # Installation
 - `git clone https://github.com/Satont/twobit && cd twobit`
@@ -37,5 +38,5 @@
 - `done!`
 
 # Some helpful info
-Create bot token by that link https://twitchtokengenerator.com/quick/UQ6SHl81nt
-Create broadcaster token by that link https://twitchtokengenerator.com/quick/RkshHUnw16
+- Create bot token by that link https://twitchtokengenerator.com/quick/UQ6SHl81nt
+- Create broadcaster token by that link https://twitchtokengenerator.com/quick/RkshHUnw16
