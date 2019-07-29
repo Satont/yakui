@@ -1,4 +1,12 @@
-require('dotenv').config()
+const fs = require('fs')
+const dotenv = require('dotenv')
+if (process.env.NODE_ENV === 'development') {
+  const development = dotenv.parse(fs.readFileSync('.env.dev'))
+  for (let k in development) {
+    process.env[k] = development[k]
+  }
+} else dotenv.config()
+
 global.db = require('./libs/db')
 
 async function load() {
@@ -10,6 +18,7 @@ async function load() {
   require('./systems/moderation')
   require('./systems/timers')
   require('./systems/users')
+  require('./integrations/donationalerts')
 }
 load()
 
