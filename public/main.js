@@ -23,6 +23,7 @@ import settingsUsers from './vue/settings/users.vue'
 
 import donationalerts from './vue/integrations/donationalerts.vue'
 import streamlabs from './vue/integrations/streamlabs.vue'
+import qiwi from './vue/integrations/qiwi.vue'
 
 Vue.use(new VueSocketIO({
   debug: true,
@@ -52,6 +53,7 @@ const routes = [
 
   { path: '/integrations/donationalerts', component: donationalerts },
   { path: '/integrations/streamlabs', component: streamlabs },
+  { path: '/integrations/qiwi', component: qiwi },
 ]
 
 const router = new VueRouter({
@@ -85,6 +87,9 @@ new Vue({
           </li>
           <li class="nav-item">
             <router-link to="/integrations/streamlabs" class="nav-link">StreamLabs</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/integrations/qiwi" class="nav-link">Qiwi</router-link>
           </li>
         </ul>
       </nav>

@@ -23,10 +23,10 @@
 
 # Tasks
 
-- [ ] Implement donation services integrations
+- [x] Implement donation services integrations
 	- [x] streamlabs
 	- [x] donationalerts
-	- [ ] qiwi donate
+	- [x] qiwi donate
 - [ ] Make user online time counting
 - [ ] Make user tips, bits counting
 
