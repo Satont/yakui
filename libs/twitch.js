@@ -141,7 +141,7 @@ class Twitch {
       }
     } catch (e) {
       console.log(`Something went wrong with getSubscribers. Will retry after 1 minute`)
-      await getBroadcasterToken()
+      await this.getBroadcasterToken()
       setTimeout(() => this.getSubscribers(), 1 * 60 * 1000)
       this.subscribers = 0
     }
