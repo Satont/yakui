@@ -27,7 +27,7 @@
 	- [x] streamlabs
 	- [x] donationalerts
 	- [x] qiwi donate
-- [ ] Make user online time counting
+- [x] Make user online time counting (beta)
 - [X] Make user tips, bits counting
 
 # Installation
