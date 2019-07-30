@@ -167,6 +167,10 @@ class Twitch {
     this.client.chat.on('USERNOTICE/RESUBSCRIPTION', async (event) => {
       await global.db('core.subscribers').where('name', 'latestReSubscriber').update('value', event.tags.displayName)
     })
+    this.client.chat.on('PRIVMSG/CHEER', async (msg) => {
+      await global.db('users').insert({ id: Number(msg.tags.userId), username: msg.username }).then(() => {}).catch(() => {})
+      await global.db('users').where({ id: Number(msg.tags.userId) }).increment({ bits: msg.bits }).update({username: msg.username})
+    })
   }
 }
 

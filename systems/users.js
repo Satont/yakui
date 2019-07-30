@@ -10,8 +10,8 @@ class Users {
     this.settings = (await global.db.select('*').from('settings').where('system', 'users'))[0].data
   }
   async parse(msg) {
-    await global.db('users').insert({ id: msg.tags.userId, username: msg.username }).then(() => {}).catch(() => {})
-    await global.db('users').where({ id: msg.tags.userId }).increment({ messages: 1, points: this.settings.pointsPerMessage }).update({username: msg.username})
+    await global.db('users').insert({ id: Number(msg.tags.userId), username: msg.username }).then(() => {}).catch(() => {})
+    await global.db('users').where({ id: Number(msg.tags.userId) }).increment({ messages: 1, points: this.settings.pointsPerMessage }).update({username: msg.username})
   }
   async sockets() {
     let self = this

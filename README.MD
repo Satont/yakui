@@ -28,7 +28,7 @@
 	- [x] donationalerts
 	- [x] qiwi donate
 - [ ] Make user online time counting
-- [ ] Make user tips, bits counting
+- [X] Make user tips, bits counting
 
 # Installation
 - `git clone https://github.com/Satont/twobit && cd twobit`
