@@ -1,5 +1,5 @@
 <template>
-  <div>
+<div>
     <button type="button" class="btn btn-block btn-sm" @click="enabled = !enabled" v-bind:class="{ 'btn-success': enabled, 'btn-danger': !enabled }">
       <span v-show="enabled">Enabled</span>
       <span v-show="!enabled">Disabled</span>
@@ -12,7 +12,7 @@
     </div>
     <input class="form-control" v-model="token">
   </div>
-  </div>
+</div>
 </template>
 
 <script>
