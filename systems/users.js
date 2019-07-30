@@ -24,7 +24,12 @@ class Users {
     for (let key of Object.keys(response.chatters)) {
       if (Array.isArray(response.chatters[key])) now = now.concat(response.chatters[key])
     }
-    console.log(now)
+    for (let user of now) {
+      if (this.onlineUsers.includes(user)) {
+        // юзер онлайн, тут добавить ему минуту времени
+      }
+    }
+    this.onlineUsers = now
   }
   async sockets() {
     let self = this
