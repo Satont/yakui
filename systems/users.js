@@ -1,17 +1,42 @@
 const { io } = require("../libs/panel")
+const axios = require('axios')
 
 class Users {
   constructor() {
     this.settings
     this.start()
     this.sockets()
+    this.onlineUsers = []
   }
   async start() {
     this.settings = (await global.db.select('*').from('settings').where('system', 'users'))[0].data
+    if (this.settings.enabled) this.checkInterval = setInterval(() => this.checkOnline(), 1 * 60 * 1000)
+    else clearInterval(this.checkInterval)
   }
   async parse(msg) {
     await global.db('users').insert({ id: Number(msg.tags.userId), username: msg.username }).then(() => {}).catch(() => {})
     await global.db('users').where({ id: Number(msg.tags.userId) }).increment({ messages: 1, points: this.settings.pointsPerMessage }).update({username: msg.username})
+  }
+  async checkOnline() {
+    if (!global.twitch.uptime || !this.settings.enabled) return
+    let request = await axios.get(`http://tmi.twitch.tv/group/user/${process.env.TWITCH_CHANNEL.toLowerCase()}/chatters`)
+    let response = request.data
+    let now = []
+    for (let key of Object.keys(response.chatters)) {
+      if (Array.isArray(response.chatters[key])) now = now.concat(response.chatters[key])
+    }
+    for (let user of now) {
+      if (this.onlineUsers.includes(user)) {
+        let userId = await this.getIdByUsername(user)
+        await global.db('users').insert({ id: Number(userId), username: user }).then(() => {}).catch(() => {})
+        await global.db('users').where({ id: Number(userId) }).increment({ watched: 1 * 60 * 1000 })
+      }
+    }
+    this.onlineUsers = now
+  }
+  async getIdByUsername(username) {
+    let request = await axios.get(`https://api.twitch.tv/helix/users?login=${username}`, { headers: { 'Client-ID': process.env.TWITCH_CLIENTID } })
+    return request.data.data[0].id
   }
   async sockets() {
     let self = this

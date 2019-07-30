@@ -1,6 +1,19 @@
 const _ = require('lodash')
 const commons = require('../libs/commons')
 const { io } = require("../libs/panel")
+const shortEnglish = require('humanize-duration').humanizer({
+  language: 'shortEn',
+  languages: {
+    shortEn: {
+      h: () => 'h',
+    }
+  },
+  units: ['h'],
+  spacer: '',
+  maxDecimalPoints: 2,
+  decimal: '.'
+})
+
 
 class Message {
   constructor() {
@@ -63,7 +76,7 @@ class Message {
       response = response.replace('$tips', user.tips)
       response = response.replace('$bits', user.bits)
       response = response.replace('$points', user.points)
-      response = response.replace('$watched', user.watched)
+      response = response.replace('$watched', shortEnglish(user.watched))
     }
     if (response.includes('$top_messages')) {
       let users = await global.db('users').select('*').orderBy('messages', 'desc').limit(10)
@@ -72,7 +85,7 @@ class Message {
     }
     if (response.includes('$top_watched')) {
       let users = await global.db('users').select('*').orderBy('watched', 'desc').limit(10)
-      users = users.map(o => `${o.username} - ${o.watched}`)
+      users = users.map(o => `${o.username} - ${shortEnglish(o.watched)}`)
       response = response.replace('$top_watched', users.join(', '))
     }
     if (response.includes('$top_bits')) {
