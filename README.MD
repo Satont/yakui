@@ -1,6 +1,6 @@
 # TwoBit bot
 
-![](https://img.shields.io/github/issues/satont/twobit)
+![](https://img.shields.io/github/issues/satont/twobit.svg)
 
 ### Features
 
