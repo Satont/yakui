@@ -19,24 +19,32 @@ class Users {
   }
   async checkOnline() {
     if (!global.twitch.uptime || !this.settings.enabled) return
-    let request = await axios.get(`http://tmi.twitch.tv/group/user/${process.env.TWITCH_CHANNEL.toLowerCase()}/chatters`)
-    let response = request.data
-    let now = []
-    for (let key of Object.keys(response.chatters)) {
-      if (Array.isArray(response.chatters[key])) now = now.concat(response.chatters[key])
-    }
-    for (let user of now) {
-      if (this.onlineUsers.includes(user)) {
-        let userId = await this.getIdByUsername(user)
-        await global.db('users').insert({ id: Number(userId), username: user }).then(() => {}).catch(() => {})
-        await global.db('users').where({ id: Number(userId) }).increment({ watched: 1 * 60 * 1000 })
+    try {
+      let request = await axios.get(`http://tmi.twitch.tv/group/user/${process.env.TWITCH_CHANNEL.toLowerCase()}/chatters`)
+      let response = request.data
+      let now = []
+      for (let key of Object.keys(response.chatters)) {
+        if (Array.isArray(response.chatters[key])) now = now.concat(response.chatters[key])
       }
+      for (let user of now) {
+        if (this.onlineUsers.includes(user)) {
+          let userId = await this.getIdByUsername(user)
+          await global.db('users').insert({ id: Number(userId), username: user }).then(() => {}).catch(() => {})
+          await global.db('users').where({ id: Number(userId) }).increment({ watched: 1 * 60 * 1000 })
+        }
+      }
+      this.onlineUsers = now
+    } catch(e) {
+      console.log(e)
     }
-    this.onlineUsers = now
   }
   async getIdByUsername(username) {
-    let request = await axios.get(`https://api.twitch.tv/helix/users?login=${username}`, { headers: { 'Client-ID': process.env.TWITCH_CLIENTID } })
-    return request.data.data[0].id
+    try {
+      let request = await axios.get(`https://api.twitch.tv/helix/users?login=${username}`, { headers: { 'Client-ID': process.env.TWITCH_CLIENTID } })
+      return request.data.data[0].id
+    } catch(e) {
+      throw new Error(e.stack)
+    }
   }
   async sockets() {
     let self = this
