@@ -10,7 +10,7 @@ class Qiwi {
   }
   async start () {
     this.settings = (await global.db('integrations').select('*').where('name', 'qiwi'))[0]
-    if (this.settings.settings.token) this.repeat = setInterval(() => this.poll())
+    if (this.settings.settings.token) this.repeat = setInterval(() => this.poll(), 3 * 1000)
   }
   async poll () {
     if (!this.settings.settings.token) return
