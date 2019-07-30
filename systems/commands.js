@@ -65,6 +65,31 @@ class Message {
       response = response.replace('$points', user.points)
       response = response.replace('$watched', user.watched)
     }
+    if (response.includes('$top_messages')) {
+      let users = await global.db('users').select('*').orderBy('messages', 'desc').limit(10)
+      users = users.map(o => `${o.username} - ${o.messages}`)
+      response = response.replace('$top_messages', users.join(', '))
+    }
+    if (response.includes('$top_watched')) {
+      let users = await global.db('users').select('*').orderBy('watched', 'desc').limit(10)
+      users = users.map(o => `${o.username} - ${o.watched}`)
+      response = response.replace('$top_watched', users.join(', '))
+    }
+    if (response.includes('$top_bits')) {
+      let users = await global.db('users').select('*').orderBy('bits', 'desc').limit(10)
+      users = users.map(o => `${o.username} - ${o.bits}`)
+      response = response.replace('$top_bits', users.join(', '))
+    }
+    if (response.includes('$top_tips')) {
+      let users = await global.db('users').select('*').orderBy('tips', 'desc').limit(10)
+      users = users.map(o => `${o.username} - ${o.tips}`)
+      response = response.replace('$top_tips', users.join(', '))
+    }
+    if (response.includes('$top_points')) {
+      let users = await global.db('users').select('*').orderBy('tips', 'points').limit(10)
+      users = users.map(o => `${o.username} - ${o.points}`)
+      response = response.replace('$top_points', users.join(', '))
+    }
     if (response.includes('(api|')) {
       response = await commons.parseMessageApi(response)
     }
