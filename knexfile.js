@@ -1,4 +1,10 @@
-require('dotenv').config()
+const fs = require('fs')
+let path = '.env'
+switch (process.env.NODE_ENV) {
+  case 'development': path = '.env.dev'; break;
+}
+console.log('config', path)
+require('dotenv').config({ path: path })
 module.exports = {
   development: {
     client: 'postgresql',
@@ -6,7 +12,7 @@ module.exports = {
       host: process.env.DB_HOST,
       port: process.env.DB_PORT,
       user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD, 
+      password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       ssl: true
     },
@@ -24,7 +30,7 @@ module.exports = {
       host: process.env.DB_HOST,
       port: process.env.DB_PORT,
       user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD, 
+      password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       ssl: true
     },
