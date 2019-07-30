@@ -86,7 +86,7 @@ class Message {
       response = response.replace('$top_tips', users.join(', '))
     }
     if (response.includes('$top_points')) {
-      let users = await global.db('users').select('*').orderBy('tips', 'points').limit(10)
+      let users = await global.db('users').select('*').orderBy('points', 'desc').limit(10)
       users = users.map(o => `${o.username} - ${o.points}`)
       response = response.replace('$top_points', users.join(', '))
     }
