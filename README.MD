@@ -23,7 +23,7 @@
 
 # Tasks
 
-- [ ] Implement donation services integrations
+- [x] Implement donation services integrations
 	- [x] streamlabs
 	- [x] donationalerts
 	- [x] qiwi donate
