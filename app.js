@@ -16,6 +16,7 @@ async function load() {
   require('./systems/timers')
   require('./systems/users')
   require('./integrations/donationalerts')
+  require('./integrations/streamlabs')
 }
 load()
 

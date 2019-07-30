@@ -24,7 +24,7 @@
 # Tasks
 
 - [ ] Implement donation services integrations
-	- [ ] streamlabs
+	- [x] streamlabs
 	- [x] donationalerts
 	- [ ] qiwi donate
 - [ ] Make user online time counting

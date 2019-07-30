@@ -61,5 +61,11 @@ exports.seed = function (knex) {
       .then((rows) => {
         if (rows.length > 0) return
         return knex('integrations').insert({ name: 'donationalerts', enabled: false, settings: { token: null } })
-      })]);
+      }),
+    knex('integrations').select().where('name', 'streamlabs')
+      .then((rows) => {
+        if (rows.length > 0) return
+        return knex('integrations').insert({ name: 'streamlabs', enabled: false, settings: { token: null } })
+      })
+    ]);
 };
