@@ -1,9 +1,7 @@
-const fs = require('fs')
 let path = '.env'
 switch (process.env.NODE_ENV) {
   case 'development': path = '.env.dev'; break;
 }
-console.log('config', path)
 require('dotenv').config({ path: path })
 module.exports = {
   development: {

@@ -1,11 +1,8 @@
-const fs = require('fs')
-const dotenv = require('dotenv')
-if (process.env.NODE_ENV === 'development') {
-  const development = dotenv.parse(fs.readFileSync('.env.dev'))
-  for (let k in development) {
-    process.env[k] = development[k]
-  }
-} else dotenv.config()
+let path = '.env'
+switch (process.env.NODE_ENV) {
+  case 'development': path = '.env.dev'; break;
+}
+require('dotenv').config({ path: path })
 
 global.db = require('./libs/db')
 
