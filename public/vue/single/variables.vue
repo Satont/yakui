@@ -59,6 +59,26 @@
         <td>User tips donate amount</td>
       </tr>
       <tr>
+        <td>$top_watched</td>
+        <td>Top 10 users by watched time</td>
+      </tr>
+      <tr>
+        <td>$top_points</td>
+        <td>Top 10 users by points</td>
+      </tr>
+      <tr>
+        <td>$top_messages</td>
+        <td>Top 10 users by messages</td>
+      </tr>
+      <tr>
+        <td>$top_tips</td>
+        <td>Top 10 users by tips</td>
+      </tr>
+      <tr>
+        <td>$top_bits</td>
+        <td>Top 10 users by bits</td>
+      </tr>
+      <tr>
         <td>$song?vk dj lastfm da</td>
         <td>Use it like: $song?vk=123&dj=1231&lastfm=nickname&da=stray228. Where <b>da</b> = donationalerts</td>
       </tr>
