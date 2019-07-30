@@ -17,6 +17,7 @@ async function load() {
   require('./systems/users')
   require('./integrations/donationalerts')
   require('./integrations/streamlabs')
+  require('./integrations/qiwi')
 }
 load()
 
