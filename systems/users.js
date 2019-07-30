@@ -19,14 +19,14 @@ class Users {
   async checkOnline() {
     //if (!global.twitch.uptime || !this.settings.enabled) return
     let request = await axios.get(`http://tmi.twitch.tv/group/user/${process.env.TWITCH_CHANNEL.toLowerCase()}/chatters`)
-    let response = await request.data
+    let response = request.data
     let now = []
     for (let key of Object.keys(response.chatters)) {
       if (Array.isArray(response.chatters[key])) now = now.concat(response.chatters[key])
     }
     for (let user of now) {
       if (this.onlineUsers.includes(user)) {
-        // юзер онлайн, тут добавить ему минуту времени
+        console.log(`${user} онлайн, тут добавить ему минуту времени`)
       }
     }
     this.onlineUsers = now
