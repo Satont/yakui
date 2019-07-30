@@ -1,6 +1,7 @@
 # TwoBit bot
 
-![](https://img.shields.io/github/issues/satont/twobit.svg)
+![](https://img.shields.io/github/issues/satont/twobit.svg) ![]
+(https://img.shields.io/discord/605696491583176724)
 
 ### Features
 
@@ -40,3 +41,4 @@
 # Some helpful info
 - Create bot token by that link https://twitchtokengenerator.com/quick/UQ6SHl81nt
 - Create broadcaster token by that link https://twitchtokengenerator.com/quick/RkshHUnw16
+- Discord server: https://discord.gg/dPm6eYb
