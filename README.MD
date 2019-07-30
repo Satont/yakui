@@ -25,7 +25,7 @@
 
 - [ ] Implement donation services integrations
 	- [ ] streamlabs
-	- [ ] donationalerts
+	- [x] donationalerts
 	- [ ] qiwi donate
 - [ ] Make user online time counting
 - [ ] Make user tips, bits counting
