@@ -30,6 +30,8 @@
 </template>
 
 <script>
+import { orderBy } from 'lodash'
+
 export default {
   data: function() {
     return {
@@ -55,10 +57,10 @@ export default {
     }
   },
   mounted() {
-     this.$socket.emit('list.variables', null, (err, list) => this.variables = list)
+     this.$socket.emit('list.variables', null, (err, list) => this.variables = _.orderBy(list, 'name', 'asc'))
   },
   updated() {
-     this.$socket.emit('list.variables', null, (err, list) => this.variables = list)
+     this.$socket.emit('list.variables', null, (err, list) => this.variables = _.orderBy(list, 'name', 'asc'))
   }
 };
 </script>
