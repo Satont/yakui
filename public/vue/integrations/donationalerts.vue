@@ -11,6 +11,9 @@
       <span class="input-group-text" id="inputGroup-sizing-sm">Secret token</span>
     </div>
     <input class="form-control" v-model="token">
+    <div class="input-group-append">
+        <button class="btn btn-info" type="button" id="popover" data-toggle="popover" title="Where to get token?" data-content="Settings -> General settings -> Secret token">?</button>
+    </div>
   </div>
 </div>
 </template>
@@ -29,6 +32,7 @@ export default {
       this.enabled = settings.enabled
       this.token = settings.settings.token
     })
+    $('#popover').popover()
   },
   methods: {
     save() {
@@ -38,3 +42,9 @@ export default {
   },
 };
 </script>
+
+<style>
+.popover-header {
+  color:#000;
+}
+</style>
