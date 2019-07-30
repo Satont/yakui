@@ -4,7 +4,7 @@
       <div class="input-group-prepend">
         <span class="input-group-text" id="inputGroup-sizing-default">Name</span>
       </div>
-      <input type="text" class="form-control" v-model="name">
+      <input type="text" class="form-control" v-model="name" maxlength="15">
     </div>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
@@ -68,17 +68,19 @@ export default {
   watch: {
     name(newVal) {
       let re = /[a-z]\d/gi;
-      this.$set(this, "name", newVal.replace(/[^a-z]+/gi, "").toLowerCase());
+      this.$set(this, "name", newVal.replace(/[^a-z-а-я-0-9]+/gi, "").toLowerCase());
     }
   },
   methods: {
     create() {
+      if (!this.name || !this.response || !this.cooldown || !this.cooldowntype) return
+      if (this.name.length > 15) return alert('Stop trying to hack me')
+      if (this.cooldowntype !== 'notstop' && this.cooldowntype !== 'stop') return alert('Stop trying to hack me')
       let currentname = window.location.href.split('/')
       let data = this.$data
       delete data.options
       this.$socket.emit('update.command', { currentname: currentname[currentname.length - 1], ...data })
       this.$router.push("/commands")
-      //if (!this.response)
     },
     addAliase (newAliase) {
       this.aliases.push(newAliase)

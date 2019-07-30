@@ -9,6 +9,7 @@
         class="form-control"
         placeholder="Name of command"
         v-model="name"
+        maxlength="15"
       >
     </div>
     <div class="input-group mb-3">
@@ -79,17 +80,21 @@ export default {
   watch: {
     name(newVal) {
       let re = /[a-z]\d/gi;
-      this.$set(this, "name", newVal.replace(/[^a-z]+/gi, "").toLowerCase());
+      this.$set(this, "name", newVal.replace(/[^a-z-а-я-0-9]+/gi, "").toLowerCase());
     }
   },
   methods: {
     create() {
+      if (!this.name || !this.response || !this.cooldown || !this.cooldowntype) return
+      if (this.name.length > 15) return alert('Stop trying to hack me')
+      if (this.cooldowntype !== 'notstop' && this.cooldowntype !== 'stop') return alert('Stop trying to hack me')
       let data = this.$data
       delete data.options
       this.$socket.emit("create.command", { ...data })
       this.$router.push("/commands")
     },
     addAliase (newAliase) {
+      if (newAliase.length > 15) return
       this.aliases.push(newAliase)
     }
   }

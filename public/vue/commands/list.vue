@@ -5,9 +5,9 @@
     <div class="row cards">
       <div class="col-md-6" :key="index" v-for="(command, index) in commands">
         <div class="card bg-dark">
-          <div class="card-header">{{ command.name }}<span v-if="command.aliases.length"> | {{ command.aliases.join(', ') }}</span><span class="badge badge-primary float-right">{{ command.cooldown }} sec.</span></div>
+          <div class="card-header">{{ command.name }} <span class="badge badge-primary float-right">{{ command.cooldown }} sec.</span></div>
           <div class="card-body">
-            <span class="badge badge-light card-span">{{ command.response }}</span>
+            <span class="badge badge-light card-span">{{ command.response | truncate(150, '...') }}</span>
           </div>
           <div class="card-footer">
             <div class="btn-group d-flex" role="group" aria-label="Basic example">
@@ -57,6 +57,12 @@ export default {
           aliases: command.aliases
         }
       });
+    }
+  },
+  filters: {
+    truncate: function (text, length, suffix) {
+      if (text.length > length) return text.substring(0, length) + suffix
+      else return text
     }
   },
   mounted() {

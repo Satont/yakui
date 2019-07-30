@@ -4,7 +4,7 @@
       <div class="input-group-prepend">
         <span class="input-group-text" id="inputGroup-sizing-default">Name</span>
       </div>
-      <input type="text" class="form-control" placeholder="Name of variable" v-model="name">
+      <input type="text" class="form-control" placeholder="Name of variable" v-model="name" maxlength="15">
     </div>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
@@ -30,6 +30,12 @@ export default {
       name: null,
       value: null
     };
+  },
+  watch: {
+    name(newVal) {
+      let re = /[a-z]\d/gi;
+      this.$set(this, "name", newVal.replace(/[^a-z-а-я-0-9]+/gi, "").toLowerCase());
+    }
   },
   methods: {
     create() {

@@ -4,7 +4,7 @@
       <div class="input-group-prepend">
         <span class="input-group-text" id="inputGroup-sizing-default">Name</span>
       </div>
-      <input type="text" class="form-control" v-model="name">
+      <input type="text" class="form-control" v-model="name" maxlength="15">
     </div>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
@@ -25,8 +25,15 @@ export default {
       value: this.$route.params.value
     };
   },
+  watch: {
+    name(newVal) {
+      let re = /[a-z]\d/gi;
+      this.$set(this, "name", newVal.replace(/[^a-z-а-я-0-9]+/gi, "").toLowerCase());
+    }
+  },
   methods: {
     create() {
+       if (this.name.length > 15) return alert('Stop trying to hack me')
        let currentname = window.location.href.split('/')
        this.$socket.emit('update.variable', { currentname: currentname[currentname.length - 1], name: this.name, value: this.value })
        this.$router.push("/variables")
