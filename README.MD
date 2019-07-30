@@ -17,6 +17,10 @@
 	- bits
 	- tips
 	- followtime
+- Integrations
+	- StreamLabs
+	- DonationAlerts
+	- Qiwi Donate
 
 ### Screenshots
 <a href="https://i.imgur.com/2klWP6o.png"><img src="https://i.imgur.com/2klWP6o.png" alt="drawing" width="250"/></a> <a href="https://i.imgur.com/EhikpI0.png"><img src="https://i.imgur.com/EhikpI0.png" alt="drawing" width="250"/></a> <a href="https://i.imgur.com/ap6lh28.png"><img src="https://i.imgur.com/ap6lh28.png" alt="drawing" width="250"/></a> <a href="https://i.imgur.com/enrORyu.png"><img src="https://i.imgur.com/enrORyu.png" alt="drawing" width="250"/></a> <a href="https://i.imgur.com/rmMmkvU.png"><img src="https://i.imgur.com/rmMmkvU.png" alt="drawing" width="250"/></a> <a href="https://i.imgur.com/ZvcI4I7.png"><img src="https://i.imgur.com/ZvcI4I7.png" alt="drawing" width="250"/></a> 
