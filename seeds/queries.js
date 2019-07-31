@@ -14,7 +14,7 @@ exports.seed = function (knex) {
     }),
     knex('systems.moderation').select().where('name', 'caps').then((rows) => {
       if (rows.length > 0) return
-      return knex('systems.moderation').insert({ name: 'caps', enabled: false, settings: { moderateSubscribers: false, triggerLength: 300, maxCapsPercent: 50, timeout: 600 } })
+      return knex('systems.moderation').insert({ name: 'caps', enabled: false, settings: { moderateSubscribers: false, triggerLength: 15, maxCapsPercent: 50, timeout: 600 } })
     }),
     knex('systems.moderation').select().where('name', 'color').then((rows) => {
       if (rows.length > 0) return
