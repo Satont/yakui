@@ -2,6 +2,9 @@
 
 ![](https://img.shields.io/github/issues/satont/twobit.svg) ![](https://img.shields.io/discord/605696491583176724.svg) ![](https://img.shields.io/david/satont/twobit.svg)
 
+### Screenshots
+<a href="https://i.imgur.com/2klWP6o.png"><img src="https://i.imgur.com/2klWP6o.png" alt="drawing" width="250"/></a> <a href="https://i.imgur.com/EhikpI0.png"><img src="https://i.imgur.com/EhikpI0.png" alt="drawing" width="250"/></a> <a href="https://i.imgur.com/ap6lh28.png"><img src="https://i.imgur.com/ap6lh28.png" alt="drawing" width="250"/></a> <a href="https://i.imgur.com/enrORyu.png"><img src="https://i.imgur.com/enrORyu.png" alt="drawing" width="250"/></a> <a href="https://i.imgur.com/rmMmkvU.png"><img src="https://i.imgur.com/rmMmkvU.png" alt="drawing" width="250"/></a> <a href="https://i.imgur.com/ZvcI4I7.png"><img src="https://i.imgur.com/ZvcI4I7.png" alt="drawing" width="250"/></a> 
+
 ### Features
 
 - Custom commands.
@@ -22,18 +25,6 @@
 	- DonationAlerts
 	- Qiwi Donate
 
-### Screenshots
-<a href="https://i.imgur.com/2klWP6o.png"><img src="https://i.imgur.com/2klWP6o.png" alt="drawing" width="250"/></a> <a href="https://i.imgur.com/EhikpI0.png"><img src="https://i.imgur.com/EhikpI0.png" alt="drawing" width="250"/></a> <a href="https://i.imgur.com/ap6lh28.png"><img src="https://i.imgur.com/ap6lh28.png" alt="drawing" width="250"/></a> <a href="https://i.imgur.com/enrORyu.png"><img src="https://i.imgur.com/enrORyu.png" alt="drawing" width="250"/></a> <a href="https://i.imgur.com/rmMmkvU.png"><img src="https://i.imgur.com/rmMmkvU.png" alt="drawing" width="250"/></a> <a href="https://i.imgur.com/ZvcI4I7.png"><img src="https://i.imgur.com/ZvcI4I7.png" alt="drawing" width="250"/></a> 
-
-# Tasks
-
-- [x] Implement donation services integrations
-	- [x] streamlabs
-	- [x] donationalerts
-	- [x] qiwi donate
-- [x] Make user online time counting (beta)
-- [x] Make user tips, bits counting
-- [x] Commands permissions
 
 # Installation
 - `git clone https://github.com/Satont/twobit && cd twobit`
