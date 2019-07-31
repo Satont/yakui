@@ -183,7 +183,6 @@ class Twitch {
       await global.db('users').insert({ id: Number(userstate['user-id']), username: userstate.username }).then(() => {}).catch(() => {})
       await global.db('users').where({ id: Number(userstate['user-id']) }).increment({ bits: Number(userstate.bits) }).update({username: userstate.username })
     })
-    this.client.chat.on('NOTICE', msg => console.log(msg))
   }
 }
 
