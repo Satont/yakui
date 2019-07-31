@@ -173,15 +173,15 @@ class Twitch {
     this.client.on("disconnected", (reason) => {
       console.log(reason)
     });
-    this.client.on('USERNOTICE/SUBSCRIPTION', async (event) => {
-      await global.db('core.subscribers').where('name', 'latestSubscriber').update('value', event.tags.displayName)
+    this.client.on('subscription', async (channel, username, method, message, userstate) => {
+      await global.db('core.subscribers').where('name', 'latestSubscriber').update('value', username)
     })
-    this.client.on('USERNOTICE/RESUBSCRIPTION', async (event) => {
-      await global.db('core.subscribers').where('name', 'latestReSubscriber').update('value', event.tags.displayName)
+    this.client.on('resub', async (channel, username, months, message, userstate, methods) => {
+      await global.db('core.subscribers').where('name', 'latestReSubscriber').update('value', username)
     })
-    this.client.on('PRIVMSG/CHEER', async (msg) => {
-      await global.db('users').insert({ id: Number(msg.tags.userId), username: msg.username }).then(() => {}).catch(() => {})
-      await global.db('users').where({ id: Number(msg.tags.userId) }).increment({ bits: msg.bits }).update({username: msg.username})
+    this.client.on('cheer', async (channel, userstate, message) => {
+      await global.db('users').insert({ id: Number(userstate['user-id']), username: userstate.username }).then(() => {}).catch(() => {})
+      await global.db('users').where({ id: Number(userstate['user-id']) }).increment({ bits: Number(userstate.bits) }).update({username: userstate.username })
     })
     this.client.chat.on('NOTICE', msg => console.log(msg))
   }
