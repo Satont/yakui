@@ -62,7 +62,7 @@ class Twitch {
   async getBroadcasterToken () {
     console.log('Trying to refresh broadcaster token')
     try {
-      let response = await fetch(`https://twitchtokengenerator.com/api/refresh/${rocess.env.TWITCH_BROADCASTERTOKEN}`)
+      let response = await fetch(`https://twitchtokengenerator.com/api/refresh/${process.env.TWITCH_BROADCASTERTOKEN}`)
       let data = await response.json()
       if (data.success) {
         this.broadcastertoken = data.token
