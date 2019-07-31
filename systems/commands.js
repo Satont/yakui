@@ -33,7 +33,7 @@ class Message {
 
     let userLevel
     for (let key of Object.keys({broadcaster: true, subscriber: true})) {
-      let index = permissions.findIndex(o => o === key)
+      userLevel = permissions.findIndex(o => o === key)
       console.log(key, index)
     }
     let commandLevel = this.permissions.findIndex(o => o === find.permission)

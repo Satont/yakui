@@ -12,6 +12,21 @@
       </div>
       <input type="text" class="form-control" v-model="response">
     </div>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="inputGroupSelect01">Permission</label>
+      </div>
+      <select class="custom-select" v-model="permission">
+        <option value="broadcaster">Broadcaster</option>
+        <option value="moderator">Moderators</option>
+        <option value="vip">Vips</option>
+        <option value="subscriber">Subscribers</option>
+        <option value="viewer">Viewers</option>
+      </select>
+      <div class="input-group-append">
+        <button class="btn btn-info" type="button" data-toggle="modal" data-target="#cooldowntypeinfo">?</button>
+      </div>
+    </div>
      <div class="input-group mb-3">
       <div class="input-group-prepend">
         <span class="input-group-text" id="inputGroup-sizing-default">Cooldown</span>
@@ -59,6 +74,7 @@ export default {
     return {
       name: this.$route.params.name,
       response: this.$route.params.response,
+      permission: this.$route.params.permission,
       cooldown: this.$route.params.cooldown || 5,
       cooldowntype: this.$route.params.cooldowntype,
       aliases: this.$route.params.aliases || [],
@@ -76,6 +92,7 @@ export default {
       if (!this.name || !this.response || !this.cooldown || !this.cooldowntype) return
       if (this.name.length > 15) return alert('Stop trying to hack me')
       if (this.cooldowntype !== 'notstop' && this.cooldowntype !== 'stop') return alert('Stop trying to hack me')
+      if (this.permission !== 'broadcaster' && this.permission !== 'moderator' && this.permission !== 'vip' && this.permission !== 'subscriber' && this.permission !== 'viewer') return
       let currentname = window.location.href.split('/')
       let data = this.$data
       delete data.options
