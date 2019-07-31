@@ -14,8 +14,8 @@ class Users {
     else clearInterval(this.checkInterval)
   }
   async parse(username, id) {
-    await global.db('users').insert({ id: Number(msg.tags.userId), username: msg.username }).then(() => {}).catch(() => {})
-    await global.db('users').where({ id: Number(msg.tags.userId) }).increment({ messages: 1, points: this.settings.pointsPerMessage }).update({username: msg.username})
+    await global.db('users').insert({ id: Number(id), username: username }).then(() => {}).catch(() => {})
+    await global.db('users').where({ id: Number(id) }).increment({ messages: 1, points: this.settings.pointsPerMessage }).update({username: username })
   }
   async checkOnline() {
     if (!global.twitch.uptime || !this.settings.enabled) return
