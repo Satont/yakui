@@ -33,7 +33,7 @@
     "sequelize": "^5.10.1",
     "socket.io": "^2.2.0",
     "socket.io-client": "^2.2.0",
-    "twitch-js": "^2.0.0-beta.30",
+    "tmi.js": "^1.4.5",
     "vue": "^2.6.10",
     "vue-loader": "^15.7.0",
     "vue-multiselect": "^2.1.6",
