@@ -33,8 +33,7 @@ class Commons {
     let diff = moment(moment().format()).diff(global.twitch.uptime)
     return humanizeDuration(moment.duration(diff), { language: 'ru' })
   }
-  async prepareFollowTime (message) {
-    let id = message.tags.userId
+  async prepareFollowTime (id) {
     let data
     try {
       let response = await fetch(
@@ -116,15 +115,15 @@ class Commons {
     }
     return message
   }
-  async eval(dbResponse, message) {
+  async eval(dbResponse, username, displayname) {
     let toEvaluate = dbResponse.replace('(eval ', '').slice(0, -1);
     
     let toEval = `(async function evaluation () {  ${toEvaluate} })()`;
     let context = {
       axios: axios,
       _: _,
-      username: message.username,
-      displayname: message.tags.displayName,
+      username: username,
+      displayname: displayName,
       say: function (msg) { global.twitch.client.chat.say(process.env.TWITCH_CHANNEL, msg).catch(console.log) },
       timeout: function (username, duration) { global.twitch.client.chat.timeout(process.env.TWITCH_CHANNEL, username, duration).catch(console.log) }
     };
@@ -133,7 +132,8 @@ class Commons {
     return run.toString()
   }
   getUserPermission (badges) {
-    if (typeof badges.subscriber !== 'undefined') return 'broadcaster'
+    if (!badges) return 'viewer'
+    else if (typeof badges.subscriber !== 'undefined') return 'broadcaster'
     else if (typeof badges.moderator !== 'undefined') return 'moderator'
     else if (typeof badges.subscriber !== 'undefined') return 'subscriber'
     else if (typeof badges.vip !== 'undefined') return 'vip'

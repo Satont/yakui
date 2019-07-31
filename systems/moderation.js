@@ -19,156 +19,156 @@ class Moderation {
     await say(msg)
     setTimeout(() => this.cooldown = false, 1 * 60 * 1000)
   }
-  async moderate (object) {
-    if (object.tags.badges.moderator || typeof object.tags.badges.broadcaster !== 'undefined') return false
-    if (await this.blacklist(object)) return true
-    if (await this.links(object)) return true
-    if (await this.symbols(object)) return true
-    if (await this.longMessage(object)) return true
-    if (await this.caps(object)) return true
-    if (await this.color(object)) return true
-    if (await this.emotes(object)) return true
+  async moderate (message, userstate) {   
+    if (userstate.moderator || (userstate.badges && typeof userstate.badges.broadcaster !== 'undefined')) return false
+    if (await this.blacklist(message, userstate)) return true
+    if (await this.links(message, userstate)) return true
+    if (await this.symbols(message, userstate)) return true
+    if (await this.longMessage(message, userstate)) return true
+    if (await this.caps(message, userstate)) return true
+    if (await this.color(message, userstate)) return true
+    if (await this.emotes(message, userstate)) return true
   }
-  async links (object) {
+  async links (message, userstate) {
     let links = this.settings.find(o => o.name === 'links')
-    if ((typeof object.tags.badges.subscriber !== 'undefined' && !links.settings.moderateSubscribers) || !links.enabled) return false
+    if ((userstate.subscriber && !links.settings.moderateSubscribers) || !links.enabled) return false
 
     const urlRegexp = /(www)? ??\.? ?[a-zA-Z0-9]+([a-zA-Z0-9-]+) ??\. ?(aero|bet|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|money|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|sk|sl|sm|sn|so|sr|st|su|sv|sy|sz|tc|td|tf|tg|th|tj|tk|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|um|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zr|zw)\b/gi
-    if (!this.warns.includes(object.username) && object.message.search(urlRegexp) >= 0) {
-      this.warns.push(object.username)
-      await timeout(object.username, 1)
-      this.announceTimeout(`@${object.username} ссылки запрещены [предупреждение]`)
-      console.log(`!!! LINK BAN ${object.username}, MESSAGE: ${object.message}`)
+    if (!this.warns.includes(userstate.username) && message.search(urlRegexp) >= 0) {
+      this.warns.push(userstate.username)
+      await timeout(userstate.username, 1)
+      this.announceTimeout(`@${userstate.username} ссылки запрещены [предупреждение]`)
+      console.log(`!!! LINK BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     }
-    if (this.warns.includes(object.username) && object.message.search(urlRegexp) >= 0) {
-      await timeout(object.username, links.settings.timeout)
-      this.announceTimeout(`@${object.username} ссылки запрещены`)
-      console.log(`!!! LINK BAN ${object.username}, MESSAGE: ${object.message}`)
+    if (this.warns.includes(userstate.username) && message.search(urlRegexp) >= 0) {
+      await timeout(userstate.username, links.settings.timeout)
+      this.announceTimeout(`@${userstate.username} ссылки запрещены`)
+      console.log(`!!! LINK BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     }
   }
-  async symbols (object) {
+  async symbols (message, userstate) {
     let symbols = this.settings.find(o => o.name === 'symbols')
-    if ((typeof object.tags.badges.subscriber !== 'undefined' && !symbols.settings.moderateSubscribers) || !symbols.enabled) return false
+    if ((userstate.subscriber && !symbols.settings.moderateSubscribers) || !symbols.enabled) return false
 
-    let reg = object.message.match(/([^\s\u0500-\u052F\u0400-\u04FF\w]+)/g)
+    let reg = message.match(/([^\s\u0500-\u052F\u0400-\u04FF\w]+)/g)
     let symbolsLength = 0
-    if (object.message.length < symbols.settings.triggerLength) return false
+    if (message.length < symbols.settings.triggerLength) return false
     for (var item in reg) {
       if (reg.hasOwnProperty(item)) {
         var symbolss = reg[item]
         symbolsLength = symbolsLength + symbolss.length
       }
     }
-    if (!this.warns.includes(object.username) && Math.ceil(symbolsLength / (object.message.length / 100)) >= symbols.settings.maxSymbolsPercent) {
-      this.warns.push(object.username)
-      await timeout(object.username, 1)
-      this.announceTimeout(`@${object.username} слишком много символов [предупреждение]`)
-      console.log(`!!! SYMBOLS BAN ${object.username}, LENGTH: ${symbolsLength}`)
+    if (!this.warns.includes(userstate.username) && Math.ceil(symbolsLength / (message.length / 100)) >= symbols.settings.maxSymbolsPercent) {
+      this.warns.push(userstate.username)
+      await timeout(userstate.username, 1)
+      this.announceTimeout(`@${userstate.username} слишком много символов [предупреждение]`)
+      console.log(`!!! SYMBOLS BAN ${userstate.username}, LENGTH: ${symbolsLength}`)
       return true
     }
-    if (Math.ceil(symbolsLength / (object.message.length / 100)) >= symbols.settings.maxSymbolsPercent) {
-      await timeout(object.username, symbols.settings.timeout)
-      this.announceTimeout(`@${object.username} слишком много символов`)
+    if (Math.ceil(symbolsLength / (message.length / 100)) >= symbols.settings.maxSymbolsPercent) {
+      await timeout(userstate.username, symbols.settings.timeout)
+      this.announceTimeout(`@${userstate.username} слишком много символов`)
       return true
     }
   }
-  async longMessage (object) {
+  async longMessage (message, userstate) {
     let longMessage = this.settings.find(o => o.name === 'longMessage')
-    if ((typeof object.tags.badges.subscriber !== 'undefined' && !longMessage.settings.moderateSubscribers) || !longMessage.enabled) return false
-    if (object.message.length < longMessage.settings.triggerLength) return false
+    if ((userstate.subscriber && !longMessage.settings.moderateSubscribers) || !longMessage.enabled) return false
+    if (message.length < longMessage.settings.triggerLength) return false
 
-    if (!this.warns.includes(object.username) && object.message.length > longMessage.settings.triggerLength) {
-      this.warns.push(object.username)
-      await timeout(object.username, 1)
-      this.announceTimeout(`@${object.username} слишком длинное сообщение [предупреждение]`)
-      console.log(`!!! LONG MESSAGE ${object.username}, LENGTH: ${object.message.length}`)
+    if (!this.warns.includes(userstate.username) && message.length > longMessage.settings.triggerLength) {
+      this.warns.push(userstate.username)
+      await timeout(userstate.username, 1)
+      this.announceTimeout(`@${userstate.username} слишком длинное сообщение [предупреждение]`)
+      console.log(`!!! LONG MESSAGE ${userstate.username}, LENGTH: ${message.length}`)
       return true
     }
-    if (this.warns.includes(object.username) && object.message.length > longMessage.settings.triggerLength) {
-      await timeout(object.username, longMessage.settings.timeout)
-      this.announceTimeout(`@${object.username} слишком длинное сообщение [предупреждение]`)
-      console.log(`!!! LONG MESSAGE ${object.username}, LENGTH: ${object.message.length}`)
+    if (this.warns.includes(userstate.username) && message.length > longMessage.settings.triggerLength) {
+      await timeout(userstate.username, longMessage.settings.timeout)
+      this.announceTimeout(`@${userstate.username} слишком длинное сообщение [предупреждение]`)
+      console.log(`!!! LONG MESSAGE ${userstate.username}, LENGTH: ${message.length}`)
       return true
     }
   }
-  async caps (object) {
+  async caps (message, userstate) {
     let caps = this.settings.find(o => o.name === 'caps')
-    object.message = object.message.replace(/[0-9]/g, '')
-    if ((typeof object.tags.badges.subscriber !== 'undefined' && !caps.settings.moderateSubscribers) || !caps.enabled) return false
-    if (object.tags.emoteOnly == '1') return false
-    if (object.message.length < caps.settings.triggerLength) return false
+    message = message.replace(/[0-9]/g, '')
+    if ((userstate.subscriber && !caps.settings.moderateSubscribers) || !caps.enabled) return false
+    if (message.length < caps.settings.triggerLength) return false
 
     let capsLength = 0
-    if (object.message.length < caps.settings.triggerLength) return false
-    for (let i = 0; i < object.message.length; i++) {
-      if (object.message.charAt(i) == object.message.charAt(i).toUpperCase()) {
+    if (message.length < caps.settings.triggerLength) return false
+    for (let i = 0; i < message.length; i++) {
+      if (message.charAt(i) == message.charAt(i).toUpperCase()) {
         capsLength += 1
       }
     }
 
-    if (!this.warns.includes(object.username) && Math.ceil(capsLength / (object.message.length / 100)) > caps.settings.maxCapsPercent) {
-      this.warns.push(object.username)
-      await timeout(object.username, 1)
-      this.announceTimeout(`@${object.username} слишком много капса [предупреждение]`)
-      console.log(`!!! CAPS BAN ${object.username}, LENGTH: ${capsLength}`)
+    if (!this.warns.includes(userstate.username) && Math.ceil(capsLength / (message.length / 100)) > caps.settings.maxCapsPercent) {
+      this.warns.push(userstate.username)
+      await timeout(userstate.username, 1)
+      this.announceTimeout(`@${userstate.username} слишком много капса [предупреждение]`)
+      console.log(`!!! CAPS BAN ${userstate.username}, LENGTH: ${capsLength}`)
       return true
     }
-    if (this.warns.includes(object.username) && Math.ceil(capsLength / (object.message.length / 100)) > caps.settings.maxCapsPercent) {
-      this.warns.push(object.username)
-      await timeout(object.username, caps.settings.timeout)
-      this.announceTimeout(`@${object.username} слишком много капса`)
-      console.log(`!!! CAPS BAN ${object.username}, LENGTH: ${capsLength}`)
+    if (this.warns.includes(userstate.username) && Math.ceil(capsLength / (message.length / 100)) > caps.settings.maxCapsPercent) {
+      this.warns.push(userstate.username)
+      await timeout(userstate.username, caps.settings.timeout)
+      this.announceTimeout(`@${userstate.username} слишком много капса`)
+      console.log(`!!! CAPS BAN ${userstate.username}, LENGTH: ${capsLength}`)
       return true
     }
   }
-  async color (object) {
+  async color (message, userstate) {
     let color = this.settings.find(o => o.name === 'color')
-    if ((typeof object.tags.badges.subscriber !== 'undefined' && !color.settings.moderateSubscribers) || !color.enabled) return false
+    if ((userstate.subscriber && !color.settings.moderateSubscribers) || !color.enabled) return false
 
-    if(!object.message.startsWith('\u0001ACTION')) {
+    if(!message.startsWith('\u0001ACTION')) {
       return false
-    } else if (!this.warns.includes(object.username)) {
-      this.warns.push(object.username)
-      await timeout(object.username, 1)
-      this.announceTimeout(`@${object.username} нельзя цветные сообщения [предупреждение]`)
-      console.log(`!!! COLOR BAN ${object.username}, MESSAGE: ${object.message}`)
+    } else if (!this.warns.includes(userstate.username)) {
+      this.warns.push(userstate.username)
+      await timeout(userstate.username, 1)
+      this.announceTimeout(`@${userstate.username} нельзя цветные сообщения [предупреждение]`)
+      console.log(`!!! COLOR BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
-    } else if (this.warns.includes(object.username)) {
-      this.warns.push(object.username)
-      await timeout(object.username, color.settings.timeout)
-      this.announceTimeout(`@${object.username} нельзя цветные сообщения`)
-      console.log(`!!! COLOR BAN ${object.username}, MESSAGE: ${object.message}`)
+    } else if (this.warns.includes(userstate.username)) {
+      this.warns.push(userstate.username)
+      await timeout(userstate.username, color.settings.timeout)
+      this.announceTimeout(`@${userstate.username} нельзя цветные сообщения`)
+      console.log(`!!! COLOR BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     }
   }
-  async emotes (object) {
+  async emotes (message, userstate) {
     let emotes = this.settings.find(o => o.name === 'emotes')
-    if ((typeof object.tags.badges.subscriber !== 'undefined' && !emotes.settings.moderateSubscribers) || !emotes.enabled) return false
-
-    if (!this.warns.includes(object.username) && object.tags.emotes.length > emotes.settings.maxCount) {
-      this.warns.push(object.username)
-      await timeout(object.username, emotes.settings.timeout)
-      this.announceTimeout(`@${object.username} слишком много смайликов`)
-      console.log(`!!! EMOTES BAN ${object.username}, LENGTH: ${object.tags.emotes.length}`)
+    if ((userstate.subscriber && !emotes.settings.moderateSubscribers) || !emotes.enabled) return false
+    let length = userstate.emotes ? Object.keys(userstate.emotes).length : 0
+    if (!this.warns.includes(userstate.username) && length > emotes.settings.maxCount) {
+      this.warns.push(userstate.username)
+      await timeout(userstate.username, emotes.settings.timeout)
+      this.announceTimeout(`@${userstate.username} слишком много смайликов`)
+      console.log(`!!! EMOTES BAN ${userstate.username}, LENGTH: ${length}`)
       return true
     }
-    if (this.warns.includes(object.username) && object.tags.emotes.length > emotes.settings.maxCount) {
-      this.warns.push(object.username)
-      await timeout(object.username, emotes.settings.timeout)
-      this.announceTimeout(`@${object.username} слишком много смайликов`)
-      console.log(`!!! EMOTES BAN ${object.username}, LENGTH: ${object.tags.emotes.length}`)
+    if (this.warns.includes(userstate.username) && length > emotes.settings.maxCount) {
+      this.warns.push(userstate.username)
+      await timeout(userstate.username, emotes.settings.timeout)
+      this.announceTimeout(`@${userstate.username} слишком много смайликов`)
+      console.log(`!!! EMOTES BAN ${userstate.username}, LENGTH: ${length}`)
       return true
     }
   }
-  async blacklist (object) {
+  async blacklist (message, userstate) {
     let blacklist = this.settings.find(o => o.name === 'blacklist')
     for (let value of blacklist.settings.list) {
-      if (object.message.includes(value)) {
-        await timeout(object.username, 600)
-        this.announceTimeout(`@${object.username} использовал запрещённое слово`)
-        console.log(`!!! BLACKLIST BAN ${object.username}, WORD: ${value}`)
+      if (value === '') return
+      if (message.includes(value)) {
+        await timeout(userstate.username, 600)
+        this.announceTimeout(`@${userstate.username} использовал запрещённое слово ${value}`)
+        console.log(`!!! BLACKLIST BAN ${userstate.username}, WORD: ${value}`)
         break;
       }
     }

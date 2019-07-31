@@ -1,4 +1,4 @@
-const TwitchJs = require('twitch-js').default
+const tmi = require("tmi.js");
 const commands = require('../systems/commands')
 const _ = require('lodash')
 const fetch = require('node-fetch')
@@ -13,11 +13,21 @@ class Twitch {
   }
   async start () {
     let token = (await global.db('core.tokens').where({ name: 'bot' }).select('value'))[0]
-    this.client = new TwitchJs({ 
-      token: token ? token.value : '', 
-      username: process.env.TWITCH_BOTUSERNAME, 
-      clientId: process.env.TWITCH_CLIENTID, 
-      onAuthenticationFailure: () => this.getToken().then(token => token) })
+    this.client = new tmi.client({
+      options: {
+          debug: true
+      },
+      connection: {
+          reconnect: true,
+          secure: true
+      },
+      identity: {
+          username: process.env.TWITCH_BOTUSERNAME,
+          password: token ? token.value : ''
+      },
+      channels: [process.env.TWITCH_CHANNEL]
+  })
+
     await this.connect()
     await this.validateBroadCasterToken()
     await this.getChannelId()
@@ -77,26 +87,23 @@ class Twitch {
     }
   }
   async connect () {
-    if (!this.connected) {
-      try {
-        await this.client.chat.connect()
-        await this.client.chat.join(process.env.TWITCH_CHANNEL)
-        this.connected = true
-        this.retries = 0
-        this.loadListeners()
-        return true
-      } catch (e) {
-        setTimeout(() => this.connect(), 100 * this.retries)
-        this.retries++
-        throw new Error(e)
-      }
-    }
+    this.client.connect()
+    .then(() => {
+      this.connected = true
+      this.retries = 0
+      this.loadListeners()
+      return true
+    })
+    .catch(e => {
+      this.getToken().then(() => this.client.connect())
+    })
   }
   async getChannelId () {
     try {
-      const id = await this.client.api.get(`users?login=${process.env.TWITCH_CHANNEL}`)
-      this.channelID = await id.users[0].id
-      console.log(`Channel id is ${id.users[0].id}`)
+      let response = await fetch(`https://api.twitch.tv/helix/users?login=${process.env.TWITCH_CHANNEL}`, { headers: { "Client-ID": process.env.TWITCH_CLIENTID }})
+      let data = await response.json()
+      this.channelID = await data.data[0].id
+      console.log(`Channel id is ${this.channelID}`)
     } catch (e) {
       console.log('Cant get channelid', e)
       setTimeout(() => this.getChannelId(), 10000)
@@ -106,7 +113,8 @@ class Twitch {
     setTimeout(() => this.getUptime(), 5 * 60 * 1000)
     try {
       if (!this.channelID) return
-      let stream = await this.client.api.get(`streams/${this.channelID}`)
+      let response = await fetch(`https://api.twitch.tv/kraken/streams/${this.channelID}`, { headers: { "Client-ID": process.env.TWITCH_CLIENTID }})
+      let stream = await response.json()
       if (_.isNil(stream.stream)) {
         this.uptime = null
         return
@@ -150,24 +158,28 @@ class Twitch {
   async loadListeners () {
     const moderation = require('../systems/moderation')
     let mainModeration = moderation.settings.find(o => o.name === 'main')
-    this.client.chat.on('PRIVMSG', async (object) => {
+    this.client.on('chat', async (channel, userstate, message, self) => {
+      if (userstate['message-type'] !== 'chat') return
       if (users.settings.enabled) {
-        await users.parse(object)
+        await users.parse(userstate.username, userstate['user-id'])
       }
       if (mainModeration.enabled === true) {
-        if (await moderation.moderate(object)) return
+        if (await moderation.moderate(message, userstate)) return
       }
-      if (object.message.toLowerCase().startsWith('!'))  {
-        return commands.prepareCommand(object.message.toLowerCase().split(' ')[0], object)
+      if (message.toLowerCase().startsWith('!'))  {
+        return commands.prepareCommand(message.toLowerCase().split(' ')[0], message, userstate)
       }
     })
-    this.client.chat.on('USERNOTICE/SUBSCRIPTION', async (event) => {
+    this.client.on("disconnected", (reason) => {
+      console.log(reason)
+    });
+    this.client.on('USERNOTICE/SUBSCRIPTION', async (event) => {
       await global.db('core.subscribers').where('name', 'latestSubscriber').update('value', event.tags.displayName)
     })
-    this.client.chat.on('USERNOTICE/RESUBSCRIPTION', async (event) => {
+    this.client.on('USERNOTICE/RESUBSCRIPTION', async (event) => {
       await global.db('core.subscribers').where('name', 'latestReSubscriber').update('value', event.tags.displayName)
     })
-    this.client.chat.on('PRIVMSG/CHEER', async (msg) => {
+    this.client.on('PRIVMSG/CHEER', async (msg) => {
       await global.db('users').insert({ id: Number(msg.tags.userId), username: msg.username }).then(() => {}).catch(() => {})
       await global.db('users').where({ id: Number(msg.tags.userId) }).increment({ bits: msg.bits }).update({username: msg.username})
     })
