@@ -113,16 +113,16 @@ class Twitch {
     setTimeout(() => this.getUptime(), 5 * 60 * 1000)
     try {
       if (!this.channelID) return
-      let response = await fetch(`https://api.twitch.tv/kraken/streams/${this.channelID}`, { headers: { "Client-ID": process.env.TWITCH_CLIENTID }})
+      let response = await fetch(`https://api.twitch.tv/helix/streams?user_id=${this.channelID}`, { headers: { "Client-ID": process.env.TWITCH_CLIENTID }})
       let stream = await response.json()
-      if (_.isNil(stream.stream)) {
+      if (!stream.data.length) {
         this.uptime = null
         return
       }
-      this.uptime = await stream.stream.createdAt
+      this.uptime = await stream.data[0].started_at
       console.log(`Uptime found ${this.uptime}`)
     } catch (error) {
-      throw Error(error)
+      throw new Error(error)
     }
   }
   async getSubscribers(opts) {
