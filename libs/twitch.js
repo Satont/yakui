@@ -167,7 +167,7 @@ class Twitch {
         if (await moderation.moderate(message, userstate)) return
       }
       if (message.toLowerCase().startsWith('!'))  {
-        return commands.prepareCommand(message.toLowerCase().split(' ')[0], userstate)
+        return commands.prepareCommand(message.toLowerCase().split(' ')[0], message, userstate)
       }
     })
     this.client.on("disconnected", (reason) => {

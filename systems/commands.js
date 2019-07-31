@@ -24,38 +24,38 @@ class Message {
     this.sockets()
     this.getCommands()
   }
-  async prepareCommand (command, message) {
+  async prepareCommand (command, message, userstate) {
     let find = this.commands.find(o => o.name === command.replace('!', '') || (o.aliases && o.aliases.includes(command.replace('!', ''))) )
     if (!find) return
     if (this.cooldowns.includes(find.name) && find.cooldowntype === 'stop') {
       return console.log(`COMMAND ${find.name.toUpperCase()} ON COOLDOWN AND HAS NO EXECUTE MODEL`)
     }
 
-    let userLevel = this.permissions.findIndex(o => o === commons.getUserPermission(message.tags.badges))
+    let userLevel = this.permissions.findIndex(o => o === commons.getUserPermission(userstate.badges))
     let commandLevel = this.permissions.findIndex(o => o === find.permission)
-    if (userLevel <= commandLevel) await this.prepareMessage(find, find.response, message)
+    if (userLevel <= commandLevel) await this.prepareMessage(find, find.response, message, userstate)
   }
-  async prepareMessage (command, response, message) {
+  async prepareMessage (command, response, message, userstate) {
     let numbersRegexp = /[random]+\((.*?)\)/
     let variableRegexp = /\$_(\S*)/g
     let songRegexp = /\$song(\S*)/g
-    let args = message.message.split(' ')
+    let args = message.split(' ')
     // модер меняет переменную в команде
-    let wantsChangeVariable = (message.tags.badges.moderator || message.tags.badges.broadcaster) && args.length >= 2 && command.response.match(variableRegexp) !== null
+    let wantsChangeVariable = (userstate.moderator || (userstate.badges && typeof userstate.badges.broadcaster !== 'undefined')) && args.length >= 2 && command.response.match(variableRegexp) !== null
     if (wantsChangeVariable) {
       args.shift()
       args = args.join(' ')
       let variable = response.match(variableRegexp)[0].replace('$_', '')
       let findVariable = await global.db('systems.variables').where('name', variable).update('value', args)
-      if (findVariable) return this.say(`@${message.tags.displayName} переменная ${variable} изменена на ${args}`)
+      if (findVariable) return this.say(`@${userstate['display-name']} переменная ${variable} изменена на ${args}`)
     }
     //
-    response = response.replace('$sender', '@' + message.tags.displayName)
+    response = response.replace('$sender', '@' + userstate['display-name'])
     if (response.includes('$uptime')) {
       response = response.replace('$uptime', commons.prepareUptime())
     }
     if (response.includes('$followtime')) {
-      response = response.replace('$followtime', await commons.prepareFollowTime(message))
+      response = response.replace('$followtime', await commons.prepareFollowTime(Number(userstate['user-id'])))
     }
     if (response.includes('$subs')) {
       response = response.replace('$subs', global.twitch.subscribers)
@@ -74,7 +74,7 @@ class Message {
       response = response.replace(response.match(songRegexp), await commons.getSong(query))
     }
     if (response.includes('$messages') || response.includes('$tips') || response.includes('$bits') || response.includes('$points') || response.includes('$watched') ) {
-      let user = await global.db('users').where({ id: message.tags.userId })
+      let user = await global.db('users').where({ id: Number(userstate['user-id']) })
       if (!user.length) return
       user = user[0]
       response = response.replace('$messages', user.messages)
@@ -112,7 +112,7 @@ class Message {
       response = await commons.parseMessageApi(response)
     }
     if (response.includes('(eval')) {
-      response = (await commons.eval(response, message)).toString()
+      response = (await commons.eval(response, userstate.username, userstate['display-name'])).toString()
     }
     if (response.includes('$random')) {
       let numbers = response.replace('$random', 'random').match(numbersRegexp)[1]
@@ -128,13 +128,13 @@ class Message {
       }
     }
     //
-    this.respond(command, response, message)
+    this.respond(command, response, message, userstate)
   }
-  async respond (command, message, object) {
-    if (this.cooldowns.includes(command.name) && (object.tags.badges.moderator || object.tags.badges.subscriber)) {
+  async respond (command, message, object, userstate) {
+    if (this.cooldowns.includes(command.name) && (userstate.moderator || userstate.subscriber)) {
       return await this.say(message)
     } else if (this.cooldowns.includes(command.name) && command.cooldowntype === 'notstop') {
-      return await this.whisper(object.username, message)
+      return await this.whisper(userstate.username, message)
     }
     await this.say(message)
     this.cooldowns.push(command.name)
@@ -149,13 +149,13 @@ class Message {
     return query
   }
   async say(msg) {
-    global.twitch.client.chat.say(process.env.TWITCH_CHANNEL, msg).catch(console.log)
+    global.twitch.client.say(process.env.TWITCH_CHANNEL, msg).catch(console.log)
   }
   async whisper(username, message) {
-    await global.twitch.client.chat.whisper(username, message).catch(console.log)
+    await global.twitch.client.whisper(username, message).catch(console.log)
   }
   async timeout(username, time) {
-    global.twitch.client.chat.timeout(process.env.TWITCH_CHANNEL, username, time).catch(console.log)
+    global.twitch.client.timeout(process.env.TWITCH_CHANNEL, username, time).catch(console.log)
   }
   async sockets() {
     let self = this
