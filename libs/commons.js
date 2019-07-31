@@ -31,7 +31,7 @@ class Commons {
     let uptime = global.twitch.uptime
     if (!uptime) return 'Offline'
     let diff = moment(moment().format()).diff(global.twitch.uptime)
-    return humanizeDuration(moment.duration(diff), { language: 'ru' })
+    return humanizeDuration(moment.duration(diff), { language: process.env.LANGUAGE })
   }
   async prepareFollowTime (id) {
     let data
@@ -55,8 +55,7 @@ class Commons {
       return 'not followed'
     }
     let diff = moment(moment().format()).diff(await data)
-
-    return humanizeDuration(moment.duration(diff), { units: ['y', 'mo', 'd', 'h', 'm'], round: true, language: process.env.LANG })
+    return humanizeDuration(moment.duration(diff), { units: ['y', 'mo', 'd', 'h', 'm'], round: true, language: process.env.LANGUAGE })
   }
   async getSong(params) {
     let url = 'http://api.satont.ru/song?'
