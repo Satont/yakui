@@ -16,6 +16,7 @@ const shortEnglish = require('humanize-duration').humanizer({
 
 
 class Message {
+  permissions = ['broadcaster', 'moderator', 'subscriber', 'vip', 'viewer']
 
   constructor() {
     this.cooldowns = []
@@ -30,11 +31,9 @@ class Message {
       return console.log(`COMMAND ${find.name.toUpperCase()} ON COOLDOWN AND HAS NO EXECUTE MODEL`)
     }
 
-    let userLevel = await commons.getUserPermission(message.tags.badges)
-    console.log(message.tags.badges, userLevel, typeof message.tags.badges.vip === 'undefined')
-    //let commandLevel = this.permissions.findIndex(o => o === find.permission)
-    //if (userLevel <= commandLevel) await this.prepareMessage(find, find.response, message)
-
+    let userLevel = this.permissions.findIndex(o => o === commons.getUserPermission(message.tags.badges))
+    let commandLevel = this.permissions.findIndex(o => o === find.permission)
+    if (userLevel <= commandLevel) await this.prepareMessage(find, find.response, message)
   }
   async prepareMessage (command, response, message) {
     let numbersRegexp = /[random]+\((.*?)\)/

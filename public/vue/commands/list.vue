@@ -52,6 +52,7 @@ export default {
         params: {
           name: command.name,
           response: command.response,
+          permission: command.permission,
           cooldown: command.cooldown,
           cooldowntype: command.cooldowntype,
           aliases: command.aliases
