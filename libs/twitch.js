@@ -95,7 +95,7 @@ class Twitch {
       return true
     })
     .catch(e => {
-      this.getToken().then(() => this.client.connect())
+      this.getToken().then(() => this.start())
     })
   }
   async getChannelId () {
