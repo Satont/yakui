@@ -13,7 +13,7 @@ class Users {
     if (this.settings.enabled) this.checkInterval = setInterval(() => this.checkOnline(), 1 * 60 * 1000)
     else clearInterval(this.checkInterval)
   }
-  async parse(msg) {
+  async parse(username, id) {
     await global.db('users').insert({ id: Number(msg.tags.userId), username: msg.username }).then(() => {}).catch(() => {})
     await global.db('users').where({ id: Number(msg.tags.userId) }).increment({ messages: 1, points: this.settings.pointsPerMessage }).update({username: msg.username})
   }
