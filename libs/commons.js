@@ -122,7 +122,7 @@ class Commons {
       axios: axios,
       _: _,
       username: username,
-      displayname: displayName,
+      displayname: displayname,
       say: function (msg) { global.twitch.client.chat.say(process.env.TWITCH_CHANNEL, msg).catch(console.log) },
       timeout: function (username, duration) { global.twitch.client.chat.timeout(process.env.TWITCH_CHANNEL, username, duration).catch(console.log) }
     };
