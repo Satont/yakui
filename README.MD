@@ -33,7 +33,7 @@
 	- [x] qiwi donate
 - [x] Make user online time counting (beta)
 - [x] Make user tips, bits counting
-- [ ] Commands permissions
+- [x] Commands permissions
 
 # Installation
 - `git clone https://github.com/Satont/twobit && cd twobit`
