@@ -158,6 +158,7 @@ class Twitch {
   }
   async loadListeners () {
     this.client.on('chat', async (channel, userstate, message, self) => {
+      if (self) return
       if (userstate['message-type'] !== 'chat') return
       if (users.settings.enabled) {
         await users.parse(userstate.username, userstate['user-id'])
