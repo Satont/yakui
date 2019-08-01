@@ -1,5 +1,6 @@
 const { io } = require("../libs/panel")
 const axios = require('axios')
+const _ = require('lodash')
 
 class Users {
   constructor() {
@@ -22,15 +23,22 @@ class Users {
     try {
       let request = await axios.get(`http://tmi.twitch.tv/group/user/${process.env.TWITCH_CHANNEL.toLowerCase()}/chatters`)
       let response = request.data
+      let chatters = []
       let now = []
       for (let key of Object.keys(response.chatters)) {
-        if (Array.isArray(response.chatters[key])) now = now.concat(response.chatters[key])
+        if (Array.isArray(response.chatters[key])) chatters = chatters.concat(response.chatters[key])
+      }
+      for (let chunk of _.chunk(chatters, 100)) {
+        let request = await this.getUsersByUsername(chunk)
+        let newMaped = _.map(request, o => {
+          return { username: o.display_name, id: Number(o.id) }
+        })
+        now = await _.concat(now, newMaped)
       }
       for (let user of now) {
         if (this.onlineUsers.includes(user)) {
-          let userId = await this.getIdByUsername(user)
-          await global.db('users').insert({ id: Number(userId), username: user }).then(() => {}).catch(() => {})
-          await global.db('users').where({ id: Number(userId) }).increment({ watched: 1 * 60 * 1000 })
+          await global.db('users').insert({ id: user.id, username: user.username }).then(() => {}).catch(() => {})
+          await global.db('users').where({ id: user.id }).increment({ watched: 1 * 60 * 1000 })
         }
       }
       this.onlineUsers = now
@@ -45,6 +53,11 @@ class Users {
     } catch(e) {
       throw new Error(e.stack)
     }
+  }
+  async getUsersByUsername(users) {
+    let request = await axios.get(`https://api.twitch.tv/helix/users?login=${users.join('&login=')}`, { headers: { 'Client-ID': process.env.TWITCH_CLIENTID } })
+    let data = await request.data.data
+    return data
   }
   async sockets() {
     let self = this
