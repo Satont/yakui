@@ -173,6 +173,7 @@ class Message {
         try {
           await global.db('systems.commands').insert(data)
           self.getCommands()
+          cb(null, true)
         } catch (e) {
           console.log(e)
         }
@@ -197,6 +198,7 @@ class Message {
         try {
           await global.db('systems.commands').where('name', name).update(data)
           self.getCommands()
+          cb(null, true)
         } catch (e) {
           console.log(e)
         }
