@@ -38,7 +38,7 @@ class Users {
       for (let user of now) {
         if (this.onlineUsers.includes(user)) {
           await global.db('users').insert({ id: user.id, username: user.username }).then(() => {}).catch(() => {})
-          await global.db('users').where({ id: user.id }).increment({ watched: 1 * 60 * 1000 })
+          await global.db('users').where({ id: user.id }).increment({ watched: 1 * 60 * 1000, points: this.settings.pointsPerTime })
         }
       }
       this.onlineUsers = now
