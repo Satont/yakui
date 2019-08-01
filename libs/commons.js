@@ -123,8 +123,8 @@ class Commons {
       _: _,
       username: username,
       displayname: displayname,
-      say: function (msg) { global.tmi.client.chat.say(process.env.TWITCH_CHANNEL, msg).catch(console.log) },
-      timeout: function (username, duration) { global.tmi.client.chat.timeout(process.env.TWITCH_CHANNEL, username, duration).catch(console.log) }
+      say: function (msg) { global.tmi.client.say(process.env.TWITCH_CHANNEL, msg).catch(console.log) },
+      timeout: function (username, duration) { global.tmi.client.timeout(process.env.TWITCH_CHANNEL, username, duration).catch(console.log) }
     };
 
     let run = await safeEval(toEval, context)
