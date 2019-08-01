@@ -39,7 +39,8 @@ class DonationAlerts {
         this.socket = null
       })
       this.socket.off('donation').on('donation', async (data) => {
-        let { username, amount_main, currency, message } = JSON.parse(data)
+        let { username, amount_main, currency, message, alert_type } = JSON.parse(data)
+        if (parseInt(alert_type, 10) !== 1) return 
         global.db('users').where({ username: username.toLowerCase() }).increment({ tips: amount_main }).catch(() => {})
         await say(`/me ${username} ${amount_main}RUB ${message}`)
       })
