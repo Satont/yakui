@@ -14,6 +14,7 @@ class Twitch {
   }
   async start () {
     let token = (await global.db('core.tokens').where({ name: 'bot' }).select('value'))[0]
+    this.token = token.value
     this.client = new tmi.client({
       options: {
           debug: true
@@ -27,7 +28,7 @@ class Twitch {
           password: token ? token.value : ''
       },
       channels: [process.env.TWITCH_CHANNEL]
-  })
+    })
 
     await this.connect()
     await this.validateBroadCasterToken()

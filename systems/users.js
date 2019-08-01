@@ -11,7 +11,7 @@ class Users {
   }
   async start() {
     this.settings = (await global.db.select('*').from('settings').where('system', 'users'))[0].data
-    if (this.settings.enabled) this.checkInterval = setInterval(() => this.checkOnline(), 1 * 60 * 1000)
+    if (this.settings.enabled) this.checkInterval = setInterval(() => this.checkOnline(), 15 * 1000)
     else clearInterval(this.checkInterval)
   }
   async parse(username, id) {
@@ -35,8 +35,8 @@ class Users {
         })
         now = await _.concat(now, newMaped)
       }
-      for (let user of now) {
-        if (this.onlineUsers.includes(user)) {
+      for (let user of await now) {
+        if (this.onlineUsers.some(o => o.username === user.username)) {
           await global.db('users').insert({ id: user.id, username: user.username }).then(() => {}).catch(() => {})
           await global.db('users').where({ id: user.id }).increment({ watched: 1 * 60 * 1000, points: this.settings.pointsPerTime })
         }
@@ -48,16 +48,20 @@ class Users {
   }
   async getIdByUsername(username) {
     try {
-      let request = await axios.get(`https://api.twitch.tv/helix/users?login=${username}`, { headers: { 'Client-ID': process.env.TWITCH_CLIENTID } })
+      let request = await axios.get(`https://api.twitch.tv/helix/users?login=${username}`, { headers: { 'Authorization': `Bearer ${global.twitch.token}` } })
       return request.data.data[0].id
     } catch(e) {
       throw new Error(e.stack)
     }
   }
   async getUsersByUsername(users) {
-    let request = await axios.get(`https://api.twitch.tv/helix/users?login=${users.join('&login=')}`, { headers: { 'Client-ID': process.env.TWITCH_CLIENTID } })
-    let data = await request.data.data
-    return data
+    try {
+      let request = await axios.get(`https://api.twitch.tv/helix/users?login=${users.join('&login=')}`, { headers: { 'Authorization': `Bearer ${global.twitch.token}` } })
+      let data = await request.data.data
+      return data
+    } catch(e) {
+      console.log(e)
+    }
   }
   async sockets() {
     let self = this
