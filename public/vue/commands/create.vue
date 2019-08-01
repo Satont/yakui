@@ -107,8 +107,11 @@ export default {
       if (this.permission !== 'broadcaster' && this.permission !== 'moderator' && this.permission !== 'vip' && this.permission !== 'subscriber' && this.permission !== 'viewer') return
       let data = this.$data
       delete data.options
-      this.$socket.emit("create.command", { ...data })
-      this.$router.push("/commands")
+      this.$socket.emit("create.command", { ...data }, async (err, data) => {
+        if (err) return alert(err)
+
+        this.$router.push("/commands")
+      })
     },
     addAliase (newAliase) {
       if (newAliase.length > 15) return
