@@ -4,8 +4,9 @@ const _ = require('lodash')
 const fetch = require('node-fetch')
 const users = require('../systems/users')
 const moderation = require('../systems/moderation')
+const twitch = require('../systems/twitch')
 
-class Twitch {
+class TwitchTmi {
   constructor() {
     this.start()
     this.retries = 0
@@ -166,6 +167,8 @@ class Twitch {
       }
       if (await moderation.moderate(message, userstate)) return
       if (message.toLowerCase().startsWith('!'))  {
+        let command = twitch.commands.find(o => o.name === message.toLowerCase().split(' ')[0])
+        if (typeof command !== 'undefined') return command.fnc(message, userstate)
         return commands.prepareCommand(message.toLowerCase().split(' ')[0], message, userstate)
       }
     })
@@ -185,4 +188,4 @@ class Twitch {
   }
 }
 
-module.exports = new Twitch()
+module.exports = new TwitchTmi()

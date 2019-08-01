@@ -15,6 +15,7 @@ async function load() {
   require('./systems/moderation')
   require('./systems/timers')
   require('./systems/users')
+  require('./systems/twitch')
   require('./integrations/donationalerts')
   require('./integrations/streamlabs')
   require('./integrations/qiwi')
