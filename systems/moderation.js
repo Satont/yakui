@@ -167,7 +167,7 @@ class Moderation {
       if (value === '') return
       if (message.includes(value)) {
         await timeout(userstate.username, 600)
-        this.announceTimeout(`@${userstate.username} использовал запрещённое слово ${value}`)
+        this.announceTimeout(`@${userstate.username} использовал запрещённое слово`)
         console.log(`!!! BLACKLIST BAN ${userstate.username}, WORD: ${value}`)
         break;
       }
