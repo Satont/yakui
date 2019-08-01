@@ -96,8 +96,11 @@ export default {
       let currentname = window.location.href.split('/')
       let data = this.$data
       delete data.options
-      this.$socket.emit('update.command', { currentname: currentname[currentname.length - 1], ...data })
-      this.$router.push("/commands")
+      this.$socket.emit('update.command', { currentname: currentname[currentname.length - 1], ...data }, async (err, data) => {
+        if (err) return alert(err)
+
+        this.$router.push("/commands")
+      })
     },
     addAliase (newAliase) {
       this.aliases.push(newAliase)
