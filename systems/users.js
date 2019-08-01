@@ -19,7 +19,7 @@ class Users {
     await global.db('users').where({ id: Number(id) }).increment({ messages: 1, points: this.settings.pointsPerMessage }).update({username: username })
   }
   async checkOnline() {
-    if (!global.twitch.uptime || !this.settings.enabled) return
+    if (!global.tmi.uptime || !this.settings.enabled) return
     try {
       let request = await axios.get(`http://tmi.twitch.tv/group/user/${process.env.TWITCH_CHANNEL.toLowerCase()}/chatters`)
       let response = request.data
@@ -48,7 +48,7 @@ class Users {
   }
   async getIdByUsername(username) {
     try {
-      let request = await axios.get(`https://api.twitch.tv/helix/users?login=${username}`, { headers: { 'Authorization': `Bearer ${global.twitch.token}` } })
+      let request = await axios.get(`https://api.twitch.tv/helix/users?login=${username}`, { headers: { 'Authorization': `Bearer ${global.tmi.token}` } })
       return request.data.data[0].id
     } catch(e) {
       throw new Error(e.stack)
@@ -56,7 +56,7 @@ class Users {
   }
   async getUsersByUsername(users) {
     try {
-      let request = await axios.get(`https://api.twitch.tv/helix/users?login=${users.join('&login=')}`, { headers: { 'Authorization': `Bearer ${global.twitch.token}` } })
+      let request = await axios.get(`https://api.twitch.tv/helix/users?login=${users.join('&login=')}`, { headers: { 'Authorization': `Bearer ${global.tmi.token}` } })
       let data = await request.data.data
       return data
     } catch(e) {

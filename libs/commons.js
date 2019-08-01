@@ -28,21 +28,21 @@ class Commons {
     return params
   }
   prepareUptime () {
-    let uptime = global.twitch.uptime
+    let uptime = global.tmi.uptime
     if (!uptime) return 'Offline'
-    let diff = moment(moment().format()).diff(global.twitch.uptime)
+    let diff = moment(moment().format()).diff(global.tmi.uptime)
     return humanizeDuration(moment.duration(diff), { language: process.env.BOT_LANG })
   }
   async prepareFollowTime (id) {
     let data
     try {
       let response = await fetch(
-        `https://api.twitch.tv/helix/users/follows?from_id=${id}&to_id=${global.twitch.channelID}`,
+        `https://api.twitch.tv/helix/users/follows?from_id=${id}&to_id=${global.tmi.channelID}`,
         {
           method: 'GET',
           headers: {
             'Client-ID': process.env.TWITCH_CLIENTID,
-            'Authorization': `Bearer ${global.twitch.broadcaster_token}`
+            'Authorization': `Bearer ${global.tmi.broadcaster_token}`
           }
         }
       )
@@ -123,8 +123,8 @@ class Commons {
       _: _,
       username: username,
       displayname: displayname,
-      say: function (msg) { global.twitch.client.chat.say(process.env.TWITCH_CHANNEL, msg).catch(console.log) },
-      timeout: function (username, duration) { global.twitch.client.chat.timeout(process.env.TWITCH_CHANNEL, username, duration).catch(console.log) }
+      say: function (msg) { global.tmi.client.chat.say(process.env.TWITCH_CHANNEL, msg).catch(console.log) },
+      timeout: function (username, duration) { global.tmi.client.chat.timeout(process.env.TWITCH_CHANNEL, username, duration).catch(console.log) }
     };
 
     let run = await safeEval(toEval, context)

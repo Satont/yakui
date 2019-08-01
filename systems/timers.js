@@ -18,7 +18,7 @@ class Timers {
     if (_.isNil(timers)) return setTimeout(() => this.check(), 1000)
     for (let timer of timers) {
       if ((new Date().getTime() - timer.triggertimestamp) > (timer.interval * 1000)) {
-        if (!global.twitch.uptime) return
+        if (!global.tmi.uptime) return
         await say(timer.responses[timer.last])
         await global.db('systems.timers').where('name', timer.name).update({ last: ++timer.last % timer.responses.length, triggertimestamp: new Date().getTime() })
       }

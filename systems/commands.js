@@ -57,7 +57,7 @@ class Message {
       response = response.replace('$followtime', await commons.prepareFollowTime(Number(userstate['user-id'])))
     }
     if (response.includes('$subs')) {
-      response = response.replace('$subs', global.twitch.subscribers)
+      response = response.replace('$subs', global.tmi.subscribers)
     }
     if (response.includes('$latestSub')) {
       response = response.replace('$latestSub', await commons.getLatestSubOrResub('sub'))
@@ -148,13 +148,13 @@ class Message {
     return query
   }
   async say(msg) {
-    global.twitch.client.say(process.env.TWITCH_CHANNEL, msg).catch(console.log)
+    global.tmi.client.say(process.env.TWITCH_CHANNEL, msg).catch(console.log)
   }
   async whisper(username, message) {
-    await global.twitch.client.whisper(username, message).catch(console.log)
+    await global.tmi.client.whisper(username, message).catch(console.log)
   }
   async timeout(username, time) {
-    global.twitch.client.timeout(process.env.TWITCH_CHANNEL, username, time).catch(console.log)
+    global.tmi.client.timeout(process.env.TWITCH_CHANNEL, username, time).catch(console.log)
   }
   async sockets() {
     let self = this
