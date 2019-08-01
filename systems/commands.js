@@ -41,7 +41,7 @@ class Message {
     let songRegexp = /\$song(\S*)/g
     let args = message.split(' ')
     // модер меняет переменную в команде
-    let wantsChangeVariable = (userstate.moderator || (userstate.badges && typeof userstate.badges.broadcaster !== 'undefined')) && args.length >= 2 && command.response.match(variableRegexp) !== null
+    let wantsChangeVariable = (userstate.mod || (userstate.badges && typeof userstate.badges.broadcaster !== 'undefined')) && args.length >= 2 && command.response.match(variableRegexp) !== null
     if (wantsChangeVariable) {
       args.shift()
       args = args.join(' ')
@@ -131,7 +131,7 @@ class Message {
     this.respond(command, response, message, userstate)
   }
   async respond (command, message, object, userstate) {
-    if (this.cooldowns.includes(command.name) && (userstate.moderator || userstate.subscriber)) {
+    if (this.cooldowns.includes(command.name) && (userstate.mod || userstate.subscriber)) {
       return await this.say(message)
     } else if (this.cooldowns.includes(command.name) && command.cooldowntype === 'notstop') {
       return await this.whisper(userstate.username, message)

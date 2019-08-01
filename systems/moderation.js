@@ -20,7 +20,7 @@ class Moderation {
     setTimeout(() => this.cooldown = false, 1 * 60 * 1000)
   }
   async moderate (message, userstate) {   
-    if (userstate.moderator || (userstate.badges && typeof userstate.badges.broadcaster !== 'undefined')) return false
+    if (userstate.mod || (userstate.badges && typeof userstate.badges.broadcaster !== 'undefined')) return false
     if (await this.blacklist(message, userstate)) return true
     if (await this.links(message, userstate)) return true
     if (await this.symbols(message, userstate)) return true
