@@ -7,11 +7,11 @@ class Moderation {
     this.warns = []
     this.settings = null
     this.init()
+    this.sockets()
   }
   async init() {
     let query = await global.db.select('*').from('systems.moderation')
     this.settings = query
-    this.sockets()
   }
   async announceTimeout (msg) {
     if (this.cooldown) return
@@ -20,6 +20,7 @@ class Moderation {
     setTimeout(() => this.cooldown = false, 1 * 60 * 1000)
   }
   async moderate (message, userstate) {   
+    if (!(this.settings.find(o => o.name === 'main')).enabled) return false
     if (userstate.mod || (userstate.badges && typeof userstate.badges.broadcaster !== 'undefined')) return false
     if (await this.blacklist(message, userstate)) return true
     if (await this.links(message, userstate)) return true
@@ -175,6 +176,7 @@ class Moderation {
   }
 
   async sockets () {
+    let self = this
     io.on('connection', async (socket) => {
       socket.on('settings.moderation', async (data, cb) => {
         let query = await global.db.select('*').from('systems.moderation')
@@ -192,6 +194,7 @@ class Moderation {
           delete item.name
           global.db('systems.moderation').where('name', name).update(item).catch(console.log)
         }
+        self.init()
       })
     })
   }

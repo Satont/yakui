@@ -3,6 +3,7 @@ const commands = require('../systems/commands')
 const _ = require('lodash')
 const fetch = require('node-fetch')
 const users = require('../systems/users')
+const moderation = require('../systems/moderation')
 
 class Twitch {
   constructor() {
@@ -156,16 +157,12 @@ class Twitch {
     setTimeout(() => this.getSubscribers(), 30 * 60 * 1000)
   }
   async loadListeners () {
-    const moderation = require('../systems/moderation')
-    let mainModeration = moderation.settings.find(o => o.name === 'main')
     this.client.on('chat', async (channel, userstate, message, self) => {
       if (userstate['message-type'] !== 'chat') return
       if (users.settings.enabled) {
         await users.parse(userstate.username, userstate['user-id'])
       }
-      if (mainModeration.enabled === true) {
-        if (await moderation.moderate(message, userstate)) return
-      }
+      if (await moderation.moderate(message, userstate)) return
       if (message.toLowerCase().startsWith('!'))  {
         return commands.prepareCommand(message.toLowerCase().split(' ')[0], message, userstate)
       }
