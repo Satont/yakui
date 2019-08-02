@@ -36,9 +36,7 @@ class Message {
     if (await permissions.hasPerm(userstate.badges, find.permission)) await this.prepareMessage(find, find.response, message, userstate)
   }
   async prepareMessage (command, response, message, userstate) {
-    let numbersRegexp = /[random]+\((.*?)\)/
     let variableRegexp = /\$_(\S*)/g
-    let songRegexp = /\$song(\S*)/g
     let args = message.split(' ')
     // модер меняет переменную в команде
     let wantsChangeVariable = (userstate.mod || (userstate.badges && typeof userstate.badges.broadcaster !== 'undefined')) && args.length >= 2 && command.response.match(variableRegexp) !== null
