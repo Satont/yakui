@@ -1,5 +1,5 @@
 const tmi = require("tmi.js");
-const commands = require('../systems/commands')
+const commands = require('../systems/customCommands')
 const _ = require('lodash')
 const fetch = require('node-fetch')
 const users = require('../systems/users')

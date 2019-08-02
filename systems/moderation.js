@@ -1,6 +1,6 @@
 const { io } = require("../libs/panel")
 const _ = require('lodash')
-const { say, timeout } = require('./commands')
+const { say, timeout } = require('./customCommands')
 
 class Moderation {
   constructor() {

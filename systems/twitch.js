@@ -1,5 +1,5 @@
 const axios = require('axios')
-const { say } = require('./commands')
+const { say } = require('./customCommands')
 const _ = require('lodash')
 
 class Twitch {
