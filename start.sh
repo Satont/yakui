@@ -1,1 +1,1 @@
-npx knex migrate:latest && npx knex seed:run && node app.js
+npx knex migrate:latest && npx knex seed:run && node --expose_gc app.js

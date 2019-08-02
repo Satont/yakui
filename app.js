@@ -39,3 +39,13 @@ async function loadDefaultCommands() {
 process.on('uncaughtException', function (err) {
   console.log(err);
 }); 
+
+function clearRam() {
+  try {
+    if (global.gc) global.gc()
+  } catch (e) {
+    console.log("`node --expose-gc app.js`")
+  }
+  setTimeout(() => clearRam(), 15 * 60 * 1000)
+}
+clearRam()
