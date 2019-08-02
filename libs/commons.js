@@ -130,19 +130,6 @@ class Commons {
     let run = await safeEval(toEval, context)
     return run.toString()
   }
-  getUserPermission (badges) {
-    if (!badges) return 'viewer'
-    else if (typeof badges.subscriber !== 'undefined') return 'broadcaster'
-    else if (typeof badges.mod !== 'undefined') return 'moderator'
-    else if (typeof badges.subscriber !== 'undefined') return 'subscriber'
-    else if (typeof badges.vip !== 'undefined') return 'vip'
-    else return 'viewer'
-  }
-  async getCommandPermission(name) {
-    let command = await global.db('systems.defaultcommands').select('*').where('name', name)
-    if (!command.length) return
-    return command[0].permission
-  }
 }
 
 module.exports = new Commons()

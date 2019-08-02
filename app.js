@@ -21,18 +21,19 @@ async function load() {
   require('./integrations/donationalerts')
   require('./integrations/streamlabs')
   require('./integrations/qiwi')
-  loadCommands()
+  loadDefaultCommands()
 }
 load()
 
-async function loadCommands() {
+async function loadDefaultCommands() {
+  const { getDefaultCommandPermission } = require('./libs/permissions')
+
   const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'))
   for (const file of commandFiles) {
     const command = require(`./commands/${file}`)
-    console.log(`COMMAND ${command.name.toUpperCase()} WAS LOADED`)
+    command.permission = await getDefaultCommandPermission(command.name)
     global.commands.set(command.name, command)
   }
-  console.log(global.commands)
 }
 
 process.on('uncaughtException', function (err) {

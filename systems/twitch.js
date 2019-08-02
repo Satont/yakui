@@ -1,21 +1,9 @@
 const axios = require('axios')
-const { say } = require('./customCommands')
 const _ = require('lodash')
 
 class Twitch {
-  constructor() {
-    this.commands = [
-      { name: "!title", fnc: this.title },
-      { name: "!game", fnc: this.game },
-    ]
-  }
-
-  async title(message, userstate) {
-    if (!userstate.mod && (userstate.badges && typeof userstate.badges.broadcaster === 'undefined')) return
-    let args = message.split(' ')
-    args.shift()
-    if (!args.length) return
-    let title = args.join(' ')
+  
+  async setTitle(title) {
     const url = `https://api.twitch.tv/kraken/channels/${process.env.TWITCH_CHANNEL}`
     try {
         await axios({
@@ -24,18 +12,12 @@ class Twitch {
         data: { channel: { status: title } },
         headers: { 'Authorization': `OAuth ${global.tmi.token}` }
       })
-      say(`${userstate.username} ===> ${title}`)
+      return true
     } catch (e) {
-      say(`${userstate.username} !!! ERROR`)
-      console.log(e)
+      throw new Error(e)
     }
   }
-  async game(message, userstate) {
-    if (!userstate.mod && (userstate.badges && typeof userstate.badges.broadcaster === 'undefined')) return
-    let args = message.split(' ')
-    args.shift()
-    if (!args.length) return
-    let game = args.join(' ')
+  async getSuggestedGame(game) {
     try {
       let request = await axios.get(`https://api.twitch.tv/kraken/search/games?query=${game}&type=suggest`, {
         headers: {
@@ -44,11 +26,12 @@ class Twitch {
         }
       })
       if (_.isNull(request.data.games)) return game = game
-      game = request.data.games[0].name
+      return request.data.games[0].name
     } catch(e) {
-      console.log(e)
+      throw new Error(e)
     }
-    
+  }
+  async setGame(game) {
     try {
       let request = await axios({
         method: 'PUT',
@@ -56,11 +39,9 @@ class Twitch {
         data: { channel: { game } },
         headers: { 'Authorization': `OAuth ${global.tmi.token}` }
       })
-      console.log(request.data)
-      say(`${userstate.username} ===> ${game}`)
+      return true
     } catch (e) {
-      say(`${userstate.username} !!! ERROR`)
-      console.log(e)
+      throw new Error(e)
     }
   }
 }

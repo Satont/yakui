@@ -4,7 +4,7 @@ const _ = require('lodash')
 const fetch = require('node-fetch')
 const users = require('../systems/users')
 const moderation = require('../systems/moderation')
-const twitch = require('../systems/twitch')
+const permissions = require('./permissions')
 
 class TwitchTmi {
   constructor() {
@@ -167,9 +167,13 @@ class TwitchTmi {
       }
       if (await moderation.moderate(message, userstate)) return
       if (message.toLowerCase().startsWith('!'))  {
-        let command = twitch.commands.find(o => o.name === message.toLowerCase().split(' ')[0])
-        if (typeof command !== 'undefined') return command.fnc(message, userstate)
-        return commands.prepareCommand(message.toLowerCase().split(' ')[0], message, userstate)
+        let command = message.toLowerCase().split(' ')[0].replace('!', '')
+        if (global.commands.has(command)) {
+          command = global.commands.get(command)
+          if (!(await permissions.hasPerm(userstate.badges, command.permission))) return
+          return command.run(command, message, userstate)
+        }
+        else return commands.prepareCommand(command, message, userstate)
       }
     })
     this.client.on("disconnected", (reason) => {
