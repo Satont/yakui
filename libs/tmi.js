@@ -165,7 +165,7 @@ class TwitchTmi {
       await users.parse(userstate.username, userstate['user-id'])
       if (await moderation.moderate(message, userstate)) return
       if (message.toLowerCase().startsWith('!'))  {
-        let command = message.toLowerCase().split(' ')[0].substring(1)
+        let command = message.toLowerCase().substring(1).split(' ')[0]
         if (global.commands.has(command)) {
           command = global.commands.get(command)
           if (!(await permissions.hasPerm(userstate.badges, command.permission))) return
