@@ -1,5 +1,5 @@
 const socket = require('socket.io-client')
-const { say } = require('../systems/commands')
+const { say } = require('../systems/customCommands')
 const { io } = require("../libs/panel")
 
 class DonationAlerts {

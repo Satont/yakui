@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { say } = require('./commands')
+const { say } = require('./customCommands')
 const { io } = require("../libs/panel")
 
 class Timers {

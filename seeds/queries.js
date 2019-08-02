@@ -71,6 +71,16 @@ exports.seed = function (knex) {
       .then((rows) => {
         if (rows.length > 0) return
         return knex('integrations').insert({ name: 'qiwi', enabled: false, settings: { token: null } })
+      }),
+    knex('systems.defaultcommands').select().where('name', 'title')
+      .then((rows) => {
+        if (rows.length > 0) return
+        return knex('systems.defaultcommands').insert({ name: 'title', enabled: true, permission: 'moderator' })
+      }),
+      knex('systems.defaultcommands').select().where('name', 'game')
+      .then((rows) => {
+        if (rows.length > 0) return
+        return knex('systems.defaultcommands').insert({ name: 'game', enabled: true, permission: 'moderator' })
       })
     ]);
 };

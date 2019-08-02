@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const commons = require('../libs/commons')
+const permissions = require('../libs/permissions')
 const { io } = require("../libs/panel")
 const shortEnglish = require('humanize-duration').humanizer({
   language: 'shortEn',
@@ -24,15 +25,13 @@ class Message {
     this.getCommands()
   }
   async prepareCommand (command, message, userstate) {
-    let find = this.commands.find(o => o.name === command.replace('!', '') || (o.aliases && o.aliases.includes(command.replace('!', ''))) )
+    let find = this.commands.find(o => o.name === command || (o.aliases && o.aliases.includes(command)) )
     if (!find) return
     if (this.cooldowns.includes(find.name) && find.cooldowntype === 'stop') {
       return console.log(`COMMAND ${find.name.toUpperCase()} ON COOLDOWN AND HAS NO EXECUTE MODEL`)
     }
 
-    let userLevel = this.permissions.findIndex(o => o === commons.getUserPermission(userstate.badges))
-    let commandLevel = this.permissions.findIndex(o => o === find.permission)
-    if (userLevel <= commandLevel) await this.prepareMessage(find, find.response, message, userstate)
+    if (await permissions.hasPerm(userstate.badges, find.permission)) await this.prepareMessage(find, find.response, message, userstate)
   }
   async prepareMessage (command, response, message, userstate) {
     let numbersRegexp = /[random]+\((.*?)\)/
