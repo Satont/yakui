@@ -45,7 +45,7 @@ class Message {
       args = args.join(' ')
       let variable = response.match(variableRegexp)[0].replace('$_', '')
       let findVariable = await global.db('systems.variables').where('name', variable).update('value', args)
-      if (findVariable) return this.say(`@${userstate['display-name']} переменная ${variable} изменена на ${args}`)
+      if (findVariable) return this.say(`@${userstate['display-name']} ${variable} ===> ${args}`)
     }
     //
     response = await variables.prepareMessage(response, userstate)
