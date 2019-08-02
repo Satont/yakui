@@ -96,7 +96,7 @@ export default {
   watch: {
     name(newVal) {
       let re = /[a-z]\d/gi;
-      this.$set(this, "name", newVal.replace(/[^a-z-а-я-0-9]+/gi, "").toLowerCase());
+      this.$set(this, "name", newVal.replace(/[^a-z-а-я-0-9 ]+/gi, "").toLowerCase());
     }
   },
   methods: {
