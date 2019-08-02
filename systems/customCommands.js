@@ -4,19 +4,6 @@ const permissions = require('../libs/permissions')
 const { io } = require("../libs/panel")
 const variables = require('../systems/variables')
 
-const shortEnglish = require('humanize-duration').humanizer({
-  language: 'shortEn',
-  languages: {
-    shortEn: {
-      h: () => 'h',
-    }
-  },
-  units: ['h'],
-  spacer: '',
-  maxDecimalPoints: 2,
-  decimal: '.'
-})
-
 class Message {
   permissions = ['broadcaster', 'moderator', 'subscriber', 'vip', 'viewer']
 
@@ -26,8 +13,18 @@ class Message {
     this.sockets()
     this.getCommands()
   }
-  async prepareCommand (command, message, userstate) {
-    let find = this.commands.find(o => o.name === command || (o.aliases && o.aliases.includes(command)) )
+  async prepareCommand (message, userstate) {
+    let find
+    let ar = message.toLowerCase().substring(1).split(' ')
+    for (let i = 0, len = ar.length; i < len; i++) {
+      let command = this.commands.find(o => o.name === ar.join(' '))
+      let aliase = this.commands.find(o => o.aliases.includes(ar.join(' ')))
+      if (!command && !aliase) ar.pop()
+      else {
+        find = command ? command : aliase
+        break;
+      }
+    }
     if (!find) return
     if (this.cooldowns.includes(find.name) && find.cooldowntype === 'stop') {
       return console.log(`COMMAND ${find.name.toUpperCase()} ON COOLDOWN AND HAS NO EXECUTE MODEL`)
@@ -115,8 +112,8 @@ class Message {
 
         if (aliases.some(o => data.aliases.includes(o)) || names.some(o => data.aliases.includes(o))) return cb('Command name or aliase already used', null)
         if (names.some(o => o.name === data.name) || aliases.some(o => names.includes(o))) return cb('Command name or aliase already used', null)
-        
-        let name = data.currentname
+
+        let name = data.currentname.replace('%20', ' ')
         delete data.currentname
         try {
           await global.db('systems.commands').where('name', name).update(data)
