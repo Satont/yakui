@@ -20,6 +20,10 @@
     </div>
     <input type="number" class="form-control" v-model.number="pointsPerTime">
   </div>
+  <div class="form-group">
+    <label for="exampleFormControlTextarea1">Ignore list of users (one record per line)</label>
+    <textarea type="text" class="form-control" v-model="ignorelist"></textarea>
+  </div>
 </div>
 </template>
 
@@ -29,7 +33,8 @@ export default {
     return {
       enabled: false,
       pointsPerMessage: 0,
-      pointsPerTime: 0
+      pointsPerTime: 0,
+      ignorelist: null
     };
   },
   mounted() {
@@ -38,10 +43,12 @@ export default {
       this.enabled = list.data.enabled
       this.pointsPerMessage = list.data.pointsPerMessage
       this.pointsPerTime = list.data.pointsPerTime
+      this.ignorelist = list.data.ignorelist.join('\n')
     })
   },
   methods: {
     save() {
+      this.$data.ignorelist = this.$data.ignorelist.split('\n')
       this.$socket.emit('update.settings.users', this.$data)
     }
   }

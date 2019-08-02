@@ -55,7 +55,7 @@ exports.seed = function (knex) {
     knex('settings').select().where('system', 'users')
       .then((rows) => {
         if (rows.length > 0) return
-        return knex('settings').insert({ system: 'users', data: { enabled: false, pointsPerMessage: 0, pointsPerTime: 0 } })
+        return knex('settings').insert({ system: 'users', data: { enabled: false, pointsPerMessage: 0, pointsPerTime: 0, ignorelist: [] } })
       }),
     knex('integrations').select().where('name', 'donationalerts')
       .then((rows) => {
