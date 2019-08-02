@@ -2,27 +2,42 @@ exports.seed = function (knex) {
   return Promise.all([
     knex('systems.moderation').select().where('name', 'links').then((rows) => {
       if (rows.length > 0) return
-      return knex('systems.moderation').insert({ name: 'links', enabled: false, settings: { moderateSubscribers: false, timeout: 600 } })
+      return knex('systems.moderation').insert({ name: 'links', enabled: false, settings: { moderateSubscribers: false, timeout: 600, warnMessage: '$sender links disallowed [warn]', timeoutMessage: '$link disallowed' } })
     }),
     knex('systems.moderation').select().where('name', 'symbols').then((rows) => {
       if (rows.length > 0) return
-      return knex('systems.moderation').insert({ name: 'symbols', enabled: false, settings: { moderateSubscribers: false, triggerLength: 20, maxSymbolsPercent: 65, timeout: 600 } })
+      return knex('systems.moderation').insert({ name: 'symbols', enabled: false, settings: { 
+        moderateSubscribers: false, triggerLength: 20, maxSymbolsPercent: 65, timeout: 600,
+        warnMessage: '$sender to many symbols [warn]', timeoutMessage: '$sender to many symbols'
+       } })
     }),
     knex('systems.moderation').select().where('name', 'longMessage').then((rows) => {
       if (rows.length > 0) return
-      return knex('systems.moderation').insert({ name: 'longMessage', enabled: false, settings: { moderateSubscribers: false, triggerLength: 300, timeout: 600 } })
+      return knex('systems.moderation').insert({ name: 'longMessage', enabled: false, settings: { 
+        moderateSubscribers: false, triggerLength: 300, timeout: 600,
+        warnMessage: '$sender to long message [warn]', timeoutMessage: '$sender to long message'
+       } })
     }),
     knex('systems.moderation').select().where('name', 'caps').then((rows) => {
       if (rows.length > 0) return
-      return knex('systems.moderation').insert({ name: 'caps', enabled: false, settings: { moderateSubscribers: false, triggerLength: 15, maxCapsPercent: 50, timeout: 600 } })
+      return knex('systems.moderation').insert({ name: 'caps', enabled: false, settings: { 
+        moderateSubscribers: false, triggerLength: 15, maxCapsPercent: 50, timeout: 600,
+        warnMessage: '$sender to many caps [warn]', timeoutMessage: '$sender to many caps'
+       } })
     }),
     knex('systems.moderation').select().where('name', 'color').then((rows) => {
       if (rows.length > 0) return
-      return knex('systems.moderation').insert({ name: 'color', enabled: false, settings: { moderateSubscribers: false, timeout: 600 } })
+      return knex('systems.moderation').insert({ name: 'color', enabled: false, settings: { 
+        moderateSubscribers: false, timeout: 600,
+        warnMessage: '$sender /me disallowed [warn]', timeoutMessage: '$sender /me disallowed'
+       } })
     }),
     knex('systems.moderation').select().where('name', 'emotes').then((rows) => {
       if (rows.length > 0) return
-      return knex('systems.moderation').insert({ name: 'emotes', enabled: false, settings: { moderateSubscribers: false, maxCount: 6, timeout: 600 } })
+      return knex('systems.moderation').insert({ name: 'emotes', enabled: false, settings: { 
+        moderateSubscribers: false, maxCount: 6, timeout: 600,
+        warnMessage: '$sender to many emotes [warn]', timeoutMessage: '$sender to many emotes'
+       } })
     }),
     knex('systems.moderation').select().where('name', 'main').then((rows) => {
       if (rows.length > 0) return
