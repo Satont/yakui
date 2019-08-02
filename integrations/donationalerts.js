@@ -6,17 +6,16 @@ class DonationAlerts {
   constructor() {
     this.connect()
     this.sockets()
+    this.repeat = setInterval(() => this.connect(), 1 * 60 * 60 * 1000) //reconnect each hour
   }
   async disconnect() {
     if (this.socket) {
       this.socket.removeAllListeners()
       this.socket.disconnect()
-      clearTimeout(this.repeat)
     }
   }
   async connect() {
     this.disconnect()
-    this.repeat = setTimeout(() => this.connect(), 1 * 60 * 60 * 1000) //reconnect each hour
     this.settings = (await global.db('integrations').select('*').where('name', 'donationalerts'))[0]
     if (!this.settings.enabled || this.settings.settings.token === null) return 
     this.socket = socket.connect('wss://socket.donationalerts.ru:443', { 
