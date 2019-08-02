@@ -15,6 +15,9 @@ class Users {
     else clearInterval(this.checkInterval)
   }
   async parse(username, id) {
+    if (!this.settings.enabled) return true
+    if (this.settings.ignorelist.includes(username)) return true
+
     await global.db('users').insert({ id: Number(id), username: username }).then(() => {}).catch(() => {})
     await global.db('users').where({ id: Number(id) }).increment({ messages: 1, points: this.settings.pointsPerMessage }).update({username: username })
   }
@@ -36,7 +39,7 @@ class Users {
         now = await _.concat(now, newMaped)
       }
       for (let user of await now) {
-        if (this.onlineUsers.some(o => o.username === user.username)) {
+        if (this.onlineUsers.some(o => o.username === user.username) && !this.settings.ignorelist.includes(user.username)) {
           await global.db('users').insert({ id: user.id, username: user.username }).then(() => {}).catch(() => {})
           await global.db('users').where({ id: user.id }).increment({ watched: 1 * 60 * 1000, points: this.settings.pointsPerTime })
         }
