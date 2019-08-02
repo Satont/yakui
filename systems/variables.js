@@ -1,6 +1,7 @@
 const { io } = require("../libs/panel")
 const commons = require('../libs/commons')
 const commands = require('./customCommands')
+const _ = require('lodash')
 
 class Variables {
   async prepareMessage(response, userstate) {
