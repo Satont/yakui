@@ -23,9 +23,6 @@
         <option value="subscriber">Subscribers</option>
         <option value="viewer">Viewers</option>
       </select>
-      <div class="input-group-append">
-        <button class="btn btn-info" type="button" data-toggle="modal" data-target="#cooldowntypeinfo">?</button>
-      </div>
     </div>
      <div class="input-group mb-3">
       <div class="input-group-prepend">
