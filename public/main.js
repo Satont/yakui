@@ -71,7 +71,7 @@ new Vue({
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Manage
             </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
               <router-link to="/commands" class="nav-link nav-link2">Commans</router-link>
               <router-link to="/variables" class="nav-link nav-link2">Variables</router-link>
               <router-link to="/timers" class="nav-link nav-link2">Timers</router-link>
@@ -81,7 +81,7 @@ new Vue({
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Settings
             </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
             <router-link to="/settings/moderation" class="nav-link nav-link2">Moderation</router-link>
             <router-link to="/settings/users" class="nav-link nav-link2">Users</router-link>
             </div>
@@ -90,7 +90,7 @@ new Vue({
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Integrations
             </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
               <router-link to="/integrations/donationalerts" class="nav-link nav-link2">Donationalerts</router-link>
               <router-link to="/integrations/streamlabs" class="nav-link nav-link2">StreamLabs</router-link>
               <router-link to="/integrations/qiwi" class="nav-link nav-link2">Qiwi</router-link>
