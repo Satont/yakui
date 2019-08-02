@@ -63,6 +63,18 @@
               </div>
               <input type="number" class="form-control" v-model.number="links.settings.timeout">
             </div>
+            <div class="input-group input-group-sm mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Timeout message</span>
+              </div>
+              <input type="text" class="form-control" v-model="links.settings.timeoutMessage">
+            </div>
+            <div class="input-group input-group-sm mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Warn message</span>
+              </div>
+              <input type="text" class="form-control" v-model="links.settings.warnMessage">
+            </div>
           </div>
         </div>
       </div>
@@ -116,6 +128,18 @@
               </div>
               <input type="number" class="form-control" v-model.number="symbols.settings.timeout">
             </div>
+            <div class="input-group input-group-sm mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Timeout message</span>
+              </div>
+              <input type="text" class="form-control" v-model="symbols.settings.timeoutMessage">
+            </div>
+            <div class="input-group input-group-sm mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Warn message</span>
+              </div>
+              <input type="text" class="form-control" v-model="symbols.settings.warnMessage">
+            </div>
           </div>
         </div>
       </div>
@@ -159,6 +183,18 @@
                 <span class="input-group-text" id="inputGroup-sizing-sm">Timeout length</span>
               </div>
               <input type="number" class="form-control" v-model.number="longMessage.settings.timeout">
+            </div>
+            <div class="input-group input-group-sm mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Timeout message</span>
+              </div>
+              <input type="text" class="form-control" v-model="longMessage.settings.timeoutMessage">
+            </div>
+            <div class="input-group input-group-sm mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Warn message</span>
+              </div>
+              <input type="text" class="form-control" v-model="longMessage.settings.warnMessage">
             </div>
           </div>
         </div>
@@ -213,6 +249,18 @@
               </div>
               <input type="number" class="form-control" v-model.number="caps.settings.timeout">
             </div>
+            <div class="input-group input-group-sm mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Timeout message</span>
+              </div>
+              <input type="text" class="form-control" v-model="caps.settings.timeoutMessage">
+            </div>
+            <div class="input-group input-group-sm mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Warn message</span>
+              </div>
+              <input type="text" class="form-control" v-model="caps.settings.warnMessage">
+            </div>
           </div>
         </div>
       </div>
@@ -248,6 +296,18 @@
                 <span class="input-group-text" id="inputGroup-sizing-sm">Timeout length</span>
               </div>
               <input type="number" class="form-control" v-model.number="color.settings.timeout">
+            </div>
+            <div class="input-group input-group-sm mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Timeout message</span>
+              </div>
+              <input type="text" class="form-control" v-model="color.settings.timeoutMessage">
+            </div>
+            <div class="input-group input-group-sm mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Warn message</span>
+              </div>
+              <input type="text" class="form-control" v-model="color.settings.warnMessage">
             </div>
           </div>
         </div>
@@ -290,6 +350,18 @@
               </div>
               <input type="number" class="form-control" v-model.number="emotes.settings.timeout">
             </div>
+            <div class="input-group input-group-sm mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Timeout message</span>
+              </div>
+              <input type="text" class="form-control" v-model="emotes.settings.timeoutMessage">
+            </div>
+            <div class="input-group input-group-sm mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Warn message</span>
+              </div>
+              <input type="text" class="form-control" v-model="emotes.settings.warnMessage">
+            </div>
           </div>
         </div>
       </div>
@@ -318,7 +390,9 @@ export default {
         enabled: true,
         settings: {
           moderateSubscribers: true,
-          timeout: 600
+          timeout: 600,
+          warnMessage: null,
+          timeoutMessage: null,
         }
       },
       symbols: {
@@ -327,7 +401,9 @@ export default {
           moderateSubscribers: true,
           triggerLength: 15,
           maxSymbolsPercent: 50,
-          timeout: 600
+          timeout: 600,
+          warnMessage: null,
+          timeoutMessage: null,
         }
       },
       longMessage: {
@@ -335,7 +411,9 @@ export default {
         settings: {
           moderateSubscribers: true,
           triggerLength: 300,
-          timeout: 600
+          timeout: 600,
+          warnMessage: null,
+          timeoutMessage: null,
         }
        },
       caps: {
@@ -344,14 +422,18 @@ export default {
           moderateSubscribers: true,
           triggerLength: 10,
           maxCapsPercent: 50,
-          timeout: 600
+          timeout: 600,
+          warnMessage: null,
+          timeoutMessage: null,
         }
       },
       color: {
         enabled: true,
         settings: {
           moderateSubscribers: true,
-          timeout: 600
+          timeout: 600,
+          warnMessage: null,
+          timeoutMessage: null,
         }
       },
       emotes: {
@@ -359,7 +441,9 @@ export default {
         settings: {
           moderateSubscribers: true,
           maxCount: 6,
-          timeout: 600
+          timeout: 600,
+          warnMessage: null,
+          timeoutMessage: null,
         }
       }
     };

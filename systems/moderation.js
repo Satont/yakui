@@ -15,8 +15,9 @@ class Moderation {
     let query = await global.db.select('*').from('systems.moderation')
     this.settings = query
   }
-  async announceTimeout (msg) {
+  async announceTimeout (msg, sender) {
     if (this.cooldown) return
+    msg = msg.replace('$sender', sender)
     this.cooldown = true
     await say(msg)
     setTimeout(() => this.cooldown = false, 1 * 60 * 1000)
@@ -39,13 +40,13 @@ class Moderation {
     if (!this.warns.includes(userstate.username) && message.search(this.urlRegexp) >= 0) {
       this.warns.push(userstate.username)
       await timeout(userstate.username, 1)
-      this.announceTimeout(`@${userstate.username} ссылки запрещены [предупреждение]`)
+      this.announceTimeout(links.settings.warnMessage, userstate.username)
       console.log(`!!! LINK BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     }
     if (this.warns.includes(userstate.username) && message.search(this.urlRegexp) >= 0) {
       await timeout(userstate.username, links.settings.timeout)
-      this.announceTimeout(`@${userstate.username} ссылки запрещены`)
+      this.announceTimeout(links.settings.timeoutMessage, userstate.username)
       console.log(`!!! LINK BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     }
@@ -66,13 +67,13 @@ class Moderation {
     if (!this.warns.includes(userstate.username) && Math.ceil(symbolsLength / (message.length / 100)) >= symbols.settings.maxSymbolsPercent) {
       this.warns.push(userstate.username)
       await timeout(userstate.username, 1)
-      this.announceTimeout(`@${userstate.username} слишком много символов [предупреждение]`)
+      this.announceTimeout(symbols.settings.warnMessage, userstate.username)
       console.log(`!!! SYMBOLS BAN ${userstate.username}, LENGTH: ${symbolsLength}`)
       return true
     }
     if (Math.ceil(symbolsLength / (message.length / 100)) >= symbols.settings.maxSymbolsPercent) {
-      await timeout(userstate.username, symbols.settings.timeout)
-      this.announceTimeout(`@${userstate.username} слишком много символов`)
+      this.announceTimeout(symbols.settings.timeoutMessage, userstate.username)
+      console.log(`!!! SYMBOLS BAN ${userstate.username}, LENGTH: ${symbolsLength}`)
       return true
     }
   }
@@ -84,13 +85,13 @@ class Moderation {
     if (!this.warns.includes(userstate.username) && message.length > longMessage.settings.triggerLength) {
       this.warns.push(userstate.username)
       await timeout(userstate.username, 1)
-      this.announceTimeout(`@${userstate.username} слишком длинное сообщение [предупреждение]`)
+      this.announceTimeout(longMessage.settings.warnMessage, userstate.username)
       console.log(`!!! LONG MESSAGE ${userstate.username}, LENGTH: ${message.length}`)
       return true
     }
     if (this.warns.includes(userstate.username) && message.length > longMessage.settings.triggerLength) {
       await timeout(userstate.username, longMessage.settings.timeout)
-      this.announceTimeout(`@${userstate.username} слишком длинное сообщение [предупреждение]`)
+      this.announceTimeout(links.settings.timeoutMessage, userstate.username)
       console.log(`!!! LONG MESSAGE ${userstate.username}, LENGTH: ${message.length}`)
       return true
     }
@@ -112,14 +113,14 @@ class Moderation {
     if (!this.warns.includes(userstate.username) && Math.ceil(capsLength / (message.length / 100)) > caps.settings.maxCapsPercent) {
       this.warns.push(userstate.username)
       await timeout(userstate.username, 1)
-      this.announceTimeout(`@${userstate.username} слишком много капса [предупреждение]`)
+      this.announceTimeout(caps.settings.warnMessage, userstate.username)
       console.log(`!!! CAPS BAN ${userstate.username}, LENGTH: ${capsLength}`)
       return true
     }
     if (this.warns.includes(userstate.username) && Math.ceil(capsLength / (message.length / 100)) > caps.settings.maxCapsPercent) {
       this.warns.push(userstate.username)
       await timeout(userstate.username, caps.settings.timeout)
-      this.announceTimeout(`@${userstate.username} слишком много капса`)
+      this.announceTimeout(caps.settings.timeoutMessage, userstate.username)
       console.log(`!!! CAPS BAN ${userstate.username}, LENGTH: ${capsLength}`)
       return true
     }
@@ -133,13 +134,13 @@ class Moderation {
     } else if (!this.warns.includes(userstate.username)) {
       this.warns.push(userstate.username)
       await timeout(userstate.username, 1)
-      this.announceTimeout(`@${userstate.username} нельзя цветные сообщения [предупреждение]`)
+      this.announceTimeout(color.settings.warnMessage, userstate.username)
       console.log(`!!! COLOR BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     } else if (this.warns.includes(userstate.username)) {
       this.warns.push(userstate.username)
       await timeout(userstate.username, color.settings.timeout)
-      this.announceTimeout(`@${userstate.username} нельзя цветные сообщения`)
+      this.announceTimeout(color.settings.timeoutMessage, userstate.username)
       console.log(`!!! COLOR BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     }
@@ -151,14 +152,14 @@ class Moderation {
     if (!this.warns.includes(userstate.username) && length > emotes.settings.maxCount) {
       this.warns.push(userstate.username)
       await timeout(userstate.username, emotes.settings.timeout)
-      this.announceTimeout(`@${userstate.username} слишком много смайликов`)
+      this.announceTimeout(emotes.settings.warnMessage, userstate.username)
       console.log(`!!! EMOTES BAN ${userstate.username}, LENGTH: ${length}`)
       return true
     }
     if (this.warns.includes(userstate.username) && length > emotes.settings.maxCount) {
       this.warns.push(userstate.username)
       await timeout(userstate.username, emotes.settings.timeout)
-      this.announceTimeout(`@${userstate.username} слишком много смайликов`)
+      this.announceTimeout(emotes.settings.timeoutMessage, userstate.username)
       console.log(`!!! EMOTES BAN ${userstate.username}, LENGTH: ${length}`)
       return true
     }
@@ -169,7 +170,6 @@ class Moderation {
       if (value === '') return
       if (message.includes(value)) {
         await timeout(userstate.username, 600)
-        this.announceTimeout(`@${userstate.username} использовал запрещённое слово`)
         console.log(`!!! BLACKLIST BAN ${userstate.username}, WORD: ${value}`)
         break;
       }
