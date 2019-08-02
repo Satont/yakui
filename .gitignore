@@ -4,3 +4,4 @@ test.js
 .env
 .env.dev
 payloads.txt
+Heap.*

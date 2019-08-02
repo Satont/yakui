@@ -2,6 +2,7 @@ const fastify = require('fastify')()
 const path = require('path')
 const PORT = process.env.PORT || process.env.PANEL_PORT // for heroku
 const io = require('socket.io')(fastify.server)
+const { writeHeapSnapshot } = require('v8')
 
 fastify.register(require('fastify-basic-auth'), { validate, authenticate: true }).after(() => {
   fastify.addHook('preHandler', fastify.basicAuth)
@@ -24,6 +25,11 @@ fastify.setErrorHandler(function (err, req, reply) {
 
 fastify.get('/', function (request, reply) {
   reply.sendFile('index.html')
+})
+
+fastify.get('/heapdump', function (request, reply) {
+  writeHeapSnapshot()
+  reply.send('ok!')
 })
 
 // Run the server!
