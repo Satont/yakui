@@ -1,6 +1,5 @@
 const { io } = require("../libs/panel")
 const commons = require('../libs/commons')
-const commands = require('./customCommands')
 const _ = require('lodash')
 
 class Variables {
@@ -25,7 +24,8 @@ class Variables {
       response = response.replace('$latestReSub', await commons.getLatestSubOrResub('resub'))
     }
     if (response.includes('$commands')) {
-      response = response.replace('$commands', commands.commands.map(val => { return '!' + val.name }).join(", "))
+      let query = await global.db.select(`*`).from('systems.commands')
+      response = response.replace('$commands', query.map(val => { return '!' + val.name }).join(", "))
     }
     if (response.includes('$song')) {
       let query = response.match(songRegexp)[0].replace('$song?', '')

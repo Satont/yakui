@@ -4,7 +4,7 @@ const permissions = require('../libs/permissions')
 const { io } = require("../libs/panel")
 const variables = require('../systems/variables')
 
-class Message {
+class CustomCommands {
   permissions = ['broadcaster', 'moderator', 'subscriber', 'vip', 'viewer']
 
   constructor() {
@@ -127,4 +127,4 @@ class Message {
   }
 }
 
-module.exports = new Message()
+module.exports = new CustomCommands()
