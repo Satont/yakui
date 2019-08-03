@@ -26,17 +26,30 @@ class CustomCommands {
       }
     }
     if (!find) return
+
+    if (!await permissions.hasPerm(userstate.badges, find.permission)) { return }
+
     if (this.cooldowns.includes(find.name) && find.cooldowntype === 'stop') {
       return console.log(`COMMAND ${find.name.toUpperCase()} ON COOLDOWN AND HAS NO EXECUTE MODEL`)
     }
+    if (this.cooldowns.includes(find.name) && (userstate.mod || userstate.subscriber)) {
+      userstate['message-type'] = 'chat'
+    } else if (this.cooldowns.includes(find.name) && find.cooldowntype === 'notstop') {
+      userstate['message-type'] = 'whisper'
+    } else this.cooldowns.push(find.name)
+    
+    this.prepareMessage(find.response, message, userstate)
 
-    if (await permissions.hasPerm(userstate.badges, find.permission)) await this.prepareMessage(find, find.response, message, userstate)
+    setTimeout(() => {
+      let index = this.cooldowns.indexOf(find.name)
+      if (index !== -1) this.cooldowns.splice(index, 1)
+    }, find.cooldown * 1000);
   }
-  async prepareMessage (command, response, message, userstate) {
+  async prepareMessage (response, message, userstate) {
     let variableRegexp = /\$_(\S*)/g
     let args = message.split(' ')
     // модер меняет переменную в команде
-    let wantsChangeVariable = (userstate.mod || (userstate.badges && typeof userstate.badges.broadcaster !== 'undefined')) && args.length >= 2 && command.response.match(variableRegexp) !== null
+    let wantsChangeVariable = (userstate.mod || (userstate.badges && typeof userstate.badges.broadcaster !== 'undefined')) && args.length >= 2 && response.match(variableRegexp) !== null
     if (wantsChangeVariable) {
       args.shift()
       args = args.join(' ')
@@ -47,20 +60,11 @@ class CustomCommands {
     //
     response = await variables.prepareMessage(response, userstate)
     //
-    this.respond(command, response, message, userstate)
+    this.respond(response, userstate)
   }
-  async respond (command, message, object, userstate) {
-    if (this.cooldowns.includes(command.name) && (userstate.mod || userstate.subscriber)) {
-      return await this.say(message)
-    } else if (this.cooldowns.includes(command.name) && command.cooldowntype === 'notstop') {
-      return await this.whisper(userstate.username, message)
-    }
-    await this.say(message)
-    this.cooldowns.push(command.name)
-    setTimeout(() => {
-      let index = this.cooldowns.indexOf(command.name)
-      if (index !== -1) this.cooldowns.splice(index, 1)
-    }, command.cooldown * 1000);
+  async respond (response, userstate) {
+    if (userstate['message-type'] === 'whisper') await this.whisper(userstate.username, response)
+    else await this.say(response)
   }
   async getCommands() {
     let query = await global.db.select(`*`).from('systems.commands')
