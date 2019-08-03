@@ -14,6 +14,7 @@ class TwitchTmi {
     this.uptime = null
   }
   async start () {
+    clearInterval(this.subsCheckInterval)
     let token = (await global.db('core.tokens').where({ name: 'bot' }).select('value'))[0]
     this.token = token.value
     this.client = new tmi.client({
@@ -35,6 +36,7 @@ class TwitchTmi {
     await this.validateBroadCasterToken()
     await this.getChannelId()
     await this.getUptime()
+    this.subsCheckInterval = setInterval(() => this.getSubscribers(), 15 * 60 * 1000);
     await this.getSubscribers()
   }
   async getToken () {
@@ -153,10 +155,8 @@ class TwitchTmi {
     } catch (e) {
       console.log(`Something went wrong with getSubscribers. Will retry after 1 minute`)
       await this.getBroadcasterToken()
-      setTimeout(() => this.getSubscribers(), 1 * 60 * 1000)
       this.subscribers = 0
     }
-    setTimeout(() => this.getSubscribers(), 30 * 60 * 1000)
   }
   async loadListeners () {
     this.client.on('chat', async (channel, userstate, message, self) => {
