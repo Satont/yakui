@@ -14,6 +14,7 @@ class Moderation {
   async init() {
     let query = await global.db.select('*').from('systems.moderation')
     this.settings = query
+    setInterval(() => this.warns = [], 15 * 60 * 1000)
   }
   async announceTimeout (msg, sender) {
     if (this.cooldown) return
