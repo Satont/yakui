@@ -111,8 +111,8 @@ class CustomCommands {
         }
       })
       socket.on('update.command', async (data, cb) => {
-        let aliases = _.flattenDeep(self.commands.map(o => o.aliases).filter(o => o.name !== data.currentname))
-        let names = self.commands.map(o => o.name).filter(o => o.name !== data.currentname)
+        let aliases = _.flattenDeep(self.commands.filter(o => o.name !== data.currentname).map(o => o.aliases))
+        let names = self.commands.map(o => o.name).filter(o => o !== data.currentname)
 
         if (aliases.some(o => data.aliases.includes(o)) || names.some(o => data.aliases.includes(o))) return cb('Command name or aliase already used', null)
         if (names.some(o => o.name === data.name) || aliases.some(o => names.includes(o))) return cb('Command name or aliase already used', null)
