@@ -88,11 +88,11 @@ class CustomCommands {
         cb(null, query)
       })
       socket.on('create.command', async (data, cb) => {
-        let aliases = _.flattenDeep(self.commands.map(o => o.aliases))
-        let names = self.commands.map(o => o.name)
+        //let aliases = _.flattenDeep(self.commands.map(o => o.aliases))
+        //let names = self.commands.map(o => o.name)
 
-        if (aliases.some(o => data.aliases.includes(o)) || names.some(o => data.aliases.includes(o))) return cb('Command name or aliase already used', null)
-        if (names.some(o => o.name === data.name) || aliases.some(o => names.includes(o))) return cb('Command name or aliase already used', null)
+        //if (aliases.some(o => data.aliases.includes(o)) || names.some(o => data.aliases.includes(o))) return cb('Command name or aliase already used', null)
+        //if (names.some(o => o.name === data.name) || aliases.some(o => names.includes(o))) return cb('Command name or aliase already used', null)
         
         try {
           await global.db('systems.commands').insert(data)
@@ -111,11 +111,11 @@ class CustomCommands {
         }
       })
       socket.on('update.command', async (data, cb) => {
-        let aliases = _.flattenDeep(self.commands.map(o => o.aliases))
-        let names = self.commands.map(o => o.name)
+        //let aliases = _.flattenDeep(self.commands.map(o => o.aliases))
+        //let names = self.commands.map(o => o.name)
 
-        if (aliases.some(o => data.aliases.includes(o)) || names.some(o => data.aliases.includes(o))) return cb('Command name or aliase already used', null)
-        if (names.some(o => o.name === data.name) || aliases.some(o => names.includes(o))) return cb('Command name or aliase already used', null)
+        //if (aliases.some(o => data.aliases.includes(o)) || names.some(o => data.aliases.includes(o))) return cb('Command name or aliase already used', null)
+        //if (names.some(o => o.name === data.name) || aliases.some(o => names.includes(o))) return cb('Command name or aliase already used', null)
 
         let name = data.currentname.replace('%20', ' ')
         delete data.currentname
