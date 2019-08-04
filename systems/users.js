@@ -11,7 +11,7 @@ class Users {
   }
   async start() {
     this.settings = (await global.db.select('*').from('settings').where('system', 'users'))[0].data
-    if (this.settings.enabled) this.checkInterval = setInterval(() => this.checkOnline(), 15 * 1000)
+    if (this.settings.enabled) this.checkInterval = setInterval(() => this.checkOnline(), 1 * 60 * 1000)
     else clearInterval(this.checkInterval)
   }
   async parse(username, id) {
