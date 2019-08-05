@@ -15,6 +15,10 @@
         <td>Uptime of stream</td>
       </tr>
       <tr>
+        <td>$param</td>
+        <td>Thats what user typed</td>
+      </tr>
+      <tr>
         <td>$followtime</td>
         <td>User followtime</td>
       </tr>

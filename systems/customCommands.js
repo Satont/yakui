@@ -38,8 +38,7 @@ class CustomCommands {
       userstate['message-type'] = 'whisper'
     } else this.cooldowns.push(find.name)
     
-    this.prepareMessage(find.response, message, userstate)
-
+    this.prepareMessage(find.response, message.substring(1).replace(find.name, '').substring(1), userstate)
     setTimeout(() => {
       let index = this.cooldowns.indexOf(find.name)
       if (index !== -1) this.cooldowns.splice(index, 1)
@@ -47,18 +46,15 @@ class CustomCommands {
   }
   async prepareMessage (response, message, userstate) {
     let variableRegexp = /\$_(\S*)/g
-    let args = message.split(' ')
     // модер меняет переменную в команде
-    let wantsChangeVariable = (userstate.mod || (userstate.badges && typeof userstate.badges.broadcaster !== 'undefined')) && args.length >= 2 && response.match(variableRegexp) !== null
+    let wantsChangeVariable = (userstate.mod || (userstate.badges && typeof userstate.badges.broadcaster !== 'undefined')) && message.length && response.match(variableRegexp) !== null
     if (wantsChangeVariable) {
-      args.shift()
-      args = args.join(' ')
       let variable = response.match(variableRegexp)[0].replace('$_', '')
-      let findVariable = await global.db('systems.variables').where('name', variable).update('value', args)
-      if (findVariable) return this.say(`@${userstate['display-name']} ${variable} ===> ${args}`)
+      let findVariable = await global.db('systems.variables').where('name', variable).update('value', message)
+      if (findVariable) return this.say(`@${userstate['display-name']} ${variable} ===> ${message}`)
     }
     //
-    response = await variables.prepareMessage(response, userstate)
+    response = await variables.prepareMessage(response, userstate, message)
     //
     this.respond(response, userstate)
   }

@@ -15,7 +15,7 @@ const shortEnglish = require('humanize-duration').humanizer({
 })
 
 class Variables {
-  async prepareMessage(response, userstate) {
+  async prepareMessage(response, userstate, message) {
     let numbersRegexp = /[random]+\((.*?)\)/
     let variableRegexp = /\$_(\S*)/g
     let songRegexp = /\$song(\S*)/g
@@ -42,6 +42,10 @@ class Variables {
     if (response.includes('$song')) {
       let query = response.match(songRegexp)[0].replace('$song?', '')
       response = response.replace(response.match(songRegexp), await commons.getSong(query))
+    }
+    if (response.includes('$param')) {
+      if (!message.length) response = response.replace('$param', '?')
+      else response = response.replace('$param', message)
     }
     if (response.includes('$messages') || response.includes('$tips') || response.includes('$bits') || response.includes('$points') || response.includes('$watched') ) {
       let user = await global.db('users').where({ id: Number(userstate['user-id']) })
