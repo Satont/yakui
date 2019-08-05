@@ -1,10 +1,11 @@
 const tmi = require("tmi.js");
-const commands = require('../systems/customCommands')
+const customCommands = require('../systems/customCommands')
 const _ = require('lodash')
 const fetch = require('node-fetch')
 const users = require('../systems/users')
 const moderation = require('../systems/moderation')
 const permissions = require('./permissions')
+const defualtCommands = require('../systems/defaultCommands')
 
 class TwitchTmi {
   constructor() {
@@ -166,12 +167,12 @@ class TwitchTmi {
       if (await moderation.moderate(message, userstate)) return
       if (message.toLowerCase().startsWith('!'))  {
         let command = message.toLowerCase().substring(1).split(' ')[0]
-        if (global.commands.has(command)) {
-          command = global.commands.get(command)
+        if (defualtCommands.commands.has(command)) {
+          command = defualtCommands.commands.get(command)
           if (!(await permissions.hasPerm(userstate.badges, command.permission))) return
           return command.run(command, message, userstate)
         }
-        else commands.prepareCommand(message, userstate)
+        else customCommands.prepareCommand(message, userstate)
       }
     })
     this.client.on('message', async (channel, userstate, message, self) => {

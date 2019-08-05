@@ -1,7 +1,7 @@
 const fs = require('fs')
 class DefaulCommands {
   constructor() {
-    global.commands = new Map()
+    this.commands = new Map()
     this.load()
   }
   async load() {
@@ -11,7 +11,7 @@ class DefaulCommands {
     for (const file of commandFiles) {
       const command = require(`../commands/${file}`)
       command.permission = await getDefaultCommandPermission(command.name)
-      global.commands.set(command.name, command)
+      this.commands.set(command.name, command)
       console.log(`COMMAND ${command.name.toUpperCase()} LOADED`)
     }
   }
