@@ -114,15 +114,16 @@ class Commons {
     }
     return message
   }
-  async eval(dbResponse, username, displayname) {
+  async eval(dbResponse, userstate, message) {
     let toEvaluate = dbResponse.replace('(eval ', '').slice(0, -1);
     
     let toEval = `(async function evaluation () {  ${toEvaluate} })()`;
     let context = {
       axios: axios,
       _: _,
-      username: username,
-      displayname: displayname,
+      username: userstate.username,
+      displayname: userstate['display-name'],
+      param: message,
       say: function (msg) { global.tmi.client.say(process.env.TWITCH_CHANNEL, msg).catch(console.log) },
       timeout: function (username, duration) { global.tmi.client.timeout(process.env.TWITCH_CHANNEL, username, duration).catch(console.log) }
     };

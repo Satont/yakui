@@ -116,7 +116,7 @@ class Variables {
       response = await commons.parseMessageApi(response)
     }
     if (response.includes('(eval')) {
-      response = (await commons.eval(response, userstate.username, userstate['display-name'])).toString()
+      response = (await commons.eval(response, userstate, message)).toString()
     }
     if (response.includes('$random')) {
       let numbers = response.replace('$random', 'random').match(numbersRegexp)[1]
