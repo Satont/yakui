@@ -68,6 +68,7 @@
     </multiselect>
     <br>
     <button type="button" class="btn btn-block btn-success" @click="create">Edit</button>
+    <button type="button" class="btn btn-block btn-danger" @click="del()">delete</button>
     <br>
     <variables></variables>
     <cooldownModal id="cooldowntypeinfo"></cooldownModal>
@@ -87,7 +88,8 @@ export default {
       cooldown: this.$route.params.cooldown || 5,
       cooldowntype: this.$route.params.cooldowntype,
       aliases: this.$route.params.aliases || [],
-      options: []
+      options: [],
+      visible: this.$route.params.visible
     };
   },
   watch: {
@@ -97,6 +99,11 @@ export default {
     }
   },
   methods: {
+    del(command, index) {
+      let currentname = window.location.href.split('/')
+      this.$socket.emit('delete.command', currentname[currentname.length - 1])
+      this.$router.push("/commands")
+    },
     create() {
       if (!this.name || !this.response || !this.cooldown || !this.cooldowntype) return
       if (this.name.length > 15) return alert('Stop trying to hack me')
