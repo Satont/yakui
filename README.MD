@@ -35,5 +35,7 @@
 
 # Some helpful info
 - Create bot token by that link https://twitchtokengenerator.com/quick/UQ6SHl81nt
+	- you should use refresh_token!
 - Create broadcaster token by that link https://twitchtokengenerator.com/quick/RkshHUnw16
+	- you should use refresh_token!
 - Discord server: https://discord.gg/dPm6eYb
