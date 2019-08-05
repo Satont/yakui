@@ -37,7 +37,7 @@ class StreamLabs {
   async parse (data) {
     if (data.type === 'donation') {
       if (!data.isTest) {
-        global.db('users').where({ username: data.message[0].from.toLowerCase() }).increment({ tips: data.message[0].amount }).catch(() => {})
+        global.db('users').where({ username: data.message[0].from.toLowerCase().replace(' ', '') }).increment({ tips: data.message[0].amount }).catch(() => {})
       }
       await say(`/me ${data.message[0].from} ${data.message[0].amount}${data.message[0].currency} ${data.message[0].message}`)
     }
