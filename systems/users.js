@@ -15,7 +15,7 @@ class Users {
     else clearInterval(this.checkInterval)
   }
   async parse(username, id) {
-    if (!this.settings.enabled) return true
+    if (!this.settings.enabled || !global.tmi.uptime) return true
     if (this.settings.ignorelist.includes(username)) return true
 
     await global.db('users').insert({ id: Number(id), username: username }).then(() => {}).catch(() => {})
