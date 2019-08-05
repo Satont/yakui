@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx knex migrate:latest && npx knex seed:run && node --expose_gc app.js",
+    "start": "npx knex migrate:latest --env production && npx knex seed:run --env production && cross-env NODE_ENV=production node --expose_gc app.js",
     "dev": "cross-env NODE_ENV=development npx knex migrate:latest --env development && cross-env NODE_ENV=development npx knex seed:run --env development && cross-env NODE_ENV=development node --expose-gc app.js",
     "build": "npx webpack"
   },
