@@ -1,6 +1,18 @@
 const { io } = require("../libs/panel")
 const commons = require('../libs/commons')
 const _ = require('lodash')
+const shortEnglish = require('humanize-duration').humanizer({
+  language: 'shortEn',
+  languages: {
+    shortEn: {
+      h: () => 'h',
+    }
+  },
+  units: ['h'],
+  spacer: '',
+  maxDecimalPoints: 1,
+  decimal: '.'
+})
 
 class Variables {
   async prepareMessage(response, userstate) {

@@ -37,9 +37,9 @@ exports.up = async function(knex) {
     table.string('username').unique().notNullable()
     table.integer('messages').defaultTo(0)
     table.integer('points').defaultTo(0)
-    table.integer('watched').defaultTo(0)
+    table.specificType('watched', 'numeric').defaultTo(0)
     table.integer('bits').defaultTo(0)
-    table.integer('tips').defaultTo(0)
+    table.specificType('tips', 'numeric').defaultTo(0)
   })
 }
 
