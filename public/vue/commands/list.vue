@@ -55,7 +55,8 @@ export default {
           permission: command.permission,
           cooldown: command.cooldown,
           cooldowntype: command.cooldowntype,
-          aliases: command.aliases
+          aliases: command.aliases,
+          visible: command.visible
         }
       });
     }

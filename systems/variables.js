@@ -37,7 +37,7 @@ class Variables {
       response = response.replace('$latestReSub', await commons.getLatestSubOrResub('resub'))
     }
     if (response.includes('$commands')) {
-      let query = await global.db.select(`*`).from('systems.commands')
+      let query = await global.db.select(`*`).from('systems.commands').where('visible', true)
       response = response.replace('$commands', query.map(val => { return '!' + val.name }).join(", "))
     }
     if (response.includes('$song')) {

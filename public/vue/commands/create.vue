@@ -62,6 +62,18 @@
         <button class="btn btn-info" type="button" data-toggle="modal" data-target="#cooldowntypeinfo">?</button>
       </div>
     </div>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-default">Visible in $commands variable</span>
+      </div>
+     
+      <div class="input-group-append">
+        <button type="submit" class="btn" v-bind:class="{ 'btn-success': visible, 'btn-danger': !visible }" @click="visible = !visible">
+          <span v-show="visible">Visible</span>
+          <span v-show="!visible">Not visible</span>
+        </button>
+      </div>
+    </div>
     <label class="typo__label">Command aliases</label>
     <multiselect v-model="aliases" tag-placeholder="Add" placeholder="Aliases" :options="options" :multiple="true" :taggable="true" @tag="addAliase">
       <template slot="noOptions">Write name</template>
@@ -87,7 +99,8 @@ export default {
       cooldown: 5,
       cooldowntype: 'notstop',
       aliases: [],
-      options: []
+      options: [],
+      visible: true
     };
   },
   watch: {
