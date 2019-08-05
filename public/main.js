@@ -20,6 +20,7 @@ import SocketIO from 'socket.io-client';
 import VueSocketIO from 'vue-socket.io'
 import cooldownModal from './vue/components/cooldownmodal.vue'
 import settingsUsers from './vue/settings/users.vue'
+import notable from './vue/settings/notable.vue'
 
 import donationalerts from './vue/integrations/donationalerts.vue'
 import streamlabs from './vue/integrations/streamlabs.vue'
@@ -50,6 +51,7 @@ const routes = [
 
   { path: '/settings/moderation', component: moderation },
   { path: '/settings/users', component: settingsUsers },
+  { path: '/settings/notable', component: notable },
 
   { path: '/integrations/donationalerts', component: donationalerts },
   { path: '/integrations/streamlabs', component: streamlabs },
@@ -84,6 +86,7 @@ new Vue({
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
             <router-link to="/settings/moderation" class="nav-link nav-link2">Moderation</router-link>
             <router-link to="/settings/users" class="nav-link nav-link2">Users</router-link>
+            <router-link to="/settings/notable" class="nav-link nav-link2">Notableplayers</router-link>
             </div>
           </li>
           <li class="nav-item dropdown">

@@ -19,6 +19,38 @@
         <td>Thats what user typed</td>
       </tr>
       <tr>
+        <td>$np</td>
+        <td>List of notableplayers</td>
+      </tr>
+      <tr>
+        <td>$lastgame</td>
+        <td>Players from last game</td>
+      </tr>
+      <tr>
+        <td>$gammedals</td>
+        <td>Medals in current game</td>
+      </tr>
+      <tr>
+        <td>$addacc</td>
+        <td>Just set command response as <b>$addacc</b>. Then use this command like <b>!command id</b>, where id is dota id</td>
+      </tr>
+      <tr>
+        <td>$delacc</td>
+        <td>Just set command response as <b>$addacc</b>. Then use this command like <b>!command id</b>, where id is dota id</td>
+      </tr>
+      <tr>
+        <td>$listacc</td>
+        <td>List of linked accounts</td>
+      </tr>
+      <tr>
+        <td>$medal</td>
+        <td>Highest medal of accounts what linked to channel</td>
+      </tr>
+      <tr>
+        <td>$score</td>
+        <td>Score per stream</td>
+      </tr>
+      <tr>
         <td>$followtime</td>
         <td>User followtime</td>
       </tr>

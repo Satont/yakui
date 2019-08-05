@@ -96,6 +96,28 @@ exports.seed = function (knex) {
       .then((rows) => {
         if (rows.length > 0) return
         return knex('systems.defaultcommands').insert({ name: 'game', enabled: true, permission: 'moderator' })
-      })
+      }),
+      knex('settings').select().where('system', 'notable')
+      .then((rows) => {
+        if (rows.length > 0) return
+        return knex('settings').insert({ system: 'notable', data: { 
+          enabled: false, token: null, 
+          notable: '$gamemode ~$mmr mmr: $list',
+          lastgametext: 'Players from past game: $list',
+          medalstext: 'Medals in this game: $list',
+          scoretext: 'Wins: $wins, Loses: $lose',
+          gamenotfound: "Game wasn't found",
+          nonotable: 'Notableplayers not found',
+          wason: 'was on',
+          noplayersfromlastgame: 'Not playing with anyone from last game',
+          streamoffline: 'Stream is not live',
+          accountadded: 'Account $id was successfuly added!',
+          account: 'Account',
+          alreadylinked: 'is already connected to channel',
+          accountdeleted: 'Account $id was successfuly deleted!',
+          accountnotlinked: 'is not linked to channel',
+          nolinkedaccs: 'Here is no linked accs'
+         } })
+      }),
     ]);
 };

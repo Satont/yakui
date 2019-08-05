@@ -13,6 +13,7 @@ const shortEnglish = require('humanize-duration').humanizer({
   maxDecimalPoints: 1,
   decimal: '.'
 })
+const notable = require('./notable')
 
 class Variables {
   async prepareMessage(response, userstate, message) {
@@ -46,6 +47,30 @@ class Variables {
     if (response.includes('$param')) {
       if (!message.length) response = response.replace('$param', '?')
       else response = response.replace('$param', message)
+    }
+    if (response.includes('$np')) {
+      response = response.replace('$np', await notable.np())
+    }
+    if (response.includes('$lastgame')) {
+      response = response.replace('$lastgame', await notable.lastgame())
+    }
+    if (response.includes('$gammedals')) {
+      response = response.replace('$gammedals', await notable.gammedals())
+    }
+    if (response.includes('$score')) {
+      response = response.replace('$score', await notable.score())
+    }
+    if (response.includes('$addacc')) {
+      response = await notable.addacc(message)
+    }
+    if (response.includes('$delacc')) {
+      response = await notable.delacc(message)
+    }
+    if (response.includes('$listacc')) {
+      response = response.replace('$listacc', await notable.listacc())
+    }
+    if (response.includes('$medal')) {
+      response = response.replace('$medal', await notable.medal())
     }
     if (response.includes('$messages') || response.includes('$tips') || response.includes('$bits') || response.includes('$points') || response.includes('$watched') ) {
       let user = await global.db('users').where({ id: Number(userstate['user-id']) })
