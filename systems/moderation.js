@@ -133,7 +133,7 @@ class Moderation {
     let color = this.settings.find(o => o.name === 'color')
     if ((userstate.subscriber && !color.settings.moderateSubscribers) || !color.enabled) return false
 
-    if(!message.startsWith('\u0001ACTION')) {
+    if(userstate["message-type"] !== 'action') {
       return false
     } else if (!this.warns.includes(userstate.username)) {
       this.warns.push(userstate.username)

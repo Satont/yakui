@@ -174,6 +174,9 @@ class TwitchTmi {
         else commands.prepareCommand(message, userstate)
       }
     })
+    this.client.on('message', async (channel, userstate, message, self) => {
+      if (userstate["message-type"] === 'action') moderation.moderate(message, userstate)
+    })
     this.client.on("disconnected", (reason) => {
       console.log(reason)
     });
