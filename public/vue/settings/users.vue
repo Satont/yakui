@@ -22,7 +22,7 @@
   </div>
   <div class="form-group">
     <label for="exampleFormControlTextarea1">Ignore list of users (one record per line)</label>
-    <textarea type="text" class="form-control" v-model="ignorelist"></textarea>
+    <textarea type="text" class="form-control" v-model="ignorelist" rows="15"></textarea>
   </div>
 </div>
 </template>
@@ -50,6 +50,7 @@ export default {
     save() {
       this.$data.ignorelist = this.$data.ignorelist.split('\n')
       this.$socket.emit('update.settings.users', this.$data)
+      this.$data.ignorelist = this.$data.ignorelist.join('\n')
     }
   }
 };

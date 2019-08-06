@@ -13,7 +13,7 @@ import timers from './vue/timers/list.vue'
 import createTimer from './vue/timers/create.vue'
 import editTimer from './vue/timers/edit.vue'
 
-import moderation from './vue/single/moderation.vue'
+import moderation from './vue/settings/moderation.vue'
 import variablelist from './vue/single/variables.vue'
 
 import SocketIO from 'socket.io-client';

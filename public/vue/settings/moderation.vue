@@ -26,7 +26,7 @@
           <div class="card-header">Blacklist</div>
           <center style="padding-top: 15px;"><span>One record per line</span></center>
           <div class="card-body">
-            <textarea type="text" class="form-control" v-model.trim="blacklist.settings.list"></textarea>
+            <textarea type="text" class="form-control" v-model.trim="blacklist.settings.list" rows="5"></textarea>
           </div>
         </div>
       </div>
@@ -456,6 +456,7 @@ export default {
       let data = this.$data
       data.blacklist.settings.list = data.blacklist.settings.list.split('\n')
       this.$socket.emit('moderation.update', data)
+      this.$data.blacklist.settings.list = this.$data.blacklist.settings.list.join('\n')
     }
   },
   mounted() {
