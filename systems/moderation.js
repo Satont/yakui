@@ -77,6 +77,7 @@ class Moderation {
     }
     if (Math.ceil(symbolsLength / (message.length / 100)) >= symbols.settings.maxSymbolsPercent) {
       this.announceTimeout(symbols.settings.timeoutMessage, userstate.username)
+      timeout(userstate.username, symbols.settings.timeout)
       console.log(`!!! SYMBOLS BAN ${userstate.username}, LENGTH: ${symbolsLength}`)
       return true
     }
