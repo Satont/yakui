@@ -24,6 +24,7 @@
 	- StreamLabs
 	- DonationAlerts
 	- Qiwi Donate
+- Dota 2 notableplayers system
 
 
 # Installation
