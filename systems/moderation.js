@@ -12,50 +12,50 @@ class Moderation {
     this.sockets()
   }
   async init() {
+    clearInterval(this.clearEach)
+
     let query = await global.db.select('*').from('systems.moderation')
     this.settings = query
-    setInterval(() => {
+    this.clearEach = setInterval(() => {
       delete this.warns
       this.warns = []
     }, 15 * 60 * 1000)
   }
   async announceTimeout (msg, sender) {
     if (this.cooldown) return
-    msg = msg.replace('$sender', sender)
     this.cooldown = true
-    await say(msg)
+    say(msg.replace('$sender', sender))
     setTimeout(() => this.cooldown = false, 1 * 60 * 1000)
   }
-  async moderate (message, userstate) {   
+  moderate (message, userstate) {   
     if (!(this.settings.find(o => o.name === 'main')).enabled) return false
     if (userstate.mod || (userstate.badges && typeof userstate.badges.broadcaster !== 'undefined')) return false
-    if (await this.blacklist(message, userstate)) return true
-    if (await this.links(message, userstate)) return true
-    if (await this.symbols(message, userstate)) return true
-    if (await this.longMessage(message, userstate)) return true
-    if (await this.caps(message, userstate)) return true
-    if (await this.color(message, userstate)) return true
-    if (await this.emotes(message, userstate)) return true
+    if (this.blacklist(message, userstate)) return true
+    if (this.links(message, userstate)) return true
+    if (this.symbols(message, userstate)) return true
+    if (this.longMessage(message, userstate)) return true
+    if (this.caps(message, userstate)) return true
+    if (this.color(message, userstate)) return true
+    if (this.emotes(message, userstate)) return true
   }
-  async links (message, userstate) {
+  links (message, userstate) {
     let links = this.settings.find(o => o.name === 'links')
     if ((userstate.subscriber && !links.settings.moderateSubscribers) || !links.enabled) return false
-
     if (!this.warns.includes(userstate.username) && message.search(this.urlRegexp) >= 0) {
       this.warns.push(userstate.username)
-      await timeout(userstate.username, 1)
+      timeout(userstate.username, 1)
       this.announceTimeout(links.settings.warnMessage, userstate.username)
       console.log(`!!! LINK BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     }
     if (this.warns.includes(userstate.username) && message.search(this.urlRegexp) >= 0) {
-      await timeout(userstate.username, links.settings.timeout)
+      timeout(userstate.username, links.settings.timeout)
       this.announceTimeout(links.settings.timeoutMessage, userstate.username)
       console.log(`!!! LINK BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     }
   }
-  async symbols (message, userstate) {
+  symbols (message, userstate) {
     let symbols = this.settings.find(o => o.name === 'symbols')
     if ((userstate.subscriber && !symbols.settings.moderateSubscribers) || !symbols.enabled) return false
 
@@ -70,7 +70,7 @@ class Moderation {
     }
     if (!this.warns.includes(userstate.username) && Math.ceil(symbolsLength / (message.length / 100)) >= symbols.settings.maxSymbolsPercent) {
       this.warns.push(userstate.username)
-      await timeout(userstate.username, 1)
+      timeout(userstate.username, 1)
       this.announceTimeout(symbols.settings.warnMessage, userstate.username)
       console.log(`!!! SYMBOLS BAN ${userstate.username}, LENGTH: ${symbolsLength}`)
       return true
@@ -81,26 +81,26 @@ class Moderation {
       return true
     }
   }
-  async longMessage (message, userstate) {
+  longMessage (message, userstate) {
     let longMessage = this.settings.find(o => o.name === 'longMessage')
     if ((userstate.subscriber && !longMessage.settings.moderateSubscribers) || !longMessage.enabled) return false
     if (message.length < longMessage.settings.triggerLength) return false
 
     if (!this.warns.includes(userstate.username) && message.length > longMessage.settings.triggerLength) {
       this.warns.push(userstate.username)
-      await timeout(userstate.username, 1)
+      timeout(userstate.username, 1)
       this.announceTimeout(longMessage.settings.warnMessage, userstate.username)
       console.log(`!!! LONG MESSAGE ${userstate.username}, LENGTH: ${message.length}`)
       return true
     }
     if (this.warns.includes(userstate.username) && message.length > longMessage.settings.triggerLength) {
-      await timeout(userstate.username, longMessage.settings.timeout)
+      timeout(userstate.username, longMessage.settings.timeout)
       this.announceTimeout(links.settings.timeoutMessage, userstate.username)
       console.log(`!!! LONG MESSAGE ${userstate.username}, LENGTH: ${message.length}`)
       return true
     }
   }
-  async caps (message, userstate) {
+  caps (message, userstate) {
     let caps = this.settings.find(o => o.name === 'caps')
     message = message.replace(/[0-9]/g, '')
     if ((userstate.subscriber && !caps.settings.moderateSubscribers) || !caps.enabled) return false
@@ -116,20 +116,20 @@ class Moderation {
 
     if (!this.warns.includes(userstate.username) && Math.ceil(capsLength / (message.length / 100)) > caps.settings.maxCapsPercent) {
       this.warns.push(userstate.username)
-      await timeout(userstate.username, 1)
+      timeout(userstate.username, 1)
       this.announceTimeout(caps.settings.warnMessage, userstate.username)
       console.log(`!!! CAPS BAN ${userstate.username}, LENGTH: ${capsLength}`)
       return true
     }
     if (this.warns.includes(userstate.username) && Math.ceil(capsLength / (message.length / 100)) > caps.settings.maxCapsPercent) {
       this.warns.push(userstate.username)
-      await timeout(userstate.username, caps.settings.timeout)
+      timeout(userstate.username, caps.settings.timeout)
       this.announceTimeout(caps.settings.timeoutMessage, userstate.username)
       console.log(`!!! CAPS BAN ${userstate.username}, LENGTH: ${capsLength}`)
       return true
     }
   }
-  async color (message, userstate) {
+  color (message, userstate) {
     let color = this.settings.find(o => o.name === 'color')
     if ((userstate.subscriber && !color.settings.moderateSubscribers) || !color.enabled) return false
 
@@ -137,47 +137,50 @@ class Moderation {
       return false
     } else if (!this.warns.includes(userstate.username)) {
       this.warns.push(userstate.username)
-      await timeout(userstate.username, 1)
+      timeout(userstate.username, 1)
       this.announceTimeout(color.settings.warnMessage, userstate.username)
       console.log(`!!! COLOR BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     } else if (this.warns.includes(userstate.username)) {
       this.warns.push(userstate.username)
-      await timeout(userstate.username, color.settings.timeout)
+      timeout(userstate.username, color.settings.timeout)
       this.announceTimeout(color.settings.timeoutMessage, userstate.username)
       console.log(`!!! COLOR BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     }
   }
-  async emotes (message, userstate) {
+  emotes (message, userstate) {
     let emotes = this.settings.find(o => o.name === 'emotes')
     if ((userstate.subscriber && !emotes.settings.moderateSubscribers) || !emotes.enabled) return false
     let length = userstate.emotes ? Object.keys(userstate.emotes).length : 0
     if (!this.warns.includes(userstate.username) && length > emotes.settings.maxCount) {
       this.warns.push(userstate.username)
-      await timeout(userstate.username, emotes.settings.timeout)
+      timeout(userstate.username, emotes.settings.timeout)
       this.announceTimeout(emotes.settings.warnMessage, userstate.username)
       console.log(`!!! EMOTES BAN ${userstate.username}, LENGTH: ${length}`)
       return true
     }
     if (this.warns.includes(userstate.username) && length > emotes.settings.maxCount) {
       this.warns.push(userstate.username)
-      await timeout(userstate.username, emotes.settings.timeout)
+      timeout(userstate.username, emotes.settings.timeout)
       this.announceTimeout(emotes.settings.timeoutMessage, userstate.username)
       console.log(`!!! EMOTES BAN ${userstate.username}, LENGTH: ${length}`)
       return true
     }
   }
-  async blacklist (message, userstate) {
+  blacklist (message, userstate) {
     let blacklist = this.settings.find(o => o.name === 'blacklist')
+    let returned
     for (let value of blacklist.settings.list) {
-      if (value === '') return
+      if (value === '') continue
       if (message.includes(value)) {
-        await timeout(userstate.username, 600)
+        timeout(userstate.username, 600)
         console.log(`!!! BLACKLIST BAN ${userstate.username}, WORD: ${value}`)
+        returned = true
         break;
       }
     }
+    return returned ? true : false
   }
 
   async sockets () {
@@ -197,9 +200,9 @@ class Moderation {
         for (let item of arr) {
           let name = item.name
           delete item.name
-          global.db('systems.moderation').where('name', name).update(item).catch(console.log)
+          await global.db('systems.moderation').where('name', name).update(item).catch(console.log)
         }
-        self.init()
+        await self.init()
       })
     })
   }

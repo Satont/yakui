@@ -20,7 +20,10 @@ class Variables {
     let numbersRegexp = /[random]+\((.*?)\)/
     let variableRegexp = /\$_(\S*)/g
     let songRegexp = /\$song(\S*)/g
-    response = response.replace('$sender', '@' + userstate['display-name'])
+  
+    if (response.includes('$sender')) {
+      response = response.replace('$sender', '@' + userstate['display-name'])
+    }
     if (response.includes('$uptime')) {
       response = response.replace('$uptime', commons.prepareUptime())
     }

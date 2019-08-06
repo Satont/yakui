@@ -5,8 +5,6 @@ const { io } = require("../libs/panel")
 const variables = require('../systems/variables')
 
 class CustomCommands {
-  permissions = ['broadcaster', 'moderator', 'subscriber', 'vip', 'viewer']
-
   constructor() {
     this.cooldowns = []
     this.commands = []
@@ -27,7 +25,7 @@ class CustomCommands {
     }
     if (!find) return
 
-    if (!await permissions.hasPerm(userstate.badges, find.permission)) { return }
+    if (!permissions.hasPerm(userstate.badges, find.permission)) return; 
 
     if (this.cooldowns.includes(find.name) && find.cooldowntype === 'stop') {
       return console.log(`COMMAND ${find.name.toUpperCase()} ON COOLDOWN AND HAS NO EXECUTE MODEL`)
@@ -59,8 +57,8 @@ class CustomCommands {
     this.respond(response, userstate)
   }
   async respond (response, userstate) {
-    if (userstate['message-type'] === 'whisper') await this.whisper(userstate.username, response)
-    else await this.say(response)
+    if (userstate['message-type'] === 'whisper') this.whisper(userstate.username, response)
+    else this.say(response)
   }
   async getCommands() {
     let query = await global.db.select(`*`).from('systems.commands')

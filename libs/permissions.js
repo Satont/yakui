@@ -10,7 +10,7 @@ class Permissions {
     else if (typeof badges.vip !== 'undefined') return 'vip'
     else return 'viewer'
   }
-  async hasPerm(badges, commandPermission) {
+  hasPerm(badges, commandPermission) {
     let userLevel = this.permissions.findIndex(o => o === this.getUserPermission(badges))
     let commandLevel = this.permissions.findIndex(o => o === commandPermission)
     if (userLevel <= commandLevel) return true

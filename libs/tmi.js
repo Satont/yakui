@@ -163,8 +163,8 @@ class TwitchTmi {
     this.client.on('chat', async (channel, userstate, message, self) => {
       if (self) return
       if (userstate['message-type'] !== 'chat') return
-      await users.parse(userstate.username, userstate['user-id'])
-      if (await moderation.moderate(message, userstate)) return
+      users.parse(userstate.username, userstate['user-id'])
+      if (moderation.moderate(message, userstate)) return
       if (message.toLowerCase().startsWith('!'))  {
         let command = message.toLowerCase().substring(1).split(' ')[0]
         if (defualtCommands.commands.has(command)) {
