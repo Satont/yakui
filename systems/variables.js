@@ -129,7 +129,7 @@ class Variables {
       response = response.replace('$', '').replace(/[random]+\((.*?)\)/, numbers)
     }
     if (response.includes('(random.viewer)')) {
-      let filteredUsers = users.onlineUsers.filter(o => !users.settings.ignorelist.includes(o.username))
+      let filteredUsers = users.onlineUsers.filter(o => !users.settings.ignorelist.includes(o.username.toLowerCase())
       response = response.replace('(random.viewer)', _.sample(filteredUsers).username)
     }
     // реплейсить кастомную переменную на значение
