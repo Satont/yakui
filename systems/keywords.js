@@ -44,7 +44,7 @@ class Keywords {
       })
       socket.on('delete.keyword', async (data, cb) => {
         try {
-          await global.db('systems.keywords').where('name', data).delete()
+          await global.db('systems.keywords').where('name', data.replace('%20', ' ')).delete()
           self.getKeywordsList()
         } catch (e) {
           console.log(e)

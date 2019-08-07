@@ -43,7 +43,7 @@ export default {
       this.$router.push("keywords/create");
     },
     deleteKeyword(keyword, index) {
-      this.$socket.emit('delete.keywords', keyword)
+      this.$socket.emit('delete.keyword', keyword.replace('%20', ' '))
       this.keywords.splice(index, 1);
     },
     editKeyword(keyword) {
