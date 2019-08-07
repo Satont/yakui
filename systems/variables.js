@@ -129,7 +129,7 @@ class Variables {
       response = response.replace('$', '').replace(/[random]+\((.*?)\)/, numbers)
     }
     if (response.includes('(random.viewer)')) {
-      response = response.replace('(random.viewer)', _.sample(users.onlineUsers))
+      response = response.replace('(random.viewer)', _.sample(users.onlineUsers).username)
     }
     // реплейсить кастомную переменную на значение
     if (response.match(variableRegexp)) {
