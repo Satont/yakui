@@ -6,6 +6,7 @@ const users = require('../systems/users')
 const moderation = require('../systems/moderation')
 const permissions = require('./permissions')
 const defualtCommands = require('../systems/defaultCommands')
+const keywords = require('../systems/keywords')
 
 class TwitchTmi {
   constructor() {
@@ -173,7 +174,7 @@ class TwitchTmi {
           return command.run(command, message, userstate)
         }
         else customCommands.prepareCommand(message, userstate)
-      }
+      } else keywords.check(message, userstate)
     })
     this.client.on('message', async (channel, userstate, message, self) => {
       if (userstate["message-type"] === 'action') moderation.moderate(message, userstate)
