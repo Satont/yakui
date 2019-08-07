@@ -49,7 +49,6 @@
   $('#nameofbot').text(`${window.location.host.split('.')[0]} command list`)
   const socket = io();
   socket.emit('list.commands', null, async (err, list) => {
-    console.log(list)
     for (let command of list) {
       if (!command.visible) continue
       if (command.response.includes('(api')) continue
