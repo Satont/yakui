@@ -12,6 +12,7 @@ class CustomCommands {
     this.getCommands()
   }
   async prepareCommand (message, userstate) {
+    message = message.substring(1)
     let find
     let ar = message.toLowerCase().substring(1).split(' ')
     for (let i = 0, len = ar.length; i < len; i++) {
@@ -20,8 +21,6 @@ class CustomCommands {
       if (!command && !aliase) ar.pop()
       else {
         find = command ? command : aliase
-
-        if (aliase) message.replace(aliase, '')
         break;
       }
     }
@@ -39,14 +38,15 @@ class CustomCommands {
     } else this.cooldowns.push(find.name)
 
     for (let item of find.aliases) {
-      message = message.replace(item, '')
+      message = _.replace(message, item, '')
     }
+    if (message.startsWith(' ')) message = message.substring(1)
 
-    this.prepareMessage(find.response, message.substring(1).replace(find.name, '').substring(1), userstate)
+    this.prepareMessage(find.response, _.replace(message, find.name, '').substring(1), userstate)
     setTimeout(() => {
       let index = this.cooldowns.indexOf(find.name)
       if (index !== -1) this.cooldowns.splice(index, 1)
-    }, find.cooldown * 1000);
+    }, find.cooldown * 1000); 
   }
   async prepareMessage (response, message, userstate) {
     let variableRegexp = /\$_(\S*)/g
