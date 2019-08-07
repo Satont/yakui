@@ -130,7 +130,7 @@ class Variables {
     }
     if (response.includes('(random.viewer)')) {
       let filteredUsers = users.onlineUsers.filter(o => !users.settings.ignorelist.includes(o.username))
-      response = response.replace('(random.viewer)', _.sample(filteredUsers))
+      response = response.replace('(random.viewer)', _.sample(filteredUsers).username)
     }
     // реплейсить кастомную переменную на значение
     if (response.match(variableRegexp)) {
