@@ -29,7 +29,14 @@ class Variables {
       response = response.replace('$uptime', commons.prepareUptime())
     }
     if (response.includes('$followtime')) {
-      response = response.replace('$followtime', await commons.prepareFollowTime(Number(userstate['user-id'])))
+      if (message.length) {
+        try {
+          let target = await users.getIdByUsername(message)
+          response = `@${userstate['display-name']} ${message} ===> ${await commons.prepareFollowTime(target)}`
+        } catch (e) {
+          response = `Info about ${message} wasn't found`
+        }
+      } else response = response.replace('$followtime', await commons.prepareFollowTime(Number(userstate['user-id'])))
     }
     if (response.includes('$subs')) {
       response = response.replace('$subs', global.tmi.subscribers)
