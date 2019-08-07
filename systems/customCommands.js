@@ -37,16 +37,18 @@ class CustomCommands {
       userstate['message-type'] = 'whisper'
     } else this.cooldowns.push(find.name)
 
+    message = message.replace(find.name, '')
+
     for (let item of find.aliases) {
       message = _.replace(message, item, '')
     }
-   
-
-    this.prepareMessage(find.response, _.replace(message, find.name, '').substring(1), userstate)
+    
+    this.prepareMessage(find.response, message, userstate)
     setTimeout(() => {
       let index = this.cooldowns.indexOf(find.name)
       if (index !== -1) this.cooldowns.splice(index, 1)
-    }, find.cooldown * 1000); 
+    }, find.cooldown * 1000);
+    //console.log(message)
   }
   async prepareMessage (response, message, userstate) {
     let variableRegexp = /\$_(\S*)/g
