@@ -31,7 +31,7 @@ class Variables {
     if (response.includes('$followtime')) {
       if (message.length) {
         try {
-          let target = await users.getIdByUsername(message)
+          let target = await users.getIdByUsername(message.replace('@', ''))
           response = `@${userstate['display-name']} ${message} ===> ${await commons.prepareFollowTime(target)}`
         } catch (e) {
           response = `@${userstate['display-name']} Info about ${message} wasn't found`
