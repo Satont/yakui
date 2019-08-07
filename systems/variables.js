@@ -84,7 +84,15 @@ class Variables {
       response = response.replace('$medal', await notable.medal())
     }
     if (response.includes('$messages') || response.includes('$tips') || response.includes('$bits') || response.includes('$points') || response.includes('$watched') ) {
-      let user = await global.db('users').where({ id: Number(userstate['user-id']) })
+      let user
+      if (message.length) {
+        try {
+          let target = await users.getIdByUsername(message.replace('@', ''))
+          user = await global.db('users').where({ id: target })
+        } catch (e) {
+          response = `@${userstate['display-name']} Info about ${message} wasn't found`
+        }
+      } else user = await global.db('users').where({ id: Number(userstate['user-id']) })
       if (!user.length) return
       user = user[0]
       response = response.replace('$messages', user.messages)
