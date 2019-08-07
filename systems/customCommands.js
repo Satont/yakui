@@ -20,6 +20,8 @@ class CustomCommands {
       if (!command && !aliase) ar.pop()
       else {
         find = command ? command : aliase
+
+        if (aliase) message.replace(aliase, '')
         break;
       }
     }
@@ -35,7 +37,11 @@ class CustomCommands {
     } else if (this.cooldowns.includes(find.name) && find.cooldowntype === 'notstop') {
       userstate['message-type'] = 'whisper'
     } else this.cooldowns.push(find.name)
-    
+
+    for (let item of find.aliases) {
+      message = message.replace(item, '')
+    }
+
     this.prepareMessage(find.response, message.substring(1).replace(find.name, '').substring(1), userstate)
     setTimeout(() => {
       let index = this.cooldowns.indexOf(find.name)
