@@ -14,6 +14,7 @@ const shortEnglish = require('humanize-duration').humanizer({
   decimal: '.'
 })
 const notable = require('./notable')
+const users = require('./users')
 
 class Variables {
   async prepareMessage(response, userstate, message) {
@@ -126,6 +127,9 @@ class Variables {
       numbers = numbers.split('-')
       numbers = _.random(numbers[0], numbers[1])
       response = response.replace('$', '').replace(/[random]+\((.*?)\)/, numbers)
+    }
+    if (response.includes('(random.viewer)')) {
+      response = response.replace('(random.viewer)', _.sample(users.onlineUsers))
     }
     // реплейсить кастомную переменную на значение
     if (response.match(variableRegexp)) {

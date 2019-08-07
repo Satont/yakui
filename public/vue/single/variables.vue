@@ -59,6 +59,10 @@
         <td>Random beetwen some numbers</td>
       </tr>
       <tr>
+        <td>(random.viewer)</td>
+        <td>Choose random viewer from chat</td>
+      </tr>
+      <tr>
         <td>$subs</td>
         <td>Subs count on channel</td>
       </tr>
