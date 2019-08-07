@@ -44,7 +44,7 @@ export default {
     },
     deleteKeyword(keyword, index) {
       this.$socket.emit('delete.keywords', keyword)
-      this.keyword.splice(index, 1);
+      this.keywords.splice(index, 1);
     },
     editKeyword(keyword) {
       this.$router.push({
