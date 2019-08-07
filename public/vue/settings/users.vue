@@ -48,7 +48,7 @@ export default {
   },
   methods: {
     save() {
-      this.$data.ignorelist = this.$data.ignorelist.split('\n')
+      this.$data.ignorelist = this.$data.ignorelist.toLowerCase().split('\n')
       this.$socket.emit('update.settings.users', this.$data)
       this.$data.ignorelist = this.$data.ignorelist.join('\n')
     }
