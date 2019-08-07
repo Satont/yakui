@@ -14,7 +14,7 @@ class CustomCommands {
   async prepareCommand (message, userstate) {
     message = message.substring(1)
     let find
-    let ar = message.toLowerCase().substring(1).split(' ')
+    let ar = message.toLowerCase().split(' ')
     for (let i = 0, len = ar.length; i < len; i++) {
       let command = this.commands.find(o => o.name === ar.join(' '))
       let aliase = this.commands.find(o => o.aliases.includes(ar.join(' ')))
@@ -40,7 +40,7 @@ class CustomCommands {
     for (let item of find.aliases) {
       message = _.replace(message, item, '')
     }
-    if (message.startsWith(' ')) message = message.substring(1)
+   
 
     this.prepareMessage(find.response, _.replace(message, find.name, '').substring(1), userstate)
     setTimeout(() => {
