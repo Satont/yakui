@@ -4,9 +4,8 @@ const PORT = process.env.PORT || process.env.PANEL_PORT // for heroku
 const io = require('socket.io')(fastify.server)
 const { writeHeapSnapshot } = require('v8')
 
-fastify.register(require('fastify-basic-auth'), { validate, authenticate: true }).after(() => {
-  fastify.addHook('preHandler', fastify.basicAuth)
-})
+fastify.register(require('fastify-auth'))
+fastify.register(require('fastify-basic-auth'), { validate, authenticate: true })
 fastify.register(require('fastify-static'), { root: path.join(__dirname, '../public'), prefix: '/public/' })
 
 async function validate (username, password, request, reply) {
@@ -23,13 +22,28 @@ fastify.setErrorHandler(function (err, req, reply) {
   reply.send(err)
 })
 
-fastify.get('/', function (request, reply) {
-  reply.sendFile('index.html')
+fastify.after(() => {
+  fastify.route({
+    method: 'GET',
+    url: '/',
+    preHandler: fastify.auth([fastify.basicAuth]),
+    handler: async (req, reply) => {
+      reply.sendFile('index.html')
+    }
+  })
+  fastify.route({
+    method: 'GET',
+    url: '/heapdump',
+    preHandler: fastify.auth([fastify.basicAuth]),
+    handler: async (req, reply) => {
+      writeHeapSnapshot()
+      reply.send('ok!')
+    }
+  })
 })
 
-fastify.get('/heapdump', function (request, reply) {
-  writeHeapSnapshot()
-  reply.send('ok!')
+fastify.get('/commands', function (request, reply) {
+  reply.sendFile('commands.html')
 })
 
 // Run the server!
