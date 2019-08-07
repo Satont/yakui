@@ -25,6 +25,7 @@
 	- DonationAlerts
 	- Qiwi Donate
 - Dota 2 notableplayers system
+- Keywords system
 
 
 # Installation
