@@ -34,7 +34,7 @@ class Variables {
           let target = await users.getIdByUsername(message)
           response = `@${userstate['display-name']} ${message} ===> ${await commons.prepareFollowTime(target)}`
         } catch (e) {
-          response = `Info about ${message} wasn't found`
+          response = `@${userstate['display-name']} Info about ${message} wasn't found`
         }
       } else response = response.replace('$followtime', await commons.prepareFollowTime(Number(userstate['user-id'])))
     }
