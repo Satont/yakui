@@ -5,6 +5,10 @@ import Commands from './vue/commands/list.vue'
 import createCommand from './vue/commands/create.vue'
 import editCommand from './vue/commands/edit.vue'
 
+import keywords from './vue/keywords/list.vue'
+import createKeyword from './vue/keywords/create.vue'
+import editKeyword from './vue/keywords/edit.vue'
+
 import Variables from './vue/variables/list.vue'
 import createVariable from './vue/variables/create.vue'
 import editVariable from './vue/variables/edit.vue'
@@ -41,6 +45,10 @@ const routes = [
   { path: '/commands/create', component: createCommand },
   { path: '/commands/edit/:name', name: 'editCommand', component: editCommand },
 
+  { path: '/keywords', component: keywords },
+  { path: '/keywords/create', component: createKeyword },
+  { path: '/keywords/edit/:name', name: 'editKeyword', component: editKeyword },
+
   { path: '/variables', component: Variables },
   { path: '/variables/create', component: createVariable },
   { path: '/variables/edit/:name', name: 'editVariable', component: editVariable },
@@ -75,6 +83,7 @@ new Vue({
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
               <router-link to="/commands" class="nav-link nav-link2">Commans</router-link>
+              <router-link to="/keywords" class="nav-link nav-link2">Keywords</router-link>
               <router-link to="/variables" class="nav-link nav-link2">Variables</router-link>
               <router-link to="/timers" class="nav-link nav-link2">Timers</router-link>
             </div>

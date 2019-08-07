@@ -10,16 +10,19 @@ async function load() {
   if (!global.db.connected) return setTimeout(() => load(), 100)
   global.tmi = require('./libs/tmi')
   require('./libs/panel')
+  
   require('./systems/customCommands')
   require('./systems/variables')
   require('./systems/moderation')
   require('./systems/timers')
   require('./systems/users')
   require('./systems/twitch')
+  require('./systems/defaultCommands')
+  require('./systems/keywords')
+
   require('./integrations/donationalerts')
   require('./integrations/streamlabs')
   require('./integrations/qiwi')
-  require('./systems/defaultCommands')
 }
 load()
 
