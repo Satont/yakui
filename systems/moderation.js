@@ -154,14 +154,14 @@ class Moderation {
     let emotes = this.settings.find(o => o.name === 'emotes')
     if ((userstate.subscriber && !emotes.settings.moderateSubscribers) || !emotes.enabled) return false
     let length = userstate.emotes ? Object.keys(userstate.emotes).length : 0
-    if (!this.warns.includes(userstate.username) && length > emotes.settings.maxCount) {
+    if (!this.warns.includes(userstate.username) && (length > emotes.settings.maxCount)) {
       this.warns.push(userstate.username)
       timeout(userstate.username, emotes.settings.timeout)
       this.announceTimeout(emotes.settings.warnMessage, userstate.username)
       console.log(`!!! EMOTES BAN ${userstate.username}, LENGTH: ${length}`)
       return true
     }
-    if (this.warns.includes(userstate.username) && length > emotes.settings.maxCount) {
+    if (this.warns.includes(userstate.username) && (length > emotes.settings.maxCount)) {
       this.warns.push(userstate.username)
       timeout(userstate.username, emotes.settings.timeout)
       this.announceTimeout(emotes.settings.timeoutMessage, userstate.username)
