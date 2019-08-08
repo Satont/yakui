@@ -37,7 +37,7 @@ class TwitchTmi {
     await this.connect()
     await this.validateBroadCasterToken()
     await this.getChannelId()
-    await this.getUptime()
+    await this.getStreamStats()
     this.subsCheckInterval = setInterval(() => this.getSubscribers(), 15 * 60 * 1000);
     await this.getSubscribers()
   }
@@ -116,17 +116,16 @@ class TwitchTmi {
       setTimeout(() => this.getChannelId(), 10000)
     }
   }
-  async getUptime() {
-    setTimeout(() => this.getUptime(), 5 * 60 * 1000)
+  async getStreamStats() {
+    setTimeout(() => this.getStreamStats(), 30 * 1000)
     try {
-      if (!this.channelID) return
-      let response = await fetch(`https://api.twitch.tv/helix/streams?user_id=${this.channelID}`, { headers: { "Client-ID": process.env.TWITCH_CLIENTID }})
+      let response = await fetch(`https://api.twitch.tv/kraken/streams/${process.env.TWITCH_CHANNEl.toLowerCase()}`, { headers: { "Client-ID": process.env.TWITCH_CLIENTID }})
       let stream = await response.json()
-      if (!stream.data.length) {
+      if (!stream.stream) {
         this.uptime = null
-        return
       }
-      this.uptime = await stream.data[0].started_at
+      this.uptime = await stream.stream.created_at
+      this.streamData = await stream.stream
       console.log(`Uptime found ${this.uptime}`)
     } catch (error) {
       throw new Error(error)

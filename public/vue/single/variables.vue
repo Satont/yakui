@@ -67,6 +67,26 @@
         <td>Subs count on channel</td>
       </tr>
       <tr>
+        <td>$stream_viewers</td>
+        <td>Current stream viewers</td>
+      </tr>
+      <tr>
+        <td>$stream_game</td>
+        <td>Current stream game</td>
+      </tr>
+      <tr>
+        <td>$stream_title</td>
+        <td>Current stream title</td>
+      </tr>
+      <tr>
+        <td>$channel_views</td>
+        <td>Views of channel</td>
+      </tr>
+      <tr>
+        <td>$channel_followers</td>
+        <td>Followers of channel</td>
+      </tr>
+      <tr>
         <td>$commands</td>
         <td>List of commands</td>
       </tr>

@@ -41,6 +41,21 @@ class Variables {
     if (response.includes('$subs')) {
       response = response.replace('$subs', global.tmi.subscribers)
     }
+    if (response.includes('$stream_viewers')) {
+      response = response.replace('$stream_viewers', global.tmi.streamData.viewers)
+    }
+    if (response.includes('$stream_game')) {
+      response = response.replace('$stream_game', global.tmi.streamData.game)
+    }
+    if (response.includes('$stream_title')) {
+      response = response.replace('$stream_title', global.tmi.streamData.channel.status)
+    }
+    if (response.includes('$channel_views')) {
+      response = response.replace('$channel_views', global.tmi.streamData.channel.views)
+    }
+    if (response.includes('$channel_followers')) {
+      response = response.replace('$channel_followers', global.tmi.streamData.channel.followers)
+    }
     if (response.includes('$latestSub')) {
       response = response.replace('$latestSub', await commons.getLatestSubOrResub('sub'))
     }
