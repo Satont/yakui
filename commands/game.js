@@ -11,7 +11,8 @@ module.exports = {
       await setGame(find)
       say(`${userstate.username} ===> ${find}`)
     } catch (e) {
-      say(`${userstate.username} !!! ERROR`)
+      await setGame(message)
+      say(`${userstate.username} !!! Game wasn't found on twitch, but setted to ${message}`)
     }
   }
 }
