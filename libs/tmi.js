@@ -119,7 +119,7 @@ class TwitchTmi {
   async getStreamStats() {
     setTimeout(() => this.getStreamStats(), 30 * 1000)
     try {
-      let response = await fetch(`https://api.twitch.tv/kraken/streams/${process.env.TWITCH_CHANNEl.toLowerCase()}`, { headers: { "Client-ID": process.env.TWITCH_CLIENTID }})
+      let response = await fetch(`https://api.twitch.tv/kraken/streams/${process.env.TWITCH_CHANNEL.toLowerCase()}`, { headers: { "Client-ID": process.env.TWITCH_CLIENTID }})
       let stream = await response.json()
       if (!stream.stream) {
         this.uptime = null
