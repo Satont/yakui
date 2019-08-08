@@ -42,19 +42,24 @@ class Variables {
       response = response.replace('$subs', global.tmi.subscribers)
     }
     if (response.includes('$stream_viewers')) {
-      response = response.replace('$stream_viewers', global.tmi.streamData.viewers)
+      let viewers = global.tmi.streamData ? global.tmi.streamData.viewers : 0
+      response = response.replace('$stream_viewers', viewers)
     }
     if (response.includes('$stream_game')) {
-      response = response.replace('$stream_game', global.tmi.streamData.game)
+      let game = global.tmi.channelData ? global.tmi.channelData.game : 'no info'
+      response = response.replace('$stream_game', game)
     }
     if (response.includes('$stream_title')) {
-      response = response.replace('$stream_title', global.tmi.streamData.channel.status)
+      let title = global.tmi.channelData ? global.tmi.channelData.status : 'no info'
+      response = response.replace('$stream_title', title)
     }
     if (response.includes('$channel_views')) {
-      response = response.replace('$channel_views', global.tmi.streamData.channel.views)
+      let views = global.tmi.channelData ? global.tmi.channelData.views : 'no info'
+      response = response.replace('$channel_views', views)
     }
     if (response.includes('$channel_followers')) {
-      response = response.replace('$channel_followers', global.tmi.streamData.channel.followers)
+      let followers = global.tmi.channelData ? global.tmi.channelData.followers : 'no info'
+      response = response.replace('$channel_followers', followers)
     }
     if (response.includes('$latestSub')) {
       response = response.replace('$latestSub', await commons.getLatestSubOrResub('sub'))

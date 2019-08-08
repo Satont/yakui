@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import humanizeDuration from 'humanize-duration'
+import moment from 'moment'
 
 import Commands from './vue/commands/list.vue'
 import createCommand from './vue/commands/create.vue'
@@ -71,11 +73,33 @@ const router = new VueRouter({
 })
 
 new Vue({
+  data: function() {
+    return {
+      followers: 0,
+      viewers: 0,
+      views: 0,
+      subscribers: 0,
+      game: '',
+      title: '',
+      uptime: 0,
+      channel: ''
+    }
+  },
+
   router,
   template: `
   <div>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <router-link to="/" class="navbar-brand mb-0 h1">Bot panel</router-link>
+        <router-link to="/" class="navbar-brand mb-0 h1">{{ channel }}</router-link>
+        <div class="ml-left">
+          <span class="badge badge-light">Game: {{ game }}</span>
+          <span class="badge badge-light">Title: {{ title }}</span>
+          <span class="badge badge-danger">Subscribers: {{ subscribers }}</span>
+          <span class="badge badge-primary">Followers: {{ followers }}</span>
+          <span class="badge badge-info">Views: {{ views }}</span>
+          <span class="badge badge-success">Uptime: {{ uptime }}</span>
+        </div>
+
         <ul class="navbar-nav ml-auto">
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -114,5 +138,27 @@ new Vue({
 
       <router-view class="body container"></router-view>
       </div>
-  `
+  `,
+  methods: {
+    getStreamData: async function() {
+      setTimeout(() => this.getStreamData(), 10 * 1000)
+      this.$socket.emit('stream.data', null, async (err, data) => {
+        if (data.uptime) {
+          let diff = moment(moment().format()).diff(data.uptime)
+          this.uptime = humanizeDuration(moment.duration(diff), { language: data.lang })
+        } else this.uptime = 'offline'
+  
+        this.viewers = data.viewers
+        this.subscribers = data.subscribers
+        this.views = data.views
+        this.title = data.status
+        this.game = data.game
+        this.followers = data.followers
+        this.channel = data.channel
+      })
+    }
+  },
+  mounted() {
+    this.getStreamData()
+  }
 }).$mount('#app')

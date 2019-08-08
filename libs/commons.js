@@ -5,7 +5,6 @@ const _ = require('lodash')
 const axios = require('axios')
 const safeEval = require('safe-eval')
 
-
 class Commons {
   constructor() {
     setInterval(() => this.logMemoryUsage(), 60 * 1000)

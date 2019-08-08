@@ -15,6 +15,7 @@ module.exports = {
     try {
       await setTitle(message)
       say(`${userstate.username} ===> ${message}`)
+      global.tmi.getChannelInfo()
     } catch (e) {
       console.log(e)
       say(`${userstate.username} !!! ERROR`)

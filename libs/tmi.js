@@ -7,6 +7,7 @@ const moderation = require('../systems/moderation')
 const permissions = require('./permissions')
 const defualtCommands = require('../systems/defaultCommands')
 const keywords = require('../systems/keywords')
+const { io } = require("./panel")
 
 class TwitchTmi {
   constructor() {
@@ -14,6 +15,7 @@ class TwitchTmi {
     this.retries = 0
     this.connected = false
     this.uptime = null
+    this.sockets()
   }
   async start () {
     clearInterval(this.subsCheckInterval)
@@ -37,7 +39,8 @@ class TwitchTmi {
     await this.connect()
     await this.validateBroadCasterToken()
     await this.getChannelId()
-    await this.getStreamStats()
+    await this.getUptimeAndViewers()
+    await this.getChannelInfo()
     this.subsCheckInterval = setInterval(() => this.getSubscribers(), 15 * 60 * 1000);
     await this.getSubscribers()
   }
@@ -116,18 +119,27 @@ class TwitchTmi {
       setTimeout(() => this.getChannelId(), 10000)
     }
   }
-  async getStreamStats() {
-    setTimeout(() => this.getStreamStats(), 30 * 1000)
+  async getUptimeAndViewers() {
+    setTimeout(() => this.getUptimeAndViewers(), 30 * 1000)
     try {
       let response = await fetch(`https://api.twitch.tv/kraken/streams/${process.env.TWITCH_CHANNEL.toLowerCase()}`, { headers: { "Client-ID": process.env.TWITCH_CLIENTID }})
       let stream = await response.json()
-      if (!stream.stream) {
+      if (stream.stream === null) {
         this.uptime = null
-      }
-      this.uptime = await stream.stream.created_at
+      } else this.uptime = await stream.stream.created_at
       this.streamData = await stream.stream
-      console.log(`Uptime found ${this.uptime}`)
     } catch (error) {
+      throw new Error(error)
+    }
+  }
+  async getChannelInfo() {
+    setTimeout(() => this.getChannelInfo(), 30 * 1000)
+    try {
+      let response = await fetch(`https://api.twitch.tv/kraken/channels/${process.env.TWITCH_CHANNEL.toLowerCase()}`, { headers: { "Client-ID": process.env.TWITCH_CLIENTID }})
+      let data = await response.json()
+      this.channelData = data
+    } catch (error) {
+      this.channelData = null
       throw new Error(error)
     }
   }
@@ -190,6 +202,20 @@ class TwitchTmi {
     this.client.on('cheer', async (channel, userstate, message) => {
       await global.db('users').insert({ id: Number(userstate['user-id']), username: userstate.username }).then(() => {}).catch(() => {})
       await global.db('users').where({ id: Number(userstate['user-id']) }).increment({ bits: Number(userstate.bits) }).update({username: userstate.username })
+    })
+  }
+  async sockets() {
+    let self = this
+    io.on('connection', function (socket) {
+      socket.on('stream.data', async (what, cb) => {
+        let data = {}
+        data.uptime = self.streamData ? self.streamData.created_at : null
+        data.viewers = self.streamData ? self.streamData.viewers : 0
+        data.lang = process.env.BOT_LANG
+        data.subscribers = self.subscribers
+        data.channel = process.env.TWITCH_CHANNEL.toLowerCase()
+        cb(null, { ...data, ...self.channelData })
+      })
     })
   }
 }

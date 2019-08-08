@@ -17,6 +17,7 @@ module.exports = {
       let find = await getSuggestedGame(message)
       await setGame(find)
       say(`${userstate.username} ===> ${find}`)
+      global.tmi.getChannelInfo()
     } catch (e) {
       await setGame(message)
       say(`${userstate.username} !!! Game wasn't found on twitch, but setted to ${message}`)
