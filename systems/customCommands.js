@@ -42,8 +42,11 @@ class CustomCommands {
     for (let item of find.aliases) {
       message = _.replace(message, item, '')
     }
-    
+
+    if (message.startsWith(' ')) message = message.slice(1)
+
     this.prepareMessage(find.response, message, userstate)
+    
     setTimeout(() => {
       let index = this.cooldowns.indexOf(find.name)
       if (index !== -1) this.cooldowns.splice(index, 1)
