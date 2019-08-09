@@ -37,11 +37,11 @@ class CustomCommands {
       userstate['message-type'] = 'whisper'
     } else this.cooldowns.push(find.name)
 
-    message = message.replace(find.name, '')
-
     for (let item of find.aliases) {
       message = _.replace(message, item, '')
     }
+
+    message = message.replace(find.name, '')
 
     if (message.startsWith(' ')) message = message.slice(1)
 
