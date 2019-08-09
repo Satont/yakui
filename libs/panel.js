@@ -46,6 +46,10 @@ fastify.get('/commands', function (request, reply) {
   reply.sendFile('commands.html')
 })
 
+fastify.get('/overlay', function (request, reply) {
+  reply.sendFile('overlay.html')
+})
+
 // Run the server!
 fastify.listen(PORT, '0.0.0.0', (err, address) => {
   if (err) throw err
