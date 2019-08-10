@@ -104,6 +104,7 @@ new Vue({
         <div class="ml-left">
           <span class="badge badge-light">Game: {{ game }}</span>
           <span class="badge badge-light">Title: {{ title }}</span>
+          <span class="badge badge-dark">Viewers: {{ viewers }}</span>
           <span class="badge badge-danger">Subscribers: {{ subscribers }}</span>
           <span class="badge badge-primary">Followers: {{ followers }}</span>
           <span class="badge badge-info">Views: {{ views }}</span>
