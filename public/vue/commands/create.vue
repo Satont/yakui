@@ -12,17 +12,9 @@
         maxlength="15"
       >
     </div>
-    <div class="input-group mb-3">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default">Response</span>
-      </div>
-      <input
-        type="text"
-        required
-        class="form-control"
-        placeholder="Response of command"
-        v-model="response"
-      >
+    <div class="form-group">
+      <label for="exampleFormControlTextarea1">Response</label>
+      <textarea type="text" class="form-control" v-model="response" rows="2"></textarea>
     </div>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
