@@ -19,6 +19,7 @@ async function load() {
   require('./systems/twitch')
   require('./systems/defaultCommands')
   require('./systems/keywords')
+  require('./systems/overlays')
 
   require('./integrations/donationalerts')
   require('./integrations/streamlabs')
