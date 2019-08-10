@@ -103,7 +103,8 @@ class Variables {
     if (response.includes('$medal')) {
       response = response.replace('$medal', await notable.medal())
     }
-    if (response.includes('$messages') || response.includes('$tips') || response.includes('$bits') || response.includes('$points') || response.includes('$watched') ) {
+    if (response.includes('$messages') || response.includes('$tips') || response.includes('$bits') || 
+    response.includes('$points') || response.includes('$watched') || response.includes('$pointsName')) {
       let user
       if (message.length) {
         try {
@@ -120,6 +121,7 @@ class Variables {
       response = response.replace('$bits', user.bits)
       response = response.replace('$points', user.points)
       response = response.replace('$watched', shortEnglish(user.watched))
+      response = response.replace('$pointsName', commons.declOfNum(user.points, users.settings.pointsName.split('|')))
     }
     if (response.includes('$top_messages')) {
       let ignoredUsers = (await global.db('settings').select('*').where('system', 'users'))[0].data.ignorelist

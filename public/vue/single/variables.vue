@@ -107,6 +107,10 @@
         <td>User points</td>
       </tr>
       <tr>
+        <td>$pointsName</td>
+        <td>Name of points</td>
+      </tr>
+      <tr>
         <td>$watched</td>
         <td>User watched time</td>
       </tr>
