@@ -152,7 +152,7 @@
       </tr>
       <tr>
         <td>(eval js)</td>
-        <td>Run javascript in command. Must have <b>return</b> for this. Example: (eval const ranks = ['Herald', 'Crusader']; return _.sample(ranks);). Avaliable variables: username, displayname, _ = lodash, axios; Avaliable functions: say(msg), timeout(username, 600)</td>
+        <td>Run javascript in command. Must have <b>return</b> for this. Example: (eval const ranks = ['Herald', 'Crusader']; return _.sample(ranks);). Avaliable variables: username, displayname, _ = lodash, axios, user (object of user from db); Avaliable functions: say(msg), timeout(username, 600)</td>
       </tr>
       <tr v-for="(variable, index) in variables" :key="index">
         <td>$_{{ variable.name }}</td>

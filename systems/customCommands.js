@@ -65,7 +65,6 @@ class CustomCommands {
     //
     response = await variables.prepareMessage(response, userstate, message)
     //
-    console.log(response)
     this.respond(response, userstate)
   }
   async respond (response, userstate) {

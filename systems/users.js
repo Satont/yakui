@@ -15,11 +15,11 @@ class Users {
     else clearInterval(this.checkInterval)
   }
   async parse(username, id) {
-    if (!this.settings.enabled || !global.tmi.uptime) return true
-    if (this.settings.ignorelist.includes(username)) return true
+    if (!this.settings.enabled) return true
 
     await global.db('users').insert({ id: Number(id), username: username }).then(() => {}).catch(() => {})
-    await global.db('users').where({ id: Number(id) }).increment({ messages: 1, points: this.settings.pointsPerMessage }).update({username: username })
+    
+    if (global.tmi.uptime && !this.settings.ignorelist.includes(username)) await global.db('users').where({ id: Number(id) }).increment({ messages: 1, points: this.settings.pointsPerMessage }).update({username: username })
   }
   async checkOnline() {
     if (!global.tmi.uptime || !this.settings.enabled) return this.onlineUsers = []
