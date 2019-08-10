@@ -8,8 +8,9 @@
     </div>
     <div class="form-group">
       <label>Overlay data</label>
-      <textarea class="form-control" v-model="data" rows="20"></textarea>
+      <textarea class="form-control" v-model="data" rows="10"></textarea>
     </div>
+    <variables></variables>
     <button type="button" class="btn btn-block btn-success" @click="create">Save</button>
     <br>
   </div>
