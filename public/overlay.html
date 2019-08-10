@@ -5,13 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Overlays</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
   </head>
   <body>
-    <p id="data"></p>
+    <p id="six7urfkCy"></p>
   </body>
   <script>
+    const socket = io()
     const url = new URL(window.location.href)
     const id = url.searchParams.get('id')
-    
+    function getData() {
+      socket.emit('overlays.data', id, async (err, data) => {
+        if (err) return document.getElementById('six7urfkCy').innerHTML = err
+        
+        document.getElementById('six7urfkCy').innerHTML = data.text.replace('$uptime', "<span id='uptime'></span>")
+        if (data.uptime) uptime(data.uptime)
+        setTimeout(() => getData(), 5 * 1000)
+      })
+    }
+    getData()
+
+    function uptime(data) {
+      setTimeout(() => uptime(data), 500);
+      let diff = moment(moment.utc()).diff(data)
+      let duration = moment.duration(diff)
+      let hours, minutes, seconds
+      hours = duration.hours() > 10 ? duration.hours() : `0${duration.hours()}`
+      minutes = duration.minutes() > 10 ? duration.minutes() : `0${duration.minutes()}`
+      seconds = duration.seconds() > 10 ? duration.seconds() : `0${duration.seconds()}`
+      document.getElementById('uptime').innerText = `${hours}:${minutes}:${seconds}`
+    }
   </script>
 </html>

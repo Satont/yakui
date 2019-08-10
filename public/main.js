@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import humanizeDuration from 'humanize-duration'
 import moment from 'moment'
+import VueClipboard from 'vue-clipboard2'
 
 import Commands from './vue/commands/list.vue'
 import createCommand from './vue/commands/create.vue'
@@ -18,6 +19,10 @@ import editVariable from './vue/variables/edit.vue'
 import timers from './vue/timers/list.vue'
 import createTimer from './vue/timers/create.vue'
 import editTimer from './vue/timers/edit.vue'
+
+import overlays from './vue/overlays/list.vue'
+import createOverlay from './vue/overlays/create.vue'
+import editOverlay from './vue/overlays/edit.vue'
 
 import moderation from './vue/settings/moderation.vue'
 import variablelist from './vue/single/variables.vue'
@@ -39,6 +44,7 @@ Vue.use(new VueSocketIO({
 Vue.component('variables', variablelist)
 Vue.use(VueRouter)
 Vue.component('cooldownModal', cooldownModal)
+Vue.use(VueClipboard)
 
 const routes = [
   { path: '/', component: Commands },
@@ -58,6 +64,10 @@ const routes = [
   { path: '/timers', component: timers },
   { path: '/timers/create', component: createTimer },
   { path: '/timers/edit/:name', name: 'editTimer', component: editTimer },
+
+  { path: '/overlays', component: overlays },
+  { path: '/overlays/create', component: createOverlay },
+  { path: '/overlays/edit/:id', name: 'editOverlay', component: editOverlay },
 
   { path: '/settings/moderation', component: moderation },
   { path: '/settings/users', component: settingsUsers },
@@ -110,6 +120,7 @@ new Vue({
               <router-link to="/keywords" class="nav-link nav-link2">Keywords</router-link>
               <router-link to="/variables" class="nav-link nav-link2">Variables</router-link>
               <router-link to="/timers" class="nav-link nav-link2">Timers</router-link>
+              <router-link to="/overlays" class="nav-link nav-link2">Overlays</router-link>
             </div>
           </li>
           <li class="nav-item dropdown">

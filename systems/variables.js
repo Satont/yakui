@@ -25,7 +25,7 @@ class Variables {
     if (response.includes('$sender')) {
       response = response.replace('$sender', '@' + userstate['display-name'])
     }
-    if (response.includes('$uptime')) {
+    if (response.includes('$uptime') && !userstate.overlay) {
       response = response.replace('$uptime', commons.prepareUptime())
     }
     if (response.includes('$followtime')) {
