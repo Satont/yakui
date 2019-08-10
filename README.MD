@@ -26,6 +26,8 @@
 	- Qiwi Donate
 - Dota 2 notableplayers system
 - Keywords system
+- Overlays system
+	- you can create some overlay and past it in your OBS!
 
 
 # Installation
