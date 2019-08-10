@@ -22,7 +22,7 @@ class Users {
     await global.db('users').where({ id: Number(id) }).increment({ messages: 1, points: this.settings.pointsPerMessage }).update({username: username })
   }
   async checkOnline() {
-    if (!global.tmi.uptime || !this.settings.enabled) return
+    if (!global.tmi.uptime || !this.settings.enabled) return this.onlineUsers = []
     try {
       let request = await axios.get(`http://tmi.twitch.tv/group/user/${process.env.TWITCH_CHANNEL.toLowerCase()}/chatters`)
       let response = request.data
