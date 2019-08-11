@@ -32,9 +32,6 @@ class Keywords {
         cb(null, query)
       })
       socket.on('create.keyword', async (data, cb) => {
-        let maped = self.keywords.map(o => o.name)
-        
-        if (maped.includes(data.name)) return cb('This keyword already in use', null)
         try {
           await global.db('systems.keywords').insert(data)
           self.getKeywordsList()
@@ -52,10 +49,6 @@ class Keywords {
         }
       })
       socket.on('update.keyword', async (data, cb) => {
-        let maped = self.keywords.map(o => o.name)
-
-        if (maped.includes(data.name)) return cb('Keyword name already in use', null)
-
         let name = data.currentname.replace('%20', ' ')
         delete data.currentname
         try {
