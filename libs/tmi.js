@@ -80,6 +80,7 @@ class TwitchTmi {
    
   }
   async getBroadcasterToken () {
+    if (process.env.TWITCH_BROADCASTERTOKEN.length === 0 || process.env.TWITCH_BROADCASTERTOKEN < 10) return
     console.log('Trying to refresh broadcaster token')
     try {
       let response = await fetch(`https://twitchtokengenerator.com/api/refresh/${process.env.TWITCH_BROADCASTERTOKEN}`)
