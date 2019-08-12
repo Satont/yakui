@@ -19,9 +19,8 @@
     function getData() {
       socket.emit('overlays.data', id, async (err, data) => {
         if (err) return document.getElementById('six7urfkCy').innerHTML = err
-        
+        if (data.uptime && data.text.includes('$uptime')) uptime(data.uptime)
         document.getElementById('six7urfkCy').innerHTML = data.text.replace('$uptime', "<span id='uptime'></span>")
-        if (data.uptime) uptime(data.uptime)
         setTimeout(() => getData(), 5 * 1000)
       })
     }
