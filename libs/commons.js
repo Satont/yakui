@@ -40,7 +40,7 @@ class Commons {
         {
           method: 'GET',
           headers: {
-            'Client-ID': process.env.TWITCH_CLIENTID,
+            'Client-ID': 'gzq39cbxvky7fiux0tb74ho7ekms8d',
             'Authorization': `Bearer ${global.tmi.broadcaster_token}`
           }
         }

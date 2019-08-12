@@ -8,6 +8,7 @@ const permissions = require('./permissions')
 const defualtCommands = require('../systems/defaultCommands')
 const keywords = require('../systems/keywords')
 const { io } = require("./panel")
+const axios = require('axios')
 
 class TwitchTmi {
   constructor() {
@@ -47,16 +48,26 @@ class TwitchTmi {
   async getToken () {
     console.log('Trying to refresh token')
     try {
-      let response = await fetch(`https://twitchtokengenerator.com/api/refresh/${process.env.TWITCH_TOKEN}`)
-      let data = await response.json()
-      if (data.success) {
-        await global.db('core.tokens').where('name', 'bot').update('value', data.token)
-        this.token = data.token
-        console.log('Bot token found!')
-        return data.token
-      } else proccess.exit(0)
+      let response = await axios(`https://id.twitch.tv/oauth2/token`, { 
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        params: {
+          grant_type: 'refresh_token',
+          refresh_token: process.env.TWITCH_TOKEN,
+          client_id: 'gzq39cbxvky7fiux0tb74ho7ekms8d',
+          client_secret: 'bo6qgahcgqcx2no0q1kvgnmzxl27u4'
+        }
+      })
+      let data = await response.data
+      await global.db('core.tokens').where('name', 'bot').update('value', data.access_token)
+      this.token = data.access_token
+      console.log('Bot token found!')
+      return data.access_token
     } catch (e) {
       console.log(e)
+      process.exit(0)
     }
   }
   async validateBroadCasterToken() {
@@ -83,17 +94,25 @@ class TwitchTmi {
     if (process.env.TWITCH_BROADCASTERTOKEN.length === 0 || process.env.TWITCH_BROADCASTERTOKEN < 10) return
     console.log('Trying to refresh broadcaster token')
     try {
-      let response = await fetch(`https://twitchtokengenerator.com/api/refresh/${process.env.TWITCH_BROADCASTERTOKEN}`)
-      let data = await response.json()
-      if (data.success) {
-        this.broadcastertoken = data.token
-        await global.db('core.tokens').where('name', 'broadcaster').update('value', data.token)
-        console.log('Broadcaster token found!')
-        return true
-      } else {
-        this.broadcastertoken === null
-      }
+      let response = await axios(`https://id.twitch.tv/oauth2/token`, { 
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        params: {
+          grant_type: 'refresh_token',
+          refresh_token: process.env.TWITCH_BROADCASTERTOKEN,
+          client_id: 'gzq39cbxvky7fiux0tb74ho7ekms8d',
+          client_secret: 'bo6qgahcgqcx2no0q1kvgnmzxl27u4'
+        }
+      })
+      let data = await response.data
+      this.broadcastertoken = data.access_token
+      await global.db('core.tokens').where('name', 'broadcaster').update('value', data.access_token)
+      console.log('Broadcaster token found!')
+      return data.access_token
     } catch (e) {
+      this.broadcastertoken === null
       console.log('Token wasnt refreshed', e)
     }
   }
@@ -111,7 +130,7 @@ class TwitchTmi {
   }
   async getChannelId () {
     try {
-      let response = await fetch(`https://api.twitch.tv/helix/users?login=${process.env.TWITCH_CHANNEL}`, { headers: { "Client-ID": process.env.TWITCH_CLIENTID }})
+      let response = await fetch(`https://api.twitch.tv/helix/users?login=${process.env.TWITCH_CHANNEL}`, { headers: { "Client-ID": 'gzq39cbxvky7fiux0tb74ho7ekms8d' }})
       let data = await response.json()
       this.channelID = await data.data[0].id
       console.log(`Channel id is ${this.channelID}`)
@@ -123,7 +142,7 @@ class TwitchTmi {
   async getUptimeAndViewers() {
     setTimeout(() => this.getUptimeAndViewers(), 30 * 1000)
     try {
-      let response = await fetch(`https://api.twitch.tv/kraken/streams/${process.env.TWITCH_CHANNEL.toLowerCase()}`, { headers: { "Client-ID": process.env.TWITCH_CLIENTID }})
+      let response = await fetch(`https://api.twitch.tv/kraken/streams/${process.env.TWITCH_CHANNEL.toLowerCase()}`, { headers: { "Client-ID": 'gzq39cbxvky7fiux0tb74ho7ekms8d' }})
       let stream = await response.json()
       if (stream.stream === null) {
         this.uptime = null
@@ -136,7 +155,7 @@ class TwitchTmi {
   async getChannelInfo() {
     setTimeout(() => this.getChannelInfo(), 30 * 1000)
     try {
-      let response = await fetch(`https://api.twitch.tv/kraken/channels/${process.env.TWITCH_CHANNEL.toLowerCase()}`, { headers: { "Client-ID": process.env.TWITCH_CLIENTID }})
+      let response = await fetch(`https://api.twitch.tv/kraken/channels/${process.env.TWITCH_CHANNEL.toLowerCase()}`, { headers: { "Client-ID": 'gzq39cbxvky7fiux0tb74ho7ekms8d' }})
       let data = await response.json()
       this.channelData = data
     } catch (error) {
