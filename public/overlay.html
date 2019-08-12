@@ -33,8 +33,8 @@
       let duration = moment.duration(diff)
       let hours, minutes, seconds
       hours = duration.hours() > 10 ? duration.hours() : `0${duration.hours()}`
-      minutes = duration.minutes() > 10 ? duration.minutes() : `0${duration.minutes()}`
-      seconds = duration.seconds() > 10 ? duration.seconds() : `0${duration.seconds()}`
+      minutes = duration.minutes() >= 10 ? duration.minutes() : `0${duration.minutes()}`
+      seconds = duration.seconds() >= 10 ? duration.seconds() : `0${duration.seconds()}`
       document.getElementById('uptime').innerText = `${hours}:${minutes}:${seconds}`
     }
   </script>
