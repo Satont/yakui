@@ -47,16 +47,15 @@ class TwitchTmi {
   async getToken () {
     console.log('Trying to refresh token')
     try {
-      let response = await fetch(`https://twitchtokengenerator.com/api/refresh/${process.env.TWITCH_TOKEN}`)
+      let response = await fetch(`http://auth.satont.ru/refresh?refresh_token=${process.env.TWITCH_TOKEN}`)
       let data = await response.json()
-      if (data.success) {
-        await global.db('core.tokens').where('name', 'bot').update('value', data.token)
-        this.token = data.token
-        console.log('Bot token found!')
-        return data.token
-      } else proccess.exit(0)
+      await global.db('core.tokens').where('name', 'bot').update('value', data.token)
+      this.token = data.token
+      console.log('Bot token found!')
+      return data.token
     } catch (e) {
       console.log(e)
+      process.exit(0)
     }
   }
   async validateBroadCasterToken() {
@@ -83,17 +82,14 @@ class TwitchTmi {
     if (process.env.TWITCH_BROADCASTERTOKEN.length === 0 || process.env.TWITCH_BROADCASTERTOKEN < 10) return
     console.log('Trying to refresh broadcaster token')
     try {
-      let response = await fetch(`https://twitchtokengenerator.com/api/refresh/${process.env.TWITCH_BROADCASTERTOKEN}`)
+      let response = await fetch(`http://auth.satont.ru/refresh?refresh_token=${process.env.TWITCH_BROADCASTERTOKEN}`)
       let data = await response.json()
-      if (data.success) {
-        this.broadcastertoken = data.token
-        await global.db('core.tokens').where('name', 'broadcaster').update('value', data.token)
-        console.log('Broadcaster token found!')
-        return true
-      } else {
-        this.broadcastertoken === null
-      }
+      this.broadcastertoken = data.token
+      await global.db('core.tokens').where('name', 'broadcaster').update('value', data.token)
+      console.log('Broadcaster token found!')
+      return data.token
     } catch (e) {
+      this.broadcastertoken === null
       console.log('Token wasnt refreshed', e)
     }
   }
