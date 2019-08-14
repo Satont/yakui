@@ -27,7 +27,7 @@ import editOverlay from './vue/overlays/edit.vue'
 import moderation from './vue/settings/moderation.vue'
 import variablelist from './vue/single/variables.vue'
 
-import SocketIO from 'socket.io-client';
+import SocketIO from 'socket.io-client'
 import VueSocketIO from 'vue-socket.io'
 import cooldownModal from './vue/components/cooldownmodal.vue'
 import settingsUsers from './vue/settings/users.vue'
@@ -41,7 +41,7 @@ import spotify from './vue/integrations/spotify.vue'
 Vue.use(new VueSocketIO({
   debug: true,
   connection: SocketIO('/')
-}));
+}))
 Vue.component('variables', variablelist)
 Vue.use(VueRouter)
 Vue.component('cooldownModal', cooldownModal)
@@ -77,15 +77,15 @@ const routes = [
   { path: '/integrations/donationalerts', component: donationalerts },
   { path: '/integrations/streamlabs', component: streamlabs },
   { path: '/integrations/qiwi', component: qiwi },
-  { path: '/integrations/spotify', component: spotify },
+  { path: '/integrations/spotify', component: spotify }
 ]
 
 const router = new VueRouter({
-  routes 
+  routes
 })
 
 new Vue({
-  data: function() {
+  data: function () {
     return {
       followers: 0,
       viewers: 0,
@@ -155,14 +155,15 @@ new Vue({
       </div>
   `,
   methods: {
-    getStreamData: async function() {
+    getStreamData: async function () {
       setTimeout(() => this.getStreamData(), 10 * 1000)
       this.$socket.emit('stream.data', null, async (err, data) => {
+        if (err) return console.log(err)
         if (data.uptime) {
-          let diff = moment(moment().format()).diff(data.uptime)
+          const diff = moment(moment().format()).diff(data.uptime)
           this.uptime = humanizeDuration(moment.duration(diff), { language: data.lang })
         } else this.uptime = 'offline'
-  
+
         this.viewers = data.viewers
         this.subscribers = data.subscribers
         this.views = data.views
@@ -173,7 +174,7 @@ new Vue({
       })
     }
   },
-  mounted() {
+  mounted () {
     this.getStreamData()
   }
 }).$mount('#app')

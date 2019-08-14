@@ -3,32 +3,36 @@ const { io } = require('../libs/panel')
 const { say } = require('./customCommands')
 
 class Keywords {
-  constructor() {
+  constructor () {
     this.keywords = []
     this.sockets()
     this.getKeywordsList()
   }
-  async check(message, userstate) {
+
+  async check (message, userstate) {
     message = message.toLowerCase()
-    for (let item of this.keywords) {
+    for (const item of this.keywords) {
       if (message.includes(item.name)) return this.respond(item, message, userstate)
     }
   }
-  async respond(item, message, userstate) {
+
+  async respond (item, message, userstate) {
     let response = item.response
     response = await variables.prepareMessage(response, userstate, message)
     await say(response)
   }
-  async getKeywordsList() {
-    let query = await global.db.select(`*`).from('systems.keywords')
+
+  async getKeywordsList () {
+    const query = await global.db.select(`*`).from('systems.keywords')
     this.keywords = query
     return query
   }
-  async sockets() {
-    let self = this
+
+  async sockets () {
+    const self = this
     io.on('connection', function (socket) {
       socket.on('list.keywords', async (data, cb) => {
-        let query = await global.db.select(`*`).from('systems.keywords')
+        const query = await global.db.select(`*`).from('systems.keywords')
         cb(null, query)
       })
       socket.on('create.keyword', async (data, cb) => {

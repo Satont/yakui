@@ -1,5 +1,5 @@
 
-exports.up = function(knex) {
+exports.up = function (knex) {
   return Promise.all([
     knex.schema.table('systems.commands', function (table) {
       return table.increments('id')
@@ -12,10 +12,10 @@ exports.up = function(knex) {
     }),
     knex.schema.table('systems.variables', function (table) {
       return table.increments('id')
-    }),
+    })
   ])
-};
+}
 
-exports.down = function(knex) {
-  
-};
+exports.down = function (knex) {
+
+}

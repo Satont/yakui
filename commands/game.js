@@ -6,7 +6,7 @@ module.exports = {
   name: 'game',
   visible: false,
   permission: 'moderator',
-  async run(command, message, userstate) {
+  async run (command, message, userstate) {
     message = message.split(' '); message.shift(); message = message.join(' ')
 
     if (!permissions.hasPerm(userstate.badges, this.permission) || !message.length) {
@@ -14,7 +14,7 @@ module.exports = {
     }
 
     try {
-      let find = await getSuggestedGame(message)
+      const find = await getSuggestedGame(message)
       await setGame(find)
       say(`${userstate.username} ===> ${find}`)
       global.tmi.getChannelInfo()

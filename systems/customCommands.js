@@ -1,32 +1,32 @@
 const _ = require('lodash')
-const commons = require('../libs/commons')
 const permissions = require('../libs/permissions')
-const { io } = require("../libs/panel")
+const { io } = require('../libs/panel')
 const variables = require('../systems/variables')
 
 class CustomCommands {
-  constructor() {
+  constructor () {
     this.cooldowns = []
     this.commands = []
     this.sockets()
     this.getCommands()
   }
+
   async prepareCommand (message, userstate) {
     message = message.substring(1)
     let find
-    let ar = message.toLowerCase().split(' ')
+    const ar = message.toLowerCase().split(' ')
     for (let i = 0, len = ar.length; i < len; i++) {
-      let command = this.commands.find(o => o.name === ar.join(' '))
-      let aliase = this.commands.find(o => o.aliases.includes(ar.join(' ')))
+      const command = this.commands.find(o => o.name === ar.join(' '))
+      const aliase = this.commands.find(o => o.aliases.includes(ar.join(' ')))
       if (!command && !aliase) ar.pop()
       else {
-        find = command ? command : aliase
-        break;
+        find = command || aliase
+        break
       }
     }
     if (!find) return
 
-    if (!permissions.hasPerm(userstate.badges, find.permission)) return; 
+    if (!permissions.hasPerm(userstate.badges, find.permission)) return
 
     if (this.cooldowns.includes(find.name) && find.cooldowntype === 'stop') {
       return console.log(`COMMAND ${find.name.toUpperCase()} ON COOLDOWN AND HAS NO EXECUTE MODEL`)
@@ -37,7 +37,7 @@ class CustomCommands {
       userstate['message-type'] = 'whisper'
     } else this.cooldowns.push(find.name)
 
-    for (let item of find.aliases) {
+    for (const item of find.aliases) {
       message = _.replace(message, item, '')
     }
 
@@ -46,20 +46,21 @@ class CustomCommands {
     if (message.startsWith(' ')) message = message.slice(1)
 
     this.prepareMessage(find.response, message, userstate)
-    
+
     setTimeout(() => {
-      let index = this.cooldowns.indexOf(find.name)
+      const index = this.cooldowns.indexOf(find.name)
       if (index !== -1) this.cooldowns.splice(index, 1)
-    }, find.cooldown * 1000);
-    //console.log(message)
+    }, find.cooldown * 1000)
+    // console.log(message)
   }
+
   async prepareMessage (response, message, userstate) {
-    let variableRegexp = /\$_(\S*)/g
+    const variableRegexp = /\$_(\S*)/g
     // модер меняет переменную в команде
-    let wantsChangeVariable = (userstate.mod || (userstate.badges && typeof userstate.badges.broadcaster !== 'undefined')) && message.length && response.match(variableRegexp) !== null
+    const wantsChangeVariable = (userstate.mod || (userstate.badges && typeof userstate.badges.broadcaster !== 'undefined')) && message.length && response.match(variableRegexp) !== null
     if (wantsChangeVariable) {
-      let variable = response.match(variableRegexp)[0].replace('$_', '')
-      let findVariable = await global.db('systems.variables').where('name', variable).update('value', message)
+      const variable = response.match(variableRegexp)[0].replace('$_', '')
+      const findVariable = await global.db('systems.variables').where('name', variable).update('value', message)
       if (findVariable) return this.say(`@${userstate['display-name']} ${variable} ===> ${message}`)
     }
     //
@@ -67,38 +68,44 @@ class CustomCommands {
     //
     this.respond(response, userstate)
   }
+
   async respond (response, userstate) {
     if (userstate['message-type'] === 'whisper') this.whisper(userstate.username, response)
     else this.say(response)
   }
-  async getCommands() {
-    let query = await global.db.select(`*`).from('systems.commands')
+
+  async getCommands () {
+    const query = await global.db.select(`*`).from('systems.commands')
     this.commands = query
     return query
   }
-  async say(msg) {
+
+  async say (msg) {
     global.tmi.client.say(process.env.TWITCH_CHANNEL, msg).catch(console.log)
   }
-  async whisper(username, message) {
+
+  async whisper (username, message) {
     await global.tmi.client.whisper(username, message).catch(console.log)
   }
-  async timeout(username, time) {
+
+  async timeout (username, time) {
     global.tmi.client.timeout(process.env.TWITCH_CHANNEL, username, time).catch(console.log)
   }
-  async sockets() {
-    let self = this
+
+  async sockets () {
+    const self = this
     io.on('connection', function (socket) {
       socket.on('list.commands', async (data, cb) => {
-        let query = await global.db.select(`*`).from('systems.commands')
+        const query = await global.db.select(`*`).from('systems.commands')
         cb(null, query)
       })
       socket.on('create.command', async (data, cb) => {
-        let aliases = _.flattenDeep(self.commands.map(o => o.aliases))
-        let names = self.commands.map(o => o.name)
+        const aliases = _.flattenDeep(self.commands.map(o => o.aliases))
+        const names = self.commands.map(o => o.name)
 
         if (aliases.some(o => data.aliases.includes(o)) || names.some(o => data.aliases.includes(o))) return cb('Command name or aliase already used', null)
         if (names.some(o => o.name === data.name) || aliases.some(o => names.includes(o))) return cb('Command name or aliase already used', null)
-        
+
         try {
           await global.db('systems.commands').insert(data)
           self.getCommands()
@@ -116,8 +123,8 @@ class CustomCommands {
         }
       })
       socket.on('update.command', async (data, cb) => {
-        let aliases = _.flattenDeep(self.commands.filter(o => o.name !== data.currentname).map(o => o.aliases))
-        let names = self.commands.map(o => o.name).filter(o => o !== data.currentname)
+        const aliases = _.flattenDeep(self.commands.filter(o => o.name !== data.currentname).map(o => o.aliases))
+        const names = self.commands.map(o => o.name).filter(o => o !== data.currentname)
 
         if (aliases.some(o => data.aliases.includes(o)) || names.some(o => data.aliases.includes(o))) return cb('Command name or aliase already used', null)
         if (names.some(o => o.name === data.name) || aliases.some(o => names.includes(o))) return cb('Command name or aliase already used', null)

@@ -1,19 +1,21 @@
 const socket = require('socket.io-client')
 const { say } = require('../systems/customCommands')
-const { io } = require("../libs/panel")
+const { io } = require('../libs/panel')
 
 class StreamLabs {
-  constructor() {
+  constructor () {
     this.connect()
     this.sockets()
   }
-  async disconnect() {
+
+  async disconnect () {
     if (this.socket) {
       this.socket.removeAllListeners()
       this.socket.disconnect()
     }
   }
-  async connect() {
+
+  async connect () {
     this.disconnect()
     this.settings = (await global.db('integrations').select('*').where('name', 'streamlabs'))[0]
     if (!this.settings.enabled || this.settings.settings.token === null) return this.disconnect()
@@ -24,7 +26,7 @@ class StreamLabs {
       })
       this.socket.on('reconnect_attempt', () => {
         console.log('STREAMLABS: Trying to reconnect to service')
-      });
+      })
       this.socket.on('disconnect', () => {
         console.log('STREAMLABS: Socket disconnected from service')
         if (this.socket) {
@@ -34,6 +36,7 @@ class StreamLabs {
       this.socket.on('event', data => this.parse(data))
     }
   }
+
   async parse (data) {
     if (data.type === 'donation') {
       if (!data.isTest) {
@@ -42,18 +45,18 @@ class StreamLabs {
       await say(`/me ${data.message[0].from} ${data.message[0].amount}${data.message[0].currency} ${data.message[0].message}`)
     }
   }
-  async sockets() {
-    let self = this
+
+  async sockets () {
+    const self = this
     io.on('connection', function (socket) {
       socket.on('settings.streamlabs', async (data, cb) => {
-        let query = (await global.db('integrations').select('*').where('name', 'streamlabs'))[0]
+        const query = (await global.db('integrations').select('*').where('name', 'streamlabs'))[0]
         cb(null, query)
       })
       socket.on('update.settings.streamlabs', async (data, cb) => {
         await global.db('integrations').where('name', 'streamlabs').update(data)
         self.connect()
       })
-
     })
   }
 }

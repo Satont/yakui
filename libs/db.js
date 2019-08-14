@@ -1,32 +1,28 @@
 const knex = require('knex')({
   client: 'pg',
-  connection:  {
+  connection: {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD, 
+    password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     ssl: true
   },
-  //debug: true,
+  // debug: true,
   pool: {
+    min: 0,
+    max: 10,
     afterCreate: function (conn, done) {
-      console.log('Connected to db')
+      console.log('Pool created')
       knex.connected = true
       done(null, conn)
     }
-  },
-  postProcessResponse: (result, queryContext) => {
-    if (Array.isArray(result) && result.length < 2) {
-      //return result[0]
-      return result
-    } else return result
   }
 })
 
-
-async function test() {
-  let test = await knex('systems.moderation').where({name: 'color'})
+// we need this workround for test connection
+async function connect () {
+  await knex.raw('SELECT VERSION()')
 }
-test()
+connect()
 module.exports = knex

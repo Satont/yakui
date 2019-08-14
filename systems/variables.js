@@ -1,11 +1,11 @@
-const { io } = require("../libs/panel")
+const { io } = require('../libs/panel')
 const commons = require('../libs/commons')
 const _ = require('lodash')
 const shortEnglish = require('humanize-duration').humanizer({
   language: 'shortEn',
   languages: {
     shortEn: {
-      h: () => 'h',
+      h: () => 'h'
     }
   },
   units: ['h'],
@@ -17,11 +17,11 @@ const notable = require('./notable')
 const users = require('./users')
 
 class Variables {
-  async prepareMessage(response, userstate, message) {
-    let numbersRegexp = /[random]+\((.*?)\)/
-    let variableRegexp = /\$_(\S*)/g
-    let songRegexp = /\$song(\S*)/g
-  
+  async prepareMessage (response, userstate, message) {
+    const numbersRegexp = /[random]+\((.*?)\)/
+    const variableRegexp = /\$_(\S*)/g
+    const songRegexp = /\$song(\S*)/g
+
     if (response.includes('$sender')) {
       response = response.replace('$sender', '@' + userstate['display-name'])
     }
@@ -31,7 +31,7 @@ class Variables {
     if (response.includes('$followtime')) {
       if (message.length) {
         try {
-          let target = await users.getIdByUsername(message.replace('@', ''))
+          const target = await users.getIdByUsername(message.replace('@', ''))
           response = `@${userstate['display-name']} ${message} ===> ${await commons.prepareFollowTime(target)}`
         } catch (e) {
           response = `@${userstate['display-name']} Info about ${message} wasn't found`
@@ -42,23 +42,23 @@ class Variables {
       response = response.replace('$subs', global.tmi.subscribers)
     }
     if (response.includes('$stream_viewers')) {
-      let viewers = global.tmi.streamData ? global.tmi.streamData.viewers : 0
+      const viewers = global.tmi.streamData ? global.tmi.streamData.viewers : 0
       response = response.replace('$stream_viewers', viewers)
     }
     if (response.includes('$stream_game')) {
-      let game = global.tmi.channelData ? global.tmi.channelData.game : 'no info'
+      const game = global.tmi.channelData ? global.tmi.channelData.game : 'no info'
       response = response.replace('$stream_game', game)
     }
     if (response.includes('$stream_title')) {
-      let title = global.tmi.channelData ? global.tmi.channelData.status : 'no info'
+      const title = global.tmi.channelData ? global.tmi.channelData.status : 'no info'
       response = response.replace('$stream_title', title)
     }
     if (response.includes('$channel_views')) {
-      let views = global.tmi.channelData ? global.tmi.channelData.views : 'no info'
+      const views = global.tmi.channelData ? global.tmi.channelData.views : 'no info'
       response = response.replace('$channel_views', views)
     }
     if (response.includes('$channel_followers')) {
-      let followers = global.tmi.channelData ? global.tmi.channelData.followers : 'no info'
+      const followers = global.tmi.channelData ? global.tmi.channelData.followers : 'no info'
       response = response.replace('$channel_followers', followers)
     }
     if (response.includes('$latestSub')) {
@@ -68,11 +68,11 @@ class Variables {
       response = response.replace('$latestReSub', await commons.getLatestSubOrResub('resub'))
     }
     if (response.includes('$commands')) {
-      let query = await global.db.select(`*`).from('systems.commands').where('visible', true)
-      response = response.replace('$commands', query.map(val => { return '!' + val.name }).join(", "))
+      const query = await global.db.select(`*`).from('systems.commands').where('visible', true)
+      response = response.replace('$commands', query.map(val => { return '!' + val.name }).join(', '))
     }
     if (response.includes('$song')) {
-      let query = response.match(songRegexp)[0].replace('$song?', '')
+      const query = response.match(songRegexp)[0].replace('$song?', '')
       response = response.replace(response.match(songRegexp), await commons.getSong(query))
     }
     if (response.includes('$param')) {
@@ -103,12 +103,12 @@ class Variables {
     if (response.includes('$medal')) {
       response = response.replace('$medal', await notable.medal())
     }
-    if (response.includes('$messages') || response.includes('$tips') || response.includes('$bits') || 
+    if (response.includes('$messages') || response.includes('$tips') || response.includes('$bits') ||
     response.includes('$points') || response.includes('$watched') || response.includes('$pointsName')) {
       let user
       if (message.length) {
         try {
-          let target = await users.getIdByUsername(message.replace('@', ''))
+          const target = await users.getIdByUsername(message.replace('@', ''))
           user = await global.db('users').where({ id: target })
         } catch (e) {
           response = `@${userstate['display-name']} Info about ${message} wasn't found`
@@ -124,31 +124,31 @@ class Variables {
       response = response.replace('$pointsName', commons.declOfNum(user.points, users.settings.pointsName.split('|')))
     }
     if (response.includes('$top_messages')) {
-      let ignoredUsers = (await global.db('settings').select('*').where('system', 'users'))[0].data.ignorelist
+      const ignoredUsers = (await global.db('settings').select('*').where('system', 'users'))[0].data.ignorelist
       let users = await global.db('users').select('*').orderBy('messages', 'desc').limit(10).whereNotIn('username', ignoredUsers).whereNot('id', global.tmi.channelID)
       users = users.map(o => `${users.indexOf(o) + 1}. ${o.username} - ${o.messages}`)
       response = response.replace('$top_messages', users.join(', '))
     }
     if (response.includes('$top_watched')) {
-      let ignoredUsers = (await global.db('settings').select('*').where('system', 'users'))[0].data.ignorelist
+      const ignoredUsers = (await global.db('settings').select('*').where('system', 'users'))[0].data.ignorelist
       let users = await global.db('users').select('*').orderBy('watched', 'desc').limit(10).whereNotIn('username', ignoredUsers).whereNot('id', global.tmi.channelID)
       users = users.map(o => `${users.indexOf(o) + 1}. ${o.username} - ${shortEnglish(o.watched)}`)
       response = response.replace('$top_watched', users.join(', '))
     }
     if (response.includes('$top_bits')) {
-      let ignoredUsers = (await global.db('settings').select('*').where('system', 'users'))[0].data.ignorelist
+      const ignoredUsers = (await global.db('settings').select('*').where('system', 'users'))[0].data.ignorelist
       let users = await global.db('users').select('*').orderBy('bits', 'desc').limit(10).whereNotIn('username', ignoredUsers).whereNot('id', global.tmi.channelID)
       users = users.map(o => `${users.indexOf(o) + 1}. ${o.username} - ${o.bits}`)
       response = response.replace('$top_bits', users.join(', '))
     }
     if (response.includes('$top_tips')) {
-      let ignoredUsers = (await global.db('settings').select('*').where('system', 'users'))[0].data.ignorelist
+      const ignoredUsers = (await global.db('settings').select('*').where('system', 'users'))[0].data.ignorelist
       let users = await global.db('users').select('*').orderBy('tips', 'desc').limit(10).whereNotIn('username', ignoredUsers).whereNot('id', global.tmi.channelID)
       users = users.map(o => `${users.indexOf(o) + 1}. ${o.username} - ${o.tips}`)
       response = response.replace('$top_tips', users.join(', '))
     }
     if (response.includes('$top_points')) {
-      let ignoredUsers = (await global.db('settings').select('*').where('system', 'users'))[0].data.ignorelist
+      const ignoredUsers = (await global.db('settings').select('*').where('system', 'users'))[0].data.ignorelist
       let users = await global.db('users').select('*').orderBy('points', 'desc').limit(10).whereNotIn('username', ignoredUsers).whereNot('id', global.tmi.channelID)
       users = users.map(o => `${users.indexOf(o) + 1}. ${o.username} - ${o.points}`)
       response = response.replace('$top_points', users.join(', '))
@@ -166,13 +166,13 @@ class Variables {
       response = response.replace('$', '').replace(/[random]+\((.*?)\)/, numbers)
     }
     if (response.includes('(random.viewer)')) {
-      let filteredUsers = users.onlineUsers.filter(o => !users.settings.ignorelist.includes(o.username.toLowerCase()))
+      const filteredUsers = users.onlineUsers.filter(o => !users.settings.ignorelist.includes(o.username.toLowerCase()))
       response = response.replace('(random.viewer)', _.sample(filteredUsers).username)
     }
     // реплейсить кастомную переменную на значение
     if (response.match(variableRegexp)) {
-      for (let [index, variable] of response.match(variableRegexp).entries()) {
-        let findVariable = (await global.db('systems.variables').where('name', variable.replace('$_', '')))[0]
+      for (const [index, variable] of response.match(variableRegexp).entries()) {
+        const findVariable = (await global.db('systems.variables').where('name', variable.replace('$_', '')))[0]
         response = findVariable ? response.replace(variable, findVariable.value) : response + ''
       }
     }
@@ -184,7 +184,7 @@ module.exports = new Variables()
 
 io.on('connection', function (socket) {
   socket.on('list.variables', async (data, cb) => {
-    let query = await global.db.select(`*`).from('systems.variables')
+    const query = await global.db.select(`*`).from('systems.variables')
     cb(null, query)
   })
   socket.on('create.variable', async (data, cb) => {
@@ -202,7 +202,7 @@ io.on('connection', function (socket) {
     }
   })
   socket.on('update.variable', async (data, cb) => {
-    let name = data.currentname
+    const name = data.currentname
     delete data.currentname
     try {
       await global.db('systems.variables').where('name', name).update(data)

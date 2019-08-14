@@ -1,6 +1,6 @@
 let path = '.env'
 switch (process.env.NODE_ENV) {
-  case 'development': path = '.env.dev'; break;
+  case 'development': path = '.env.dev'; break
 }
 require('dotenv').config({ path: path })
 module.exports = {

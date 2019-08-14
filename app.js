@@ -1,16 +1,16 @@
 let path = '.env'
 switch (process.env.NODE_ENV) {
-  case 'development': path = '.env.dev'; break;
+  case 'development': path = '.env.dev'; break
 }
 require('dotenv').config({ path: path })
 
 global.db = require('./libs/db')
 
-async function load() {
+async function load () {
   if (!global.db.connected) return setTimeout(() => load(), 100)
   global.tmi = require('./libs/tmi')
   require('./libs/panel')
-  
+
   require('./systems/customCommands')
   require('./systems/variables')
   require('./systems/moderation')
@@ -28,16 +28,15 @@ async function load() {
 }
 load()
 
-
 process.on('uncaughtException', function (err) {
-  console.log(err);
-}); 
+  console.log(err)
+})
 
-function clearRam() {
+function clearRam () {
   try {
     if (global.gc) global.gc()
   } catch (e) {
-    console.log("`node --expose-gc app.js`")
+    console.log('`node --expose-gc app.js`')
   }
   setTimeout(() => clearRam(), 15 * 60 * 1000)
 }

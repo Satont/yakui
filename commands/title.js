@@ -6,7 +6,7 @@ module.exports = {
   name: 'title',
   visible: false,
   permission: 'moderator',
-  async run(command, message, userstate) {
+  async run (command, message, userstate) {
     message = message.split(' '); message.shift(); message = message.join(' ')
     if (!permissions.hasPerm(userstate.badges, this.permission) || !message.length) {
       return say(`${userstate.username} ${global.tmi.streamData.channel.status}`)

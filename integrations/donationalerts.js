@@ -1,27 +1,29 @@
 const socket = require('socket.io-client')
 const { say } = require('../systems/customCommands')
-const { io } = require("../libs/panel")
+const { io } = require('../libs/panel')
 
 class DonationAlerts {
-  constructor() {
+  constructor () {
     this.connect()
     this.sockets()
-    this.repeat = setInterval(() => this.connect(), 1 * 60 * 60 * 1000) //reconnect each hour
+    this.repeat = setInterval(() => this.connect(), 1 * 60 * 60 * 1000) // reconnect each hour
   }
-  async disconnect() {
+
+  async disconnect () {
     if (this.socket) {
       this.socket.removeAllListeners()
       this.socket.disconnect()
     }
   }
-  async connect() {
+
+  async connect () {
     this.disconnect()
     this.settings = (await global.db('integrations').select('*').where('name', 'donationalerts'))[0]
-    if (!this.settings.enabled || this.settings.settings.token === null) return 
-    this.socket = socket.connect('wss://socket.donationalerts.ru:443', { 
-      reconnection: true, 
-      reconnectionDelay: 1000, 
-      reconnectionDelayMax: 5000, 
+    if (!this.settings.enabled || this.settings.settings.token === null) return
+    this.socket = socket.connect('wss://socket.donationalerts.ru:443', {
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
       reconnectionAttempts: Infinity
     })
     if (this.socket !== null) {
@@ -31,7 +33,7 @@ class DonationAlerts {
       })
       this.socket.on('reconnect_attempt', () => {
         console.log('DONATIONALERTS.RU: Trying to reconnect to service')
-      });
+      })
       this.socket.on('disconnect', () => {
         console.log('DONATIONALERTS.RU: Socket disconnected from service')
         this.disconnect()
@@ -46,18 +48,18 @@ class DonationAlerts {
       })
     }
   }
-  async sockets() {
-    let self = this
+
+  async sockets () {
+    const self = this
     io.on('connection', function (socket) {
       socket.on('settings.donationalerts', async (data, cb) => {
-        let query = (await global.db('integrations').select('*').where('name', 'donationalerts'))[0]
+        const query = (await global.db('integrations').select('*').where('name', 'donationalerts'))[0]
         cb(null, query)
       })
       socket.on('update.settings.donationalerts', async (data, cb) => {
         await global.db('integrations').where('name', 'donationalerts').update(data)
         self.connect()
       })
-
     })
   }
 }

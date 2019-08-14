@@ -12,6 +12,11 @@
   "engines": {
     "node": ">=12"
   },
+  "standard": {
+    "ignore": [
+      "/public/dist/build.js"
+    ]
+  },
   "author": "Satont",
   "license": "MIT",
   "dependencies": {
@@ -49,5 +54,8 @@
     "vue-template-compiler": "^2.6.10",
     "webpack": "^4.36.1",
     "webpack-cli": "^3.3.6"
+  },
+  "devDependencies": {
+    "standard": "^13.1.0"
   }
 }

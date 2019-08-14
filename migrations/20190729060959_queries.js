@@ -1,5 +1,5 @@
 
-exports.up = async function(knex) {
+exports.up = async function (knex) {
   await knex.raw('CREATE SCHEMA IF NOT EXISTS systems')
   await knex.raw('CREATE SCHEMA IF NOT EXISTS core')
 
@@ -43,6 +43,6 @@ exports.up = async function(knex) {
   })
 }
 
-exports.down = function(knex) {
-  
-};
+exports.down = function (knex) {
+
+}

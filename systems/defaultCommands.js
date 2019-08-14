@@ -1,10 +1,11 @@
 const fs = require('fs')
 class DefaulCommands {
-  constructor() {
+  constructor () {
     this.commands = new Map()
     this.load()
   }
-  async load() {
+
+  async load () {
     const { getDefaultCommandPermission } = require('../libs/permissions')
 
     const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'))
