@@ -1,7 +1,7 @@
 const { fastify, io } = require("../libs/panel")
 const SpotifyWebApi = require('spotify-web-api-node')
 
-class Qiwi {
+class Spotify {
   scopes = [
     'user-read-currently-playing',
     'user-read-private',
@@ -88,4 +88,4 @@ class Qiwi {
   }
 }
 
-module.exports = new Qiwi()
+module.exports = new Spotify()
