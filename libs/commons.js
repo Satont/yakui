@@ -4,6 +4,7 @@ const humanizeDuration = require('humanize-duration')
 const _ = require('lodash')
 const axios = require('axios')
 const safeEval = require('safe-eval')
+const spotify = require('../integrations/spotify')
 
 class Commons {
   constructor() {
@@ -57,6 +58,10 @@ class Commons {
     return humanizeDuration(moment.duration(diff), { units: ['y', 'mo', 'd', 'h', 'm'], round: true, language: process.env.BOT_LANG })
   }
   async getSong(params) {
+    if (spotify.settings.enabled) {
+      let data = await spotify.nowPlaying()
+      if (data) return data
+    }
     let url = 'http://api.satont.ru/song?'
     let response = await fetch(url + params)
     let data = response.text()

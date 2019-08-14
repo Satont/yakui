@@ -4,17 +4,26 @@
       <span v-show="enabled">Enabled</span>
       <span v-show="!enabled">Disabled</span>
       </button>
-    <button type="button" class="btn btn-block btn-sm btn-info" @click="save" style="margin-top: 5px;">Save</button>
+    <button type="button" class="btn btn-block btn-sm btn-info" @click="save" style="margin-top: 5px;">Authorize!</button>
     <br>
     <div class="input-group input-group-sm mb-3">
-    <div class="input-group-prepend">
-      <span class="input-group-text" id="inputGroup-sizing-sm">Secret token</span>
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-sm">clientId</span>
+      </div>
+      <input class="form-control" v-model="settings.clientId">
     </div>
-    <input class="form-control" v-model="token">
-    <div class="input-group-append">
-        <button class="btn btn-info" type="button" id="popover" data-toggle="popover" title="Where to get token?" data-content="Settings -> General settings -> Secret token">?</button>
+    <div class="input-group input-group-sm mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-sm">clientSecret</span>
+      </div>
+      <input class="form-control" v-model="settings.clientSecret">
     </div>
-  </div>
+    <div class="input-group input-group-sm mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-sm">redirectUri</span>
+      </div>
+      <input class="form-control" v-model="settings.redirectUri">
+    </div>
 </div>
 </template>
 
@@ -23,7 +32,11 @@ export default {
   data: function() {
     return {
       enabled: false,
-      settings: {}
+      settings: {
+        clientId: null,
+        clientSecret: null,
+        redirectUri: null
+      }
     };
   },
   mounted() {
@@ -32,19 +45,20 @@ export default {
       this.enabled = settings.enabled
       this.settings = settings.settings
     })
-    $('#popover').popover()
   },
   methods: {
     save() {
-      let data = { enabled: this.enabled, settings: { token: this.token } }
-      this.$socket.emit('update.settings.donationalerts', data)
+      this.$socket.emit('spotify.auth', this.$data, async (err, data) => {
+        if (err)  {
+          alert('Some problem with your settings');
+          console.log(err)
+        }
+        else {
+          console.log(data)
+          window.location.href = data
+        }
+      })
     }
   },
 };
 </script>
-
-<style>
-.popover-header {
-  color:#000;
-}
-</style>

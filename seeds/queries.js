@@ -121,7 +121,7 @@ exports.seed = function (knex) {
       }),
       knex('integrations').select().where('name', 'spotify').then((rows) => {
         if (rows[0]) return
-        return knex('integrations').where('name', 'spotify').insert({ name: 'spotify', enabled: false, settings: { clientId: null, clientSecret: null, redirectUri: null, access_token: null, refresh_token: null } })
+        return knex('integrations').where('name', 'spotify').insert({ name: 'spotify', enabled: false, settings: { clientId: null, clientSecret: null, redirectUri: null, accessToken: null, refreshToken: null } })
        })
     ]);
 };

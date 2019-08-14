@@ -36,6 +36,7 @@ import notable from './vue/settings/notable.vue'
 import donationalerts from './vue/integrations/donationalerts.vue'
 import streamlabs from './vue/integrations/streamlabs.vue'
 import qiwi from './vue/integrations/qiwi.vue'
+import spotify from './vue/integrations/spotify.vue'
 
 Vue.use(new VueSocketIO({
   debug: true,
@@ -76,6 +77,7 @@ const routes = [
   { path: '/integrations/donationalerts', component: donationalerts },
   { path: '/integrations/streamlabs', component: streamlabs },
   { path: '/integrations/qiwi', component: qiwi },
+  { path: '/integrations/spotify', component: spotify },
 ]
 
 const router = new VueRouter({
@@ -142,6 +144,7 @@ new Vue({
               <router-link to="/integrations/donationalerts" class="nav-link nav-link2">Donationalerts</router-link>
               <router-link to="/integrations/streamlabs" class="nav-link nav-link2">StreamLabs</router-link>
               <router-link to="/integrations/qiwi" class="nav-link nav-link2">Qiwi</router-link>
+              <router-link to="/integrations/spotify" class="nav-link nav-link2">Spotify</router-link>
             </div>
           </li>
           </li>
