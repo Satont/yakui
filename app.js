@@ -24,6 +24,7 @@ async function load() {
   require('./integrations/donationalerts')
   require('./integrations/streamlabs')
   require('./integrations/qiwi')
+  require('./integrations/spotify')
 }
 load()
 

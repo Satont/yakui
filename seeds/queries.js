@@ -119,5 +119,9 @@ exports.seed = function (knex) {
           nolinkedaccs: 'Here is no linked accs'
          } })
       }),
+      knex('integrations').select().where('name', 'spotify').then((rows) => {
+        if (rows[0]) return
+        return knex('integrations').where('name', 'spotify').insert({ name: 'spotify', enabled: false, settings: { clientId: null, clientSecret: null, redirectUri: null, access_token: null, refresh_token: null } })
+       })
     ]);
 };
