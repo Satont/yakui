@@ -49,7 +49,7 @@ class Qiwi {
     if (!this.client) return false
     return this.client.getMyCurrentPlayingTrack({
     }).then(data => {
-      return `${data.body.item.artists[0].name} — ${data.body.item.name}`
+      return `${data.body.item.artists.map(o => o.name).join(', ')} — ${data.body.item.name}`
     }, err => {
       console.log(err)
       return null
