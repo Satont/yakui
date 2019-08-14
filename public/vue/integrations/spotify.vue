@@ -44,6 +44,7 @@ export default {
     this.$socket.emit('settings.spotify', null, (err, settings) => {
       this.enabled = settings.enabled
       this.settings = settings.settings
+      if (!this.settings.redirectUri) this.settings.redirectUri = `${window.location.origin}/integrations/spotify/callback`
     })
   },
   methods: {
