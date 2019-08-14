@@ -42,17 +42,15 @@ class Keywords {
       })
       socket.on('delete.keyword', async (data, cb) => {
         try {
-          await global.db('systems.keywords').where('name', data.replace('%20', ' ')).delete()
+          await global.db('systems.keywords').where('id', data).delete()
           self.getKeywordsList()
         } catch (e) {
           console.log(e)
         }
       })
       socket.on('update.keyword', async (data, cb) => {
-        let name = data.currentname.replace('%20', ' ')
-        delete data.currentname
         try {
-          await global.db('systems.keywords').where('name', name).update(data)
+          await global.db('systems.keywords').where('id', data.id).update(data)
           self.getKeywordsList()
           cb(null, true)
         } catch (e) {

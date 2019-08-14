@@ -51,13 +51,14 @@ export default {
       this.$router.push("timers/create");
     },
     deletetimer(timer, index) {
-      this.$socket.emit('delete.timer', timer.name)
+      this.$socket.emit('delete.timer', timer.id)
       this.timers.splice(index, 1);
     },
     edittimer(timer) {
       this.$router.push({
         name: "editTimer",
         params: {
+          id: timer.id,
           name: timer.name,
           interval: timer.interval,
           responses: timer.responses

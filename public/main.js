@@ -52,19 +52,19 @@ const routes = [
 
   { path: '/commands', component: Commands },
   { path: '/commands/create', component: createCommand },
-  { path: '/commands/edit/:name', name: 'editCommand', component: editCommand },
+  { path: '/commands/edit/:id', name: 'editCommand', component: editCommand },
 
   { path: '/keywords', component: keywords },
   { path: '/keywords/create', component: createKeyword },
-  { path: '/keywords/edit/:name', name: 'editKeyword', component: editKeyword },
+  { path: '/keywords/edit/:id', name: 'editKeyword', component: editKeyword },
 
   { path: '/variables', component: Variables },
   { path: '/variables/create', component: createVariable },
-  { path: '/variables/edit/:name', name: 'editVariable', component: editVariable },
+  { path: '/variables/edit/:id', name: 'editVariable', component: editVariable },
 
   { path: '/timers', component: timers },
   { path: '/timers/create', component: createTimer },
-  { path: '/timers/edit/:name', name: 'editTimer', component: editTimer },
+  { path: '/timers/edit/:id', name: 'editTimer', component: editTimer },
 
   { path: '/overlays', component: overlays },
   { path: '/overlays/create', component: createOverlay },

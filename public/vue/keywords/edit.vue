@@ -36,6 +36,7 @@
 export default {
   data: function() {
     return {
+      id: this.$route.params.id,
       name: this.$route.params.name,
       response: this.$route.params.response,
       visible: this.$route.params.visible
@@ -49,16 +50,14 @@ export default {
   },
   methods: {
     del(keyword, index) {
-      let currentname = window.location.href.split('/')
-      this.$socket.emit('delete.keyword', currentname[currentname.length - 1])
+      this.$socket.emit('delete.keyword', keyword.id)
       this.$router.push("/keywords")
     },
     create() {
       if (!this.name || !this.response) return
       if (this.name.length > 100) return alert('Stop trying to hack me')
-      let currentname = window.location.href.split('/')
       let data = this.$data
-      this.$socket.emit('update.keyword', { currentname: currentname[currentname.length - 1], ...data }, async (err, data) => {
+      this.$socket.emit('update.keyword', { ...data }, async (err, data) => {
         if (err) return alert(err)
         this.$router.push("/keywords")
       })
@@ -67,7 +66,8 @@ export default {
   mounted() {
     if (!this.response) {
       this.$socket.emit("list.keywords", {}, (err, list) => {
-        let find = list.find(o => o.name === this.name)
+        let find = list.find(o => o.id === this.id)
+        this.id = find.id
         this.name = find.name
         this.response = find.response
         this.visible = find.visible

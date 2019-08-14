@@ -50,6 +50,7 @@ export default {
       this.$router.push({
         name: "editCommand",
         params: {
+          id: command.id,
           name: command.name,
           response: command.response,
           permission: command.permission,
