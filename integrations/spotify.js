@@ -81,7 +81,7 @@ class Qiwi {
         self.settings.settings.refreshToken = data.body['refresh_token']
         await global.db('integrations').where('name', 'spotify').update({ settings: self.settings.settings })
         self.start()
-        reply.redirect(`${request.headers.host}/#/integrations/spotify`)
+        reply.redirect(`http://${request.headers.host}/#/integrations/spotify`)
       }, err => console.log(err))
     })
   }
