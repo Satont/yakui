@@ -122,10 +122,8 @@ class CustomCommands {
         if (aliases.some(o => data.aliases.includes(o)) || names.some(o => data.aliases.includes(o))) return cb('Command name or aliase already used', null)
         if (names.some(o => o.name === data.name) || aliases.some(o => names.includes(o))) return cb('Command name or aliase already used', null)
 
-        let name = data.currentname.replace('%20', ' ')
-        delete data.currentname
         try {
-          await global.db('systems.commands').where('name', name).update(data)
+          await global.db('systems.commands').where('id', data.id).update(data)
           self.getCommands()
           cb(null, true)
         } catch (e) {

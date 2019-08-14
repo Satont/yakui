@@ -50,6 +50,7 @@ export default {
       this.$router.push({
         name: "editKeyword",
         params: {
+          id: keyword.id,
           name: keyword.name,
           response: keyword.response,
           visible: keyword.visible,

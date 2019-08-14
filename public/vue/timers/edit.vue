@@ -38,6 +38,7 @@
 export default {
   data: function() {
     return {
+      id: this.$route.params.id,
       name: this.$route.params.name,
       interval: this.$route.params.interval,
       responses: this.$route.params.responses
@@ -59,13 +60,14 @@ export default {
     save() {
       if (!this.name || !this.interval || !this.responses.length) return
       if (this.name.length > 15) return alert('Stop trying to hack me')
-      this.$socket.emit("update.timer", { name: this.name, interval: this.interval, responses: this.responses })
+      this.$socket.emit("update.timer", this.$data)
     }
   },
   mounted() {
     if (!this.interval) {
       this.$socket.emit("list.timers", {}, (err, list) => {
-        let find = list.find(o => o.name === this.name)
+        let find = list.find(o => o.id === this.id)
+        this.id = find.id
         this.name = find.name
         this.responses = find.responses
         this.interval = find.interval

@@ -80,6 +80,7 @@ export default {
   components: { Multiselect },
   data: function() {
     return {
+      id: this.$route.params.id,
       name: this.$route.params.name,
       response: this.$route.params.response,
       permission: this.$route.params.permission,
@@ -107,10 +108,10 @@ export default {
       if (this.name.length > 15) return alert('Stop trying to hack me')
       if (this.cooldowntype !== 'notstop' && this.cooldowntype !== 'stop') return alert('Stop trying to hack me')
       if (this.permission !== 'broadcaster' && this.permission !== 'moderator' && this.permission !== 'vip' && this.permission !== 'subscriber' && this.permission !== 'viewer') return
-      let currentname = window.location.href.split('/')
+
       let data = this.$data
       delete data.options
-      this.$socket.emit('update.command', { currentname: currentname[currentname.length - 1], ...data }, async (err, data) => {
+      this.$socket.emit('update.command', { ...data }, async (err, data) => {
         if (err) return alert(err)
 
         this.$router.push("/commands")
@@ -123,7 +124,8 @@ export default {
   mounted() {
     if (!this.response) {
       this.$socket.emit("list.commands", {}, (err, list) => {
-        let find = list.find(o => o.name === this.name)
+        let find = list.find(o => o.id === this.id)
+        this.id = find.id
         this.name = find.name
         this.response = find.response
         this.cooldown = find.cooldown,
