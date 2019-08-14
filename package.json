@@ -9,6 +9,9 @@
     "dev": "cross-env NODE_ENV=development npx knex migrate:latest --env development && cross-env NODE_ENV=development npx knex seed:run --env development && cross-env NODE_ENV=development node --expose-gc app.js",
     "build": "npx webpack"
   },
+  "engines": {
+    "node": ">=12"
+  },
   "author": "Satont",
   "license": "MIT",
   "dependencies": {
@@ -24,7 +27,6 @@
     "fastify-session": "^3.0.0",
     "fastify-static": "^2.5.0",
     "humanize-duration": "^3.20.0",
-    "i": "^0.3.6",
     "knex": "^0.19.0",
     "lodash": "^4.17.14",
     "moment": "^2.24.0",
