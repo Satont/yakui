@@ -26,7 +26,7 @@ class Qiwi {
     if (this.client) this.client = null
 
     this.client = new SpotifyWebApi(this.settings.settings)
-    this.refreshInterval = setInterval(() => this.refreshToken(), 60 * 60 * 1000)
+    this.refreshInterval = setInterval(() => this.refreshToken(), 60 * 1000)
   }
   async generateAuthLink() {
     if (!this.client) return false
