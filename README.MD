@@ -24,6 +24,7 @@
 	- StreamLabs
 	- DonationAlerts
 	- Qiwi Donate
+	- Spotify
 - Dota 2 notableplayers system
 - Keywords system
 - Overlays system

@@ -56,4 +56,4 @@ fastify.listen(PORT, '0.0.0.0', (err, address) => {
   console.log(`server listening on ${address}`)
 })
 
-module.exports = { io, PORT }
+module.exports = { fastify, io, PORT }
