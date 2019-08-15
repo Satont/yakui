@@ -36,13 +36,11 @@ class CustomCommands {
     } else if (this.cooldowns.includes(find.name) && find.cooldowntype === 'notstop') {
       userstate['message-type'] = 'whisper'
     } else this.cooldowns.push(find.name)
-
-    for (const item of find.aliases) {
+    
+    for (const item of _.concat(find.aliases, find.name).reverse()) {
       message = _.replace(message, item, '')
     }
-
-    message = message.replace(find.name, '')
-
+   
     if (message.startsWith(' ')) message = message.slice(1)
 
     this.prepareMessage(find.response, message, userstate)
