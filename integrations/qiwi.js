@@ -20,8 +20,8 @@ class Qiwi {
       const data = await request.data
       if (data.events.length === 0) return
       for (const event of data.events) {
-        const username = event.attributes.DONATION_SENDER ? event.attributes.DONATION_SENDER.toLowerCase().replace(' ', '') : 'anonym'
-        global.db('users').where({ username }).increment({ tips: event.attributes.DONATION_AMOUNT }).catch(() => {})
+        const username = event.attributes.DONATION_SENDER ? event.attributes.DONATION_SENDER.replace(' ', '') : 'anonym'
+        global.db('users').where({ username: username.toLowerCase() }).increment({ tips: event.attributes.DONATION_AMOUNT }).catch(() => {})
         await say(`/me ${username} ${event.attributes.DONATION_AMOUNT}${event.attributes.DONATION_CURRENCY} ${event.attributes.DONATION_MESSAGE ? event.attributes.DONATION_MESSAGE : ''}`)
       }
     } catch (e) {
