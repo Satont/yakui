@@ -66,12 +66,11 @@
       </div>
       </div>
 
-      <div class="tab-pane fade" id="list" role="tabpanel" aria-labelledby="list-tab">...</div>
-
+      <div class="tab-pane fade" id="list" role="tabpanel" aria-labelledby="list-tab">
+        <b-table striped hover :items="users"></b-table>
       </div>
+        
     </div>
-
-
 </div>
 </template>
 
@@ -83,7 +82,8 @@ export default {
       pointsPerMessage: 0,
       pointsPerTime: 0,
       pointsName: null,
-      ignorelist: null
+      ignorelist: null,
+      users: []
     };
   },
   mounted() {
@@ -94,6 +94,10 @@ export default {
       this.pointsPerTime = list.data.pointsPerTime
       this.pointsName = list.data.pointsName
       this.ignorelist = list.data.ignorelist.join('\n')
+    })
+    this.$socket.emit('users.get', null, (err, list) => {
+      console.log(list)
+      this.users = list
     })
   },
   methods: {

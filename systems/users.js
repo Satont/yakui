@@ -86,6 +86,10 @@ class Users {
         await global.db('settings').where('system', 'users').update({ data })
         self.start()
       })
+      socket.on('users.get', async (data, cb) => {
+        const users = await global.db('users').select('*')
+        cb(null, await users)
+      })
     })
   }
 }
