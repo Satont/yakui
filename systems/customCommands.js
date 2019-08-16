@@ -79,14 +79,17 @@ class CustomCommands {
   }
 
   async say (msg) {
+    if (process.env.NODE_ENV !== 'production') return console.log(msg)
     global.tmi.client.say(process.env.TWITCH_CHANNEL, msg).catch(console.log)
   }
 
   async whisper (username, message) {
+    if (process.env.NODE_ENV !== 'production') return console.log(message)
     await global.tmi.client.whisper(username, message).catch(console.log)
   }
 
   async timeout (username, time) {
+    if (process.env.NODE_ENV !== 'production') return console.log(userna, timeout)
     global.tmi.client.timeout(process.env.TWITCH_CHANNEL, username, time).catch(console.log)
   }
 
