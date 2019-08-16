@@ -58,7 +58,7 @@ class Users {
 
   async getIdByUsername (username) {
     try {
-      const request = await axios.get(`https://api.twitch.tv/helix/users?login=${username}`, { headers: { Authorization: `Bearer ${global.tmi.token}` } })
+      const request = await axios.get(`https://api.twitch.tv/helix/users?login=${username}`, { headers: { 'Client-ID': process.env.TWITCH_CLIENTID } })
       return request.data.data[0].id
     } catch (e) {
       throw new Error(e.stack)
@@ -67,7 +67,7 @@ class Users {
 
   async getUsersByUsername (users) {
     try {
-      const request = await axios.get(`https://api.twitch.tv/helix/users?login=${users.join('&login=')}`, { headers: { Authorization: `Bearer ${global.tmi.token}` } })
+      const request = await axios.get(`https://api.twitch.tv/helix/users?login=${users.join('&login=')}`, { headers: { 'Client-ID': process.env.TWITCH_CLIENTID } })
       const data = await request.data.data
       return data
     } catch (e) {
