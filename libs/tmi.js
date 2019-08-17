@@ -41,6 +41,8 @@ class TwitchTmi {
     await this.getChannelId()
     await this.getUptimeAndViewers()
     await this.getChannelInfo()
+    setInterval(() => this.getToken(), 1 * 60 * 1000)
+    setInterval(() => this.getBroadcasterToken(), 1 * 60 * 1000)
     this.subsCheckInterval = setInterval(() => this.getSubscribers(), 1 * 30 * 1000)
     await this.getSubscribers()
   }
