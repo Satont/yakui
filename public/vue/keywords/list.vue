@@ -53,7 +53,7 @@ export default {
           id: keyword.id,
           name: keyword.name,
           response: keyword.response,
-          response: keyword.cooldown,
+          cooldown: keyword.cooldown,
           visible: keyword.visible,
         }
       });
