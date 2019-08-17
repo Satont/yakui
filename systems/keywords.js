@@ -5,6 +5,7 @@ const { say } = require('./customCommands')
 class Keywords {
   constructor () {
     this.keywords = []
+    this.cooldowns = []
     this.sockets()
     this.getKeywordsList()
   }
@@ -17,6 +18,14 @@ class Keywords {
   }
 
   async respond (item, message, userstate) {
+    if (this.cooldowns.includes(item.name)) return
+    else {
+      this.cooldowns.push(item.name)
+      setTimeout(() => {
+        const index = this.cooldowns.indexOf(item.name)
+        if (index !== -1) this.cooldowns.splice(index, 1)
+      }, item.cooldown * 1000)
+    }
     let response = item.response
     response = await variables.prepareMessage(response, userstate, message)
     await say(response)

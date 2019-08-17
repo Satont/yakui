@@ -16,15 +16,17 @@
       <div class="input-group-prepend">
         <span class="input-group-text" id="inputGroup-sizing-default">Response</span>
       </div>
-      <input
-        type="text"
-        required
-        class="form-control"
-        placeholder="Response of keyword"
-        v-model="response"
-      >
+      <input type="text" required class="form-control" placeholder="Response of keyword" v-model="response">
     </div>
-
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-default">Cooldown</span>
+      </div>
+     <input ype="number" required class="form-control" v-model="cooldown">
+      <div class="input-group-append">
+       <span class="input-group-text" id="inputGroup-sizing-default">seconds</span>
+      </div>
+    </div>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
         <span class="input-group-text" id="inputGroup-sizing-default">Visible in $keywords variable</span>
@@ -51,7 +53,8 @@ export default {
     return {
       name: null,
       response: null,
-      visible: true
+      visible: true,
+      cooldown: 5
     };
   },
   watch: {
