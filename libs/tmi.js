@@ -2,7 +2,7 @@ const Tmi = require('tmi.js')
 const fetch = require('node-fetch')
 const moderation = require('../systems/moderation')
 const { io } = require('./panel')
-const commons = require('./commons')
+const parser = require('./parser')
 
 class TwitchTmi {
   constructor () {
@@ -178,16 +178,10 @@ class TwitchTmi {
   }
 
   async loadListeners () {
-    const loadedSystems = await commons.autoLoad('./systems/')
     this.client.on('chat', async (channel, userstate, message, self) => {
       if (self) return
       if (moderation.onMessage(userstate, message)) return // we want use moderation outside of loop
-      for (let [type, systems] of Object.entries({ systems: loadedSystems })) {
-        for (let [name, system] of Object.entries(systems)) {
-          if (name === 'moderation' || typeof system.onMessage === 'undefined') continue
-          system.onMessage(userstate, message)
-        }
-      }
+      parser.process(userstate, message)
     })
     this.client.on('message', async (channel, userstate, message, self) => {
       if (userstate['message-type'] === 'action') moderation.onMessage(userstate, message)

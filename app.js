@@ -17,7 +17,6 @@ async function load () {
   require('./systems/timers')
   require('./systems/users')
   require('./systems/twitch')
-  require('./systems/defaultCommands')
   require('./systems/keywords')
   require('./systems/overlays')
 

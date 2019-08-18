@@ -3,6 +3,10 @@ const { io } = require('../libs/panel')
 const { say } = require('./customCommands')
 
 class Keywords {
+  parsers = [
+    { name: 'message', fnc: this.onMessage }
+  ]
+  
   constructor () {
     this.keywords = []
     this.cooldowns = []

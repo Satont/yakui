@@ -4,6 +4,10 @@ const { io } = require('../libs/panel')
 const variables = require('../systems/variables')
 
 class CustomCommands {
+  parsers = [
+    { name: 'message', fnc: this.onMessage }
+  ]
+
   constructor () {
     this.cooldowns = []
     this.commands = []
@@ -12,7 +16,8 @@ class CustomCommands {
   }
 
   async onMessage (userstate, message) {
-    message = message.substring(1)
+    if (!message.startsWith('!')) return
+    message = message.replace('!', '').trim()
     let find
     const ar = message.toLowerCase().split(' ')
     for (let i = 0, len = ar.length; i < len; i++) {
@@ -37,11 +42,12 @@ class CustomCommands {
       userstate['message-type'] = 'whisper'
     } else this.cooldowns.push(find.name)
     
-    for (const item of _.concat(find.aliases, find.name).reverse()) {
-      message = _.replace(message, item, '')
+    for (const item of _.concat(find.aliases, find.name)) {
+      if (new RegExp("\\b" + item + "\\b").test(message)) {
+        message = message.replace(item, '').trim()
+      }
     }
-   
-    if (message.startsWith(' ')) message = message.slice(1)
+    message = message.trim()
 
     this.prepareMessage(find.response, message, userstate)
 

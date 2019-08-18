@@ -3,6 +3,10 @@ const axios = require('axios')
 const _ = require('lodash')
 
 class Users {
+  parsers = [
+    { name: 'message', fnc: this.onMessage }
+  ]
+  
   constructor () {
     this.settings = null
     this.start()
