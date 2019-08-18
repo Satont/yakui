@@ -178,13 +178,11 @@ class TwitchTmi {
   }
 
   async loadListeners () {
-    this.client.on('chat', async (channel, userstate, message, self) => {
-      if (self) return
-      if (moderation.onMessage(userstate, message)) return // we want use moderation outside of loop
-      parser.process(userstate, message)
-    })
     this.client.on('message', async (channel, userstate, message, self) => {
-      if (userstate['message-type'] === 'action') moderation.onMessage(userstate, message)
+      if (self) return
+      if (userstate['message-type'] === 'whisper') return // we do not want listen whispers
+      moderation.onMessage(userstate, message)
+      parser.process(userstate, message)
     })
     this.client.on('disconnected', (reason) => {
       console.log(reason)
@@ -198,6 +196,15 @@ class TwitchTmi {
     this.client.on('cheer', async (channel, userstate, message) => {
       await global.db('users').insert({ id: Number(userstate['user-id']), username: userstate.username }).then(() => {}).catch(() => {})
       await global.db('users').where({ id: Number(userstate['user-id']) }).increment({ bits: Number(userstate.bits) }).update({ username: userstate.username })
+    })
+    this.client.on('anongiftpaidupgrade', async (channel, username, userstate) => {
+      await global.db('core.subscribers').where('name', 'latestReSubscriber').update('value', username)
+    })
+    this.client.on('giftpaidupgrade', async (channel, username, sender, userstate) => {
+      await global.db('core.subscribers').where('name', 'latestReSubscriber').update('value', username)
+    })
+    this.client.on('subgift', async (channel, username, streakMonths, recipient, methods, userstate) => {
+      await global.db('core.subscribers').where('name', 'latestReSubscriber').update('value', userstate['msg-param-recipient-user-name'])
     })
   }
 
