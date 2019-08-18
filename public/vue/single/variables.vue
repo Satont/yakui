@@ -91,6 +91,10 @@
         <td>List of commands</td>
       </tr>
       <tr>
+        <td>$commands</td>
+        <td>List of variables</td>
+      </tr>
+      <tr>
         <td>$latestSub</td>
         <td>Nickname of latest subscriber</td>
       </tr>

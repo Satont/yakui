@@ -10,7 +10,7 @@ class Keywords {
     this.getKeywordsList()
   }
 
-  async check (message, userstate) {
+  async onMessage (userstate, message) {
     message = message.toLowerCase()
     for (const item of this.keywords) {
       if (message.includes(item.name)) return this.respond(item, message, userstate)

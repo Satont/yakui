@@ -11,7 +11,7 @@ class CustomCommands {
     this.getCommands()
   }
 
-  async prepareCommand (message, userstate) {
+  async onMessage (userstate, message) {
     message = message.substring(1)
     let find
     const ar = message.toLowerCase().split(' ')

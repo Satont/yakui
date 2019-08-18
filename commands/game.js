@@ -10,7 +10,7 @@ module.exports = {
     message = message.split(' '); message.shift(); message = message.join(' ')
 
     if (!permissions.hasPerm(userstate.badges, this.permission) || !message.length) {
-      return say(`${userstate.username} ${global.tmi.streamData.game}`)
+      return say(`@${userstate.username} ${global.tmi.channelData.game}`)
     }
 
     try {

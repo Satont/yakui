@@ -16,12 +16,17 @@ class Users {
     else clearInterval(this.checkInterval)
   }
 
-  async parse (username, id) {
+  async onMessage (userstate, message) {
     if (!this.settings.enabled) return true
 
-    await global.db('users').insert({ id: Number(id), username: username }).then(() => {}).catch(() => {})
+    const id = Number(userstate['user-id'])
+    const username = userstate.username
 
-    if (global.tmi.uptime && !this.settings.ignorelist.includes(username)) await global.db('users').where({ id: Number(id) }).increment({ messages: 1, points: this.settings.pointsPerMessage }).update({ username: username })
+    await global.db('users').insert({ id, username }).then(() => {}).catch(() => {})
+
+    if (global.tmi.uptime && !this.settings.ignorelist.includes(username)) {
+      await global.db('users').where({ id }).increment({ messages: 1, points: this.settings.pointsPerMessage }).update({ username })
+    }
   }
 
   async checkOnline () {

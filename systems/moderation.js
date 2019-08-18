@@ -21,41 +21,41 @@ class Moderation {
       this.warns = []
     }, 15 * 60 * 1000)
   }
-  async announceTimeout (msg, sender) {
+  announceTimeout (msg, sender) {
     if (this.cooldown) return
     this.cooldown = true
     say(msg.replace('$sender', sender))
     setTimeout(() => this.cooldown = false, 1 * 60 * 1000)
   }
-  moderate (message, userstate) {   
+  onMessage (userstate, message) {   
     if (!(this.settings.find(o => o.name === 'main')).enabled) return false
     if (userstate.mod || (userstate.badges && typeof userstate.badges.broadcaster !== 'undefined')) return false
-    if (this.blacklist(message, userstate)) return true
-    if (this.links(message, userstate)) return true
-    if (this.symbols(message, userstate)) return true
-    if (this.longMessage(message, userstate)) return true
-    if (this.caps(message, userstate)) return true
-    if (this.color(message, userstate)) return true
-    if (this.emotes(message, userstate)) return true
+    if (this.blacklist(userstate, message)) return true
+    if (this.links(userstate, message)) return true
+    if (this.symbols(userstate, message)) return true
+    if (this.longMessage(userstate, message)) return true
+    if (this.caps(userstate, message)) return true
+    if (this.color(userstate, message)) return true
+    if (this.emotes(userstate, message)) return true
   }
-  links (message, userstate) {
+  links (userstate, message) {
     let links = this.settings.find(o => o.name === 'links')
     if ((userstate.subscriber && !links.settings.moderateSubscribers) || !links.enabled) return false
     if (!this.warns.includes(userstate.username) && message.search(this.urlRegexp) >= 0) {
       this.warns.push(userstate.username)
       timeout(userstate.username, 1)
-      this.announceTimeout(links.settings.warnMessage, userstate.username)
+      this.announceTimeout(links.settings.warnuserstate, message.username)
       console.log(`!!! LINK BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     }
     if (this.warns.includes(userstate.username) && message.search(this.urlRegexp) >= 0) {
       timeout(userstate.username, links.settings.timeout)
-      this.announceTimeout(links.settings.timeoutMessage, userstate.username)
+      this.announceTimeout(links.settings.timeoutuserstate, message.username)
       console.log(`!!! LINK BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     }
   }
-  symbols (message, userstate) {
+  symbols (userstate, message) {
     let symbols = this.settings.find(o => o.name === 'symbols')
     if ((userstate.subscriber && !symbols.settings.moderateSubscribers) || !symbols.enabled) return false
 
@@ -71,18 +71,18 @@ class Moderation {
     if (!this.warns.includes(userstate.username) && Math.ceil(symbolsLength / (message.length / 100)) >= symbols.settings.maxSymbolsPercent) {
       this.warns.push(userstate.username)
       timeout(userstate.username, 1)
-      this.announceTimeout(symbols.settings.warnMessage, userstate.username)
+      this.announceTimeout(symbols.settings.warnuserstate, message.username)
       console.log(`!!! SYMBOLS BAN ${userstate.username}, LENGTH: ${symbolsLength}`)
       return true
     }
     if (Math.ceil(symbolsLength / (message.length / 100)) >= symbols.settings.maxSymbolsPercent) {
-      this.announceTimeout(symbols.settings.timeoutMessage, userstate.username)
+      this.announceTimeout(symbols.settings.timeoutuserstate, message.username)
       timeout(userstate.username, symbols.settings.timeout)
       console.log(`!!! SYMBOLS BAN ${userstate.username}, LENGTH: ${symbolsLength}`)
       return true
     }
   }
-  longMessage (message, userstate) {
+  longMessage (userstate, message) {
     let longMessage = this.settings.find(o => o.name === 'longMessage')
     if ((userstate.subscriber && !longMessage.settings.moderateSubscribers) || !longMessage.enabled) return false
     if (message.length < longMessage.settings.triggerLength) return false
@@ -90,18 +90,18 @@ class Moderation {
     if (!this.warns.includes(userstate.username) && message.length > longMessage.settings.triggerLength) {
       this.warns.push(userstate.username)
       timeout(userstate.username, 1)
-      this.announceTimeout(longMessage.settings.warnMessage, userstate.username)
+      this.announceTimeout(longMessage.settings.warnuserstate, message.username)
       console.log(`!!! LONG MESSAGE ${userstate.username}, LENGTH: ${message.length}`)
       return true
     }
     if (this.warns.includes(userstate.username) && message.length > longMessage.settings.triggerLength) {
       timeout(userstate.username, longMessage.settings.timeout)
-      this.announceTimeout(links.settings.timeoutMessage, userstate.username)
+      this.announceTimeout(links.settings.timeoutuserstate, message.username)
       console.log(`!!! LONG MESSAGE ${userstate.username}, LENGTH: ${message.length}`)
       return true
     }
   }
-  caps (message, userstate) {
+  caps (userstate, message) {
     let caps = this.settings.find(o => o.name === 'caps')
     message = message.replace(/[0-9]/g, '')
     if ((userstate.subscriber && !caps.settings.moderateSubscribers) || !caps.enabled) return false
@@ -118,19 +118,19 @@ class Moderation {
     if (!this.warns.includes(userstate.username) && Math.ceil(capsLength / (message.length / 100)) > caps.settings.maxCapsPercent) {
       this.warns.push(userstate.username)
       timeout(userstate.username, 1)
-      this.announceTimeout(caps.settings.warnMessage, userstate.username)
+      this.announceTimeout(caps.settings.warnuserstate, message.username)
       console.log(`!!! CAPS BAN ${userstate.username}, LENGTH: ${capsLength}`)
       return true
     }
     if (this.warns.includes(userstate.username) && Math.ceil(capsLength / (message.length / 100)) > caps.settings.maxCapsPercent) {
       this.warns.push(userstate.username)
       timeout(userstate.username, caps.settings.timeout)
-      this.announceTimeout(caps.settings.timeoutMessage, userstate.username)
+      this.announceTimeout(caps.settings.timeoutuserstate, message.username)
       console.log(`!!! CAPS BAN ${userstate.username}, LENGTH: ${capsLength}`)
       return true
     }
   }
-  color (message, userstate) {
+  color (userstate, message) {
     let color = this.settings.find(o => o.name === 'color')
     if ((userstate.subscriber && !color.settings.moderateSubscribers) || !color.enabled) return false
 
@@ -139,37 +139,37 @@ class Moderation {
     } else if (!this.warns.includes(userstate.username)) {
       this.warns.push(userstate.username)
       timeout(userstate.username, 1)
-      this.announceTimeout(color.settings.warnMessage, userstate.username)
+      this.announceTimeout(color.settings.warnuserstate, message.username)
       console.log(`!!! COLOR BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     } else if (this.warns.includes(userstate.username)) {
       this.warns.push(userstate.username)
       timeout(userstate.username, color.settings.timeout)
-      this.announceTimeout(color.settings.timeoutMessage, userstate.username)
+      this.announceTimeout(color.settings.timeoutuserstate, message.username)
       console.log(`!!! COLOR BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     }
   }
-  emotes (message, userstate) {
+  emotes (userstate, message) {
     let emotes = this.settings.find(o => o.name === 'emotes')
     if ((userstate.subscriber && !emotes.settings.moderateSubscribers) || !emotes.enabled) return false
     let length = userstate.emotes ? _.flattenDeep(_.values(userstate.emotes)).length : 0
     if (!this.warns.includes(userstate.username) && (length > emotes.settings.maxCount)) {
       this.warns.push(userstate.username)
       timeout(userstate.username, emotes.settings.timeout)
-      this.announceTimeout(emotes.settings.warnMessage, userstate.username)
+      this.announceTimeout(emotes.settings.warnuserstate, message.username)
       console.log(`!!! EMOTES BAN ${userstate.username}, LENGTH: ${length}`)
       return true
     }
     if (this.warns.includes(userstate.username) && (length > emotes.settings.maxCount)) {
       this.warns.push(userstate.username)
       timeout(userstate.username, emotes.settings.timeout)
-      this.announceTimeout(emotes.settings.timeoutMessage, userstate.username)
+      this.announceTimeout(emotes.settings.timeoutuserstate, message.username)
       console.log(`!!! EMOTES BAN ${userstate.username}, LENGTH: ${length}`)
       return true
     }
   }
-  blacklist (message, userstate) {
+  blacklist (userstate, message) {
     let blacklist = this.settings.find(o => o.name === 'blacklist')
     let returned
     for (let value of blacklist.settings.list) {

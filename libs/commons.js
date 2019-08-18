@@ -5,10 +5,30 @@ const _ = require('lodash')
 const axios = require('axios')
 const safeEval = require('safe-eval')
 const spotify = require('../integrations/spotify')
+const { readdirSync } = require('fs')
+const { join, normalize } = require('path')
 
 class Commons {
   constructor () {
     setInterval(() => this.logMemoryUsage(), 60 * 1000)
+  }
+
+  async autoLoad (directory) {
+    const directoryListing = readdirSync(directory);
+    const loaded = {};
+    for (const file of directoryListing) {
+      if (file.startsWith('_') || !file.endsWith('.js')) {
+        continue;
+      }
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const imported = require(normalize(join(process.cwd(), directory, file)));
+      if (typeof imported.default !== 'undefined') {
+        loaded[file.split('.')[0]] = new imported.default(); // remap default to root object
+      } else {
+        loaded[file.split('.')[0]] = imported;
+      }
+    }
+    return loaded;
   }
 
   logMemoryUsage () {

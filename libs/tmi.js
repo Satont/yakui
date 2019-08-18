@@ -1,12 +1,8 @@
 const Tmi = require('tmi.js')
-const customCommands = require('../systems/customCommands')
 const fetch = require('node-fetch')
-const users = require('../systems/users')
 const moderation = require('../systems/moderation')
-const permissions = require('./permissions')
-const defualtCommands = require('../systems/defaultCommands')
-const keywords = require('../systems/keywords')
 const { io } = require('./panel')
+const commons = require('./commons')
 
 class TwitchTmi {
   constructor () {
@@ -182,22 +178,19 @@ class TwitchTmi {
   }
 
   async loadListeners () {
+    const loadedSystems = await commons.autoLoad('./systems/')
     this.client.on('chat', async (channel, userstate, message, self) => {
       if (self) return
-      if (userstate['message-type'] !== 'chat') return
-      users.parse(userstate.username, userstate['user-id'])
-      if (moderation.moderate(message, userstate)) return
-      if (message.toLowerCase().startsWith('!')) {
-        let command = message.toLowerCase().substring(1).split(' ')[0]
-        if (defualtCommands.commands.has(command)) {
-          command = defualtCommands.commands.get(command)
-          if (!(await permissions.hasPerm(userstate.badges, command.permission))) return
-          return command.run(command, message, userstate)
-        } else customCommands.prepareCommand(message, userstate)
-      } else keywords.check(message, userstate)
+      if (moderation.onMessage(userstate, message)) return // we want use moderation outside of loop
+      for (let [type, systems] of Object.entries({ systems: loadedSystems })) {
+        for (let [name, system] of Object.entries(systems)) {
+          if (name === 'moderation' || typeof system.onMessage === 'undefined') continue
+          system.onMessage(userstate, message)
+        }
+      }
     })
     this.client.on('message', async (channel, userstate, message, self) => {
-      if (userstate['message-type'] === 'action') moderation.moderate(message, userstate)
+      if (userstate['message-type'] === 'action') moderation.onMessage(userstate, message)
     })
     this.client.on('disconnected', (reason) => {
       console.log(reason)
