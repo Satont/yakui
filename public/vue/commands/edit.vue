@@ -75,6 +75,7 @@
 
 <script>
 import Multiselect from 'vue-multiselect'
+import { random } from 'lodash'
 
 export default {
   components: { Multiselect },
@@ -124,7 +125,8 @@ export default {
   mounted() {
     if (!this.response) {
       this.$socket.emit("list.commands", {}, (err, list) => {
-        let find = list.find(o => o.id === this.id)
+        let find = list.find(o => o.id === Number(this.id))
+        if (!find) return this.$router.push('/commands')
         this.id = find.id
         this.name = find.name
         this.response = find.response

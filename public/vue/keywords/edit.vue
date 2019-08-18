@@ -76,7 +76,8 @@ export default {
   mounted() {
     if (!this.response) {
       this.$socket.emit("list.keywords", {}, (err, list) => {
-        let find = list.find(o => o.id === this.id)
+        let find = list.find(o => o.id === Number(this.id))
+         if (!find) return this.$router.push('/keywords')
         this.id = find.id
         this.name = find.name
         this.response = find.response

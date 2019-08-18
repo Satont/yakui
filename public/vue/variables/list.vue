@@ -47,9 +47,11 @@ export default {
       this.variables.splice(index, 1);
     },
     editVariable(variable) {
+      console.log(variable)
       this.$router.push({
         name: "editVariable",
         params: {
+          id: variable.id,
           name: variable.name,
           value: variable.value
         }
