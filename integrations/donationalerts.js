@@ -18,7 +18,7 @@ class DonationAlerts {
 
   async connect () {
     this.disconnect()
-    this.settings = (await global.db('integrations').select('*').where('name', 'donationalerts'))[0]
+    this.settings = await global.db('integrations').select('*').where('name', 'donationalerts').first()
     if (!this.settings.enabled || this.settings.settings.token === null) return
     this.socket = socket.connect('wss://socket.donationalerts.ru:443', {
       reconnection: true,
@@ -52,7 +52,7 @@ class DonationAlerts {
     const self = this
     io.on('connection', function (socket) {
       socket.on('settings.donationalerts', async (data, cb) => {
-        const query = (await global.db('integrations').select('*').where('name', 'donationalerts'))[0]
+        const query = await global.db('integrations').select('*').where('name', 'donationalerts').first()
         cb(null, query)
       })
       socket.on('update.settings.donationalerts', async (data, cb) => {

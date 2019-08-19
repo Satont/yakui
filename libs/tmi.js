@@ -15,7 +15,7 @@ class TwitchTmi {
 
   async start () {
     clearInterval(this.subsCheckInterval)
-    const token = (await global.db('core.tokens').where({ name: 'bot' }).select('value'))[0]
+    const token = await global.db('core.tokens').where({ name: 'bot' }).select('value').first()
     this.token = token.value
     this.client = new Tmi.client({
       options: {
@@ -59,7 +59,7 @@ class TwitchTmi {
   }
 
   async validateBroadCasterToken () {
-    let token = (await global.db('core.tokens').where({ name: 'broadcaster' }).select('value'))[0]
+    let token = await global.db('core.tokens').where({ name: 'broadcaster' }).select('value').first()
     token = await token ? token.value : ''
     try {
       let response = await fetch(`https://id.twitch.tv/oauth2/validate`, { headers: { Authorization: `OAuth ${token}` } })

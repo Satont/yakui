@@ -124,31 +124,31 @@ class Variables {
       response = response.replace('$pointsName', commons.declOfNum(user.points, users.settings.pointsName.split('|')))
     }
     if (response.includes('$top_messages')) {
-      const ignoredUsers = (await global.db('settings').select('*').where('system', 'users'))[0].data.ignorelist
+      const ignoredUsers = await global.db('settings').select('*').where('system', 'users').first().data.ignorelist
       let users = await global.db('users').select('*').orderBy('messages', 'desc').limit(10).whereNotIn('username', ignoredUsers).whereNot('id', global.tmi.channelID)
       users = users.map(o => `${users.indexOf(o) + 1}. ${o.username} - ${o.messages}`)
       response = response.replace('$top_messages', users.join(', '))
     }
     if (response.includes('$top_watched')) {
-      const ignoredUsers = (await global.db('settings').select('*').where('system', 'users'))[0].data.ignorelist
+      const ignoredUsers = await global.db('settings').select('*').where('system', 'users').first().data.ignorelist
       let users = await global.db('users').select('*').orderBy('watched', 'desc').limit(10).whereNotIn('username', ignoredUsers).whereNot('id', global.tmi.channelID)
       users = users.map(o => `${users.indexOf(o) + 1}. ${o.username} - ${shortEnglish(o.watched)}`)
       response = response.replace('$top_watched', users.join(', '))
     }
     if (response.includes('$top_bits')) {
-      const ignoredUsers = (await global.db('settings').select('*').where('system', 'users'))[0].data.ignorelist
+      const ignoredUsers = await global.db('settings').select('*').where('system', 'users').first().data.ignorelist
       let users = await global.db('users').select('*').orderBy('bits', 'desc').limit(10).whereNotIn('username', ignoredUsers).whereNot('id', global.tmi.channelID)
       users = users.map(o => `${users.indexOf(o) + 1}. ${o.username} - ${o.bits}`)
       response = response.replace('$top_bits', users.join(', '))
     }
     if (response.includes('$top_tips')) {
-      const ignoredUsers = (await global.db('settings').select('*').where('system', 'users'))[0].data.ignorelist
+      const ignoredUsers = await global.db('settings').select('*').where('system', 'users').first().data.ignorelist
       let users = await global.db('users').select('*').orderBy('tips', 'desc').limit(10).whereNotIn('username', ignoredUsers).whereNot('id', global.tmi.channelID)
       users = users.map(o => `${users.indexOf(o) + 1}. ${o.username} - ${o.tips}`)
       response = response.replace('$top_tips', users.join(', '))
     }
     if (response.includes('$top_points')) {
-      const ignoredUsers = (await global.db('settings').select('*').where('system', 'users'))[0].data.ignorelist
+      const ignoredUsers = await global.db('settings').select('*').where('system', 'users').first().data.ignorelist
       let users = await global.db('users').select('*').orderBy('points', 'desc').limit(10).whereNotIn('username', ignoredUsers).whereNot('id', global.tmi.channelID)
       users = users.map(o => `${users.indexOf(o) + 1}. ${o.username} - ${o.points}`)
       response = response.replace('$top_points', users.join(', '))

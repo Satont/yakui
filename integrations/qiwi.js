@@ -9,7 +9,7 @@ class Qiwi {
   }
 
   async start () {
-    this.settings = (await global.db('integrations').select('*').where('name', 'qiwi'))[0]
+    this.settings = await global.db('integrations').select('*').where('name', 'qiwi').first()
     if (this.settings.settings.token) this.repeat = setInterval(() => this.poll(), 3 * 1000)
   }
 
@@ -33,7 +33,7 @@ class Qiwi {
     const self = this
     io.on('connection', function (socket) {
       socket.on('settings.qiwi', async (data, cb) => {
-        const query = (await global.db('integrations').select('*').where('name', 'qiwi'))[0]
+        const query = await global.db('integrations').select('*').where('name', 'qiwi').first()
         cb(null, query)
       })
       socket.on('update.settings.qiwi', async (data, cb) => {

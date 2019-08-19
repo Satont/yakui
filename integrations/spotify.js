@@ -21,7 +21,7 @@ class Spotify {
   }
   async start () {
     clearInterval(this.refreshInterval)
-    this.settings = (await global.db('integrations').select('*').where('name', 'spotify'))[0]
+    this.settings = await global.db('integrations').select('*').where('name', 'spotify').first()
     if (!this.settings.enabled || !this.settings.settings.clientId || !this.settings.settings.clientSecret || !this.settings.settings.redirectUri) return
     if (this.client) this.client = null
 
@@ -60,12 +60,12 @@ class Spotify {
     let self = this
     io.on('connection', function (socket) {
       socket.on('settings.spotify', async (data, cb) => {
-        let query = (await global.db('integrations').select('*').where('name', 'spotify'))[0]
+        let query = await global.db('integrations').select('*').where('name', 'spotify').first()
         cb(null, query)
       })
       socket.on('spotify.auth', async (data, cb) => {
-        let query = await global.db('integrations').where('name', 'spotify').update(data).returning(['enabled', 'settings'])
-        self.settings = query[0]
+        let query = await global.db('integrations').where('name', 'spotify').update(data).returning(['enabled', 'settings']).first()
+        self.settings = query
         await self.start()
         let link = await self.generateAuthLink()
         if (!link) return cb('error', null)

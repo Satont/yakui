@@ -4,7 +4,8 @@ const _ = require('lodash')
 
 class Users {
   parsers = [
-    { name: 'message', fnc: this.onMessage }
+    { name: 'addMessage', fnc: this.addMessage },
+    { name: 'pointsMessage', fnc: this.pointsParser }
   ]
   
   constructor () {
@@ -20,7 +21,7 @@ class Users {
     else clearInterval(this.checkInterval)
   }
 
-  async onMessage (userstate, message) {
+  async addMessage (userstate, message) {
     if (!this.settings.enabled) return true
 
     const id = Number(userstate['user-id'])
@@ -28,9 +29,21 @@ class Users {
 
     await global.db('users').insert({ id, username }).then(() => {}).catch(() => {})
 
+    if (message.startsWith('!')) return 
+
     if (global.tmi.uptime && !this.settings.ignorelist.includes(username)) {
       await global.db('users').where({ id }).increment({ messages: 1, points: this.settings.pointsPerMessage }).update({ username })
     }
+  }
+
+  async pointsParser (userstate, message) {
+    const [messageInterval, pointsPerMessage] = [this.settings.pointsMessageInterval, this.settings.pointsPerMessage]
+
+    //if (messageInterval === 0 || pointsPerMessage === 0) return
+    
+    const user = await global.db('users').where('id', Number(userstate['user-id'])).first()
+
+    
   }
 
   async checkOnline () {

@@ -17,7 +17,7 @@ class StreamLabs {
 
   async connect () {
     this.disconnect()
-    this.settings = (await global.db('integrations').select('*').where('name', 'streamlabs'))[0]
+    this.settings = await global.db('integrations').select('*').where('name', 'streamlabs').first()
     if (!this.settings.enabled || this.settings.settings.token === null) return this.disconnect()
     this.socket = socket.connect(`https://sockets.streamlabs.com?token=${this.settings.settings.token}`)
     if (this.socket !== null) {
@@ -50,7 +50,7 @@ class StreamLabs {
     const self = this
     io.on('connection', function (socket) {
       socket.on('settings.streamlabs', async (data, cb) => {
-        const query = (await global.db('integrations').select('*').where('name', 'streamlabs'))[0]
+        const query = await global.db('integrations').select('*').where('name', 'streamlabs').first()
         cb(null, query)
       })
       socket.on('update.settings.streamlabs', async (data, cb) => {

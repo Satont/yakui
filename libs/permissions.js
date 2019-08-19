@@ -18,9 +18,9 @@ class Permissions {
   }
 
   async getDefaultCommandPermission (name) {
-    const command = await global.db('systems.defaultcommands').select('*').where('name', name)
+    const command = await global.db('systems.defaultcommands').select('*').where('name', name).first()
     if (!command.length) throw new Error(`Command ${name} not found`)
-    return command[0].permission
+    return command.permission
   }
 }
 
