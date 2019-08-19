@@ -17,6 +17,17 @@
         <button class="btn btn-info" type="button" data-toggle="modal" data-target="#pointsinfo">?</button>
       </div>
   </div>
+
+   <div class="input-group input-group-sm mb-3">
+    <div class="input-group-prepend">
+      <span class="input-group-text" id="inputGroup-sizing-sm">Points each X message</span>
+    </div>
+    <input type="number" class="form-control" v-model.number="pointsMessageInterval">
+    <div class="input-group-append">
+      <span class="input-group-text" id="inputGroup-sizing-sm">number</span>
+    </div>
+  </div>
+  
   <div class="input-group input-group-sm mb-3">
     <div class="input-group-prepend">
       <span class="input-group-text" id="inputGroup-sizing-sm">Points per message</span>
@@ -25,7 +36,16 @@
   </div>
   <div class="input-group input-group-sm mb-3">
     <div class="input-group-prepend">
-      <span class="input-group-text" id="inputGroup-sizing-sm">Points per 1 minute of online</span>
+      <span class="input-group-text" id="inputGroup-sizing-sm">Points watched giving interval</span>
+    </div>
+    <input type="number" class="form-control" v-model.number="pointsWatchedInterval">
+    <div class="input-group-append">
+      <span class="input-group-text" id="inputGroup-sizing-sm">minutes</span>
+    </div>
+  </div>
+  <div class="input-group input-group-sm mb-3">
+    <div class="input-group-prepend">
+      <span class="input-group-text" id="inputGroup-sizing-sm">Points per {{ pointsWatchedInterval }} minute of online</span>
     </div>
     <input type="number" class="form-control" v-model.number="pointsPerTime">
   </div>
@@ -63,7 +83,9 @@ export default {
   data: function() {
     return {
       enabled: false,
+      pointsMessageInterval: 0,
       pointsPerMessage: 0,
+      pointsWatchedInterval: 0,
       pointsPerTime: 0,
       pointsName: null,
       ignorelist: null
@@ -73,7 +95,9 @@ export default {
     let self = this;
     this.$socket.emit('settings.users', null, (err, list) => {
       this.enabled = list.data.enabled
+      this.pointsMessageInterval = list.data.pointsMessageInterval
       this.pointsPerMessage = list.data.pointsPerMessage
+      this.pointsWatchedInterval = list.data.pointsWatchedInterval
       this.pointsPerTime = list.data.pointsPerTime
       this.pointsName = list.data.pointsName
       this.ignorelist = list.data.ignorelist.join('\n')
