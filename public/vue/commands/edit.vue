@@ -30,7 +30,7 @@
         type="number"
         required
         class="form-control"
-        v-model="cooldown"
+        v-model.number="cooldown"
       >
       <div class="input-group-append">
         <span class="input-group-text" id="inputGroup-sizing-default">seconds</span>

@@ -32,18 +32,22 @@ class Users {
     if (message.startsWith('!')) return 
 
     if (global.tmi.uptime && !this.settings.ignorelist.includes(username)) {
-      await global.db('users').where({ id }).increment({ messages: 1, points: this.settings.pointsPerMessage }).update({ username })
+      await global.db('users').where({ id }).increment({ messages: 1 }).update({ username })
     }
   }
 
   async pointsParser (userstate, message) {
-    const [messageInterval, pointsPerMessage] = [this.settings.pointsMessageInterval, this.settings.pointsPerMessage]
+    const [messageInterval, pointsPerMessage, userId] = [this.settings.pointsMessageInterval, this.settings.pointsPerMessage, Number(userstate['user-id'])]
 
-    //if (messageInterval === 0 || pointsPerMessage === 0) return
+    if (messageInterval === 0 || pointsPerMessage === 0 || !global.tmi.uptime) return
     
-    const user = await global.db('users').where('id', Number(userstate['user-id'])).first()
+    const user = await global.db('users').where('id', userId).first()
 
-    
+    if (!user) return
+    console.log (user.lastMessagePoints, messageInterval, )
+    if (user.lastMessagePoints + messageInterval <= user.messages) {
+      await global.db('users').where({ id: userId }).update({ lastMessagePoints: user.messages }).increment({ points: parseInt(pointsPerMessage, 10)})
+    }
   }
 
   async checkOnline () {

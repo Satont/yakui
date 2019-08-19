@@ -17,6 +17,15 @@
         <button class="btn btn-info" type="button" data-toggle="modal" data-target="#pointsinfo">?</button>
       </div>
   </div>
+   <div class="input-group input-group-sm mb-3">
+    <div class="input-group-prepend">
+      <span class="input-group-text" id="inputGroup-sizing-sm">Points each X message</span>
+    </div>
+    <input type="number" class="form-control" v-model.number="pointsMessageInterval">
+    <div class="input-group-append">
+      <span class="input-group-text" id="inputGroup-sizing-sm">number</span>
+    </div>
+  </div>
   <div class="input-group input-group-sm mb-3">
     <div class="input-group-prepend">
       <span class="input-group-text" id="inputGroup-sizing-sm">Points per message</span>
@@ -63,6 +72,7 @@ export default {
   data: function() {
     return {
       enabled: false,
+      pointsMessageInterval: 0,
       pointsPerMessage: 0,
       pointsPerTime: 0,
       pointsName: null,
@@ -73,6 +83,7 @@ export default {
     let self = this;
     this.$socket.emit('settings.users', null, (err, list) => {
       this.enabled = list.data.enabled
+      this.pointsMessageInterval = list.data.pointsMessageInterval
       this.pointsPerMessage = list.data.pointsPerMessage
       this.pointsPerTime = list.data.pointsPerTime
       this.pointsName = list.data.pointsName
