@@ -5,7 +5,7 @@ const _ = require('lodash')
 class Users {
   parsers = [
     { name: 'addMessage', fnc: this.addMessage },
-    { name: 'pointsMessage', fnc: this.pointsParser }
+    { name: 'pointsMessage', fnc: this.pointsMsg }
   ]
   
   constructor () {
@@ -36,7 +36,7 @@ class Users {
     }
   }
 
-  async pointsParser (userstate, message) {
+  async pointsMsg (userstate, message) {
     const [messageInterval, pointsPerMessage, userId] = [this.settings.pointsMessageInterval, this.settings.pointsPerMessage, Number(userstate['user-id'])]
 
     if (messageInterval === 0 || pointsPerMessage === 0 || !global.tmi.uptime) return
@@ -44,12 +44,29 @@ class Users {
     const user = await global.db('users').where('id', userId).first()
 
     if (!user) return
-    console.log (user.lastMessagePoints, messageInterval, )
+
     if (user.lastMessagePoints + messageInterval <= user.messages) {
       await global.db('users').where({ id: userId }).update({ lastMessagePoints: user.messages }).increment({ points: parseInt(pointsPerMessage, 10)})
     }
   }
+  async pointsWatched (now) {
+    const [pointsPerWatched, pointsInterval] = [this.settings.pointsPerTime, this.settings.pointsWatchedInterval * 60 * 1000]
 
+    if (!global.tmi.uptime) return
+
+    for (const user of now) {
+      await global.db('users').insert({ id: user.id, username: user.username }).then(() => {}).catch(() => {})
+      const userDb = await global.db('users').where({ id: user.id }).first()
+      if (pointsPerWatched !== 0 || pointsInterval !== 0) {
+        const shouldUpdate = new Date().getTime() - new Date(Number(userDb.lastWatchedPoints)).getTime() >= pointsInterval
+        if (this.onlineUsers.some(o => o.username === user.username) && !this.settings.ignorelist.includes(user.username) && shouldUpdate) {
+          await global.db('users').where({ id: user.id }).update({ lastWatchedPoints: Number(new Date().getTime()) }).increment({ watched: 1 * 60 * 1000, points: parseInt(pointsPerWatched, 10)})
+        }
+      } else {
+        await global.db('users').where({ id: user.id }).update({ lastWatchedPoints: Number(new Date().getTime()) }).increment({ watched: 1 * 60 * 1000 })
+      }
+    }
+  }
   async checkOnline () {
     if (!global.tmi.uptime || !this.settings.enabled) {
       this.onlineUsers = []
@@ -70,13 +87,9 @@ class Users {
         })
         now = await _.concat(now, newMaped)
       }
-      for (const user of await now) {
-        if (this.onlineUsers.some(o => o.username === user.username) && !this.settings.ignorelist.includes(user.username)) {
-          await global.db('users').insert({ id: user.id, username: user.username }).then(() => {}).catch(() => {})
-          await global.db('users').where({ id: user.id }).increment({ watched: 1 * 60 * 1000, points: this.settings.pointsPerTime })
-        }
-      }
+      
       this.onlineUsers = now
+      this.pointsWatched(now)
     } catch (e) {
       console.log(e)
     }
