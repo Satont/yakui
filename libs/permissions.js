@@ -4,7 +4,7 @@ class Permissions {
   getUserPermission (badges) {
     if (!badges) return 'viewer'
     else if (typeof badges.broadcaster !== 'undefined') return 'broadcaster'
-    else if (typeof badges.mod !== 'undefined') return 'moderator'
+    else if (typeof badges.moderator !== 'undefined') return 'moderator'
     else if (typeof badges.subscriber !== 'undefined') return 'subscriber'
     else if (typeof badges.vip !== 'undefined') return 'vip'
     else return 'viewer'
