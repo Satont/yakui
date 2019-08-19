@@ -8,7 +8,8 @@ class Notable {
   }
 
   async init () {
-    this.settings = await global.db.select('*').from('settings').where('system', 'notable').first().data
+    const query = await global.db.select('*').from('settings').where('system', 'notable').first()
+    this.settings = query.data
   }
 
   async np () {
