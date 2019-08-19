@@ -27,6 +27,8 @@
 	- Spotify
 - Dota 2 notableplayers system
 - Keywords system
+- Points system
+	- count user points per watched or messages
 - Overlays system
 	- you can create some overlay and past it in your OBS!
 
