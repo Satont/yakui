@@ -41,13 +41,13 @@ class Twitch {
   }
 
   async setTitle (title) {
-    const url = `https://api.twitch.tv/kraken/channels/${process.env.TWITCH_CHANNEL}`
+    const url = `https://api.twitch.tv/kraken/channels/${global.tmi.channelID}`
     try {
       await axios({
         method: 'PUT',
         url,
         data: { channel: { status: title } },
-        headers: { Authorization: `OAuth ${global.tmi.token}` }
+        headers: { Authorization: `OAuth ${global.tmi.token}`, 'Accept': 'application/vnd.twitchtv.v5+json' }
       })
       return true
     } catch (e) {
@@ -74,9 +74,9 @@ class Twitch {
     try {
       await axios({
         method: 'PUT',
-        url: `https://api.twitch.tv/kraken/channels/${process.env.TWITCH_CHANNEL}`,
+        url: `https://api.twitch.tv/kraken/channels/${global.tmi.channelID}`,
         data: { channel: { game } },
-        headers: { Authorization: `OAuth ${global.tmi.token}` }
+        headers: { Authorization: `OAuth ${global.tmi.token}`, 'Accept': 'application/vnd.twitchtv.v5+json' }
       })
       return true
     } catch (e) {

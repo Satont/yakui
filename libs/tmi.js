@@ -122,7 +122,12 @@ class TwitchTmi {
   async getUptimeAndViewers () {
     setTimeout(() => this.getUptimeAndViewers(), 30 * 1000)
     try {
-      const response = await fetch(`https://api.twitch.tv/kraken/streams/${process.env.TWITCH_CHANNEL.toLowerCase()}`, { headers: { 'Client-ID': process.env.TWITCH_CLIENTID } })
+      const response = await fetch(`https://api.twitch.tv/kraken/streams/${this.channelID}`, { 
+        headers: { 
+          'Client-ID': process.env.TWITCH_CLIENTID,
+          'Accept': 'application/vnd.twitchtv.v5+json'
+        }
+      })
       const stream = await response.json()
       if (stream.stream === null) {
         this.uptime = null
@@ -136,7 +141,12 @@ class TwitchTmi {
   async getChannelInfo () {
     setTimeout(() => this.getChannelInfo(), 30 * 1000)
     try {
-      const response = await fetch(`https://api.twitch.tv/kraken/channels/${process.env.TWITCH_CHANNEL.toLowerCase()}`, { headers: { 'Client-ID': process.env.TWITCH_CLIENTID } })
+      const response = await fetch(`https://api.twitch.tv/kraken/channels/${this.channelID}`, { 
+        headers: { 
+          'Client-ID': process.env.TWITCH_CLIENTID,
+          'Accept': 'application/vnd.twitchtv.v5+json'
+        }
+      })
       const data = await response.json()
       this.channelData = data
     } catch (error) {
