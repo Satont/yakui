@@ -75,6 +75,8 @@
               </div>
               <input type="text" class="form-control" v-model="links.settings.warnMessage">
             </div>
+            <center style="padding-top: 15px;"><span>Whitelist (one record per line)</span></center>
+            <textarea type="text" class="form-control" v-model.trim="links.settings.whitelist" rows="2"></textarea>
           </div>
         </div>
       </div>
@@ -393,6 +395,7 @@ export default {
           timeout: 600,
           warnMessage: null,
           timeoutMessage: null,
+          whitelist: null,
         }
       },
       symbols: {
@@ -455,8 +458,10 @@ export default {
     save() {
       let data = this.$data
       data.blacklist.settings.list = data.blacklist.settings.list.split('\n')
+      data.links.settings.whitelist = data.links.settings.whitelist.split('\n')
       this.$socket.emit('moderation.update', data)
-      this.$data.blacklist.settings.list = this.$data.blacklist.settings.list.join('\n')
+      this.blacklist.settings.list = this.$data.blacklist.settings.list.join('\n')
+      this.links.settings.whitelist = this.links.settings.whitelist.join('\n')
     }
   },
   mounted() {
@@ -466,6 +471,7 @@ export default {
       this.blacklist.settings.list = list.find(o => o.name === 'blacklist').settings.list.join('\n')
       this.main = list.find(o => o.name === 'main')
       this.links = list.find(o => o.name === 'links')
+      this.links.settings.whitelist = this.links.settings.whitelist.join('\n')
       this.symbols = list.find(o => o.name === 'symbols')
       this.longMessage = list.find(o => o.name === 'longMessage')
       this.caps = list.find(o => o.name === 'caps')

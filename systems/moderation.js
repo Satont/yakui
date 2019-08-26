@@ -41,7 +41,8 @@ class Moderation {
   links (userstate, message) {
     let links = this.settings.find(o => o.name === 'links')
     if ((userstate.subscriber && !links.settings.moderateSubscribers) || !links.enabled) return false
-    if (!this.warns.includes(userstate.username) && message.search(this.urlRegexp) >= 0) {
+    else if (links.settings.whitelist.some(o => message.includes(o))) return true
+    else if (!this.warns.includes(userstate.username) && message.search(this.urlRegexp) >= 0) {
       this.warns.push(userstate.username)
       timeout(userstate.username, 1)
       this.announceTimeout(links.settings.warnuserstate, message.username)
