@@ -1,6 +1,7 @@
 const { io } = require("../libs/panel")
 const _ = require('lodash')
 const { say, timeout } = require('./customCommands')
+const permissions = require('../libs/permissions')
 
 class Moderation {
   urlRegexp = /(www)? ??\.? ?[a-zA-Z0-9]+([a-zA-Z0-9-]+) ??\. ?(aero|bet|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|money|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|sk|sl|sm|sn|so|sr|st|su|sv|sy|sz|tc|td|tf|tg|th|tj|tk|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|um|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zr|zw)\b/gi
@@ -44,25 +45,29 @@ class Moderation {
   }
   links (userstate, message) {
     let links = this.settings.find(o => o.name === 'links')
+    links.settings.whitelist = links.settings.whitelist.filter(o => o !== '')
+
     if ((userstate.subscriber && !links.settings.moderateSubscribers) || !links.enabled) return false
     else if (links.settings.whitelist.some(o => message.includes(o))) return true
-    else if (this.permits.includes(userstate.username) || this.permits.includes(userstate['display-name'])) {
-      const index = this.permits.indexOf(userstate.username)
-      if (index !== -1) this.permits.splice(index, 1)
-      const index2 = this.permits.indexOf(userstate['display-name'])
-      if (index !== -1) this.permits.splice(index2, 1)
+    else if (this.permits.includes(userstate.username) || this.permits.includes(userstate['display-name'].toLowerCase())) {
+      const usernameIndex = this.permits.indexOf(userstate.username)
+      if (usernameIndex !== -1) this.permits.splice(usernameIndex, 1)
+
+      const displayNameIndex = this.permits.indexOf(userstate['display-name'].toLowerCase())
+      if (displayNameIndex !== -1) this.permits.splice(displayNameIndex, 1)
+
       return false
     }
     else if (!this.warns.includes(userstate.username) && message.search(this.urlRegexp) >= 0) {
       this.warns.push(userstate.username)
       timeout(userstate.username, 1)
-      this.announceTimeout(links.settings.warnuserstate, message.username)
+      this.announceTimeout(links.settings.warnMessage, userstate.username)
       console.log(`!!! LINK BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     }
     if (this.warns.includes(userstate.username) && message.search(this.urlRegexp) >= 0) {
       timeout(userstate.username, links.settings.timeout)
-      this.announceTimeout(links.settings.timeoutuserstate, message.username)
+      this.announceTimeout(links.settings.timeoutMessage, userstate.username)
       console.log(`!!! LINK BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     }
@@ -83,12 +88,12 @@ class Moderation {
     if (!this.warns.includes(userstate.username) && Math.ceil(symbolsLength / (message.length / 100)) >= symbols.settings.maxSymbolsPercent) {
       this.warns.push(userstate.username)
       timeout(userstate.username, 1)
-      this.announceTimeout(symbols.settings.warnuserstate, message.username)
+      this.announceTimeout(symbols.settings.warnuserstate, userstate.username)
       console.log(`!!! SYMBOLS BAN ${userstate.username}, LENGTH: ${symbolsLength}`)
       return true
     }
     if (Math.ceil(symbolsLength / (message.length / 100)) >= symbols.settings.maxSymbolsPercent) {
-      this.announceTimeout(symbols.settings.timeoutuserstate, message.username)
+      this.announceTimeout(symbols.settings.timeoutuserstate, userstate.username)
       timeout(userstate.username, symbols.settings.timeout)
       console.log(`!!! SYMBOLS BAN ${userstate.username}, LENGTH: ${symbolsLength}`)
       return true
@@ -102,13 +107,13 @@ class Moderation {
     if (!this.warns.includes(userstate.username) && message.length > longMessage.settings.triggerLength) {
       this.warns.push(userstate.username)
       timeout(userstate.username, 1)
-      this.announceTimeout(longMessage.settings.warnuserstate, message.username)
+      this.announceTimeout(longMessage.settings.warnuserstate, userstate.username)
       console.log(`!!! LONG MESSAGE ${userstate.username}, LENGTH: ${message.length}`)
       return true
     }
     if (this.warns.includes(userstate.username) && message.length > longMessage.settings.triggerLength) {
       timeout(userstate.username, longMessage.settings.timeout)
-      this.announceTimeout(links.settings.timeoutuserstate, message.username)
+      this.announceTimeout(links.settings.timeoutuserstate, userstate.username)
       console.log(`!!! LONG MESSAGE ${userstate.username}, LENGTH: ${message.length}`)
       return true
     }
@@ -130,14 +135,14 @@ class Moderation {
     if (!this.warns.includes(userstate.username) && Math.ceil(capsLength / (message.length / 100)) > caps.settings.maxCapsPercent) {
       this.warns.push(userstate.username)
       timeout(userstate.username, 1)
-      this.announceTimeout(caps.settings.warnuserstate, message.username)
+      this.announceTimeout(caps.settings.warnuserstate, userstate.username)
       console.log(`!!! CAPS BAN ${userstate.username}, LENGTH: ${capsLength}`)
       return true
     }
     if (this.warns.includes(userstate.username) && Math.ceil(capsLength / (message.length / 100)) > caps.settings.maxCapsPercent) {
       this.warns.push(userstate.username)
       timeout(userstate.username, caps.settings.timeout)
-      this.announceTimeout(caps.settings.timeoutuserstate, message.username)
+      this.announceTimeout(caps.settings.timeoutuserstate, userstate.username)
       console.log(`!!! CAPS BAN ${userstate.username}, LENGTH: ${capsLength}`)
       return true
     }
@@ -151,13 +156,13 @@ class Moderation {
     } else if (!this.warns.includes(userstate.username)) {
       this.warns.push(userstate.username)
       timeout(userstate.username, 1)
-      this.announceTimeout(color.settings.warnuserstate, message.username)
+      this.announceTimeout(color.settings.warnuserstate, userstate.username)
       console.log(`!!! COLOR BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     } else if (this.warns.includes(userstate.username)) {
       this.warns.push(userstate.username)
       timeout(userstate.username, color.settings.timeout)
-      this.announceTimeout(color.settings.timeoutuserstate, message.username)
+      this.announceTimeout(color.settings.timeoutuserstate, userstate.username)
       console.log(`!!! COLOR BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     }
@@ -169,14 +174,14 @@ class Moderation {
     if (!this.warns.includes(userstate.username) && (length > emotes.settings.maxCount)) {
       this.warns.push(userstate.username)
       timeout(userstate.username, emotes.settings.timeout)
-      this.announceTimeout(emotes.settings.warnuserstate, message.username)
+      this.announceTimeout(emotes.settings.warnuserstate, userstate.username)
       console.log(`!!! EMOTES BAN ${userstate.username}, LENGTH: ${length}`)
       return true
     }
     if (this.warns.includes(userstate.username) && (length > emotes.settings.maxCount)) {
       this.warns.push(userstate.username)
       timeout(userstate.username, emotes.settings.timeout)
-      this.announceTimeout(emotes.settings.timeoutuserstate, message.username)
+      this.announceTimeout(emotes.settings.timeoutuserstate, userstate.username)
       console.log(`!!! EMOTES BAN ${userstate.username}, LENGTH: ${length}`)
       return true
     }
@@ -199,11 +204,13 @@ class Moderation {
     if (!permissions.hasPerm(userstate.badges, 'moderator') || !message.length) {
       return
     }
-    const target = message.replace('@', '').trim()
+    const target = message.replace('@', '').trim().toLowerCase()
     
     if (this.permits.includes(target)) return say(`@${userstate.username} ${target} already has a permit`)
 
     this.permits.push(target)
+    say(`@${userstate.username} permit was given to @${target}`)
+
     setTimeout(() => {
       const index = this.permits.indexOf(target)
       if (index !== -1) this.permits.splice(index, 1)

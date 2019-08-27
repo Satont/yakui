@@ -95,7 +95,7 @@ class CustomCommands {
   }
 
   async timeout (username, time) {
-    if (process.env.NODE_ENV !== 'production') return console.log(userna, timeout)
+    if (process.env.NODE_ENV !== 'production') return console.log(username, time)
     global.tmi.client.timeout(process.env.TWITCH_CHANNEL, username, time).catch(console.log)
   }
 
