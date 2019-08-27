@@ -4,10 +4,14 @@ const { say, timeout } = require('./customCommands')
 
 class Moderation {
   urlRegexp = /(www)? ??\.? ?[a-zA-Z0-9]+([a-zA-Z0-9-]+) ??\. ?(aero|bet|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|money|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|sk|sl|sm|sn|so|sr|st|su|sv|sy|sz|tc|td|tf|tg|th|tj|tk|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|um|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zr|zw)\b/gi
+  commands = [
+    { name: 'permit', fnc: this.givePermit }
+  ]
 
   constructor() {
     this.warns = []
     this.settings = null
+    this.permits = []
     this.init()
     this.sockets()
   }
@@ -42,6 +46,13 @@ class Moderation {
     let links = this.settings.find(o => o.name === 'links')
     if ((userstate.subscriber && !links.settings.moderateSubscribers) || !links.enabled) return false
     else if (links.settings.whitelist.some(o => message.includes(o))) return true
+    else if (this.permits.includes(userstate.username) || this.permits.includes(userstate['display-name'])) {
+      const index = this.permits.indexOf(userstate.username)
+      if (index !== -1) this.permits.splice(index, 1)
+      const index2 = this.permits.indexOf(userstate['display-name'])
+      if (index !== -1) this.permits.splice(index2, 1)
+      return false
+    }
     else if (!this.warns.includes(userstate.username) && message.search(this.urlRegexp) >= 0) {
       this.warns.push(userstate.username)
       timeout(userstate.username, 1)
@@ -184,7 +195,20 @@ class Moderation {
     }
     return returned ? true : false
   }
+  async givePermit(userstate, message) {
+    if (!permissions.hasPerm(userstate.badges, 'moderator') || !message.length) {
+      return
+    }
+    const target = message.replace('@', '').trim()
+    
+    if (this.permits.includes(target)) return say(`@${userstate.username} ${target} already has a permit`)
 
+    this.permits.push(target)
+    setTimeout(() => {
+      const index = this.permits.indexOf(target)
+      if (index !== -1) this.permits.splice(index, 1)
+    }, 5 * 60 * 1000)
+  }
   async sockets () {
     let self = this
     io.on('connection', async (socket) => {
