@@ -1,6 +1,7 @@
 const { say } = require('../systems/customCommands')
 const { io } = require('../libs/panel')
 const axios = require('axios')
+const events = require('../systems/events')
 
 class Qiwi {
   constructor () {
@@ -22,7 +23,7 @@ class Qiwi {
       for (const event of data.events) {
         const username = event.attributes.DONATION_SENDER ? event.attributes.DONATION_SENDER.replace(' ', '') : 'anonym'
         global.db('users').where({ username: username.toLowerCase() }).increment({ tips: Number(event.attributes.DONATION_AMOUNT) }).catch(() => {})
-        await say(`/me ${username} ${event.attributes.DONATION_AMOUNT}${event.attributes.DONATION_CURRENCY} ${event.attributes.DONATION_MESSAGE ? event.attributes.DONATION_MESSAGE : ''}`)
+        events.fire('tip', { username, amount: event.attributes.DONATION_AMOUNT, currency: event.attributes.DONATION_CURRENCY, message: event.attributes.DONATION_MESSAGE})
       }
     } catch (e) {
       throw new Error(e)

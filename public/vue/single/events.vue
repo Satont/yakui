@@ -2,7 +2,7 @@
 <div>
   <center><h2>Events</h2></center>
   <div id="navigation">
-    <a @click="show = 'tips'" class="btn btn-primary btn-sm">Tip</a>
+    <a @click="show = 'tip'" class="btn btn-primary btn-sm">Tip</a>
     <a @click="show = 'bits'" class="btn btn-primary btn-sm">Bits</a>
     <a @click="show = 'sub'" class="btn btn-primary btn-sm">Sub</a>
     <a @click="show = 'resub'" class="btn btn-primary btn-sm">Resub</a>
@@ -36,17 +36,20 @@
     </div>
   </div>
   <br>
+  <button type="button" class="btn btn-block btn-success" @click="save()" style="margin-bottom:5px;">Save</button>
   <button type="button" class="btn btn-block btn-success" @click="addOperation()">Add new opperation</button>
 </div>
 </template>
 
 <script>
+import { isPlainObject } from 'lodash'
+
 export default {
   data: function() {
     return {
-      show: 'tips',
-      tips: {
-        description: 'Triggering when when you get some donation',
+      show: 'tip',
+      tip: {
+        description: 'Triggering when you get some donation',
         operations: []
       },
       bits: {
@@ -108,7 +111,12 @@ export default {
     };
   },
   mounted() {
-    console.log(this[this.show].description)
+    const self = this
+    this.$socket.emit('list.events', null, async (err, list) => {
+      for (const item of list) {
+        self[item.name].operations = isPlainObject(item.operations) ? [] : item.operations
+      }
+    })
   },
   methods: {
     addOperation: function () {
@@ -116,6 +124,12 @@ export default {
     },
     deleteOperation: function (index) {
       this[this.show].operations.splice(index, 1)
+    },
+    save: function () {
+      const what = { name: this.show, operations: this[this.show].operations }
+      this.$socket.emit('events.save', what, async (err, data) => {
+
+      })
     }
   }
 };
@@ -135,7 +149,6 @@ export default {
   color: #212529;
   padding: 15px !important;
 }
-
 .display-4::first-letter {
   text-transform: uppercase;
 }
