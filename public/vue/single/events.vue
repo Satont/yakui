@@ -18,6 +18,12 @@
     <a @click="show = 'slowMode'" class="btn btn-primary btn-sm">Slow Mode</a>
     <a @click="show = 'subsOnlyChat'" class="btn btn-primary btn-sm">Subs Only Chat</a>
   </div>
+  <div class="jumbotron jumbotron-fluid">
+    <div class="container">
+      <h1 class="display-4">{{ show }} event</h1>
+      <p class="lead">{{ this.$data[show].description }}</p>
+    </div>
+  </div>
   <div class="card bg-dark" :key="index" v-for="(operation, index) in this.$data[show].operations" style="margin-bottom:15px;">
     <div class="card-body">
       <select class="custom-select" v-model="operation.key" style="margin-bottom:15px;">
@@ -40,55 +46,69 @@ export default {
     return {
       show: 'tips',
       tips: {
+        description: 'Triggering when when you get some donation',
         operations: []
       },
       bits: {
+        description: 'Triggering when you get some cheers',
         operations: []
       },
       sub: {
+        description: 'Triggering when you get new subscriber',
         operations: []
       },
       resub: {
+        description: 'Triggering when some user did resubscribtion',
         operations: []
       },
       subGift: {
+        description: 'Triggering when some user gift subscribtion to another user',
         operations: []
       },
       message: {
+        description: 'Triggering when some chat message appears',
         operations: []
       },
       chatClear: {
+        description: 'Triggering when chat was cleared',
         operations: []
       },
       userJoin: {
+        description: 'Triggering when some user joined channel',
         operations: []
       },
       userPart: {
+        description: 'Triggering when some user parted channel',
         operations: []
       },
       emoteOnly: {
+        description: 'Triggering when emote only was enabled/disabled on channel',
         operations: []
       },
       hosted: {
+        description: 'Triggering when you got hosted',
         operations: []
       },
       hosting: {
+        description: 'Triggering when yuo starting host',
         operations: []
       },
       raided: {
+        description: 'Triggering when someone start to raid you',
         operations: []
       },
       slowMode: {
+        description: 'Triggering when slow mode enabled/disabled in chat',
         operations: []
       },
       subsOnlyChat: {
+        description: 'Triggering when subscribers only chat enabled',
         operations: []
       }
     };
   },
   mounted() {
-    let self = this;
-    this.$socket.emit('list.variables', null, (err, list) => this.variables = list)
+    console.log(this[this.show].description)
   },
   methods: {
     addOperation: function () {
@@ -110,5 +130,13 @@ export default {
 #navigation a {
   display: inline-block;
   padding-top: 5px;
+}
+.jumbotron {
+  color: #212529;
+  padding: 15px !important;
+}
+
+.display-4::first-letter {
+  text-transform: uppercase;
 }
 </style>
