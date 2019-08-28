@@ -3,6 +3,7 @@ const fetch = require('node-fetch')
 const moderation = require('../systems/moderation')
 const { io } = require('./panel')
 const parser = require('./parser')
+const events = require('../systems/events')
 
 class TwitchTmi {
   constructor () {
@@ -197,13 +198,16 @@ class TwitchTmi {
     this.client.on('disconnected', (reason) => {
       console.log(reason)
     })
-    this.client.on('subscription', async (channel, username, method, message, userstate) => {
+    this.client.on('subscription', async (channel, username, methods, message, userstate) => {
       await global.db('core.subscribers').where('name', 'latestSubscriber').update('value', username)
+      events.fire('sub', { username, subTier: methods.plan, message })
     })
     this.client.on('resub', async (channel, username, months, message, userstate, methods) => {
       await global.db('core.subscribers').where('name', 'latestReSubscriber').update('value', username)
+      events.fire('resub', { username, subTier: methods.plan, message, subStreak: userstate['msg-param-cumulative-months'] })
     })
     this.client.on('cheer', async (channel, userstate, message) => {
+      events.fire('tip', { username: userstate.username, amount: userstate.bits, message })
       await global.db('users').insert({ id: Number(userstate['user-id']), username: userstate.username }).then(() => {}).catch(() => {})
       await global.db('users').where({ id: Number(userstate['user-id']) }).increment({ bits: Number(userstate.bits) }).update({ username: userstate.username })
     })
@@ -214,7 +218,35 @@ class TwitchTmi {
       await global.db('core.subscribers').where('name', 'latestReSubscriber').update('value', username)
     })
     this.client.on('subgift', async (channel, username, streakMonths, recipient, methods, userstate) => {
+      events.fire('subGift', { username, subTier: methods.plan, message, subStreak: streakMonths, subGiftRecipient: recipient, subGifterCount: userstate['msg-param-sender-count'] })
       await global.db('core.subscribers').where('name', 'latestReSubscriber').update('value', userstate['msg-param-recipient-user-name'])
+    })
+    this.client.on('clearchat', async (channel) => {
+      events.fire('chatClear', {})
+    })
+    this.client.on('join', async (channel, username, self) => {
+      events.fire('userJoin', { username })
+    })
+    this.client.on('part', async (channel, username, self) => {
+      events.fire('userPart', { username })
+    })
+    this.client.on('emoteonly', async (channel, enabled) => {
+      events.fire('userPart', { emoteOnlyState: enabled })
+    })
+    this.client.on('hosted', async (channel, username, viewers, autohost) => {
+      events.fire('hosted', { username, hostedViewers: viewers })
+    })
+    this.client.on('hosting', (channel, target, viewers) => {
+      events.fire('hosted', { username: target, hostingViewers: viewers })
+    })
+    this.client.on('raided', (channel, username, viewers) => {
+      events.fire('raided', { username, raidViewers: viewers })
+    })
+    this.client.on('slowmode', (channel, enabled, length) => {
+      events.fire('slowMode', { slowModeState: enabled, slowModeLength: length })
+    })
+    this.client.on('subscribers', (channel, enabled) => {
+      events.fire('subsOnlyChat', { subsOnlyChatState: enabled })
     })
   }
 
