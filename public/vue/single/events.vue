@@ -74,18 +74,42 @@ export default {
         operations: []
       },
       bits: {
+        variables: [
+          { name: '$username', description: 'Username of user who donated' },
+          { name: '$amount', description: 'How much donated' },
+          { name: '$message', description: 'Message of donation' }
+        ],
         description: 'Triggering when you get some cheers',
         operations: []
       },
       sub: {
+        variables: [
+          { name: '$username', description: 'Username of user who donated' },
+          { name: '$subTier', description: 'Tier of sub. Twitch prime/1/2/3/' },
+          { name: '$message', description: 'Message of donation' }
+        ],
         description: 'Triggering when you get new subscriber',
         operations: []
       },
       resub: {
+         variables: [
+          { name: '$username', description: 'Username of user who donated' },
+          { name: '$subTier', description: 'Tier of sub. Twitch prime/1/2/3/' },
+          { name: '$subStreak', description: 'Cumulative streak of user months' },
+          { name: '$message', description: 'Message of donation' }
+        ],
         description: 'Triggering when some user did resubscribtion',
         operations: []
       },
       subGift: {
+        variables: [
+          { name: '$username', description: 'Username of user who donated' },
+          { name: '$subTier', description: 'Tier of sub. Twitch prime/1/2/3/' },
+          { name: '$subStreak', description: 'Cumulative streak of user months' },
+          { name: '$subGiftRecipient', description: 'Username of recipient user' },
+          { name: '$subGifterCount', description: 'Gifted subs count by $username' },
+          { name: '$message', description: 'Message of donation' }
+        ],
         description: 'Triggering when some user gift subscribtion to another user',
         operations: []
       },
@@ -98,34 +122,62 @@ export default {
         operations: []
       },
       userJoin: {
+        variables: [
+          { name: '$username', description: 'Username who joined chat' }
+        ],
         description: 'Triggering when some user joined channel',
         operations: []
       },
       userPart: {
+        variables: [
+          { name: '$username', description: 'Username who parted chat' }
+        ],
         description: 'Triggering when some user parted channel',
         operations: []
       },
       emoteOnly: {
+        variables: [
+          { name: '$emoteOnlyState', description: 'Showing does emoteonly enabled or disabled' }
+        ],
         description: 'Triggering when emote only was enabled/disabled on channel',
         operations: []
       },
       hosted: {
+        variables: [
+          { name: '$username', description: 'Username who started host' },
+          { name: '$hostedViewers', description: 'Viewers of host' }
+        ],
         description: 'Triggering when you got hosted',
         operations: []
       },
       hosting: {
+        variables: [
+          { name: '$username', description: 'Username of target' },
+          { name: '$hostingViewers', description: 'Viewers of host' }
+        ],
         description: 'Triggering when yuo starting host',
         operations: []
       },
       raided: {
+        variables: [
+          { name: '$username', description: 'Username raider' },
+          { name: '$raidViewers', description: 'Viewers of raid' }
+        ],
         description: 'Triggering when someone start to raid you',
         operations: []
       },
       slowMode: {
+        variables: [
+          { name: '$slowModeState', description: 'State of slow mode (enabled/disabled)' },
+          { name: '$slowModeLength', description: 'Length of slow mode' }
+        ],
         description: 'Triggering when slow mode enabled/disabled in chat',
         operations: []
       },
       subsOnlyChat: {
+        variables: [
+          { name: '$subsOnlyChatState', description: 'State of subscribers mode (enabled/disabled)' },
+        ],
         description: 'Triggering when subscribers only chat enabled',
         operations: []
       }
