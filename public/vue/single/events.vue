@@ -24,6 +24,21 @@
       <p class="lead">{{ this.$data[show].description }}</p>
     </div>
   </div>
+
+  <table class="table table-dark table-sm">
+    <thead>
+      <tr align="center">
+        <th colspan="2">Avalible variables for {{ show }} event</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(variable, index) in this.$data[show].variables" :key="index">
+        <td>{{ variable.name }}</td>
+        <td>{{ variable.description }}</td>
+      </tr>
+    </tbody>
+  </table>
+
   <div class="card bg-dark" :key="index" v-for="(operation, index) in this.$data[show].operations" style="margin-bottom:15px;">
     <div class="card-body">
       <select class="custom-select" v-model="operation.key" style="margin-bottom:15px;">
@@ -49,6 +64,12 @@ export default {
     return {
       show: 'tip',
       tip: {
+        variables: [
+          { name: '$username', description: 'Username of user who donated' },
+          { name: '$amount', description: 'How much donated' },
+          { name: '$currency', description: 'Currency of donate' },
+          { name: '$message', description: 'Message of donation' }
+        ],
         description: 'Triggering when you get some donation',
         operations: []
       },
