@@ -1,4 +1,3 @@
-const { say } = require('../systems/customCommands')
 const { io } = require('../libs/panel')
 const axios = require('axios')
 const events = require('../systems/events')

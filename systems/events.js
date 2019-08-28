@@ -16,10 +16,10 @@ class Events {
     for (let operation of event.operations) {
       if (operation.key === 'sendMessage') {
         let message = operation.message
-        message = message.replace('$username', opts.username)
+        message = message.replace('$username', opts.username || '')
         message = message.replace('$amount', opts.amount)
         message = message.replace('$currency', opts.currency)
-        message = message.replace('$message', opts.message ? opts.message : '')
+        message = message.replace('$message', opts.message || '')
         await say(message)
       }
     }

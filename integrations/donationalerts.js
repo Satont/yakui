@@ -1,6 +1,7 @@
 const socket = require('socket.io-client')
-const { say } = require('../systems/customCommands')
+const events = require('../systems/events')
 const { io } = require('../libs/panel')
+
 
 class DonationAlerts {
   constructor () {
@@ -43,7 +44,7 @@ class DonationAlerts {
         let { username, amount_main, currency, message, alert_type } = JSON.parse(data)
         if (parseInt(alert_type, 10) !== 1) return
         global.db('users').where({ username: username.toLowerCase().replace(' ', '') }).increment({ tips: Number(amount_main) }).catch(() => {})
-        await say(`/me ${username} ${amount_main}RUB ${message}`)
+        events.fire('tip', { username, amount: amount_main, currency, message })
       })
     }
   }
