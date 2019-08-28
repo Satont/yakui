@@ -1,5 +1,5 @@
 const socket = require('socket.io-client')
-const { say } = require('../systems/customCommands')
+const events = require('../systems/events')
 const { io } = require('../libs/panel')
 
 class StreamLabs {
@@ -42,7 +42,7 @@ class StreamLabs {
       if (!data.isTest) {
         global.db('users').where({ username: data.message[0].from.toLowerCase().replace(' ', '') }).increment({ tips: Number(data.message[0].amount) }).catch(() => {})
       }
-      await say(`/me ${data.message[0].from} ${data.message[0].amount}${data.message[0].currency} ${data.message[0].message}`)
+      events.fire('tip', { username: data.message[0].from, amount: data.message[0].amount, currency: data.message[0].currency, message: data.message[0].message })
     }
   }
 
