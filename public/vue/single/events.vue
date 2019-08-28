@@ -18,8 +18,8 @@
     <a @click="show = 'slowMode'" class="btn btn-primary btn-sm">Slow Mode</a>
     <a @click="show = 'subsOnlyChat'" class="btn btn-primary btn-sm">Subs Only Chat</a>
   </div>
-  <div v-if="show === 'tips'">
-    <div class="card bg-dark" :key="index" v-for="(operation, index) in tips" style="margin-bottom:15px;">
+  <div>
+    <div class="card bg-dark" :key="index" v-for="(operation, index) in this.$data[show]" style="margin-bottom:15px;">
       <div class="card-body">
         <select class="custom-select" v-model="operation.key" style="margin-bottom:15px;">
           <option value="sendMessage">Send Chat Message</option>
@@ -38,7 +38,21 @@ export default {
   data: function() {
     return {
       show: 'tips',
-      tips: []
+      tips: [],
+      bits: [],
+      sub: [],
+      resub: [],
+      subGift: [],
+      message: [],
+      chatClear: [],
+      userJoin: [],
+      userPart: [],
+      emoteOnly: [],
+      hosted: [],
+      hosting: [],
+      raided: [],
+      slowMode: [],
+      subsOnlyChat: []
     };
   },
   mounted() {
