@@ -50,7 +50,7 @@ class Timers {
           await global.db('systems.timers').insert(data)
           self.init()
         } catch (e) {
-          console.log(e)
+          global.log.error(e)
         }
       })
       socket.on('delete.timer', async (data, cb) => {
@@ -58,7 +58,7 @@ class Timers {
           await global.db('systems.timers').where('id', data).delete()
           self.init()
         } catch (e) {
-          console.log(e)
+          global.log.error(e)
         }
       })
       socket.on('update.timer', async (data, cb) => {
@@ -66,7 +66,7 @@ class Timers {
           await global.db('systems.timers').where('id', data.id).update(data)
           self.init()
         } catch (e) {
-          console.log(e)
+          global.log.error(e)
         }
       })
     })

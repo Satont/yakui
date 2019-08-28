@@ -19,7 +19,7 @@ class Twitch {
       say(`${userstate.username} ===> ${message}`)
       global.tmi.getChannelInfo()
     } catch (e) {
-      console.log(e)
+      global.log.error(e)
       say(`${userstate.username} !!! ERROR`)
     }
   }

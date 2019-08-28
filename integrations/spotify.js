@@ -37,12 +37,12 @@ class Spotify {
   async refreshToken() {
     if (!this.client) return
     this.client.refreshAccessToken().then(async data => {
-        console.log('Spotify access token was refreshed')
+      global.log.info('Spotify access token was refreshed')
         this.client.setAccessToken(data.body['access_token'])
         this.settings.settings.accessToken = data.body['access_token']
         await global.db('integrations').where('name', 'spotify').update({ settings: this.settings.settings })
       }, err => {
-        console.log('Could not refresh access token', err)
+        global.log.info('Could not refresh access token', err)
       }
     );
   }
@@ -52,7 +52,7 @@ class Spotify {
     }).then(data => {
       return `${data.body.item.artists.map(o => o.name).join(', ')} — ${data.body.item.name}`
     }, err => {
-      console.log(err)
+      global.log.error(err)
       return null
     });
   }
@@ -83,7 +83,7 @@ class Spotify {
         await global.db('integrations').where('name', 'spotify').update({ settings: self.settings.settings })
         self.start()
         reply.redirect(`http://${request.headers.host}/#/integrations/spotify`)
-      }, err => console.log(err))
+      }, err => global.log.error(err))
     })
   }
 }

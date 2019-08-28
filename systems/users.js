@@ -91,7 +91,7 @@ class Users {
       this.onlineUsers = now
       this.pointsWatched(now)
     } catch (e) {
-      console.log(e)
+      global.log.error(e)
     }
   }
 
@@ -110,7 +110,7 @@ class Users {
       const data = await request.data.data
       return data
     } catch (e) {
-      console.log(e)
+      global.log.error(e)
     }
   }
 

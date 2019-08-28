@@ -4,6 +4,7 @@ switch (process.env.NODE_ENV) {
 }
 require('dotenv').config({ path: path })
 
+require('./libs/logger')
 global.db = require('./libs/db')
 
 async function load () {
@@ -28,15 +29,19 @@ async function load () {
 }
 load()
 
-process.on('uncaughtException', function (err) {
-  console.log(err)
+process.on('unhandledRejection', function (err, promise) {
+  global.log.error(require('util').inspect(promise))
+})
+
+process.on('uncaughtException', (e) => {
+  global.log.error(require('util').inspect(e))
 })
 
 function clearRam () {
   try {
     if (global.gc) global.gc()
   } catch (e) {
-    console.log('`node --expose-gc app.js`')
+   global.log.info('`node --expose-gc app.js`')
   }
   setTimeout(() => clearRam(), 15 * 60 * 1000)
 }

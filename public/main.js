@@ -163,7 +163,7 @@ new Vue({
     getStreamData: async function () {
       setTimeout(() => this.getStreamData(), 10 * 1000)
       this.$socket.emit('stream.data', null, async (err, data) => {
-        if (err) return console.log(err)
+        if (err) return global.log.error(err)
         if (data.uptime) {
           const diff = moment(moment().format()).diff(data.uptime)
           this.uptime = humanizeDuration(moment.duration(diff), { language: data.lang })

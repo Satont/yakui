@@ -73,7 +73,7 @@ class Commons {
       data = await response.json()
       data = await data.data[0] ? data.data[0].followed_at : null
     } catch (e) {
-      console.log(e)
+      global.log.error(e)
     }
     if (_.isNil(await data)) {
       return 'not followed'
@@ -155,8 +155,8 @@ class Commons {
       displayname: userstate['display-name'],
       param: message,
       user: await global.db('users').where('id', userstate['user-id']).first() || { points: 0, messages: 0, watched: 0, bits: 0, tips: 0 },
-      say: function (msg) { global.tmi.client.say(process.env.TWITCH_CHANNEL, msg).catch(console.log) },
-      timeout: function (username, duration) { global.tmi.client.timeout(process.env.TWITCH_CHANNEL, username, duration).catch(console.log) }
+      say: function (msg) { global.tmi.client.say(process.env.TWITCH_CHANNEL, msg).catch(global.log.error) },
+      timeout: function (username, duration) { global.tmi.client.timeout(process.env.TWITCH_CHANNEL, username, duration).catch(global.log.error) }
     }
 
     const run = await safeEval(toEval, context)

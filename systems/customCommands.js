@@ -34,7 +34,7 @@ class CustomCommands {
     if (!permissions.hasPerm(userstate.badges, find.permission)) return
 
     if (this.cooldowns.includes(find.name) && find.cooldowntype === 'stop') {
-      return console.log(`COMMAND ${find.name.toUpperCase()} ON COOLDOWN AND HAS NO EXECUTE MODEL`)
+      return global.log.info(`COMMAND ${find.name.toUpperCase()} ON COOLDOWN AND HAS NO EXECUTE MODEL`)
     }
     if (this.cooldowns.includes(find.name) && (userstate.mod || userstate.subscriber)) {
       userstate['message-type'] = 'chat'
@@ -55,7 +55,6 @@ class CustomCommands {
       const index = this.cooldowns.indexOf(find.name)
       if (index !== -1) this.cooldowns.splice(index, 1)
     }, find.cooldown * 1000)
-    // console.log(message)
   }
 
   async prepareMessage (response, message, userstate) {
@@ -85,18 +84,21 @@ class CustomCommands {
   }
 
   async say (msg) {
-    if (process.env.NODE_ENV !== 'production') return console.log(msg)
-    global.tmi.client.say(process.env.TWITCH_CHANNEL, msg).catch(console.log)
+    global.log.chatOut(msg)
+    if (process.env.NODE_ENV !== 'production') return
+    global.tmi.client.say(process.env.TWITCH_CHANNEL, msg).catch(global.log.error)
   }
 
   async whisper (username, message) {
-    if (process.env.NODE_ENV !== 'production') return console.log(message)
-    await global.tmi.client.whisper(username, message).catch(console.log)
+    global.log.chatOut(username, message)
+    if (process.env.NODE_ENV !== 'production') return
+    await global.tmi.client.whisper(username, message).catch(global.log.error)
   }
 
   async timeout (username, time) {
-    if (process.env.NODE_ENV !== 'production') return console.log(username, time)
-    global.tmi.client.timeout(process.env.TWITCH_CHANNEL, username, time).catch(console.log)
+    global.log.chatOut(username, time)
+    if (process.env.NODE_ENV !== 'production') return
+    global.tmi.client.timeout(process.env.TWITCH_CHANNEL, username, time).catch(global.log.error)
   }
 
   async sockets () {
@@ -118,7 +120,7 @@ class CustomCommands {
           self.getCommands()
           cb(null, true)
         } catch (e) {
-          console.log(e)
+          global.log.error(e)
         }
       })
       socket.on('delete.command', async (data, cb) => {
@@ -126,7 +128,7 @@ class CustomCommands {
           await global.db('systems.commands').where('name', data).delete()
           self.getCommands()
         } catch (e) {
-          console.log(e)
+          global.log.error(e)
         }
       })
       socket.on('update.command', async (data, cb) => {
@@ -141,7 +143,7 @@ class CustomCommands {
           self.getCommands()
           cb(null, true)
         } catch (e) {
-          console.log(e)
+          global.log.error(e)
         }
       })
     })

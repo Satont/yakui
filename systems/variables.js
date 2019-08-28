@@ -191,14 +191,14 @@ io.on('connection', function (socket) {
     try {
       await global.db('systems.variables').insert(data)
     } catch (e) {
-      console.log(e)
+      global.log.error(e)
     }
   })
   socket.on('delete.variable', async (data, cb) => {
     try {
       await global.db('systems.variables').where('name', data).delete()
     } catch (e) {
-      console.log(e)
+      global.log.error(e)
     }
   })
   socket.on('update.variable', async (data, cb) => {
@@ -207,7 +207,7 @@ io.on('connection', function (socket) {
     try {
       await global.db('systems.variables').where('name', name).update(data)
     } catch (e) {
-      console.log(e)
+      global.log.error(e)
     }
   })
 })

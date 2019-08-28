@@ -54,7 +54,7 @@ class Keywords {
           self.getKeywordsList()
           cb(null, true)
         } catch (e) {
-          console.log(e)
+          global.log.error(e)
         }
       })
       socket.on('delete.keyword', async (data, cb) => {
@@ -62,7 +62,7 @@ class Keywords {
           await global.db('systems.keywords').where('id', data).delete()
           self.getKeywordsList()
         } catch (e) {
-          console.log(e)
+          global.log.error(e)
         }
       })
       socket.on('update.keyword', async (data, cb) => {
@@ -71,7 +71,7 @@ class Keywords {
           self.getKeywordsList()
           cb(null, true)
         } catch (e) {
-          console.log(e)
+          global.log.error(e)
         }
       })
     })

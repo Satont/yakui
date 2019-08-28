@@ -62,13 +62,13 @@ class Moderation {
       this.warns.push(userstate.username)
       timeout(userstate.username, 1)
       this.announceTimeout(links.settings.warnMessage, userstate.username)
-      console.log(`!!! LINK BAN ${userstate.username}, MESSAGE: ${message}`)
+      global.log.info(`!!! LINK BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     }
     if (this.warns.includes(userstate.username) && message.search(this.urlRegexp) >= 0) {
       timeout(userstate.username, links.settings.timeout)
       this.announceTimeout(links.settings.timeoutMessage, userstate.username)
-      console.log(`!!! LINK BAN ${userstate.username}, MESSAGE: ${message}`)
+      global.log.info(`!!! LINK BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     }
   }
@@ -89,13 +89,13 @@ class Moderation {
       this.warns.push(userstate.username)
       timeout(userstate.username, 1)
       this.announceTimeout(symbols.settings.warnuserstate, userstate.username)
-      console.log(`!!! SYMBOLS BAN ${userstate.username}, LENGTH: ${symbolsLength}`)
+      global.log.info(`!!! SYMBOLS BAN ${userstate.username}, LENGTH: ${symbolsLength}`)
       return true
     }
     if (Math.ceil(symbolsLength / (message.length / 100)) >= symbols.settings.maxSymbolsPercent) {
       this.announceTimeout(symbols.settings.timeoutuserstate, userstate.username)
       timeout(userstate.username, symbols.settings.timeout)
-      console.log(`!!! SYMBOLS BAN ${userstate.username}, LENGTH: ${symbolsLength}`)
+      global.log.info(`!!! SYMBOLS BAN ${userstate.username}, LENGTH: ${symbolsLength}`)
       return true
     }
   }
@@ -108,13 +108,13 @@ class Moderation {
       this.warns.push(userstate.username)
       timeout(userstate.username, 1)
       this.announceTimeout(longMessage.settings.warnuserstate, userstate.username)
-      console.log(`!!! LONG MESSAGE ${userstate.username}, LENGTH: ${message.length}`)
+      global.log.info(`!!! LONG MESSAGE ${userstate.username}, LENGTH: ${message.length}`)
       return true
     }
     if (this.warns.includes(userstate.username) && message.length > longMessage.settings.triggerLength) {
       timeout(userstate.username, longMessage.settings.timeout)
       this.announceTimeout(links.settings.timeoutuserstate, userstate.username)
-      console.log(`!!! LONG MESSAGE ${userstate.username}, LENGTH: ${message.length}`)
+      global.log.info(`!!! LONG MESSAGE ${userstate.username}, LENGTH: ${message.length}`)
       return true
     }
   }
@@ -136,14 +136,14 @@ class Moderation {
       this.warns.push(userstate.username)
       timeout(userstate.username, 1)
       this.announceTimeout(caps.settings.warnuserstate, userstate.username)
-      console.log(`!!! CAPS BAN ${userstate.username}, LENGTH: ${capsLength}`)
+      global.log.info(`!!! CAPS BAN ${userstate.username}, LENGTH: ${capsLength}`)
       return true
     }
     if (this.warns.includes(userstate.username) && Math.ceil(capsLength / (message.length / 100)) > caps.settings.maxCapsPercent) {
       this.warns.push(userstate.username)
       timeout(userstate.username, caps.settings.timeout)
       this.announceTimeout(caps.settings.timeoutuserstate, userstate.username)
-      console.log(`!!! CAPS BAN ${userstate.username}, LENGTH: ${capsLength}`)
+      global.log.info(`!!! CAPS BAN ${userstate.username}, LENGTH: ${capsLength}`)
       return true
     }
   }
@@ -157,13 +157,13 @@ class Moderation {
       this.warns.push(userstate.username)
       timeout(userstate.username, 1)
       this.announceTimeout(color.settings.warnuserstate, userstate.username)
-      console.log(`!!! COLOR BAN ${userstate.username}, MESSAGE: ${message}`)
+      global.log.info(`!!! COLOR BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     } else if (this.warns.includes(userstate.username)) {
       this.warns.push(userstate.username)
       timeout(userstate.username, color.settings.timeout)
       this.announceTimeout(color.settings.timeoutuserstate, userstate.username)
-      console.log(`!!! COLOR BAN ${userstate.username}, MESSAGE: ${message}`)
+      global.log.info(`!!! COLOR BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     }
   }
@@ -175,14 +175,14 @@ class Moderation {
       this.warns.push(userstate.username)
       timeout(userstate.username, emotes.settings.timeout)
       this.announceTimeout(emotes.settings.warnuserstate, userstate.username)
-      console.log(`!!! EMOTES BAN ${userstate.username}, LENGTH: ${length}`)
+      global.log.info(`!!! EMOTES BAN ${userstate.username}, LENGTH: ${length}`)
       return true
     }
     if (this.warns.includes(userstate.username) && (length > emotes.settings.maxCount)) {
       this.warns.push(userstate.username)
       timeout(userstate.username, emotes.settings.timeout)
       this.announceTimeout(emotes.settings.timeoutuserstate, userstate.username)
-      console.log(`!!! EMOTES BAN ${userstate.username}, LENGTH: ${length}`)
+      global.log.info(`!!! EMOTES BAN ${userstate.username}, LENGTH: ${length}`)
       return true
     }
   }
@@ -193,7 +193,7 @@ class Moderation {
       if (value === '') continue
       if (message.includes(value)) {
         timeout(userstate.username, 600)
-        console.log(`!!! BLACKLIST BAN ${userstate.username}, WORD: ${value}`)
+        global.log.info(`!!! BLACKLIST BAN ${userstate.username}, WORD: ${value}`)
         returned = true
         break;
       }
@@ -233,7 +233,7 @@ class Moderation {
         for (let item of arr) {
           let name = item.name
           delete item.name
-          await global.db('systems.moderation').where('name', name).update(item).catch(console.log)
+          await global.db('systems.moderation').where('name', name).update(item).catch(global.log.error)
         }
         await self.init()
       })

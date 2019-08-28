@@ -30,13 +30,13 @@ class DonationAlerts {
     if (this.socket !== null) {
       this.socket.on('connect', () => {
         this.socket.emit('add-user', { token: this.settings.settings.token, type: 'minor' })
-        console.log('DONATIONALERTS.RU: Successfully connected socket to service')
+        global.log.info('DONATIONALERTS.RU: Successfully connected socket to service')
       })
       this.socket.on('reconnect_attempt', () => {
-        console.log('DONATIONALERTS.RU: Trying to reconnect to service')
+        global.log.info('DONATIONALERTS.RU: Trying to reconnect to service')
       })
       this.socket.on('disconnect', () => {
-        console.log('DONATIONALERTS.RU: Socket disconnected from service')
+        global.log.info('DONATIONALERTS.RU: Socket disconnected from service')
         this.disconnect()
         this.socket = null
       })

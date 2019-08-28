@@ -22,13 +22,13 @@ class StreamLabs {
     this.socket = socket.connect(`https://sockets.streamlabs.com?token=${this.settings.settings.token}`)
     if (this.socket !== null) {
       this.socket.on('connect', () => {
-        console.log('STREAMLABS: Successfully connected socket to service')
+        global.log.info('STREAMLABS: Successfully connected socket to service')
       })
       this.socket.on('reconnect_attempt', () => {
-        console.log('STREAMLABS: Trying to reconnect to service')
+        global.log.info('STREAMLABS: Trying to reconnect to service')
       })
       this.socket.on('disconnect', () => {
-        console.log('STREAMLABS: Socket disconnected from service')
+        global.log.info('STREAMLABS: Socket disconnected from service')
         if (this.socket) {
           this.socket.open()
         }
