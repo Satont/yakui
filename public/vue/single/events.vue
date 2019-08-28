@@ -18,14 +18,15 @@
     <a @click="show = 'slowMode'" class="btn btn-primary btn-sm">Slow Mode</a>
     <a @click="show = 'subsOnlyChat'" class="btn btn-primary btn-sm">Subs Only Chat</a>
   </div>
-  <div>
-    <div class="card bg-dark" :key="index" v-for="(operation, index) in this.$data[show]" style="margin-bottom:15px;">
-      <div class="card-body">
-        <select class="custom-select" v-model="operation.key" style="margin-bottom:15px;">
-          <option value="sendMessage">Send Chat Message</option>
-        </select>
-        <input type="text" class="form-control" v-if="operation.key === 'sendMessage'" v-model="operation.message" placeholder="Message for sending">
-      </div>
+  <div class="card bg-dark" :key="index" v-for="(operation, index) in this.$data[show].operations" style="margin-bottom:15px;">
+    <div class="card-body">
+      <select class="custom-select" v-model="operation.key" style="margin-bottom:15px;">
+        <option value="sendMessage">Send Chat Message</option>
+      </select>
+      <input type="text" class="form-control" v-if="operation.key === 'sendMessage'" v-model="operation.message" placeholder="Message for sending">
+    </div>
+    <div class="card-footer text-muted">
+      <button type="button" class="btn btn-block btn-danger btn-sm" @click="deleteOperation(index)">Delete</button>
     </div>
   </div>
   <br>
@@ -38,21 +39,51 @@ export default {
   data: function() {
     return {
       show: 'tips',
-      tips: [],
-      bits: [],
-      sub: [],
-      resub: [],
-      subGift: [],
-      message: [],
-      chatClear: [],
-      userJoin: [],
-      userPart: [],
-      emoteOnly: [],
-      hosted: [],
-      hosting: [],
-      raided: [],
-      slowMode: [],
-      subsOnlyChat: []
+      tips: {
+        operations: []
+      },
+      bits: {
+        operations: []
+      },
+      sub: {
+        operations: []
+      },
+      resub: {
+        operations: []
+      },
+      subGift: {
+        operations: []
+      },
+      message: {
+        operations: []
+      },
+      chatClear: {
+        operations: []
+      },
+      userJoin: {
+        operations: []
+      },
+      userPart: {
+        operations: []
+      },
+      emoteOnly: {
+        operations: []
+      },
+      hosted: {
+        operations: []
+      },
+      hosting: {
+        operations: []
+      },
+      raided: {
+        operations: []
+      },
+      slowMode: {
+        operations: []
+      },
+      subsOnlyChat: {
+        operations: []
+      }
     };
   },
   mounted() {
@@ -61,7 +92,10 @@ export default {
   },
   methods: {
     addOperation: function () {
-      this[this.show].push({ key: 'sendMessage', message: '' })
+      this[this.show].operations.push({ key: 'sendMessage', message: '' })
+    },
+    deleteOperation: function (index) {
+      this[this.show].operations.splice(index, 1)
     }
   }
 };
