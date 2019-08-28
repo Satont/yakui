@@ -86,7 +86,7 @@ export default {
         variables: [
           { name: '$username', description: 'Username of user who donated' },
           { name: '$subTier', description: 'Tier of sub. Twitch prime/1/2/3/' },
-          { name: '$message', description: 'Message of donation' }
+          { name: '$message', description: 'Message of sub' }
         ],
         description: 'Triggering when you get new subscriber',
         operations: []
@@ -96,7 +96,7 @@ export default {
           { name: '$username', description: 'Username of user who donated' },
           { name: '$subTier', description: 'Tier of sub. Twitch prime/1/2/3/' },
           { name: '$subStreak', description: 'Cumulative streak of user months' },
-          { name: '$message', description: 'Message of donation' }
+          { name: '$message', description: 'Message of resub' }
         ],
         description: 'Triggering when some user did resubscribtion',
         operations: []
@@ -107,8 +107,7 @@ export default {
           { name: '$subTier', description: 'Tier of sub. Twitch prime/1/2/3/' },
           { name: '$subStreak', description: 'Cumulative streak of user months' },
           { name: '$subGiftRecipient', description: 'Username of recipient user' },
-          { name: '$subGifterCount', description: 'Gifted subs count by $username' },
-          { name: '$message', description: 'Message of donation' }
+          { name: '$subGifterCount', description: 'Gifted subs count by $username' }
         ],
         description: 'Triggering when some user gift subscribtion to another user',
         operations: []

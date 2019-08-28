@@ -218,7 +218,7 @@ class TwitchTmi {
       await global.db('core.subscribers').where('name', 'latestReSubscriber').update('value', username)
     })
     this.client.on('subgift', async (channel, username, streakMonths, recipient, methods, userstate) => {
-      events.fire('subGift', { username, subTier: methods.plan, message, subStreak: streakMonths, subGiftRecipient: recipient, subGifterCount: userstate['msg-param-sender-count'] })
+      events.fire('subGift', { username, subTier: methods.plan, subStreak: streakMonths, subGiftRecipient: recipient, subGifterCount: userstate['msg-param-sender-count'] })
       await global.db('core.subscribers').where('name', 'latestReSubscriber').update('value', userstate['msg-param-recipient-user-name'])
     })
     this.client.on('clearchat', async (channel) => {
