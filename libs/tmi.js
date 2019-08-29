@@ -239,8 +239,8 @@ class TwitchTmi {
       events.fire('userPart', { username })
     })
     this.client.on('emoteonly', async (channel, enabled) => {
-      global.log.info(`emote nnly ${enabled}`)
-      events.fire('userPart', { emoteOnlyState: enabled })
+      global.log.info(`emote only ${enabled}`)
+      events.fire('emoteOnly', { emoteOnlyState: enabled })
     })
     this.client.on('hosted', async (channel, username, viewers, autohost) => {
       global.log.hosted(`host from ${username}, viewers: ${viewers}, autohost: ${autohost}`)
