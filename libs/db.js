@@ -13,7 +13,7 @@ const knex = require('knex')({
     min: 0,
     max: 10,
     afterCreate: function (conn, done) {
-      global.log.info('Pool created')
+      console.log('Pool created')
       knex.connected = true
       done(null, conn)
     }

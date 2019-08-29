@@ -179,7 +179,7 @@ class TwitchTmi {
         this.getSubscribers({ cursor: data.pagination.cursor, count: data.data.length + opts.count })
       } else {
         this.subscribers = data.data.length + opts.count
-        global.log.info(`Subscribers found! Count: ${this.subscribers}`)
+        console.log(`Subscribers found! Count: ${this.subscribers}`)
       }
     } catch (e) {
       global.log.error(`Something went wrong with getSubscribers. Will retry after 1 minute`)

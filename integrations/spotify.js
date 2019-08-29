@@ -37,7 +37,7 @@ class Spotify {
   async refreshToken() {
     if (!this.client) return
     this.client.refreshAccessToken().then(async data => {
-      global.log.info('Spotify access token was refreshed')
+        console.log('Spotify access token was refreshed')
         this.client.setAccessToken(data.body['access_token'])
         this.settings.settings.accessToken = data.body['access_token']
         await global.db('integrations').where('name', 'spotify').update({ settings: this.settings.settings })
