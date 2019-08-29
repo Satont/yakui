@@ -25,7 +25,7 @@ global.log = winston.createLogger({
       if (info.level === 'bits') level = '+cheer'
       if (info.level === 'hosted') level = '+hosted'
       if (info.level === 'raided') level = '+raided'
-      let timestamp = moment().tz('Europe/Moscow').format('YYYY-MM-DD[T]HH:mm:ss.SSS')
+      let timestamp = moment().tz(process.env.TZ).format('YYYY-MM-DD[T]HH:mm:ss.SSS')
       if (typeof info.message === 'object') info.message = JSON.stringify(info.message, null, 4)
       return `${timestamp} ${level} ${info.message}`
     })
