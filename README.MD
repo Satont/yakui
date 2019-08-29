@@ -31,6 +31,8 @@
 	- count user points per watched or messages
 - Overlays system
 	- you can create some overlay and past it in your OBS!
+- Events system
+	- Trigger on some event and do something!
 
 
 # Installation
