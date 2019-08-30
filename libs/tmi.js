@@ -190,7 +190,7 @@ class TwitchTmi {
 
   async loadListeners () {
     this.client.on('message', async (channel, userstate, message, self) => {
-      if (self) return global.log.chatOut(message)
+      if (self) return global.log.chatOut(`${userstate.username}: ${message}`)
       if (userstate['message-type'] === 'whisper') return // we do not want listen whispers
       global.log.chatIn(`${userstate.username}: ${message} | UserId: [${userstate['user-id']}]`)
       moderation.onMessage(userstate, message)
