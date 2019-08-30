@@ -197,7 +197,7 @@ class TwitchTmi {
       parser.process(userstate, message)
     })
     this.client.on('disconnected', (reason) => {
-      global.log.info(reason)
+      global.log.error(reason)
     })
     this.client.on('subscription', async (channel, username, methods, message, userstate) => {
       global.log.sub(`username: ${username}, userId: ${userstate['user-id']}, message: ${message}, method: ${methods.plan}`)
