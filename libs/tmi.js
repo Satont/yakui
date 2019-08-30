@@ -104,7 +104,11 @@ class TwitchTmi {
         return true
       })
       .catch(e => {
-        this.getToken().then(() => this.start())
+        if (e === 'Login authentication failed') return this.getToken().then(() => this.start())
+        else {
+          setTimeout(() => this.connect(), this.retries * 1000)
+          this.retries++
+        }
       })
   }
 
@@ -198,6 +202,7 @@ class TwitchTmi {
     })
     this.client.on('disconnected', (reason) => {
       global.log.error(reason)
+      this.connect()
     })
     this.client.on('subscription', async (channel, username, methods, message, userstate) => {
       global.log.sub(`username: ${username}, userId: ${userstate['user-id']}, message: ${message}, method: ${methods.plan}`)
