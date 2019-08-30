@@ -236,11 +236,9 @@ class TwitchTmi {
       events.fire('chatClear', {})
     })
     this.client.on('join', async (channel, username, self) => {
-      global.log.info(`${username} joined channel`)
       events.fire('userJoin', { username })
     })
     this.client.on('part', async (channel, username, self) => {
-      global.log.info(`${username} parted channel`)
       events.fire('userPart', { username })
     })
     this.client.on('emoteonly', async (channel, enabled) => {
