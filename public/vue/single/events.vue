@@ -115,7 +115,7 @@ export default {
       message: {
         description: 'Triggering when some chat message appears',
         variables: [
-          { name: '$username', description: 'Username of user who sended message' },
+          { name: '$username', description: 'Username of user who sent message' },
         ],
         operations: []
       },
