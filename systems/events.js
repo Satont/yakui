@@ -52,8 +52,8 @@ class Events {
         cb(null, query)
       })
       socket.on('events.save', async (data, cb) => {
-        self.load()
         await global.db('systems.events').where('name', data.name).update({ operations: JSON.stringify(data.operations) })
+        await self.load()
       })
     })
   }

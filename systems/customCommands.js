@@ -116,7 +116,7 @@ class CustomCommands {
 
         try {
           await global.db('systems.commands').insert(data)
-          self.getCommands()
+          await self.getCommands()
           cb(null, true)
         } catch (e) {
           global.log.error(e)
@@ -125,7 +125,7 @@ class CustomCommands {
       socket.on('delete.command', async (data, cb) => {
         try {
           await global.db('systems.commands').where('name', data).delete()
-          self.getCommands()
+          await self.getCommands()
         } catch (e) {
           global.log.error(e)
         }
@@ -139,7 +139,7 @@ class CustomCommands {
 
         try {
           await global.db('systems.commands').where('id', data.id).update(data)
-          self.getCommands()
+          await self.getCommands()
           cb(null, true)
         } catch (e) {
           global.log.error(e)

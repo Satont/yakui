@@ -128,7 +128,7 @@ class Notable {
       })
       socket.on('update.settings.notable', async (data, cb) => {
         await global.db('settings').where('system', 'notable').update({ data: data })
-        self.init()
+        await self.init()
       })
     })
   }

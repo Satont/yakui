@@ -123,7 +123,7 @@ class Users {
       })
       socket.on('update.settings.users', async (data, cb) => {
         await global.db('settings').where('system', 'users').update({ data })
-        self.start()
+        await self.start()
       })
     })
   }

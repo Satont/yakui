@@ -51,7 +51,7 @@ class Keywords {
       socket.on('create.keyword', async (data, cb) => {
         try {
           await global.db('systems.keywords').insert(data)
-          self.getKeywordsList()
+          await self.getKeywordsList()
           cb(null, true)
         } catch (e) {
           global.log.error(e)
@@ -60,7 +60,7 @@ class Keywords {
       socket.on('delete.keyword', async (data, cb) => {
         try {
           await global.db('systems.keywords').where('id', data).delete()
-          self.getKeywordsList()
+          await self.getKeywordsList()
         } catch (e) {
           global.log.error(e)
         }
@@ -68,7 +68,7 @@ class Keywords {
       socket.on('update.keyword', async (data, cb) => {
         try {
           await global.db('systems.keywords').where('id', data.id).update(data)
-          self.getKeywordsList()
+          await self.getKeywordsList()
           cb(null, true)
         } catch (e) {
           global.log.error(e)
