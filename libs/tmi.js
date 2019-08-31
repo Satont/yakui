@@ -199,6 +199,7 @@ class TwitchTmi {
       global.log.chatIn(`${userstate.username}: ${message} | UserId: [${userstate['user-id']}]`)
       moderation.onMessage(userstate, message)
       parser.process(userstate, message)
+      events.fire('message', { username: userstate.username })
     })
     this.client.on('disconnected', (reason) => {
       global.log.error(reason)
