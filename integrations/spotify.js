@@ -64,8 +64,8 @@ class Spotify {
         cb(null, query)
       })
       socket.on('spotify.auth', async (data, cb) => {
-        let query = await global.db('integrations').where('name', 'spotify').update(data).returning(['enabled', 'settings']).first()
-        self.settings = query
+        let query = await global.db('integrations').where('name', 'spotify').update(data).returning(['enabled', 'settings'])
+        self.settings = query[0]
         await self.start()
         let link = await self.generateAuthLink()
         if (!link) return cb('error', null)
