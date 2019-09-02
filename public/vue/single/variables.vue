@@ -55,7 +55,7 @@
         <td>User followtime</td>
       </tr>
       <tr>
-        <td>$random(0-99999)</td>
+        <td>(random.0-99999)</td>
         <td>Random beetwen some numbers</td>
       </tr>
       <tr>
