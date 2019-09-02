@@ -1,50 +1,56 @@
 # TwoBit bot
 
-![](https://img.shields.io/github/issues/satont/twobit.svg) ![](https://img.shields.io/discord/605696491583176724.svg) ![](https://img.shields.io/david/satont/twobit.svg)
+[![GitHub issues](https://img.shields.io/github/issues/Satont/twobit)](https://github.com/Satont/twobit/issues)
+[![Discord](https://img.shields.io/discord/605696491583176724)](https://discord.gg/dPm6eYb)
+[![David](https://img.shields.io/david/Satont/twobit)](https://david-dm.org/Satont/twobit)
 
-### Screenshots
-<a href="https://i.imgur.com/2klWP6o.png"><img src="https://i.imgur.com/2klWP6o.png" alt="drawing" width="250"/></a> <a href="https://i.imgur.com/EhikpI0.png"><img src="https://i.imgur.com/EhikpI0.png" alt="drawing" width="250"/></a> <a href="https://i.imgur.com/ap6lh28.png"><img src="https://i.imgur.com/ap6lh28.png" alt="drawing" width="250"/></a> <a href="https://i.imgur.com/enrORyu.png"><img src="https://i.imgur.com/enrORyu.png" alt="drawing" width="250"/></a> <a href="https://i.imgur.com/rmMmkvU.png"><img src="https://i.imgur.com/rmMmkvU.png" alt="drawing" width="250"/></a> <a href="https://i.imgur.com/ZvcI4I7.png"><img src="https://i.imgur.com/ZvcI4I7.png" alt="drawing" width="250"/></a> 
+## Screenshots
 
-### Features
+<img src="https://i.imgur.com/2klWP6o.png" width="250" /> <img src="https://i.imgur.com/EhikpI0.png" width="250" /> <img src="https://i.imgur.com/ap6lh28.png" width="250" /> <img src="https://i.imgur.com/enrORyu.png" width="250" /> <img src="https://i.imgur.com/rmMmkvU.png" width="250" /> <img src="https://i.imgur.com/ZvcI4I7.png" width="250" />
 
-- Custom commands.
-	- you can create command with javascript evaluation
-	- already in bot builder variables
-	- also supports custom variables
-- Timers. Send message in chat every N seconds
-- Variables. Create some variable, what can be used in timers or custom commands
-- Moderation system
-- Users stats counting
-	- messages
-	- time on stream
-	- bits
-	- tips
-	- followtime
-- Integrations
-	- StreamLabs
-	- DonationAlerts
-	- Qiwi Donate
-	- Spotify
-- Dota 2 notableplayers system
-- Keywords system
-- Points system
-	- count user points per watched or messages
-- Overlays system
-	- you can create some overlay and past it in your OBS!
-- Events system
-	- Trigger on some event and do something!
+## Features
+
+- Custom commands:
+	- you can create a command with JavaScript evaluation;
+	- already in bot builder variables;
+	- also supports custom variables.
+- Timers: send message in chat periodically.
+- Variables: create some variable, which can be used in timers or custom commands.
+- Moderation system.
+- Users stats counting:
+	- messages;
+	- time on stream;
+	- bits;
+	- tips;
+	- time of follow.
+- Integrations:
+	- Streamlabs;
+	- DonationAlerts;
+	- Qiwi Donate;
+	- Spotify.
+- Dota 2 notable players system.
+- Keywords system.
+- Points system:
+	- count user points per watching or chatting.
+- Overlays system:
+	- you can create some overlay and use it in your OBS!
+- Events system:
+	- trigger on some event and do something!
 
 
-# Installation
-- `git clone https://github.com/Satont/twobit && cd twobit`
-- `npm i`
-- `rename .env.example to .env, or create .env`
-- `fill .env with you data`
-- `done!`
+## Installation
 
-# Some helpful info
-- Create bot token by that link http://auth.satont.ru
-	- you should use refresh_token!
-- Create broadcaster token by that link http://auth.satont.ru
-	- you should use refresh_token!
-- Discord server: https://discord.gg/dPm6eYb
+```shell
+git clone https://github.com/Satont/twobit
+cd twobit
+npm install
+mv .env.example .env
+```
+
+Then get values for `TWITCH_BROADCASTERTOKEN` and `TWITCH_TOKEN` from [auth.satont.ru](http://auth.satont.ru) (you should use `refresh_token`).
+
+Then fill the `.env` file with your data and that's all!
+
+## Help
+
+- [Discord server](https://discord.gg/dPm6eYb)
