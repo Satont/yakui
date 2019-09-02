@@ -18,10 +18,8 @@ const users = require('./users')
 
 class Variables {
   async prepareMessage (response, userstate, message) {
-    const numbersRegexp = /[random]+\((.*?)\)/
     const variableRegexp = /\$_(\S*)/g
     const songRegexp = /\$song(\S*)/g
-
     if (response.includes('$sender')) {
       response = response.replace('$sender', '@' + userstate['display-name'])
     }
@@ -159,16 +157,18 @@ class Variables {
     if (response.includes('(eval')) {
       response = (await commons.eval(response, userstate, message))
     }
+
     if (response.includes('(random.')) {
-      const randomRegex = /[(]random.+.+[)]/ig
+      const randomRegex = /[(]random\.\d{1,100}[-]\d{1,100}[)]/ig
       const exec = randomRegex.exec(response)
-      if (!exec) return
-      const numbers = exec[0].replace('(random.', '').replace(')', '').trim().split('-')
-      response = response.replace(exec[0], _.random(numbers[0], numbers[1]))
+      if (exec) {
+        const numbers = exec[0].replace('(random.', '').replace(')', '').trim().split('-')
+        response = response.replace(exec[0], _.random(numbers[0], numbers[1]))
+      }
     }
     if (response.includes('(random.viewer)')) {
       const filteredUsers = users.onlineUsers.filter(o => !users.settings.ignorelist.includes(o.username.toLowerCase()))
-      response = response.replace('(random.viewer)', _.sample(filteredUsers).username)
+      if (filteredUsers.length) response = response.replace('(random.viewer)', _.sample(filteredUsers).username)
     }
     // реплейсить кастомную переменную на значение
     if (response.match(variableRegexp)) {
