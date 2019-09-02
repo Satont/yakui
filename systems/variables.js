@@ -159,11 +159,12 @@ class Variables {
     if (response.includes('(eval')) {
       response = (await commons.eval(response, userstate, message))
     }
-    if (response.includes('$random')) {
-      let numbers = response.replace('$random', 'random').match(numbersRegexp)[1]
-      numbers = numbers.split('-')
-      numbers = _.random(numbers[0], numbers[1])
-      response = response.replace('$', '').replace(/[random]+\((.*?)\)/, numbers)
+    if (response.includes('(random.')) {
+      const randomRegex = /[(]random.+.+[)]/ig
+      const exec = randomRegex.exec(response)
+      if (!exec) return
+      const numbers = exec[0].replace('(random.', '').replace(')', '').trim().split('-')
+      response = response.replace(exec[0], _.random(numbers[0], numbers[1]))
     }
     if (response.includes('(random.viewer)')) {
       const filteredUsers = users.onlineUsers.filter(o => !users.settings.ignorelist.includes(o.username.toLowerCase()))
