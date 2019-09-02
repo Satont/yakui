@@ -84,6 +84,7 @@ class CustomCommands {
   }
 
   async say (msg) {
+    global.log.chatOut(msg)
     if (process.env.NODE_ENV !== 'production') return
     global.tmi.client.say(process.env.TWITCH_CHANNEL, msg).catch(global.log.error)
   }
