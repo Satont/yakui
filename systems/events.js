@@ -15,8 +15,8 @@ class Events {
     let event = this.events.find(o => o.name === what)
     event.operations = _.isPlainObject(event.operations ) ? [] : event.operations
     for (let operation of event.operations) {
-      if (operation.filter) {
-        if (!await this.filter(operation.filter, opts)) break;
+      if (typeof operation.filter !== 'undefined' || operation.filter) {
+        if (!await this.filter(operation.filter, opts)) continue;
       }
       if (operation.key === 'sendMessage') {
         let message = operation.message
