@@ -22,6 +22,12 @@
         <option value="viewer">Viewers</option>
       </select>
     </div>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-default">Command description</span>
+      </div>
+      <input type="text" class="form-control" placeholder="description of command" v-model="description">
+    </div>
      <div class="input-group mb-3">
       <div class="input-group-prepend">
         <span class="input-group-text" id="inputGroup-sizing-default">Cooldown</span>
@@ -85,6 +91,7 @@ export default {
       name: this.$route.params.name,
       response: this.$route.params.response,
       permission: this.$route.params.permission,
+      description: this.$route.params.description,
       cooldown: this.$route.params.cooldown || 5,
       cooldowntype: this.$route.params.cooldowntype,
       aliases: this.$route.params.aliases || [],
