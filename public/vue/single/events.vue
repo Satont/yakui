@@ -44,6 +44,10 @@
       <select class="custom-select" v-model="operation.key" style="margin-bottom:15px;">
         <option value="sendMessage">Send Chat Message</option>
       </select>
+      <center><label>Filter of operation (javascript)</label></center>
+      <input type="text" class="form-control" v-model="operation.filter" placeholder="$username === 'sadisnamenya'">
+      <br>
+      <center><label v-if="operation.key === 'sendMessage'">Message for sending</label></center>
       <input type="text" class="form-control" v-if="operation.key === 'sendMessage'" v-model="operation.message" placeholder="Message for sending">
     </div>
     <div class="card-footer text-muted">
