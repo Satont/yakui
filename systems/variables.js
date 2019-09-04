@@ -108,21 +108,14 @@ class Variables {
     if (response.includes('$messages') || response.includes('$tips') || response.includes('$bits') ||
     response.includes('$points') || response.includes('$watched') || response.includes('$pointsName')) {
       let user
-      if (message.length) {
-        try {
-          const target = await users.getIdByUsername(message.replace('@', ''))
-          user = await global.db('users').where({ id: target })
-        } catch (e) {
-          response = `@${userstate['display-name']} Info about ${message} wasn't found`
-        }
-      } else user = await global.db('users').where({ id: Number(userstate['user-id']) })
-      if (!user.length) return
-      user = user[0]
-      response = response.replace('$messages', user.messages)
-      response = response.replace('$tips', user.tips)
-      response = response.replace('$bits', user.bits)
-      response = response.replace('$points', user.points)
-      response = response.replace('$watched', shortEnglish(user.watched))
+      if (message.length) user = await global.db('users').where({ id: target }).first()
+      else user = await global.db('users').where({ id: Number(userstate['user-id']) }).first()
+      console.log(user)
+      response = response.replace('$messages', user.messages || '0')
+      response = response.replace('$tips', user.tips|| '0')
+      response = response.replace('$bits', user.bits|| '0')
+      response = response.replace('$points', user.points|| '0')
+      response = response.replace('$watched', shortEnglish(user.watched) || '0')
       response = response.replace('$pointsName', commons.declOfNum(user.points, users.settings.pointsName.split('|')))
     }
     if (response.includes('$top_messages')) {
