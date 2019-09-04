@@ -139,6 +139,7 @@ export default {
         this.response = find.response
         this.cooldown = find.cooldown,
         this.permission = find.permission,
+        this.description = find.description,
         this.cooldowntype = find.cooldowntype,
         this.aliases = find.aliases,
         this.visible = find.visible
