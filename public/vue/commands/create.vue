@@ -30,6 +30,12 @@
     </div>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-default">Command description</span>
+      </div>
+      <input type="text" class="form-control" placeholder="description of command" v-model="description">
+    </div>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
         <span class="input-group-text" id="inputGroup-sizing-default">Cooldown</span>
       </div>
       <input
@@ -88,6 +94,7 @@ export default {
       name: null,
       response: null,
       permission: 'viewer',
+      description: null,
       cooldown: 5,
       cooldowntype: 'notstop',
       aliases: [],
