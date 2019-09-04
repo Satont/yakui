@@ -176,6 +176,7 @@ new Vue({
         this.game = data.game
         this.followers = data.followers
         this.channel = data.channel
+        document.title = data.channel
       })
     }
   },
