@@ -66,8 +66,12 @@ class Variables {
       response = response.replace('$latestReSub', await commons.getLatestSubOrResub('resub'))
     }
     if (response.includes('$commands')) {
-      const query = await global.db.select(`*`).from('systems.commands').where('visible', true)
-      response = response.replace('$commands', query.map(val => { return '!' + val.name }).join(', '))
+      let commands = []
+      for (let system of global.systems) {
+        if (typeof system.commands === 'undefined') continue
+        commands.push(system.commands.filter(o => o.visible))
+      }
+      response = response.replace('$commands', _.flattenDeep(commands).map(o => { return `!${o.name}`}).join(', '))
     }
     if (response.includes('$song')) {
       const query = response.match(songRegexp)[0].replace('$song?', '')
