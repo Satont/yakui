@@ -1,10 +1,8 @@
-const commons = require('../libs/commons')
 const { io } = require('../libs/panel')
 const { say } = require('./customCommands')
 const _ = require('lodash')
 
 class Events {
-  systemsList = []
   events = []
 
   constructor() {
@@ -40,9 +38,6 @@ class Events {
   }
   async load () {
     this.events = await global.db.select(`*`).from('systems.events')
-    for (let system of Object.entries(await commons.autoLoad('./systems/'))) {
-      this.systemsList.push(system[1])
-    }
   }
   async sockets() {
     const self = this

@@ -3,24 +3,20 @@ switch (process.env.NODE_ENV) {
   case 'development': path = '.env.dev'; break
 }
 require('dotenv').config({ path: path })
-
 require('./libs/logger')
+
 global.db = require('./libs/db')
+const { autoLoad } = require('./libs/commons')
 
 async function load () {
   if (!global.db.connected) return setTimeout(() => load(), 100)
   global.tmi = require('./libs/tmi')
   require('./libs/panel')
 
-  require('./systems/customCommands')
-  require('./systems/variables')
-  require('./systems/moderation')
-  require('./systems/timers')
-  require('./systems/users')
-  require('./systems/twitch')
-  require('./systems/keywords')
-  require('./systems/overlays')
-  require('./systems/events')
+  global.systems = []
+  for (let system of Object.entries(await autoLoad('./systems/'))) {
+    global.systems.push(system[1])
+  }
 
   require('./integrations/donationalerts')
   require('./integrations/streamlabs')
