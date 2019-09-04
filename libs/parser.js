@@ -1,6 +1,6 @@
 module.exports = (userstate, message) => {
   const isCommand = message.startsWith('!') ? true : false
-  for (let system of global.systems) {
+  for (let [, system] of Object.entries(global.systems)) {
     if (system.constructor.name !== 'CustomCommands' && typeof system.commands !== 'undefined' && isCommand) {
       for (let command of system.commands) {
         let msg = message.replace('!', '').trim()

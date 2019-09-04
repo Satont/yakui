@@ -67,7 +67,7 @@ class Variables {
     }
     if (response.includes('$commands')) {
       let commands = []
-      for (let system of global.systems) {
+      for (let [, system] of Object.entries(global.systems)) {
         if (typeof system.commands === 'undefined') continue
         commands.push(system.commands.filter(o => o.visible))
       }

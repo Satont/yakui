@@ -13,10 +13,7 @@ async function load () {
   global.tmi = require('./libs/tmi')
   require('./libs/panel')
 
-  global.systems = []
-  for (let system of Object.entries(await autoLoad('./systems/'))) {
-    global.systems.push(system[1])
-  }
+  global.systems = await autoLoad('./systems/')
 
   require('./integrations/donationalerts')
   require('./integrations/streamlabs')
