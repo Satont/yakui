@@ -4,7 +4,7 @@ const { say } = require('./customCommands')
 
 class CoreCommands {
   commands = [
-    { name: 'help', description: 'Shows command description', fnc: this.help }
+    { name: 'help', description: 'Shows command description. Usage: !help commandname. For example: !help help', fnc: this.help }
   ]
   async help (userstate, message) {
     if (!message.length) return
