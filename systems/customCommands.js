@@ -4,6 +4,7 @@ const { io } = require('../libs/panel')
 const variables = require('../systems/variables')
 
 class CustomCommands {
+  commands = []
   parsers = [
     { name: 'message', fnc: this.onMessage }
   ]

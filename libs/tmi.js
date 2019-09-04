@@ -198,7 +198,7 @@ class TwitchTmi {
       if (userstate['message-type'] === 'whisper') return // we do not want listen whispers
       global.log.chatIn(`${userstate.username}: ${message} | UserId: [${userstate['user-id']}]`)
       moderation.onMessage(userstate, message)
-      parser.process(userstate, message)
+      parser(userstate, message)
       events.fire('message', { username: userstate.username })
     })
     this.client.on('disconnected', (reason) => {
