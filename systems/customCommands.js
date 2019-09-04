@@ -112,9 +112,11 @@ class CustomCommands {
       socket.on('create.command', async (data, cb) => {
         const aliases = _.flattenDeep(self.commands.map(o => o.aliases))
         const names = self.commands.map(o => o.name)
-
-        if (aliases.some(o => data.aliases.includes(o)) || names.some(o => data.aliases.includes(o))) return cb('Command name or aliase already used', null)
-        if (names.some(o => o.name === data.name) || aliases.some(o => names.includes(o))) return cb('Command name or aliase already used', null)
+        
+        const name_exist = _.some(aliases, o => o === data.name) || _.some(names, o => o === data.name)
+        const aliase_exist = _.some(names, o => data.aliases.includes(o)) || _.some(aliases, o => data.aliases.includes(o))
+      
+        if (name_exist || aliase_exist) return cb('Command name or aliase already used', null)
 
         try {
           await global.db('systems.commands').insert(data)
@@ -133,11 +135,13 @@ class CustomCommands {
         }
       })
       socket.on('update.command', async (data, cb) => {
-        const aliases = _.flattenDeep(self.commands.filter(o => o.name !== data.currentname).map(o => o.aliases))
-        const names = self.commands.map(o => o.name).filter(o => o !== data.currentname)
+        const aliases = _.flattenDeep(self.commands.filter(o => o.id !== data.id).map(o => o.aliases))
+        const names = self.commands.filter(o => o.id !== data.id).map(o => o.name)
 
-        if (aliases.some(o => data.aliases.includes(o)) || names.some(o => data.aliases.includes(o))) return cb('Command name or aliase already used', null)
-        if (names.some(o => o.name === data.name) || aliases.some(o => names.includes(o))) return cb('Command name or aliase already used', null)
+        const name_exist = _.some(aliases, o => o === data.name) || _.some(names, o => o === data.name)
+        const aliase_exist = _.some(names, o => data.aliases.includes(o)) || _.some(aliases, o => data.aliases.includes(o))
+        
+        if (name_exist || aliase_exist) return cb('Command name or aliase already used', null)
 
         try {
           await global.db('systems.commands').where('id', data.id).update(data)
