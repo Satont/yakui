@@ -110,7 +110,6 @@ class Variables {
       let user
       if (message.length) user = await global.db('users').where({ id: target }).first()
       else user = await global.db('users').where({ id: Number(userstate['user-id']) }).first()
-      console.log(user)
       response = response.replace('$messages', user.messages || '0')
       response = response.replace('$tips', user.tips|| '0')
       response = response.replace('$bits', user.bits|| '0')
