@@ -237,9 +237,11 @@ class TwitchTmi {
       events.fire('chatClear', {})
     })
     this.client.on('join', async (channel, username, self) => {
+      if (global.systems.users.settings.ignorelist.includes(username)) return
       events.fire('userJoin', { username })
     })
     this.client.on('part', async (channel, username, self) => {
+      if (global.systems.users.settings.ignorelist.includes(username)) return
       events.fire('userPart', { username })
     })
     this.client.on('emoteonly', async (channel, enabled) => {
