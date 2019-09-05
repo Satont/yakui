@@ -88,12 +88,12 @@ class Moderation {
     if (!this.warns.includes(userstate.username) && Math.ceil(symbolsLength / (message.length / 100)) >= symbols.settings.maxSymbolsPercent) {
       this.warns.push(userstate.username)
       timeout(userstate.username, 1)
-      this.announceTimeout(symbols.settings.warnuserstate, userstate.username)
+      this.announceTimeout(symbols.settings.warnMessage, userstate.username)
       global.log.info(`!!! SYMBOLS BAN ${userstate.username}, LENGTH: ${symbolsLength}`)
       return true
     }
     if (Math.ceil(symbolsLength / (message.length / 100)) >= symbols.settings.maxSymbolsPercent) {
-      this.announceTimeout(symbols.settings.timeoutuserstate, userstate.username)
+      this.announceTimeout(symbols.settings.timeoutMessage, userstate.username)
       timeout(userstate.username, symbols.settings.timeout)
       global.log.info(`!!! SYMBOLS BAN ${userstate.username}, LENGTH: ${symbolsLength}`)
       return true
@@ -107,13 +107,13 @@ class Moderation {
     if (!this.warns.includes(userstate.username) && message.length > longMessage.settings.triggerLength) {
       this.warns.push(userstate.username)
       timeout(userstate.username, 1)
-      this.announceTimeout(longMessage.settings.warnuserstate, userstate.username)
+      this.announceTimeout(longMessage.settings.warnMessage, userstate.username)
       global.log.info(`!!! LONG MESSAGE ${userstate.username}, LENGTH: ${message.length}`)
       return true
     }
     if (this.warns.includes(userstate.username) && message.length > longMessage.settings.triggerLength) {
       timeout(userstate.username, longMessage.settings.timeout)
-      this.announceTimeout(links.settings.timeoutuserstate, userstate.username)
+      this.announceTimeout(links.settings.timeoutMessage, userstate.username)
       global.log.info(`!!! LONG MESSAGE ${userstate.username}, LENGTH: ${message.length}`)
       return true
     }
@@ -135,14 +135,13 @@ class Moderation {
     if (!this.warns.includes(userstate.username) && Math.ceil(capsLength / (message.length / 100)) > caps.settings.maxCapsPercent) {
       this.warns.push(userstate.username)
       timeout(userstate.username, 1)
-      this.announceTimeout(caps.settings.warnuserstate, userstate.username)
+      this.announceTimeout(caps.settings.warnMessage, userstate.username)
       global.log.info(`!!! CAPS BAN ${userstate.username}, LENGTH: ${capsLength}`)
       return true
     }
     if (this.warns.includes(userstate.username) && Math.ceil(capsLength / (message.length / 100)) > caps.settings.maxCapsPercent) {
-      this.warns.push(userstate.username)
       timeout(userstate.username, caps.settings.timeout)
-      this.announceTimeout(caps.settings.timeoutuserstate, userstate.username)
+      this.announceTimeout(caps.settings.timeoutMessage, userstate.username)
       global.log.info(`!!! CAPS BAN ${userstate.username}, LENGTH: ${capsLength}`)
       return true
     }
@@ -156,13 +155,12 @@ class Moderation {
     } else if (!this.warns.includes(userstate.username)) {
       this.warns.push(userstate.username)
       timeout(userstate.username, 1)
-      this.announceTimeout(color.settings.warnuserstate, userstate.username)
+      this.announceTimeout(color.settings.warnMessage, userstate.username)
       global.log.info(`!!! COLOR BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     } else if (this.warns.includes(userstate.username)) {
-      this.warns.push(userstate.username)
       timeout(userstate.username, color.settings.timeout)
-      this.announceTimeout(color.settings.timeoutuserstate, userstate.username)
+      this.announceTimeout(color.settings.timeoutMessage, userstate.username)
       global.log.info(`!!! COLOR BAN ${userstate.username}, MESSAGE: ${message}`)
       return true
     }
@@ -174,14 +172,13 @@ class Moderation {
     if (!this.warns.includes(userstate.username) && (length > emotes.settings.maxCount)) {
       this.warns.push(userstate.username)
       timeout(userstate.username, emotes.settings.timeout)
-      this.announceTimeout(emotes.settings.warnuserstate, userstate.username)
+      this.announceTimeout(emotes.settings.warnMessage, userstate.username)
       global.log.info(`!!! EMOTES BAN ${userstate.username}, LENGTH: ${length}`)
       return true
     }
     if (this.warns.includes(userstate.username) && (length > emotes.settings.maxCount)) {
-      this.warns.push(userstate.username)
       timeout(userstate.username, emotes.settings.timeout)
-      this.announceTimeout(emotes.settings.timeoutuserstate, userstate.username)
+      this.announceTimeout(emotes.settings.timeoutMessage, userstate.username)
       global.log.info(`!!! EMOTES BAN ${userstate.username}, LENGTH: ${length}`)
       return true
     }
