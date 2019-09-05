@@ -1,5 +1,5 @@
 const socket = require('socket.io-client')
-const { say } = require('../systems/customCommands')
+const events = require('../systems/events')
 const { io } = require('../libs/panel')
 
 class StreamLabs {
@@ -17,18 +17,18 @@ class StreamLabs {
 
   async connect () {
     this.disconnect()
-    this.settings = (await global.db('integrations').select('*').where('name', 'streamlabs'))[0]
+    this.settings = await global.db('integrations').select('*').where('name', 'streamlabs').first()
     if (!this.settings.enabled || this.settings.settings.token === null) return this.disconnect()
     this.socket = socket.connect(`https://sockets.streamlabs.com?token=${this.settings.settings.token}`)
     if (this.socket !== null) {
       this.socket.on('connect', () => {
-        console.log('STREAMLABS: Successfully connected socket to service')
+        global.log.info('STREAMLABS: Successfully connected socket to service')
       })
       this.socket.on('reconnect_attempt', () => {
-        console.log('STREAMLABS: Trying to reconnect to service')
+        global.log.info('STREAMLABS: Trying to reconnect to service')
       })
       this.socket.on('disconnect', () => {
-        console.log('STREAMLABS: Socket disconnected from service')
+        global.log.info('STREAMLABS: Socket disconnected from service')
         if (this.socket) {
           this.socket.open()
         }
@@ -40,9 +40,9 @@ class StreamLabs {
   async parse (data) {
     if (data.type === 'donation') {
       if (!data.isTest) {
-        global.db('users').where({ username: data.message[0].from.toLowerCase().replace(' ', '') }).increment({ tips: data.message[0].amount }).catch(() => {})
+        global.db('users').where({ username: data.message[0].from.toLowerCase().replace(' ', '') }).increment({ tips: Number(data.message[0].amount) }).catch(() => {})
       }
-      await say(`/me ${data.message[0].from} ${data.message[0].amount}${data.message[0].currency} ${data.message[0].message}`)
+      events.fire('tip', { username: data.message[0].from, amount: data.message[0].amount, currency: data.message[0].currency, message: data.message[0].message })
     }
   }
 
@@ -50,7 +50,7 @@ class StreamLabs {
     const self = this
     io.on('connection', function (socket) {
       socket.on('settings.streamlabs', async (data, cb) => {
-        const query = (await global.db('integrations').select('*').where('name', 'streamlabs'))[0]
+        const query = await global.db('integrations').select('*').where('name', 'streamlabs').first()
         cb(null, query)
       })
       socket.on('update.settings.streamlabs', async (data, cb) => {

@@ -5,3 +5,4 @@ test.js
 .env.dev
 payloads.txt
 Heap.*
+logs

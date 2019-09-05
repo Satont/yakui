@@ -55,7 +55,7 @@
         <td>User followtime</td>
       </tr>
       <tr>
-        <td>$random(0-99999)</td>
+        <td>(random.0-99999)</td>
         <td>Random beetwen some numbers</td>
       </tr>
       <tr>
@@ -89,6 +89,10 @@
       <tr>
         <td>$commands</td>
         <td>List of commands</td>
+      </tr>
+      <tr>
+        <td>$commands</td>
+        <td>List of variables</td>
       </tr>
       <tr>
         <td>$latestSub</td>

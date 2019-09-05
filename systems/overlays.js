@@ -10,14 +10,14 @@ io.on('connection', function (socket) {
     try {
       await global.db('systems.overlays').insert(data)
     } catch (e) {
-      console.log(e)
+      global.log.error(e)
     }
   })
   socket.on('delete.overlay', async (data, cb) => {
     try {
       await global.db('systems.overlays').where('id', data).delete()
     } catch (e) {
-      console.log(e)
+      global.log.error(e)
     }
   })
   socket.on('update.overlay', async (data, cb) => {
@@ -26,7 +26,7 @@ io.on('connection', function (socket) {
     try {
       await global.db('systems.overlays').where('id', id).update(data)
     } catch (e) {
-      console.log(e)
+      global.log.error(e)
     }
   })
   socket.on('overlays.data', async (id, cb) => {

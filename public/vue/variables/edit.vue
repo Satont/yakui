@@ -21,6 +21,7 @@
 export default {
   data: function() {
     return {
+      id: this.$route.params.id,
       name: this.$route.params.name,
       value: this.$route.params.value
     };
@@ -42,7 +43,9 @@ export default {
   mounted() {
     if (!this.value) {
       this.$socket.emit("list.variables", {}, (err, list) => {
-        let find = list.find(o => o.name === this.name)
+        let find = list.find(o => o.name === Number(this.id))
+        if (!find) return this.$router.push('/variables')
+        this.id = find.id
         this.name = find.name
         this.value = find.value
       })

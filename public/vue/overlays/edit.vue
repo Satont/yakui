@@ -40,7 +40,8 @@ export default {
   mounted() {
     if (!this.value) {
       this.$socket.emit("list.overlays", {}, (err, list) => {
-        let find = list.find(o => o.id === this.id)
+        let find = list.find(o => o.id === Number(this.id))
+        if (!find) return this.$router.push('/overlays')
         this.name = find.name
         this.data = find.data
       })

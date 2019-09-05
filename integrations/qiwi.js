@@ -1,6 +1,6 @@
-const { say } = require('../systems/customCommands')
 const { io } = require('../libs/panel')
 const axios = require('axios')
+const events = require('../systems/events')
 
 class Qiwi {
   constructor () {
@@ -9,7 +9,7 @@ class Qiwi {
   }
 
   async start () {
-    this.settings = (await global.db('integrations').select('*').where('name', 'qiwi'))[0]
+    this.settings = await global.db('integrations').select('*').where('name', 'qiwi').first()
     if (this.settings.settings.token) this.repeat = setInterval(() => this.poll(), 3 * 1000)
   }
 
@@ -21,8 +21,8 @@ class Qiwi {
       if (data.events.length === 0) return
       for (const event of data.events) {
         const username = event.attributes.DONATION_SENDER ? event.attributes.DONATION_SENDER.replace(' ', '') : 'anonym'
-        global.db('users').where({ username: username.toLowerCase() }).increment({ tips: event.attributes.DONATION_AMOUNT }).catch(() => {})
-        await say(`/me ${username} ${event.attributes.DONATION_AMOUNT}${event.attributes.DONATION_CURRENCY} ${event.attributes.DONATION_MESSAGE ? event.attributes.DONATION_MESSAGE : ''}`)
+        global.db('users').where({ username: username.toLowerCase() }).increment({ tips: Number(event.attributes.DONATION_AMOUNT) }).catch(() => {})
+        events.fire('tip', { username, amount: event.attributes.DONATION_AMOUNT, currency: event.attributes.DONATION_CURRENCY, message: event.attributes.DONATION_MESSAGE})
       }
     } catch (e) {
       throw new Error(e)
@@ -33,7 +33,7 @@ class Qiwi {
     const self = this
     io.on('connection', function (socket) {
       socket.on('settings.qiwi', async (data, cb) => {
-        const query = (await global.db('integrations').select('*').where('name', 'qiwi'))[0]
+        const query = await global.db('integrations').select('*').where('name', 'qiwi').first()
         cb(null, query)
       })
       socket.on('update.settings.qiwi', async (data, cb) => {

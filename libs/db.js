@@ -23,6 +23,7 @@ const knex = require('knex')({
 // we need this workround for test connection
 async function connect () {
   await knex.raw('SELECT VERSION()')
+  await global.db('core.subscribers').where('name', 'latestSubscriber').update('value', 'username')
 }
 connect()
 module.exports = knex

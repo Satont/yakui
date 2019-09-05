@@ -8,7 +8,8 @@ class Notable {
   }
 
   async init () {
-    this.settings = (await global.db.select('*').from('settings').where('system', 'notable'))[0].data
+    const query = await global.db.select('*').from('settings').where('system', 'notable').first()
+    this.settings = query.data
   }
 
   async np () {
@@ -122,12 +123,12 @@ class Notable {
     const self = this
     io.on('connection', function (socket) {
       socket.on('settings.notable', async (data, cb) => {
-        const query = await global.db('settings').select('*').where('system', 'notable')
-        cb(null, query[0])
+        const query = await global.db('settings').select('*').where('system', 'notable').first()
+        cb(null, query)
       })
       socket.on('update.settings.notable', async (data, cb) => {
         await global.db('settings').where('system', 'notable').update({ data: data })
-        self.init()
+        await self.init()
       })
     })
   }

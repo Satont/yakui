@@ -66,7 +66,8 @@ export default {
   mounted() {
     if (!this.interval) {
       this.$socket.emit("list.timers", {}, (err, list) => {
-        let find = list.find(o => o.id === this.id)
+        let find = list.find(o => o.id === Number(this.id))
+        if (!find) return this.$router.push('/timers')
         this.id = find.id
         this.name = find.name
         this.responses = find.responses

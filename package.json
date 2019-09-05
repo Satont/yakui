@@ -1,6 +1,6 @@
 {
   "name": "twobit",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "description": "",
   "main": "app.js",
   "scripts": {
@@ -36,6 +36,7 @@
     "knex": "^0.19.0",
     "lodash": "^4.17.14",
     "moment": "^2.24.0",
+    "moment-timezone": "^0.5.26",
     "node-fetch": "^2.6.0",
     "npm": "^6.10.3",
     "path": "^0.12.7",
@@ -54,9 +55,10 @@
     "vue-socket.io": "^3.0.7",
     "vue-template-compiler": "^2.6.10",
     "webpack": "^4.36.1",
-    "webpack-cli": "^3.3.6"
+    "webpack-cli": "^3.3.6",
+    "winston": "^3.2.1"
   },
   "devDependencies": {
-    "standard": "^13.1.0"
+    "standard": "^14.0.2"
   }
 }

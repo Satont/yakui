@@ -21,7 +21,7 @@ class Spotify {
   }
   async start () {
     clearInterval(this.refreshInterval)
-    this.settings = (await global.db('integrations').select('*').where('name', 'spotify'))[0]
+    this.settings = await global.db('integrations').select('*').where('name', 'spotify').first()
     if (!this.settings.enabled || !this.settings.settings.clientId || !this.settings.settings.clientSecret || !this.settings.settings.redirectUri) return
     if (this.client) this.client = null
 
@@ -42,7 +42,7 @@ class Spotify {
         this.settings.settings.accessToken = data.body['access_token']
         await global.db('integrations').where('name', 'spotify').update({ settings: this.settings.settings })
       }, err => {
-        console.log('Could not refresh access token', err)
+        global.log.info('Could not refresh access token', err)
       }
     );
   }
@@ -52,7 +52,7 @@ class Spotify {
     }).then(data => {
       return `${data.body.item.artists.map(o => o.name).join(', ')} — ${data.body.item.name}`
     }, err => {
-      console.log(err)
+      global.log.error(err)
       return null
     });
   }
@@ -60,7 +60,7 @@ class Spotify {
     let self = this
     io.on('connection', function (socket) {
       socket.on('settings.spotify', async (data, cb) => {
-        let query = (await global.db('integrations').select('*').where('name', 'spotify'))[0]
+        let query = await global.db('integrations').select('*').where('name', 'spotify').first()
         cb(null, query)
       })
       socket.on('spotify.auth', async (data, cb) => {
@@ -83,7 +83,7 @@ class Spotify {
         await global.db('integrations').where('name', 'spotify').update({ settings: self.settings.settings })
         self.start()
         reply.redirect(`http://${request.headers.host}/#/integrations/spotify`)
-      }, err => console.log(err))
+      }, err => global.log.error(err))
     })
   }
 }

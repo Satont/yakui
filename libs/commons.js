@@ -5,10 +5,30 @@ const _ = require('lodash')
 const axios = require('axios')
 const safeEval = require('safe-eval')
 const spotify = require('../integrations/spotify')
+const { readdirSync } = require('fs')
+const { join, normalize } = require('path')
 
 class Commons {
   constructor () {
     setInterval(() => this.logMemoryUsage(), 60 * 1000)
+  }
+
+  async autoLoad (directory) {
+    const directoryListing = readdirSync(directory);
+    const loaded = {};
+    for (const file of directoryListing) {
+      if (file.startsWith('_') || !file.endsWith('.js')) {
+        continue;
+      }
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const imported = require(normalize(join(process.cwd(), directory, file)));
+      if (typeof imported.default !== 'undefined') {
+        loaded[file.split('.')[0]] = new imported.default(); // remap default to root object
+      } else {
+        loaded[file.split('.')[0]] = imported;
+      }
+    }
+    return loaded;
   }
 
   logMemoryUsage () {
@@ -53,7 +73,7 @@ class Commons {
       data = await response.json()
       data = await data.data[0] ? data.data[0].followed_at : null
     } catch (e) {
-      console.log(e)
+      global.log.error(e)
     }
     if (_.isNil(await data)) {
       return 'not followed'
@@ -134,9 +154,9 @@ class Commons {
       username: userstate.username,
       displayname: userstate['display-name'],
       param: message,
-      user: (await global.db('users').where('id', userstate['user-id']))[0] || { points: 0, messages: 0, watched: 0, bits: 0, tips: 0 },
-      say: function (msg) { global.tmi.client.say(process.env.TWITCH_CHANNEL, msg).catch(console.log) },
-      timeout: function (username, duration) { global.tmi.client.timeout(process.env.TWITCH_CHANNEL, username, duration).catch(console.log) }
+      user: await global.db('users').where('id', userstate['user-id']).first() || { points: 0, messages: 0, watched: 0, bits: 0, tips: 0 },
+      say: function (msg) { global.tmi.client.say(process.env.TWITCH_CHANNEL, msg).catch(global.log.error) },
+      timeout: function (username, duration) { global.tmi.client.timeout(process.env.TWITCH_CHANNEL, username, duration).catch(global.log.error) }
     }
 
     const run = await safeEval(toEval, context)

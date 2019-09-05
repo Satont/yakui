@@ -41,6 +41,8 @@ import streamlabs from './vue/integrations/streamlabs.vue'
 import qiwi from './vue/integrations/qiwi.vue'
 import spotify from './vue/integrations/spotify.vue'
 
+import events from './vue/single/events.vue'
+
 Vue.use(new VueSocketIO({
   debug: true,
   connection: SocketIO('/')
@@ -81,7 +83,9 @@ const routes = [
   { path: '/integrations/donationalerts', component: donationalerts },
   { path: '/integrations/streamlabs', component: streamlabs },
   { path: '/integrations/qiwi', component: qiwi },
-  { path: '/integrations/spotify', component: spotify }
+  { path: '/integrations/spotify', component: spotify },
+
+  { path: '/systems/events', component: events }
 ]
 
 const router = new VueRouter({
@@ -123,6 +127,7 @@ new Vue({
               Manage
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+              <router-link to="/systems/events" class="nav-link nav-link2">Events</router-link>
               <router-link to="/commands" class="nav-link nav-link2">Commans</router-link>
               <router-link to="/keywords" class="nav-link nav-link2">Keywords</router-link>
               <router-link to="/variables" class="nav-link nav-link2">Variables</router-link>
@@ -162,7 +167,7 @@ new Vue({
     getStreamData: async function () {
       setTimeout(() => this.getStreamData(), 10 * 1000)
       this.$socket.emit('stream.data', null, async (err, data) => {
-        if (err) return console.log(err)
+        if (err) return global.log.error(err)
         if (data.uptime) {
           const diff = moment(moment().format()).diff(data.uptime)
           this.uptime = humanizeDuration(moment.duration(diff), { language: data.lang })
@@ -175,6 +180,7 @@ new Vue({
         this.game = data.game
         this.followers = data.followers
         this.channel = data.channel
+        document.title = data.channel
       })
     }
   },

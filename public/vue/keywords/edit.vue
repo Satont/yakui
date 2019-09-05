@@ -14,6 +14,15 @@
     </div>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-default">Cooldown</span>
+      </div>
+     <input ype="number" required class="form-control" v-model="cooldown">
+      <div class="input-group-append">
+       <span class="input-group-text" id="inputGroup-sizing-default">seconds</span>
+      </div>
+    </div>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
         <span class="input-group-text" id="inputGroup-sizing-default">Visible in $keywords variable</span>
       </div>
       <div class="input-group-append">
@@ -39,6 +48,7 @@ export default {
       id: this.$route.params.id,
       name: this.$route.params.name,
       response: this.$route.params.response,
+      cooldown: this.$route.params.cooldown,
       visible: this.$route.params.visible
     };
   },
@@ -66,10 +76,12 @@ export default {
   mounted() {
     if (!this.response) {
       this.$socket.emit("list.keywords", {}, (err, list) => {
-        let find = list.find(o => o.id === this.id)
+        let find = list.find(o => o.id === Number(this.id))
+         if (!find) return this.$router.push('/keywords')
         this.id = find.id
         this.name = find.name
         this.response = find.response
+        this.cooldown = find.cooldown
         this.visible = find.visible
       })
     }

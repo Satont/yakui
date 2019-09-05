@@ -3,13 +3,18 @@ const { io } = require('../libs/panel')
 const { say } = require('./customCommands')
 
 class Keywords {
+  parsers = [
+    { name: 'message', fnc: this.onMessage }
+  ]
+  
   constructor () {
     this.keywords = []
+    this.cooldowns = []
     this.sockets()
     this.getKeywordsList()
   }
 
-  async check (message, userstate) {
+  async onMessage (userstate, message) {
     message = message.toLowerCase()
     for (const item of this.keywords) {
       if (message.includes(item.name)) return this.respond(item, message, userstate)
@@ -17,6 +22,14 @@ class Keywords {
   }
 
   async respond (item, message, userstate) {
+    if (this.cooldowns.includes(item.name)) return
+    else {
+      this.cooldowns.push(item.name)
+      setTimeout(() => {
+        const index = this.cooldowns.indexOf(item.name)
+        if (index !== -1) this.cooldowns.splice(index, 1)
+      }, item.cooldown * 1000)
+    }
     let response = item.response
     response = await variables.prepareMessage(response, userstate, message)
     await say(response)
@@ -38,27 +51,27 @@ class Keywords {
       socket.on('create.keyword', async (data, cb) => {
         try {
           await global.db('systems.keywords').insert(data)
-          self.getKeywordsList()
+          await self.getKeywordsList()
           cb(null, true)
         } catch (e) {
-          console.log(e)
+          global.log.error(e)
         }
       })
       socket.on('delete.keyword', async (data, cb) => {
         try {
           await global.db('systems.keywords').where('id', data).delete()
-          self.getKeywordsList()
+          await self.getKeywordsList()
         } catch (e) {
-          console.log(e)
+          global.log.error(e)
         }
       })
       socket.on('update.keyword', async (data, cb) => {
         try {
           await global.db('systems.keywords').where('id', data.id).update(data)
-          self.getKeywordsList()
+          await self.getKeywordsList()
           cb(null, true)
         } catch (e) {
-          console.log(e)
+          global.log.error(e)
         }
       })
     })

@@ -4,6 +4,11 @@ const { io } = require('../libs/panel')
 const variables = require('../systems/variables')
 
 class CustomCommands {
+  commands = []
+  parsers = [
+    { name: 'message', fnc: this.onMessage }
+  ]
+
   constructor () {
     this.cooldowns = []
     this.commands = []
@@ -11,8 +16,9 @@ class CustomCommands {
     this.getCommands()
   }
 
-  async prepareCommand (message, userstate) {
-    message = message.substring(1)
+  onMessage (userstate, message) {
+    if (!message.startsWith('!')) return
+    message = message.replace('!', '').trim()
     let find
     const ar = message.toLowerCase().split(' ')
     for (let i = 0, len = ar.length; i < len; i++) {
@@ -28,28 +34,25 @@ class CustomCommands {
 
     if (!permissions.hasPerm(userstate.badges, find.permission)) return
 
-    if (this.cooldowns.includes(find.name) && find.cooldowntype === 'stop') {
-      return console.log(`COMMAND ${find.name.toUpperCase()} ON COOLDOWN AND HAS NO EXECUTE MODEL`)
+    if (this.cooldowns.includes(find.id) && find.cooldowntype === 'stop') {
+      return global.log.info(`COMMAND ${find.name.toUpperCase()} ON COOLDOWN AND HAS NO EXECUTE MODEL`)
     }
-    if (this.cooldowns.includes(find.name) && (userstate.mod || userstate.subscriber)) {
+    if (this.cooldowns.includes(find.id) && (userstate.mod || userstate.subscriber)) {
       userstate['message-type'] = 'chat'
-    } else if (this.cooldowns.includes(find.name) && find.cooldowntype === 'notstop') {
+    } else if (this.cooldowns.includes(find.id) && find.cooldowntype === 'notstop') {
       userstate['message-type'] = 'whisper'
-    } else this.cooldowns.push(find.name)
+    } else this.cooldowns.push(find.id)
     
-    for (const item of _.concat(find.aliases, find.name).reverse()) {
-      message = _.replace(message, item, '')
+    for (const item of _.concat(find.aliases, find.name)) {
+      if (new RegExp("\\b" + item + "\\b").test(message)) {
+        message = message.replace(item, '').trim()
+      }
     }
-   
-    if (message.startsWith(' ')) message = message.slice(1)
+    message = message.trim()
 
     this.prepareMessage(find.response, message, userstate)
 
-    setTimeout(() => {
-      const index = this.cooldowns.indexOf(find.name)
-      if (index !== -1) this.cooldowns.splice(index, 1)
-    }, find.cooldown * 1000)
-    // console.log(message)
+    setTimeout(() => _.remove(this.cooldowns, o => o === find.id), find.cooldown * 1000)
   }
 
   async prepareMessage (response, message, userstate) {
@@ -79,18 +82,21 @@ class CustomCommands {
   }
 
   async say (msg) {
-    if (process.env.NODE_ENV !== 'production') return console.log(msg)
-    global.tmi.client.say(process.env.TWITCH_CHANNEL, msg).catch(console.log)
+    global.log.chatOut(msg)
+    if (process.env.NODE_ENV !== 'production') return
+    global.tmi.client.say(process.env.TWITCH_CHANNEL, msg).catch(global.log.error)
   }
 
   async whisper (username, message) {
-    if (process.env.NODE_ENV !== 'production') return console.log(message)
-    await global.tmi.client.whisper(username, message).catch(console.log)
+    global.log.chatOut(username, message)
+    if (process.env.NODE_ENV !== 'production') return
+    await global.tmi.client.whisper(username, message).catch(global.log.error)
   }
 
   async timeout (username, time) {
-    if (process.env.NODE_ENV !== 'production') return console.log(userna, timeout)
-    global.tmi.client.timeout(process.env.TWITCH_CHANNEL, username, time).catch(console.log)
+    global.log.chatOut(username, time)
+    if (process.env.NODE_ENV !== 'production') return
+    global.tmi.client.timeout(process.env.TWITCH_CHANNEL, username, time).catch(global.log.error)
   }
 
   async sockets () {
@@ -103,39 +109,43 @@ class CustomCommands {
       socket.on('create.command', async (data, cb) => {
         const aliases = _.flattenDeep(self.commands.map(o => o.aliases))
         const names = self.commands.map(o => o.name)
-
-        if (aliases.some(o => data.aliases.includes(o)) || names.some(o => data.aliases.includes(o))) return cb('Command name or aliase already used', null)
-        if (names.some(o => o.name === data.name) || aliases.some(o => names.includes(o))) return cb('Command name or aliase already used', null)
+        
+        const name_exist = _.some(aliases, o => o === data.name) || _.some(names, o => o === data.name)
+        const aliase_exist = _.some(names, o => data.aliases.includes(o)) || _.some(aliases, o => data.aliases.includes(o))
+      
+        if (name_exist || aliase_exist) return cb('Command name or aliase already used', null)
 
         try {
           await global.db('systems.commands').insert(data)
-          self.getCommands()
+          await self.getCommands()
           cb(null, true)
         } catch (e) {
-          console.log(e)
+          global.log.error(e)
         }
       })
       socket.on('delete.command', async (data, cb) => {
         try {
           await global.db('systems.commands').where('name', data).delete()
-          self.getCommands()
+          await self.getCommands()
         } catch (e) {
-          console.log(e)
+          global.log.error(e)
         }
       })
       socket.on('update.command', async (data, cb) => {
-        const aliases = _.flattenDeep(self.commands.filter(o => o.name !== data.currentname).map(o => o.aliases))
-        const names = self.commands.map(o => o.name).filter(o => o !== data.currentname)
+        const aliases = _.flattenDeep(self.commands.filter(o => o.id !== data.id).map(o => o.aliases))
+        const names = self.commands.filter(o => o.id !== data.id).map(o => o.name)
 
-        if (aliases.some(o => data.aliases.includes(o)) || names.some(o => data.aliases.includes(o))) return cb('Command name or aliase already used', null)
-        if (names.some(o => o.name === data.name) || aliases.some(o => names.includes(o))) return cb('Command name or aliase already used', null)
+        const name_exist = _.some(aliases, o => o === data.name) || _.some(names, o => o === data.name)
+        const aliase_exist = _.some(names, o => data.aliases.includes(o)) || _.some(aliases, o => data.aliases.includes(o))
+        
+        if (name_exist || aliase_exist) return cb('Command name or aliase already used', null)
 
         try {
           await global.db('systems.commands').where('id', data.id).update(data)
-          self.getCommands()
+          await self.getCommands()
           cb(null, true)
         } catch (e) {
-          console.log(e)
+          global.log.error(e)
         }
       })
     })

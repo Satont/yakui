@@ -1,6 +1,7 @@
 const socket = require('socket.io-client')
-const { say } = require('../systems/customCommands')
+const events = require('../systems/events')
 const { io } = require('../libs/panel')
+
 
 class DonationAlerts {
   constructor () {
@@ -18,7 +19,7 @@ class DonationAlerts {
 
   async connect () {
     this.disconnect()
-    this.settings = (await global.db('integrations').select('*').where('name', 'donationalerts'))[0]
+    this.settings = await global.db('integrations').select('*').where('name', 'donationalerts').first()
     if (!this.settings.enabled || this.settings.settings.token === null) return
     this.socket = socket.connect('wss://socket.donationalerts.ru:443', {
       reconnection: true,
@@ -29,21 +30,21 @@ class DonationAlerts {
     if (this.socket !== null) {
       this.socket.on('connect', () => {
         this.socket.emit('add-user', { token: this.settings.settings.token, type: 'minor' })
-        console.log('DONATIONALERTS.RU: Successfully connected socket to service')
+        global.log.info('DONATIONALERTS.RU: Successfully connected socket to service')
       })
       this.socket.on('reconnect_attempt', () => {
-        console.log('DONATIONALERTS.RU: Trying to reconnect to service')
+        global.log.info('DONATIONALERTS.RU: Trying to reconnect to service')
       })
       this.socket.on('disconnect', () => {
-        console.log('DONATIONALERTS.RU: Socket disconnected from service')
+        global.log.info('DONATIONALERTS.RU: Socket disconnected from service')
         this.disconnect()
         this.socket = null
       })
       this.socket.off('donation').on('donation', async (data) => {
         let { username, amount_main, currency, message, alert_type } = JSON.parse(data)
         if (parseInt(alert_type, 10) !== 1) return
-        global.db('users').where({ username: username.toLowerCase().replace(' ', '') }).increment({ tips: amount_main }).catch(() => {})
-        await say(`/me ${username} ${amount_main}RUB ${message}`)
+        global.db('users').where({ username: username.toLowerCase().replace(' ', '') }).increment({ tips: Number(amount_main) }).catch(() => {})
+        events.fire('tip', { username, amount: amount_main, currency, message })
       })
     }
   }
@@ -52,7 +53,7 @@ class DonationAlerts {
     const self = this
     io.on('connection', function (socket) {
       socket.on('settings.donationalerts', async (data, cb) => {
-        const query = (await global.db('integrations').select('*').where('name', 'donationalerts'))[0]
+        const query = await global.db('integrations').select('*').where('name', 'donationalerts').first()
         cb(null, query)
       })
       socket.on('update.settings.donationalerts', async (data, cb) => {
