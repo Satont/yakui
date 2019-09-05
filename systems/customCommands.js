@@ -16,7 +16,7 @@ class CustomCommands {
     this.getCommands()
   }
 
-  async onMessage (userstate, message) {
+  onMessage (userstate, message) {
     if (!message.startsWith('!')) return
     message = message.replace('!', '').trim()
     let find
@@ -34,14 +34,14 @@ class CustomCommands {
 
     if (!permissions.hasPerm(userstate.badges, find.permission)) return
 
-    if (this.cooldowns.includes(find.name) && find.cooldowntype === 'stop') {
+    if (this.cooldowns.includes(find.id) && find.cooldowntype === 'stop') {
       return global.log.info(`COMMAND ${find.name.toUpperCase()} ON COOLDOWN AND HAS NO EXECUTE MODEL`)
     }
-    if (this.cooldowns.includes(find.name) && (userstate.mod || userstate.subscriber)) {
+    if (this.cooldowns.includes(find.id) && (userstate.mod || userstate.subscriber)) {
       userstate['message-type'] = 'chat'
-    } else if (this.cooldowns.includes(find.name) && find.cooldowntype === 'notstop') {
+    } else if (this.cooldowns.includes(find.id) && find.cooldowntype === 'notstop') {
       userstate['message-type'] = 'whisper'
-    } else this.cooldowns.push(find.name)
+    } else this.cooldowns.push(find.id)
     
     for (const item of _.concat(find.aliases, find.name)) {
       if (new RegExp("\\b" + item + "\\b").test(message)) {
@@ -52,10 +52,7 @@ class CustomCommands {
 
     this.prepareMessage(find.response, message, userstate)
 
-    setTimeout(() => {
-      const index = this.cooldowns.indexOf(find.name)
-      if (index !== -1) this.cooldowns.splice(index, 1)
-    }, find.cooldown * 1000)
+    setTimeout(() => _.remove(this.cooldowns, o => o === find.id), find.cooldown * 1000)
   }
 
   async prepareMessage (response, message, userstate) {
