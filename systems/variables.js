@@ -105,17 +105,35 @@ class Variables {
     if (response.includes('$medal')) {
       response = response.replace('$medal', await notable.medal())
     }
-    if (response.includes('$messages') || response.includes('$tips') || response.includes('$bits') ||
-    response.includes('$points') || response.includes('$watched') || response.includes('$pointsName')) {
+    if (response.includesOneOf(['$messages', '$tips', '$bits', '$points', '$watched', '$pointsName'])) {
+      const raw = `select * from users join (select id, row_number() over (order by "watched" desc) as watched_position, row_number() over (order by "messages" desc) as messages_position, row_number() over (order by "tips" desc) as tips_position, row_number() over (order by "bits" desc) as bits_position, row_number() over (order by "points" desc) as points_position from users) as ranked_users on ranked_users.id = users.id where users.id = ?`
       let user
-      if (message.length) user = await global.db('users').where({ id: target }).first()
-      else user = await global.db('users').where({ id: Number(userstate['user-id']) }).first()
-      response = response.replace('$messages', user.messages || '0')
-      response = response.replace('$tips', user.tips|| '0')
-      response = response.replace('$bits', user.bits|| '0')
-      response = response.replace('$points', user.points|| '0')
-      response = response.replace('$watched', shortEnglish(user.watched) || '0')
-      response = response.replace('$pointsName', commons.declOfNum(user.points, users.settings.pointsName.split('|')))
+      if (message.length) {
+        try {
+          const target = await users.getIdByUsername(message.replace('@', ''))
+          user = await global.db.raw(raw, [target])
+        } catch (e) {
+          user = {}
+          user.rows = []
+          response = `@${userstate['display-name']} user ${message} not found on twitch`
+        }
+      }
+      else user = await global.db.raw(raw, [Number(userstate['user-id'])])
+      if (!user.rows.length) user = {}
+      else user = user.rows[0]
+      user.positions = {
+        messages: _.get(user, 'messages_position', 0) === 0 ? '' : `(#${user.messages_position})`,
+        tips: _.get(user, 'tips_position', 0) === 0 ? '' : `(#${user.tips_position})`,
+        bits: _.get(user, 'bits_position', 0) === 0 ? '' : `(#${user.bits_position})`,
+        points: _.get(user, 'points_position', 0) === 0 ? '' : `(#${user.points_position})`,
+        watched: _.get(user, 'watched_position', 0) === 0 ? '' : `(#${user.watched_position})`
+      }
+      response = response.replace('$messages', `${_.get(user, 'messages', 0)} ${user.positions.messages}`)
+      .replace('$tips', `${_.get(user, 'tips', 0)} ${user.positions.tips}`)
+      .replace('$bits', `${_.get(user, 'bits', 0)} ${user.positions.bits}`)
+      .replace('$points', `${_.get(user, 'points', 0)} ${user.positions.points}`)
+      .replace('$watched', `${shortEnglish(_.get(user, 'watched', 0))} ${user.positions.messages}`)
+      .replace('$pointsName', commons.declOfNum(user.points, users.settings.pointsName.split('|')))
     }
     if (response.includes('$top_messages')) {
       const ignoredUsers = (await global.db('settings').select('*').where('system', 'users').first()).data.ignorelist

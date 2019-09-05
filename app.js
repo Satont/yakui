@@ -4,7 +4,7 @@ switch (process.env.NODE_ENV) {
 }
 require('dotenv').config({ path: path })
 require('./libs/logger')
-
+require('./libs/prototypes')
 global.db = require('./libs/db')
 const { autoLoad } = require('./libs/commons')
 
