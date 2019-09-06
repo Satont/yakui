@@ -3,6 +3,9 @@ import VueRouter from 'vue-router'
 import humanizeDuration from 'humanize-duration'
 import moment from 'moment'
 import VueClipboard from 'vue-clipboard2'
+import BootstrapVue from 'bootstrap-vue'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import Commands from './vue/commands/list.vue'
 import createCommand from './vue/commands/create.vue'
@@ -30,7 +33,7 @@ import variablelist from './vue/single/variables.vue'
 import SocketIO from 'socket.io-client'
 import VueSocketIO from 'vue-socket.io'
 import cooldownModal from './vue/components/cooldownmodal.vue'
-import settingsUsers from './vue/settings/users.vue'
+import settingsUsers from './vue/users/settings.vue'
 import notable from './vue/settings/notable.vue'
 
 import donationalerts from './vue/integrations/donationalerts.vue'
@@ -48,6 +51,7 @@ Vue.component('variables', variablelist)
 Vue.use(VueRouter)
 Vue.component('cooldownModal', cooldownModal)
 Vue.use(VueClipboard)
+Vue.use(BootstrapVue)
 
 const routes = [
   { path: '/', component: Commands },

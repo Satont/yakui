@@ -125,6 +125,20 @@ class Users {
         await global.db('settings').where('system', 'users').update({ data })
         await self.start()
       })
+      socket.on('users.get', async (data, cb) => {
+        const users = await global.db.raw(`select * from users order by ${data.sortBy} ${data.sortDesc ? 'desc' : 'asc'} offset ${(data.page - 1) * 30} limit ${data.perPage}`)
+        cb(null, users.rows)
+      })
+      socket.on('users.count', async (data, cb) => {
+        const query = await global.db('users').count()
+        cb(null, Number(query[0].count))
+      })
+      socket.on('users.update.user', async (data, cb) => {
+        global.db('users').where('id', data.id).update(data).then(() => cb(null, 'success')).catch(console.log)
+      })
+      socket.on('users.delete.user', async (data, cb) => {
+        global.db('users').where('id', data).del().then(() => cb(null, 'success')).catch(console.log)
+      })
     })
   }
 }
