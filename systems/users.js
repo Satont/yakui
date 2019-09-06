@@ -133,6 +133,12 @@ class Users {
         const query = await global.db('users').count()
         cb(null, Number(query[0].count))
       })
+      socket.on('users.update.user', async (data, cb) => {
+        global.db('users').where('id', data.id).update(data).then(() => cb(null, 'success')).catch(console.log)
+      })
+      socket.on('users.delete.user', async (data, cb) => {
+        global.db('users').where('id', data).del().then(() => cb(null, 'success')).catch(console.log)
+      })
     })
   }
 }
