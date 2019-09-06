@@ -9,17 +9,21 @@ module.exports = (userstate, message) => {
         let msg = message.replace('!', '').trim()
         if (!msg.startsWith(command.name)) continue // skip command if name not found
 
-        if (typeof command.cooldown === 'undefined') {
+        if (typeof command.cooldown === 'undefined' || typeof command.cooldownper === 'undefined') {
           userstate['message-type'] = 'chat'
         }
-        else if (cooldowns.includes(command.id) && command.cooldowntype === 'stop') {
+        else if (cooldowns.some(o => o.id === command.id) && command.cooldowntype === 'stop') {
           return global.log.info(`COMMAND ${find.name.toUpperCase()} ON COOLDOWN AND HAS NO EXECUTE MODEL`)
         }
-        else if (cooldowns.includes(command.id) && (userstate.mod || userstate.subscriber)) {
+        else if (cooldowns.some(o => o.id === command.id) && (userstate.mod || userstate.subscriber)) {
           userstate['message-type'] = 'chat'
-        } else if (cooldowns.includes(command.id) && command.cooldowntype === 'notstop') {
+        } else if (cooldowns.some(o => o.id === command.id) && command.cooldowntype === 'notstop' && command.cooldowper !== 'user') {
           userstate['message-type'] = 'whisper'
-        } else cooldowns.push(command.id)
+        } else if (command.cooldownper === 'user') {
+          cooldowns.push({ id: command.id, type: 'user' })
+          break; /// we don't want to execute command if command cooldown type is for user
+        }
+        else cooldowns.push({ id: command.id, type: 'global' })
 
         command['fnc'].apply(system, [userstate, msg.replace(command.name, '').trim(), command.response || null])
         setTimeout(() => _.remove(cooldowns, o => o === command.id), command.cooldown * 1000)
