@@ -39,7 +39,7 @@
     </tbody>
   </table>
 
-  <div class="card bg-dark" :key="index" v-for="(operation, index) in this.$data[show].operations" style="margin-bottom:15px;">
+  <div class="card card-bg" :key="index" v-for="(operation, index) in this.$data[show].operations" style="margin-bottom:15px;">
     <div class="card-body">
       <select class="custom-select" v-model="operation.key" style="margin-bottom:15px;">
         <option value="sendMessage">Send Chat Message</option>
@@ -215,6 +215,9 @@ export default {
 </script>
 
 <style>
+.card-bg {
+  background-color: #50585f !important
+}
 #navigation {
   list-style: none;
   margin: 20px 0;
