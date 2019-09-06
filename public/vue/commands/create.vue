@@ -50,6 +50,15 @@
     </div>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
+        <label class="input-group-text" for="inputGroupSelect01">Cooldown for</label>
+      </div>
+      <select class="custom-select" v-model="cooldownfor">
+        <option value="global">Global</option>
+        <option value="user">Per user</option>
+      </select>
+    </div>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
         <label class="input-group-text" for="inputGroupSelect01">Type of cooldown</label>
       </div>
       <select class="custom-select" v-model="cooldowntype">
@@ -97,6 +106,7 @@ export default {
       description: 'This command have not description',
       cooldown: 5,
       cooldowntype: 'notstop',
+      cooldownfor: 'user',
       aliases: [],
       options: [],
       visible: true

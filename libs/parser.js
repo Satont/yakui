@@ -7,22 +7,37 @@ module.exports = (userstate, message) => {
     if (typeof system.commands !== 'undefined' && isCommand) {
       for (let command of system.commands) {
         let msg = message.replace('!', '').trim()
-        if (!msg.startsWith(command.name)) continue // skip command if name not found
 
-        if (typeof command.cooldown === 'undefined') {
+        command.names = command.aliases ? command.aliases : []
+        command.names.push(command.name)
+
+        if (!command.names.some(o => msg.startsWith(o))) continue // skip command if name not found
+        if (typeof command.cooldown === 'undefined' || typeof command.cooldownfor === 'undefined') {
           userstate['message-type'] = 'chat'
         }
-        else if (cooldowns.includes(command.id) && command.cooldowntype === 'stop') {
-          return global.log.info(`COMMAND ${find.name.toUpperCase()} ON COOLDOWN AND HAS NO EXECUTE MODEL`)
+        else if (cooldowns.some(o => o.id === command.id) && command.cooldowntype === 'stop' && command.cooldownfor === 'global') {
+          return global.log.info(`COMMAND ${command.name.toUpperCase()} ON COOLDOWN AND HAS NO EXECUTE MODEL`)
         }
-        else if (cooldowns.includes(command.id) && (userstate.mod || userstate.subscriber)) {
+        else if (cooldowns.some(o => o.id === command.id && o.user === userstate.username) && command.cooldowntype === 'stop' && command.cooldownfor ==='user') {
+          return global.log.info(`COMMAND ${command.name.toUpperCase()} ON COOLDOWN FOR USER ${userstate.username} AND HAS NO EXECUTE MODEL`)
+        }
+        else if (cooldowns.some(o => o.id === command.id) && (userstate.mod || userstate.subscriber)) {
           userstate['message-type'] = 'chat'
-        } else if (cooldowns.includes(command.id) && command.cooldowntype === 'notstop') {
+        } else if (cooldowns.some(o => o.id === command.id) && command.cooldowntype === 'notstop' && command.cooldownfor !== 'user') {
           userstate['message-type'] = 'whisper'
-        } else cooldowns.push(command.id)
+        } else if (cooldowns.some(o => o.id === command.id && o.user === userstate.username) && command.cooldownfor === 'user') {
+          break;
+        }
+        cooldowns.push({ id: command.id, type: command.cooldownfor, user: userstate.username })
 
-        command['fnc'].apply(system, [userstate, msg.replace(command.name, '').trim(), command.response || null])
-        setTimeout(() => _.remove(cooldowns, o => o === command.id), command.cooldown * 1000)
+        for (const item of command.names) {
+          if (new RegExp("\\b" + item + "\\b").test(message)) {
+            msg = msg.replace(item, '').trim()
+          }
+        }
+
+        command['fnc'].apply(system, [userstate, msg.trim(), command.response || null])
+        setTimeout(() => _.remove(cooldowns, o => o.id === command.id), command.cooldown * 1000)
         break; // stop loop if command was found and axecuted
       }
     } else {

@@ -42,6 +42,15 @@
         <span class="input-group-text" id="inputGroup-sizing-default">seconds</span>
       </div>
     </div>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="inputGroupSelect01">Cooldown for</label>
+      </div>
+      <select class="custom-select" v-model="cooldownfor">
+        <option value="global">Global</option>
+        <option value="user">Per user</option>
+      </select>
+    </div>
      <div class="input-group mb-3">
       <div class="input-group-prepend">
         <label class="input-group-text" for="inputGroupSelect01">Type of cooldowns</label>
@@ -94,6 +103,7 @@ export default {
       description: this.$route.params.description,
       cooldown: this.$route.params.cooldown || 5,
       cooldowntype: this.$route.params.cooldowntype,
+      cooldownfor: this.$route.params.cooldownfor,
       aliases: this.$route.params.aliases || [],
       options: [],
       visible: this.$route.params.visible
@@ -141,6 +151,7 @@ export default {
         this.permission = find.permission,
         this.description = find.description,
         this.cooldowntype = find.cooldowntype,
+        this.cooldownfor = find.cooldownfor,
         this.aliases = find.aliases,
         this.visible = find.visible
       })
