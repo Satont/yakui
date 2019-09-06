@@ -132,7 +132,7 @@ class Variables {
       .replace('$tips', `${_.get(user, 'tips', 0)} ${user.positions.tips}`)
       .replace('$bits', `${_.get(user, 'bits', 0)} ${user.positions.bits}`)
       .replace('$points', `${_.get(user, 'points', 0)} ${user.positions.points}`)
-      .replace('$watched', `${shortEnglish(_.get(user, 'watched', 0))} ${user.positions.messages}`)
+      .replace('$watched', `${shortEnglish(_.get(user, 'watched', 0))} ${user.positions.watched}`)
       .replace('$pointsName', commons.declOfNum(user.points, users.settings.pointsName.split('|')))
     }
     if (response.includes('$top_messages')) {
