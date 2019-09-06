@@ -128,7 +128,7 @@ new Vue({
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
               <router-link to="/systems/events" class="nav-link nav-link2">Events</router-link>
-              <router-link to="/commands" class="nav-link nav-link2">Commans</router-link>
+              <router-link to="/commands" class="nav-link nav-link2">Commands</router-link>
               <router-link to="/keywords" class="nav-link nav-link2">Keywords</router-link>
               <router-link to="/variables" class="nav-link nav-link2">Variables</router-link>
               <router-link to="/timers" class="nav-link nav-link2">Timers</router-link>
