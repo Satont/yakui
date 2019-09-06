@@ -57,6 +57,7 @@ export default {
           description: command.description,
           cooldown: command.cooldown,
           cooldowntype: command.cooldowntype,
+          cooldownfor: command.cooldownfor,
           aliases: command.aliases,
           visible: command.visible
         }
