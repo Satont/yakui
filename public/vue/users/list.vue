@@ -13,7 +13,7 @@
     <b-form-input size="sm" v-model="data.item.messages" v-bind:value="data.item.messages"></b-form-input>
   </template>
   <template slot="[watched]" slot-scope="data">
-    <b-form-input size="sm" v-model="data.item.watched" v-bind:value="data.item.watched"></b-form-input>
+    <b-form-input size="sm" :value="data.value" @input="data.item.watched = $event"></b-form-input>
   </template>
   <template slot="[tips]" slot-scope="data">
     <b-form-input size="sm" v-model="data.item.tips" v-bind:value="data.item.tips"></b-form-input>
@@ -53,7 +53,7 @@ export default {
         { key: 'index', label: '#', tdClass: 'indexes' },
         { key: 'username', sortable: true },
         { key: 'messages', sortable: true },
-        { key: 'watched', sortable: true, label: 'Watched (hours)' },
+        { key: 'watched', sortable: true, label: 'Watched (hours)', formatter: value => { return String(this.watchedHours(value)) } },
         { key: 'tips', sortable: true },
         { key: 'bits', sortable: true },
         { key: 'points', sortable: true },
@@ -90,7 +90,7 @@ export default {
         bits: Number(data.bits),
         tips: Number(data.tips),
         points: Number(data.points),
-        watched: Number(data.watched),
+        watched: Number(data.watched) * 60 * 60 * 1000,
       }
       this.$socket.emit('users.update.user', user, (err, data) => {})
     },
