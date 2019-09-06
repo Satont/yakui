@@ -94,7 +94,7 @@ export default {
       name: null,
       response: null,
       permission: 'viewer',
-      description: null,
+      description: 'This command have not description',
       cooldown: 5,
       cooldowntype: 'notstop',
       aliases: [],
