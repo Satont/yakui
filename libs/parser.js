@@ -10,19 +10,22 @@ module.exports = (userstate, message) => {
 
         command.names = command.aliases ? command.aliases : []
         command.names.push(command.name)
-        
+
         if (!command.names.some(o => msg.startsWith(o))) continue // skip command if name not found
         if (typeof command.cooldown === 'undefined' || typeof command.cooldownfor === 'undefined') {
           userstate['message-type'] = 'chat'
         }
-        else if (cooldowns.some(o => o.id === command.id) && command.cooldowntype === 'stop') {
-          return global.log.info(`COMMAND ${find.name.toUpperCase()} ON COOLDOWN AND HAS NO EXECUTE MODEL`)
+        else if (cooldowns.some(o => o.id === command.id) && command.cooldowntype === 'stop' && command.cooldownfor === 'global') {
+          return global.log.info(`COMMAND ${command.name.toUpperCase()} ON COOLDOWN AND HAS NO EXECUTE MODEL`)
+        }
+        else if (cooldowns.some(o => o.id === command.id && o.user === userstate.username) && command.cooldowntype === 'stop' && command.cooldownfor ==='user') {
+          return global.log.info(`COMMAND ${command.name.toUpperCase()} ON COOLDOWN FOR USER ${userstate.username} AND HAS NO EXECUTE MODEL`)
         }
         else if (cooldowns.some(o => o.id === command.id) && (userstate.mod || userstate.subscriber)) {
           userstate['message-type'] = 'chat'
         } else if (cooldowns.some(o => o.id === command.id) && command.cooldowntype === 'notstop' && command.cooldownfor !== 'user') {
           userstate['message-type'] = 'whisper'
-        } else if (cooldowns.some(o => o.id === command.id) && cooldowns.some(o => o.user === userstate.username) && command.cooldownfor === 'user') {
+        } else if (cooldowns.some(o => o.id === command.id && o.user === userstate.username) && command.cooldownfor === 'user') {
           break;
         }
         cooldowns.push({ id: command.id, type: command.cooldownfor, user: userstate.username })
