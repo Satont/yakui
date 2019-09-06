@@ -126,8 +126,12 @@ class Users {
         await self.start()
       })
       socket.on('users.get', async (data, cb) => {
-        const users = await global.db('users').select('*')
-        cb(null, await users)
+        const users = await global.db.raw(`select * from users order by ${data.sortBy} ${data.sortDesc ? 'desc' : 'asc'} offset ${(data.page - 1) * 30} limit ${data.perPage}`)
+        cb(null, users.rows)
+      })
+      socket.on('users.count', async (data, cb) => {
+        const query = await global.db('users').count()
+        cb(null, Number(query[0].count))
       })
     })
   }

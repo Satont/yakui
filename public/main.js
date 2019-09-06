@@ -33,7 +33,7 @@ import variablelist from './vue/single/variables.vue'
 import SocketIO from 'socket.io-client'
 import VueSocketIO from 'vue-socket.io'
 import cooldownModal from './vue/components/cooldownmodal.vue'
-import settingsUsers from './vue/settings/users.vue'
+import settingsUsers from './vue/users/settings.vue'
 import notable from './vue/settings/notable.vue'
 
 import donationalerts from './vue/integrations/donationalerts.vue'
