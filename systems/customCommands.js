@@ -5,9 +5,6 @@ const variables = require('../systems/variables')
 
 class CustomCommands {
   commands = []
-  parsers = [
-    { name: 'message', fnc: this.onMessage }
-  ]
 
   constructor () {
     this.cooldowns = []
@@ -16,46 +13,7 @@ class CustomCommands {
     this.getCommands()
   }
 
-  onMessage (userstate, message) {
-    if (!message.startsWith('!')) return
-    message = message.replace('!', '').trim()
-    let find
-    const ar = message.toLowerCase().split(' ')
-    for (let i = 0, len = ar.length; i < len; i++) {
-      const command = this.commands.find(o => o.name === ar.join(' '))
-      const aliase = this.commands.find(o => o.aliases.includes(ar.join(' ')))
-      if (!command && !aliase) ar.pop()
-      else {
-        find = command || aliase
-        break
-      }
-    }
-    if (!find) return
-
-    if (!permissions.hasPerm(userstate.badges, find.permission)) return
-
-    if (this.cooldowns.includes(find.id) && find.cooldowntype === 'stop') {
-      return global.log.info(`COMMAND ${find.name.toUpperCase()} ON COOLDOWN AND HAS NO EXECUTE MODEL`)
-    }
-    if (this.cooldowns.includes(find.id) && (userstate.mod || userstate.subscriber)) {
-      userstate['message-type'] = 'chat'
-    } else if (this.cooldowns.includes(find.id) && find.cooldowntype === 'notstop') {
-      userstate['message-type'] = 'whisper'
-    } else this.cooldowns.push(find.id)
-    
-    for (const item of _.concat(find.aliases, find.name)) {
-      if (new RegExp("\\b" + item + "\\b").test(message)) {
-        message = message.replace(item, '').trim()
-      }
-    }
-    message = message.trim()
-
-    this.prepareMessage(find.response, message, userstate)
-
-    setTimeout(() => _.remove(this.cooldowns, o => o === find.id), find.cooldown * 1000)
-  }
-
-  async prepareMessage (response, message, userstate) {
+  async prepareMessage (userstate, message, response) {
     const variableRegexp = /\$_(\S*)/g
     // модер меняет переменную в команде
     const wantsChangeVariable = (userstate.mod || (userstate.badges && typeof userstate.badges.broadcaster !== 'undefined')) && message.length && response.match(variableRegexp) !== null
@@ -77,7 +35,12 @@ class CustomCommands {
 
   async getCommands () {
     const query = await global.db.select(`*`).from('systems.commands')
-    this.commands = query
+    let arr = []
+    for (let command of query) {
+      command.fnc = this.prepareMessage
+      arr.push(command)
+    }
+    this.commands = arr
     return query
   }
 
@@ -88,7 +51,7 @@ class CustomCommands {
   }
 
   async whisper (username, message) {
-    global.log.chatOut(username, message)
+    global.log.whisperOut(`${username} ${message}`)
     if (process.env.NODE_ENV !== 'production') return
     await global.tmi.client.whisper(username, message).catch(global.log.error)
   }

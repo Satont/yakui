@@ -11,13 +11,14 @@ if (!fs.existsSync(logDir)) fs.mkdirSync(logDir)
 
 global.log = winston.createLogger({
   json: false,
-  levels: { info: 1, chatIn: 1, chatOut: 1, error: 1, sub: 1, resub: 1, subgift: 1, bits: 1, hosted: 1, raided: 1 },
+  levels: { info: 1, chatIn: 1, chatOut: 1, whisperOut: 1, error: 1, sub: 1, resub: 1, subgift: 1, bits: 1, hosted: 1, raided: 1 },
   format: combine(
     printf(info => {
       let level
       if (info.level === 'info') level = '!!!'
       if (info.level === 'chatIn') level = '>>>'
       if (info.level === 'chatOut') level = '<<<'
+      if (info.level === 'whisperOut') level = '<<< whispers'
       if (info.level === 'error') level = '!!! ERROR !!!'
       if (info.level === 'sub') level = '+sub'
       if (info.level === 'resub') level = '+resub'
