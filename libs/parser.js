@@ -7,7 +7,11 @@ module.exports = (userstate, message) => {
     if (typeof system.commands !== 'undefined' && isCommand) {
       for (let command of system.commands) {
         let msg = message.replace('!', '').trim()
-        if (!msg.startsWith(command.name)) continue // skip command if name not found
+
+        command.names = command.aliases ? command.aliases : []
+        command.names.push(command.name)
+        
+        if (!command.names.some(o => msg.startsWith(o))) continue // skip command if name not found
         if (typeof command.cooldown === 'undefined' || typeof command.cooldownfor === 'undefined') {
           userstate['message-type'] = 'chat'
         }
@@ -23,7 +27,13 @@ module.exports = (userstate, message) => {
         }
         cooldowns.push({ id: command.id, type: command.cooldownfor, user: userstate.username })
 
-        command['fnc'].apply(system, [userstate, msg.replace(command.name, '').trim(), command.response || null])
+        for (const item of command.names) {
+          if (new RegExp("\\b" + item + "\\b").test(message)) {
+            msg = msg.replace(item, '').trim()
+          }
+        }
+
+        command['fnc'].apply(system, [userstate, msg.trim(), command.response || null])
         setTimeout(() => _.remove(cooldowns, o => o.id === command.id), command.cooldown * 1000)
         break; // stop loop if command was found and axecuted
       }
