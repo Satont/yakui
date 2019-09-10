@@ -54,8 +54,7 @@
     "vue-router": "^3.0.7",
     "vue-socket.io": "^3.0.7",
     "vue-template-compiler": "^2.6.10",
-    "webpack": "^4.36.1",
-    "webpack-cli": "^3.3.6",
+    "webpack": "^4.39.3",
     "winston": "^3.2.1"
   },
   "devDependencies": {

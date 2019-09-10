@@ -1,1 +1,1 @@
-npm run build; npm start
+npm start
