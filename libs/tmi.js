@@ -254,7 +254,7 @@ class TwitchTmi {
     })
     this.client.on('hosting', (channel, target, viewers) => {
       global.log.info(`starting host ${target} with ${viewers} viewers`)
-      events.fire('hosted', { username: target, hostingViewers: viewers })
+      events.fire('hosting', { username: target, hostingViewers: viewers })
     })
     this.client.on('raided', (channel, username, viewers) => {
       global.log.raided(`raid from ${username}, viewers: ${viewers}`)
