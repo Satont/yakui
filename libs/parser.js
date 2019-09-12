@@ -8,10 +8,10 @@ module.exports = (userstate, message) => {
       for (let command of system.commands) {
         let msg = message.replace('!', '').trim()
 
-        command.names = command.aliases ? command.aliases : []
-        command.names.push(command.name)
+        let names_of_command = command.aliases ? _.clone(command.aliases) : []
+        names_of_command.push(command.name)
 
-        if (!command.names.some(o => msg.startsWith(o))) continue // skip command if name not found
+        if (!names_of_command.some(o => msg.startsWith(o))) continue // skip command if name not found
         if (typeof command.cooldown === 'undefined' || typeof command.cooldownfor === 'undefined') {
           userstate['message-type'] = 'chat'
         }
@@ -30,7 +30,7 @@ module.exports = (userstate, message) => {
         }
         cooldowns.push({ id: command.id, type: command.cooldownfor, user: userstate.username })
 
-        for (const item of command.names) {
+        for (const item of names_of_command) {
           if (new RegExp("\\b" + item + "\\b").test(message)) {
             msg = msg.replace(item, '').trim()
           }
