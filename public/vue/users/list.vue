@@ -3,31 +3,31 @@
 <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" align="center" v-on:input="changePage"></b-pagination>
 
 <b-table id="table" striped hover primary-key dark :items="users" :fields="fields" @sort-changed="sort" no-local-sorting>
-  <template slot="[index]" slot-scope="data">
+  <template v-slot:cell(index)="data">
     {{ data.index + 1 }}
   </template>
-  <template slot="[username]" slot-scope="data">
-    {{ data.item.username }}
+  <template v-slot:cell(username)="data">
+    {{ data.value }}
   </template>
-  <template slot="[messages]" slot-scope="data">
-    <b-form-input size="sm" v-model="data.item.messages" v-bind:value="data.item.messages"></b-form-input>
+  <template v-slot:cell(messages)="data">
+    <b-form-input size="sm" v-model="data.item.messages" :value="data.value"></b-form-input>
   </template>
-  <template slot="[watched]" slot-scope="data">
-    <b-form-input size="sm" :value="data.value" @input="data.item.watched = $event"></b-form-input>
+  <template v-slot:cell(watched)="data">
+    <b-form-input size="sm" @input="data.item.watched = $event" :value="data.value"></b-form-input>
   </template>
-  <template slot="[tips]" slot-scope="data">
-    <b-form-input size="sm" v-model="data.item.tips" v-bind:value="data.item.tips"></b-form-input>
+  <template v-slot:cell(tips)="data">
+    <b-form-input size="sm" v-model="data.item.tips" :value="data.value"></b-form-input>
   </template>
-  <template slot="[bits]" slot-scope="data">
-     <b-form-input size="sm" v-model="data.item.bits" v-bind:value="data.item.bits"></b-form-input>
+  <template v-slot:cell(bits)="data">
+     <b-form-input size="sm" v-model="data.item.bits" :value="data.value"></b-form-input>
   </template>
-  <template slot="[points]" slot-scope="data">
-    <b-form-input size="sm" v-model="data.item.points" v-bind:value="data.item.points"></b-form-input>
+  <template v-slot:cell(points)="data">
+    <b-form-input size="sm" v-model="data.item.points" :value="data.value"></b-form-input>
   </template>
-  <template slot="[actions]" slot-scope="data">
+  <template v-slot:cell(actions)="data">
     <b-button-group size="sm">
       <b-button @click="saveUser(data.item)" variant="success"><i class="fas fa-save"></i></b-button>
-      <b-button @click="deleteUser(data.index, data.item.id)" variant="danger"><i class="fas fa-trash"></i></b-button>
+      <b-button @click="deleteUser(data.item.index, data.item.id)" variant="danger"><i class="fas fa-trash"></i></b-button>
     </b-button-group>
   </template>
 </b-table>
