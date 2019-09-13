@@ -59,10 +59,10 @@ export default {
     }
   },
   mounted() {
-     this.$socket.emit('list.variables', null, (err, list) => this.variables = _.orderBy(list, 'name', 'asc'))
+     this.$socket.emit('list.variables', null, (err, list) => this.variables = orderBy(list, 'name', 'asc'))
   },
   updated() {
-     this.$socket.emit('list.variables', null, (err, list) => this.variables = _.orderBy(list, 'name', 'asc'))
+     this.$socket.emit('list.variables', null, (err, list) => this.variables = orderBy(list, 'name', 'asc'))
   }
 };
 </script>

@@ -67,10 +67,10 @@ export default {
     }
   },
   mounted() {
-    this.$socket.emit('list.timers', null, (err, list) => this.timers = _.orderBy(list, 'name', 'asc'))
+    this.$socket.emit('list.timers', null, (err, list) => this.timers = orderBy(list, 'name', 'asc'))
   },
   updated() {
-    this.$socket.emit('list.timers', null, (err, list) => this.timers = _.orderBy(list, 'name', 'asc'))
+    this.$socket.emit('list.timers', null, (err, list) => this.timers = orderBy(list, 'name', 'asc'))
   }
 };
 </script>

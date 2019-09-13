@@ -66,10 +66,10 @@ export default {
     }
   },
   mounted() {
-    this.$socket.emit('list.keywords', null, (err, list) => this.keywords = _.orderBy(list, 'name', 'asc'))
+    this.$socket.emit('list.keywords', null, (err, list) => this.keywords = orderBy(list, 'name', 'asc'))
   },
   updated() {
-    this.$socket.emit('list.keywords', null, (err, list) => this.keywords = _.orderBy(list, 'name', 'asc'))
+    this.$socket.emit('list.keywords', null, (err, list) => this.keywords = orderBy(list, 'name', 'asc'))
   }
 };
 </script>

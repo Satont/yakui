@@ -61,10 +61,10 @@ export default {
     }
   },
   mounted() {
-     this.$socket.emit('list.overlays', null, (err, list) => this.overlays = _.orderBy(list, 'name', 'asc'))
+     this.$socket.emit('list.overlays', null, (err, list) => this.overlays = orderBy(list, 'name', 'asc'))
   },
   updated() {
-     this.$socket.emit('list.overlays', null, (err, list) => this.overlays = _.orderBy(list, 'name', 'asc'))
+     this.$socket.emit('list.overlays', null, (err, list) => this.overlays = orderBy(list, 'name', 'asc'))
   },
   filters: {
     truncate: function (text, length, suffix) {

@@ -71,10 +71,10 @@ export default {
     }
   },
   mounted() {
-    this.$socket.emit('list.commands', null, (err, list) => this.commands = _.orderBy(list, 'name', 'asc'))
+    this.$socket.emit('list.commands', null, (err, list) => this.commands = orderBy(list, 'name', 'asc'))
   },
   updated() {
-    this.$socket.emit('list.commands', null, (err, list) => this.commands = _.orderBy(list, 'name', 'asc'))
+    this.$socket.emit('list.commands', null, (err, list) => this.commands = orderBy(list, 'name', 'asc'))
   }
 };
 </script>
