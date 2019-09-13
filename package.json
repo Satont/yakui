@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npx knex migrate:latest --env production && npx knex seed:run --env production && cross-env NODE_ENV=production node --expose_gc app.js",
     "dev": "cross-env NODE_ENV=development npx knex migrate:latest --env development && cross-env NODE_ENV=development npx knex seed:run --env development && cross-env NODE_ENV=development node --expose-gc app.js",
-    "build": "npx webpack"
+    "build": "parcel build ./public/main.js --out-dir ./public/dist --out-file build.js --no-source-maps"
   },
   "engines": {
     "node": ">=12"
@@ -17,14 +17,15 @@
       "/public/dist/build.js"
     ]
   },
+  "alias": {
+    "vue": "./node_modules/vue/dist/vue.common.js"
+  },
   "author": "Satont",
   "license": "MIT",
   "dependencies": {
     "axios": "^0.19.0",
-    "babel-loader": "^8.0.6",
-    "bootstrap-vue": "^2.0.0-rc.28",
+    "bootstrap": "^4.3.1",
     "cross-env": "^5.2.0",
-    "css-loader": "^3.0.0",
     "dotenv": "^8.0.0",
     "fastify": "^2.6.0",
     "fastify-auth": "^0.5.0",
@@ -53,12 +54,15 @@
     "vue-multiselect": "^2.1.6",
     "vue-router": "^3.0.7",
     "vue-socket.io": "^3.0.7",
-    "vue-template-compiler": "^2.6.10",
-    "webpack": "^4.39.3",
-    "webpack-cli": "^3.3.8",
     "winston": "^3.2.1"
   },
   "devDependencies": {
-    "standard": "^14.0.2"
+    "@babel/core": "^7.6.0",
+    "@babel/polyfill": "^7.6.0",
+    "cssnano": "^4.1.10",
+    "parcel-bundler": "^1.12.3",
+    "standard": "^14.0.2",
+    "vue-template-compiler": "^2.6.10",
+    "bootstrap-vue": "^2.0.0"
   }
 }

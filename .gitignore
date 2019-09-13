@@ -6,3 +6,5 @@ test.js
 payloads.txt
 Heap.*
 logs
+public/dist/*
+.cache
