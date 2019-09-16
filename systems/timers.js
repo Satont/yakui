@@ -14,21 +14,23 @@ class Timers {
     clearTimeout(this.timeout)
     const timers = await global.db.select(`*`).from('systems.timers')
     if (!_.isNil(timers)) for (const timer of timers) await global.db('systems.timers').where('name', timer.name).update({ last: 0, triggertimestamp: new Date().getTime() })
-    this.check()
+    await this.check()
   }
 
   async check () {
     const timers = await global.db.select(`*`).from('systems.timers')
-    if (_.isNil(timers)) return setTimeout(() => this.check(), 1000)
+    if (_.isNil(timers)) {
+      return this.timeout = setTimeout(() => this.check(), 1000)
+    }
+    else this.timeout = setTimeout(() => this.check(), 10000)
     for (const timer of timers) {
       if ((new Date().getTime() - timer.triggertimestamp) > (timer.interval * 1000)) {
-        if (!global.tmi.uptime) return
+        //if (!global.tmi.uptime) return
         const response = await variables.prepareMessage(timer.responses[timer.last], { 'display-name': process.env.TWITCH_BOTUSERNAME })
         await say(response)
         await global.db('systems.timers').where('name', timer.name).update({ last: ++timer.last % timer.responses.length, triggertimestamp: new Date().getTime() })
       }
     }
-    this.timeout = setTimeout(() => this.check(), 10000)
   }
 
   async prepareResponse (response) {
