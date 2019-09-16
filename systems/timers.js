@@ -11,13 +11,13 @@ class Timers {
   }
 
   async init () {
-    clearTimeout(this.timeout)
     const timers = await global.db.select(`*`).from('systems.timers')
     if (!_.isNil(timers)) for (const timer of timers) await global.db('systems.timers').where('name', timer.name).update({ last: 0, triggertimestamp: new Date().getTime() })
     await this.check()
   }
 
   async check () {
+    clearTimeout(this.timeout)
     const timers = await global.db.select(`*`).from('systems.timers')
     if (_.isNil(timers)) {
       return this.timeout = setTimeout(() => this.check(), 1000)
