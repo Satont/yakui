@@ -133,7 +133,7 @@ class Variables {
       .replace('$bits', `${_.get(user, 'bits', 0)} ${user.positions.bits}`)
       .replace('$points', `${_.get(user, 'points', 0)} ${user.positions.points}`)
       .replace('$watched', `${shortEnglish(_.get(user, 'watched', 0))} ${user.positions.watched}`)
-      .replace('$pointsName', commons.declOfNum(user.points, users.settings.pointsName.split('|')))
+      .replace('$pointsName', commons.declOfNum(user.points, users.settings.pointsName.split('|')) || '')
     }
     if (response.includes('$top_messages')) {
       const ignoredUsers = (await global.db('settings').select('*').where('system', 'users').first()).data.ignorelist
