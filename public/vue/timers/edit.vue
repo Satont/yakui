@@ -61,6 +61,7 @@ export default {
       if (!this.name || !this.interval || !this.responses.length) return
       if (this.name.length > 15) return alert('Stop trying to hack me')
       this.$socket.emit("update.timer", this.$data)
+      this.$router.push('/timers')
     }
   },
   mounted() {
