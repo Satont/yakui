@@ -82,9 +82,19 @@
       </div>
     </div>
     <label class="typo__label">Command aliases</label>
-    <multiselect v-model="aliases" tag-placeholder="Add" placeholder="Aliases" :options="options" :multiple="true" :taggable="true" @tag="addAliase">
-      <template slot="noOptions">Write name</template>
-    </multiselect>
+    <div class="input-group mb-3" v-for="(aliase, index) in aliases" :key="index">
+      <input
+        type="text"
+        required
+        class="form-control"
+        placeholder="Text"
+        v-model="aliases[index]"
+      >
+      <div class="input-group-append">
+        <button type="button" class="btn btn-danger" @click="deleteAliase(index)">Delete</button>
+      </div>
+    </div>
+    <button type="button" class="btn btn-block btn-success" @click="createAliase">+</button>
     <br>
     <button type="button" class="btn btn-block btn-success" @click="create">Create</button>
     <br>
@@ -94,10 +104,7 @@
 </template>
 
 <script>
-import Multiselect from 'vue-multiselect'
-
 export default {
-  components: { Multiselect },
   data: function() {
     return {
       name: null,
@@ -106,7 +113,7 @@ export default {
       description: 'This command have not description',
       cooldown: 5,
       cooldowntype: 'notstop',
-      cooldownfor: 'user',
+      cooldownfor: 'global',
       aliases: [],
       options: [],
       visible: true
@@ -119,11 +126,18 @@ export default {
     }
   },
   methods: {
+    createAliase() {
+      this.aliases.push("");
+    },
+    deleteAliase(index) {
+      this.aliases.splice(index, 1);
+    },
     create() {
       if (!this.name || !this.response || !this.cooldown || !this.cooldowntype) return
       if (this.name.length > 15) return alert('Stop trying to hack me')
       if (this.cooldowntype !== 'notstop' && this.cooldowntype !== 'stop') return alert('Stop trying to hack me')
       if (this.permission !== 'broadcaster' && this.permission !== 'moderator' && this.permission !== 'vip' && this.permission !== 'subscriber' && this.permission !== 'viewer') return
+      if (this.aliases.some(o => !o.length)) return alert('Some of your aliases is empty. Delete them first.')
       let data = this.$data
       delete data.options
       this.$socket.emit("create.command", { ...data }, async (err, data) => {
