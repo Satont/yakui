@@ -75,7 +75,13 @@ class Notable {
 
   async addacc (param) {
     try {
-      await axios(`http://aibt.ga/api/addacc?channel=${process.env.TWITCH_CHANNEL.toLocaleLowerCase()}&token=${this.settings.token}&id=${param}`)
+      await axios.put(`http://aibt.ga/api/accounts`, {
+        data: {
+          channel: process.env.TWITCH_CHANNEL.toLocaleLowerCase(),
+          token: this.settings.token,
+          id: param
+        }
+      })
       const message = this.settings.accountadded.replace('$id', param)
       return message
     } catch (e) {
@@ -88,7 +94,13 @@ class Notable {
 
   async delacc (param) {
     try {
-      await axios(`http://aibt.ga/api/delacc?channel=${process.env.TWITCH_CHANNEL.toLocaleLowerCase()}&token=${this.settings.token}&id=${param}`)
+      await axios.delete(`http://aibt.ga/api/accounts`, {
+        data: {
+          channel: process.env.TWITCH_CHANNEL.toLocaleLowerCase(),
+          token: this.settings.token,
+          id: param
+        }
+      })
       const message = this.settings.accountdeleted.replace('$id', param)
       return message
     } catch (e) {
