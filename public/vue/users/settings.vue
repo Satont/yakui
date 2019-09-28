@@ -160,11 +160,11 @@ export default {
         pointsMessageInterval: this.pointsMessageInterval,
         pointsPerMessage: this.pointsPerMessage,
         pointsWatchedInterval: this.pointsWatchedInterval,
-        pointsPerTime: this.pointsPerMessage,
+        pointsPerTime: this.pointsPerTime,
         pointsName: this.pointsName,
         ignorelist: this.ignorelist.toLowerCase().split('\n')
       }, (err, data) => {if (err) console.log(err)})
-      this.$data.ignorelist = this.$data.ignorelist.join('\n')
+      
     }
   }
 };
