@@ -11,7 +11,8 @@ module.exports = (userstate, message) => {
         let names_of_command = command.aliases ? _.clone(command.aliases) : []
         names_of_command.push(command.name)
 
-        if (!names_of_command.some(o => new RegExp('^\\b' + o + '\\b').test(msg))) continue // skip command if name not found
+        if (!names_of_command.some(o => new RegExp('^(?<command>' + o + ')( |$)', 'ui').test(msg))) continue // skip command if name not found
+
         if (typeof command.cooldown === 'undefined' || typeof command.cooldownfor === 'undefined') {
           userstate['message-type'] = 'chat'
         }
@@ -31,7 +32,7 @@ module.exports = (userstate, message) => {
         cooldowns.push({ id: command.id, type: command.cooldownfor, user: userstate.username })
 
         for (const item of names_of_command) {
-          if (new RegExp('^\\b' + item + '\\b').test(msg)) {
+          if (new RegExp('^' + item, 'u').test(msg)) {
             msg = msg.replace(item, '').trim()
           }
         }
