@@ -76,11 +76,9 @@ class Notable {
   async addacc (param) {
     try {
       await axios.put(`http://aibt.ga/api/accounts`, {
-        data: {
-          channel: process.env.TWITCH_CHANNEL.toLocaleLowerCase(),
-          token: this.settings.token,
-          id: param
-        }
+        channel: process.env.TWITCH_CHANNEL.toLocaleLowerCase(),
+        token: this.settings.token,
+        id: param
       })
       const message = this.settings.accountadded.replace('$id', param)
       return message
