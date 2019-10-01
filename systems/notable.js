@@ -118,7 +118,7 @@ class Notable {
 
   async listacc () {
     try {
-      const request = await axios(`http://aibt.ga/api/listacc?channel=${process.env.TWITCH_CHANNEL.toLocaleLowerCase()}&token=${this.settings.token}`)
+      const request = await axios(`http://aibt.ga/api/accounts?channel=${process.env.TWITCH_CHANNEL.toLocaleLowerCase()}&token=${this.settings.token}`)
       const response = await request.data
       return response.accounts.join(', ')
     } catch (e) {
