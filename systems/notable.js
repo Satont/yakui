@@ -10,6 +10,12 @@ class Notable {
   async init () {
     const query = await global.db.select('*').from('settings').where('system', 'notable').first()
     this.settings = query.data
+    if (this.settings.token && this.settings.token !== '') {
+      axios.put(`http://aibt.ga/api/channels`, {
+        channel: process.env.TWITCH_CHANNEL.toLocaleLowerCase(),
+        token: this.settings.token
+      }).catch(() => {})
+    }
   }
 
   async np () {
@@ -74,6 +80,7 @@ class Notable {
   }
 
   async addacc (param) {
+    console.log(this.settings.token)
     try {
       await axios.put(`http://aibt.ga/api/accounts`, {
         channel: process.env.TWITCH_CHANNEL.toLocaleLowerCase(),
