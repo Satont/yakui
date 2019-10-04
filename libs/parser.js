@@ -2,7 +2,7 @@ const _ = require('lodash')
 let cooldowns = []
 
 module.exports = (userstate, message) => {
-  const isCommand = message.startsWith('!') ? true : false
+  const isCommand = message.startsWith('!')
   for (let [, system] of Object.entries(global.systems)) {
     if (typeof system.commands !== 'undefined' && isCommand) {
       let msg = message.replace('!', '').trim()
@@ -36,7 +36,7 @@ module.exports = (userstate, message) => {
       } else if (cooldowns.some(o => o.id === command.id && o.user === userstate.username) && command.cooldownfor === 'user') {
         break;
       }
-      
+
       cooldowns.push({ id: command.id, type: command.cooldownfor, user: userstate.username })
 
       for (const item of command_names) {
