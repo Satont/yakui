@@ -11,7 +11,15 @@ module.exports = (userstate, message) => {
         let names_of_command = command.aliases ? _.clone(command.aliases) : []
         names_of_command.push(command.name)
 
-        if (!names_of_command.some(o => new RegExp('^(?<command>' + o + ')( |$)', 'ui').test(msg))) continue // skip command if name not found
+        let msgArray = msg.toLowerCase().split(' ')
+        let finded = false
+        for (let i = 0, len = msg.split(' ').length; i < len; i++) {
+          const find = names_of_command.find(o => o === msgArray.join(' '))
+          if (!find) msgArray.pop()
+          else finded = true
+        }
+
+        if (!finded) continue;
 
         if (typeof command.cooldown === 'undefined' || typeof command.cooldownfor === 'undefined') {
           userstate['message-type'] = 'chat'
@@ -39,7 +47,7 @@ module.exports = (userstate, message) => {
 
         command['fnc'].apply(system, [userstate, msg.trim(), command.response || null])
         setTimeout(() => _.remove(cooldowns, o => o.id === command.id), command.cooldown * 1000)
-        break; // stop loop if command was found and axecuted
+        //break; // stop loop if command was found and axecuted
       }
     } else {
       if (typeof system.parsers === 'undefined') continue

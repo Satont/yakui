@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const permissions = require('../libs/permissions')
 const { io } = require('../libs/panel')
 const variables = require('../systems/variables')
 
@@ -7,8 +6,6 @@ class CustomCommands {
   commands = []
 
   constructor () {
-    this.cooldowns = []
-    this.commands = []
     this.sockets()
     this.getCommands()
   }
