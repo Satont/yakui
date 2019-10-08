@@ -40,7 +40,7 @@ module.exports = (userstate, message) => {
       cooldowns.push({ id: command.id, type: command.cooldownfor, user: userstate.username })
 
       for (const item of command_names) {
-        if (new RegExp('^' + item, 'u').test(msg)) {
+        if (new RegExp('^(?<command>' + item + ')( |$)', 'ui').test(msg)) {
           msg = msg.replace(item, '').trim()
         }
       }
