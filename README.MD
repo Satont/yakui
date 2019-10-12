@@ -44,7 +44,7 @@
 git clone https://github.com/Satont/twobit
 cd twobit
 npm install
-mv .env.example .env
+cp .env.example .env
 ```
 
 Then get values for `TWITCH_BROADCASTERTOKEN` and `TWITCH_TOKEN` from [auth.satont.ru](http://auth.satont.ru) (you should use `refresh_token`).
