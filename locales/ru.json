@@ -1,6 +1,8 @@
 {
-	"Hello": "test",
-	"tObj": {
-		"s": "w"
-	}
+	"commands": {
+    "notFound": "Команда {name} не найдена.",
+    "ui": {
+      "create": "Создать команду"
+    }
+  }
 }

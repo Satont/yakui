@@ -56,11 +56,12 @@
   },
   "devDependencies": {
     "@babel/core": "^7.6.0",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/polyfill": "^7.6.0",
+    "bootstrap-vue": "^2.0.2",
     "cssnano": "^4.1.10",
     "parcel-bundler": "^1.12.3",
     "standard": "^14.3.1",
-    "vue-template-compiler": "^2.6.10",
-    "bootstrap-vue": "^2.0.2"
+    "vue-template-compiler": "^2.6.10"
   }
 }

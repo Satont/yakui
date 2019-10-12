@@ -1,3 +1,5 @@
+const { translate } = require('./locales')
+ 
 class Permissions {
   permissions = ['broadcaster', 'moderator', 'subscriber', 'vip', 'viewer']
   
@@ -19,7 +21,7 @@ class Permissions {
 
   async getDefaultCommandPermission (name) {
     const command = await global.db('systems.defaultcommands').select('*').where('name', name).first()
-    if (!command.length) throw new Error(`Command ${name} not found`)
+    if (!command.length) throw new Error(translate('commands.notFound'), { name })
     return command.permission
   }
 }

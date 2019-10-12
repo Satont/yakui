@@ -14,7 +14,6 @@ async function load () {
   require('./libs/panel')
 
   global.systems = await autoLoad('./systems/')
-
   require('./integrations/donationalerts')
   require('./integrations/streamlabs')
   require('./integrations/qiwi')

@@ -89,6 +89,14 @@ const routes = [
   { path: '/systems/events', component: events }
 ]
 
+Vue.prototype.translate = (path, variables) => {
+  let result
+  Vue.prototype.$socket.emit('getLocales', { path, variables }, (err, data) => {
+    result = data
+  })
+  return result
+}
+
 const router = new VueRouter({
   routes
 })

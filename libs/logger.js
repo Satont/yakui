@@ -5,7 +5,6 @@ const combine = format.combine
 const moment = require('moment-timezone')
 const logDir = './logs'
 const fs = require('fs')
-const { inspect } = require('util')
 
 if (!fs.existsSync(logDir)) fs.mkdirSync(logDir)
 

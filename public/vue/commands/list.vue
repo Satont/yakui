@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button type="button" class="btn btn-block btn-success" @click="goToCreate">Create command</button>
+    <button type="button" class="btn btn-block btn-success" @click="goToCreate">{{ translate('commands.ui.create') }}</button>
     <br>
     <div class="row cards">
       <div class="col-md-6" :key="index" v-for="(command, index) in commands">

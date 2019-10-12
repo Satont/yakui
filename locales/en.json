@@ -1,6 +1,8 @@
 {
-	"Hello": "test",
-	"tObj": {
-		"s": "w"
-	}
+	"commands": {
+    "notFound": "Command {name} not found.",
+    "ui": {
+      "create": "Create command"
+    }
+  }
 }
