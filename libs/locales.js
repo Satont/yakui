@@ -30,10 +30,7 @@ class Locales {
   async sockets () {
     let self = this
     io.on('connection', async (socket) => {
-      socket.on('getLocales', (data, cb) => {
-        let query = self.translate(data.path, data.variables)
-        cb(null, query)
-      })
+      socket.emit('langs', self.lang)
     })
   }
 }

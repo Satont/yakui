@@ -44,6 +44,8 @@ import spotify from './vue/integrations/spotify.vue'
 
 import events from './vue/single/events.vue'
 
+import translate from './vue/helpers/locales'
+
 Vue.use(new VueSocketIO({
   debug: true,
   connection: SocketIO('/')
@@ -90,11 +92,7 @@ const routes = [
 ]
 
 Vue.prototype.translate = (path, variables) => {
-  let result
-  Vue.prototype.$socket.emit('getLocales', { path, variables }, (err, data) => {
-    result = data
-  })
-  return result
+  return translate(path, variables)
 }
 
 const router = new VueRouter({
@@ -195,5 +193,11 @@ new Vue({
   },
   mounted () {
     this.getStreamData()
+  },
+  sockets: {
+    langs: function (data) {
+      window.locales = data
+      console.log(data)
+    }
   }
 }).$mount('#app')
