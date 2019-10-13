@@ -1,26 +1,18 @@
 <template>
   <div>
-    <button type="button" class="btn btn-block btn-success" @click="goToCreate">{{ translate('commands.ui.create') }}</button>
+    <button type="button" class="btn btn-block btn-success" @click="goToCreate">{{ translate('ui.create') }}</button>
     <br>
     <div class="row cards">
       <div class="col-md-6" :key="index" v-for="(command, index) in commands">
         <div class="card bg-dark">
-          <div class="card-header">{{ command.name }} <span class="badge badge-primary float-right">{{ command.cooldown }} sec.</span></div>
+          <div class="card-header">{{ command.name }} <span class="badge badge-primary float-right">{{ command.cooldown }} {{ translate('ui.abbrs.seconds') }}</span></div>
           <div class="card-body">
             <span class="badge badge-light card-span">{{ command.response | truncate(150, '...') }}</span>
           </div>
           <div class="card-footer">
             <div class="btn-group d-flex" role="group" aria-label="Basic example">
-              <button
-                type="button"
-                class="btn btn-block btn-sm btn-info w-100"
-                @click="editCommand(command)"
-              >Edit</button>
-              <button
-                type="button"
-                class="btn btn-sm btn-danger w-100"
-                @click="deleteCommand(command.name, index)"
-              >Delete</button>
+              <button type="button" class="btn btn-block btn-sm btn-info w-100" @click="editCommand(command)" >{{ translate('ui.edit') }}</button>
+              <button type="button" class="btn btn-sm btn-danger w-100" @click="deleteCommand(command.name, index)">{{ translate('ui.delete') }}</button>
             </div>
           </div>
         </div>

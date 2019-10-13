@@ -1,8 +1,54 @@
 {
-	"commands": {
-    "notFound": "Command {name} not found.",
-    "ui": {
-      "create": "Create command"
+  "ui": {
+    "menu": {
+      "manage": "Manage",
+      "settings": "Settings",
+      "integrations": "Integrations",
+      "els": {
+        "events": "Events",
+        "commands": "Commands",
+        "keywords": "Keywords",
+        "variables": "Variables",
+        "timers": "Timers",
+        "overlays": "Overlays",
+        "moderation": "Moderation",
+        "users": "Users",
+        "notableplayers": "Notable players"
+      }
+    },
+    "quickStats": {
+      "game": "Game",
+      "title": "Title",
+      "viewers": "Viewers",
+      "subscribers": "Subscribers",
+      "followers": "Followers",
+      "views": "Views",
+      "uptime": "Uptime"
+    },
+    "delete": "Delete",
+    "create": "Create",
+    "save": "Save",
+    "edit": "Edit",
+    "abbrs": {
+      "seconds": "sec."
+    },
+    "commands": {
+      "name": "Name",
+      "response": "Response",
+      "permission": "Permission",
+      "description": "Command description",
+      "cooldown": "Cooldown",
+      "cooldownFor": "Cooldown for",
+      "cooldownTypes": {
+        "label": "Type of cooldown",
+        "execute": "Execute",
+        "noExecute": "No execute"
+      },
+      "visible": "Visible in $commands variable",
+      "aliases": "Aliases for command"
     }
+  },
+	"commands": {
+    "notFound": "Command {name} not found."
   }
 }

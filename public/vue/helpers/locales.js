@@ -8,5 +8,6 @@ export default function translate(path, variables) {
       query = query.replace(regexp, variables[variable[0]])
     }
   }
+  if (query === 'Not found') console.error('Locale not found:', window.locales, path, variables)
   return query
 }

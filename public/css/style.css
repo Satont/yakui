@@ -24,3 +24,7 @@ body {
 .nav-link2 {
   color: #000 !important;
 }
+
+.badge-dark {
+  background-color: #64696f !important;
+}

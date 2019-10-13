@@ -1,8 +1,54 @@
 {
-	"commands": {
-    "notFound": "Команда {name} не найдена.",
-    "ui": {
-      "create": "Создать команду"
+  "ui": {
+    "menu": {
+      "manage": "Управление",
+      "settings": "Настройки",
+      "integrations": "Интеграции",
+      "els": {
+        "events": "События",
+        "commands": "Команды",
+        "keywords": "Ключевые слова",
+        "variables": "Переменные",
+        "timers": "Таймеры",
+        "overlays": "Оверлеи",
+        "moderation": "Модерация",
+        "users": "Пользователи",
+        "notableplayers": "Notable players"
+      }
+    },
+    "quickStats": {
+      "game": "Игра",
+      "title": "Название",
+      "viewers": "Зрителей",
+      "subscribers": "Сабскрайберов",
+      "followers": "Фоловеров",
+      "views": "Просмотров",
+      "uptime": "Uptime"
+    },
+    "delete": "Удалить",
+    "create": "Создать",
+    "save": "Сохранить",
+    "edit": "Изменить",
+    "abbrs": {
+      "seconds": "сек."
+    },
+    "commands": {
+      "name": "Имя",
+      "response": "Ответ",
+      "permission": "Право доступа",
+      "description": "Описание команды",
+      "cooldown": "Кулдаун",
+      "cooldownFor": "Кулдаун для",
+      "cooldownTypes": {
+        "label": "Тип кулдауна",
+        "execute": "Исполнять",
+        "noExecute": "Не исполнять"
+      },
+      "visible": "Показывать в $commands переменной",
+      "aliases": "Алиасы для команды"
     }
+  },
+	"commands": {
+    "notFound": "Команда {name} не найдена."
   }
 }

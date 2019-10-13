@@ -119,42 +119,42 @@ new Vue({
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <router-link to="/" class="navbar-brand mb-0 h1">{{ channel }}</router-link>
         <div class="ml-left">
-          <span class="badge badge-light">Game: {{ game }}</span>
-          <span class="badge badge-light">Title: {{ title }}</span>
-          <span class="badge badge-dark">Viewers: {{ viewers }}</span>
-          <span class="badge badge-danger">Subscribers: {{ subscribers }}</span>
-          <span class="badge badge-primary">Followers: {{ followers }}</span>
-          <span class="badge badge-info">Views: {{ views }}</span>
-          <span class="badge badge-success">Uptime: {{ uptime }}</span>
+          <span class="badge badge-light">{{ translate('ui.quickStats.game') }}: {{ game }}</span>
+          <span class="badge badge-light">{{ translate('ui.quickStats.title') }}: {{ title }}</span>
+          <span class="badge badge-dark">{{ translate('ui.quickStats.viewers') }}: {{ viewers }}</span>
+          <span class="badge badge-danger">{{ translate('ui.quickStats.subscribers') }}: {{ subscribers }}</span>
+          <span class="badge badge-primary">{{ translate('ui.quickStats.followers') }}: {{ followers }}</span>
+          <span class="badge badge-info">{{ translate('ui.quickStats.views') }}: {{ views }}</span>
+          <span class="badge badge-success">{{ translate('ui.quickStats.uptime') }}: {{ uptime }}</span>
         </div>
 
         <ul class="navbar-nav ml-auto">
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Manage
+              {{ translate('ui.menu.manage') }}
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-              <router-link to="/systems/events" class="nav-link nav-link2">Events</router-link>
-              <router-link to="/commands" class="nav-link nav-link2">Commands</router-link>
-              <router-link to="/keywords" class="nav-link nav-link2">Keywords</router-link>
-              <router-link to="/variables" class="nav-link nav-link2">Variables</router-link>
-              <router-link to="/timers" class="nav-link nav-link2">Timers</router-link>
-              <router-link to="/overlays" class="nav-link nav-link2">Overlays</router-link>
+              <router-link to="/systems/events" class="nav-link nav-link2">{{ translate('ui.menu.els.events') }}</router-link>
+              <router-link to="/commands" class="nav-link nav-link2">{{ translate('ui.menu.els.commands') }}</router-link>
+              <router-link to="/keywords" class="nav-link nav-link2">{{ translate('ui.menu.els.keywords') }}</router-link>
+              <router-link to="/variables" class="nav-link nav-link2">{{ translate('ui.menu.els.variables') }}</router-link>
+              <router-link to="/timers" class="nav-link nav-link2">{{ translate('ui.menu.els.timers') }}</router-link>
+              <router-link to="/overlays" class="nav-link nav-link2">{{ translate('ui.menu.els.overlays') }}</router-link>
             </div>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Settings
+            {{ translate('ui.menu.manage') }}
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-            <router-link to="/settings/moderation" class="nav-link nav-link2">Moderation</router-link>
-            <router-link to="/settings/users" class="nav-link nav-link2">Users</router-link>
-            <router-link to="/settings/notable" class="nav-link nav-link2">Notableplayers</router-link>
+            <router-link to="/settings/moderation" class="nav-link nav-link2">{{ translate('ui.menu.els.moderation') }}</router-link>
+            <router-link to="/settings/users" class="nav-link nav-link2">{{ translate('ui.menu.els.users') }}</router-link>
+            <router-link to="/settings/notable" class="nav-link nav-link2">{{ translate('ui.menu.els.notableplayers') }}</router-link>
             </div>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Integrations
+            {{ translate('ui.menu.integrations') }}
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
               <router-link to="/integrations/donationalerts" class="nav-link nav-link2">Donationalerts</router-link>
@@ -197,7 +197,6 @@ new Vue({
   sockets: {
     langs: function (data) {
       window.locales = data
-      console.log(data)
     }
   }
 }).$mount('#app')

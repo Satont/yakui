@@ -2,17 +2,23 @@
   <div>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default">Name</span>
+        <span class="input-group-text" id="inputGroup-sizing-default">
+           {{ translate('ui.commands.name') }}
+        </span>
       </div>
       <input type="text" class="form-control" v-model="name" maxlength="15">
     </div>
     <div class="form-group">
-      <label for="exampleFormControlTextarea1">Response</label>
+      <label for="exampleFormControlTextarea1">
+        {{ translate('ui.commands.response') }}
+      </label>
       <textarea type="text" class="form-control" v-model="response" rows="2"></textarea>
     </div>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
-        <label class="input-group-text" for="inputGroupSelect01">Permission</label>
+        <label class="input-group-text" for="inputGroupSelect01">
+          {{ translate('ui.commands.permission') }}
+        </label>
       </div>
       <select class="custom-select" v-model="permission">
         <option value="broadcaster">Broadcaster</option>
@@ -24,13 +30,17 @@
     </div>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default">Command description</span>
+        <span class="input-group-text" id="inputGroup-sizing-default">
+           {{ translate('ui.commands.description') }}
+        </span>
       </div>
       <input type="text" class="form-control" placeholder="description of command" v-model="description">
     </div>
      <div class="input-group mb-3">
       <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default">Cooldown</span>
+        <span class="input-group-text" id="inputGroup-sizing-default">
+           {{ translate('ui.commands.cooldown') }}
+        </span>
       </div>
       <input
         type="number"
@@ -39,12 +49,16 @@
         v-model.number="cooldown"
       >
       <div class="input-group-append">
-        <span class="input-group-text" id="inputGroup-sizing-default">seconds</span>
+        <span class="input-group-text" id="inputGroup-sizing-default">
+          {{ translate('ui.abbrs.seconds') }}
+        </span>
       </div>
     </div>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
-        <label class="input-group-text" for="inputGroupSelect01">Cooldown for</label>
+        <label class="input-group-text" for="inputGroupSelect01">
+          {{ translate('ui.commands.cooldownFor') }}
+        </label>
       </div>
       <select class="custom-select" v-model="cooldownfor">
         <option value="global">Global</option>
@@ -53,11 +67,17 @@
     </div>
      <div class="input-group mb-3">
       <div class="input-group-prepend">
-        <label class="input-group-text" for="inputGroupSelect01">Type of cooldowns</label>
+        <label class="input-group-text" for="inputGroupSelect01">
+          {{ translate('ui.commands.cooldownTypes.label') }}
+        </label>
       </div>
       <select class="custom-select" v-model="cooldowntype">
-        <option value="notstop">Execute</option>
-        <option value="stop">No execute</option>
+        <option value="notstop">
+          {{ translate('ui.commands.cooldownTypes.execute') }}
+        </option>
+        <option value="stop">
+          {{ translate('ui.commands.cooldownTypes.noExecute') }}
+        </option>
       </select>
       <div class="input-group-append">
         <button class="btn btn-info" type="button" data-toggle="modal" data-target="#cooldowntypeinfo">?</button>
@@ -65,7 +85,9 @@
     </div>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default">Visible in $commands variable</span>
+        <span class="input-group-text" id="inputGroup-sizing-default">
+          {{ translate('ui.commands.visible') }}
+        </span>
       </div>
      
       <div class="input-group-append">
@@ -85,13 +107,19 @@
         v-model="aliases[index]"
       >
       <div class="input-group-append">
-        <button type="button" class="btn btn-danger" @click="deleteAliase(index)">Delete</button>
+        <button type="button" class="btn btn-danger" @click="deleteAliase(index)">
+           {{ translate('ui.delete') }}
+        </button>
       </div>
     </div>
     <button type="button" class="btn btn-block btn-success" @click="createAliase">+</button>
     <br>
-    <button type="button" class="btn btn-block btn-success" @click="create">Edit</button>
-    <button type="button" class="btn btn-block btn-danger" @click="del()">delete</button>
+    <button type="button" class="btn btn-block btn-success" @click="create">
+       {{ translate('ui.edit') }}
+    </button>
+    <button type="button" class="btn btn-block btn-danger" @click="del()">
+       {{ translate('ui.delete') }}
+    </button>
     <br>
     <variables></variables>
     <cooldownModal id="cooldowntypeinfo"></cooldownModal>
