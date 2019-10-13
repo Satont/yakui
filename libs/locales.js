@@ -26,6 +26,7 @@ class Locales {
     }
     return query
   }
+  
   async sockets () {
     let self = this
     io.on('connection', async (socket) => {
