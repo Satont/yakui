@@ -46,6 +46,121 @@
       },
       "visible": "Показывать в $commands переменной",
       "aliases": "Алиасы для команды"
+    },
+    "events": {
+      "avaliableVariables": "Доступные переменные",
+      "operations": {
+        "add": "Добавить новую операцию",
+        "sendChatMessage": {
+          "label": "Отправить сообщение в чат",
+          "filterLabel": "Фильтр операции (javascript)",
+          "messageLabel": "Сообщение для отправки"
+        }
+      },
+      "tip": {
+        "description": "Срабатывает, когда вам кто-то донатит",
+        "variables": {
+          "username": "Ник того кто задонатил",
+          "amount": "Сумма доната",
+          "currency": "Валюта доната",
+          "message": "Сообщение доната"
+        }
+      },
+      "bits": {
+        "description": "Срабатывает, когда кто-то донатит битсы",
+        "variables": {
+          "username": "Ник того кто задонатил",
+          "amount": "Сумма доната",
+          "message": "Сообщение доната"
+        }
+      },
+      "sub": {
+        "description": "Срабатывает, когда кто-то оформляет подписку",
+        "variables": {
+          "username": "Ник того кто засабился",
+          "subTier": "Тир саба. Twitch prime/1/2/3/",
+          "message": "Сообщение саба"
+        }
+      },
+      "resub": {
+        "description": "Срабатывает, когда кто-то обновляет подписку",
+        "variables": {
+          "username": "Ник того кто заресабился",
+          "subTier": "Тир ресаба. Twitch prime/1/2/3/",
+          "message": "Сообщение ресаба"
+        }
+      },
+      "subGift": {
+        "description": "Срабатывает, когда кому-то дарят саб",
+        "variables": {
+          "username": "Ник того кто дарит саб",
+          "subTier": "Тир саба. 1/2/3",
+          "subStreak": "Общее время подписки того кто получает саб",
+          "subGiftRecipient": "Ник того кто получает саб",
+          "subGifterCount": "Всего подарено сабов от $username"
+        }
+      },
+      "message": {
+        "description": "Срабатывает, когда кто-то пишет сообщение",
+        "variables": {
+          "username": "Кто отправляет сообщение"
+        }
+      },
+      "userJoin": {
+        "description": "Срабатывает, когда юзер входит в чат",
+        "variables": {
+          "username": "Ник того кто зашёл в чат"
+        }
+      },
+      "userPart": {
+        "description": "Срабатывает, когда юзер выходит из чата",
+        "variables": {
+          "username": "Ник того кто вышел с чата"
+        }
+      },
+      "emoteOnly": {
+        "description": "Срабатывает, когда режим \"только смайлики\" был включён/выключен",
+        "variables": {
+          "emoteOnlyState": "Показывает включён/выключен"
+        }
+      },
+      "hosted": {
+        "description": "Срабатывает, когда кто-то хостит вас",
+        "variables": {
+          "username": "Ник того кто хостит",
+          "hostedViewers": "Зрителей"
+        }
+      },
+      "hosting": {
+        "description": "Срабатывает, когда вы начинаете кого-то хостить",
+        "variables": {
+          "username": "Ник того на кого хост",
+          "hostingViewers": "Зрителей"
+        }
+      },
+      "raided": {
+        "description": "Срабатывает, когда кто-то вас рейдит",
+        "variables": {
+          "username": "Ник рейдера",
+          "raidViewers": "Зрителей"
+        }
+      },
+      "slowMode": {
+        "description": "Срабатывает, когда режим \"slow\" был включён/выключен",
+        "variables": {
+          "slowModeState": "Положенеие слоу мода (enabled/disabled)",
+          "slowModeLength": "Длительность слоу мода"
+        }
+      },
+      "subsOnlyChat": {
+        "description": "Срабатывает, когда режим \"только подписчики\" был включён/выключен",
+        "variables": {
+          "subsOnlyChatState": "Состояние мода (enabled/disabled)"
+        }
+      },
+      "chatClear": {
+        "description": "Срабатывает, когда чат был очищен"
+      }
     }
   },
 	"commands": {

@@ -46,6 +46,121 @@
       },
       "visible": "Visible in $commands variable",
       "aliases": "Aliases for command"
+    },
+    "events": {
+      "avaliableVariables": "Avaliable variables",
+      "operations": {
+        "add": "Add new operation",
+        "sendChatMessage": {
+          "label": "Send message in chat",
+          "filterLabel": "Filter of operation (javascript)",
+          "messageLabel": "Message for sending"
+        }
+      },
+      "tip": {
+        "description": "Triggering when you get some donation",
+        "variables": {
+          "username": "Username of user who donated",
+          "amount": "How much donated",
+          "currency": "Currency of donate",
+          "message": "Message of donation"
+        }
+      },
+      "bits": {
+        "description": "Triggering when you get some cheers",
+        "variables": {
+          "username": "Username of user who donated",
+          "amount": "How much donated",
+          "message": "Message of donation"
+        }
+      },
+      "sub": {
+        "description": "Triggering when you get new subscriber",
+        "variables": {
+          "username": "Username who subscribed",
+          "subTier": "Tier of sub. Twitch prime/1/2/3/",
+          "message": "Message of sub"
+        }
+      },
+      "resub": {
+        "description": "Triggering when some user did resubscribtion",
+        "variables": {
+          "username": "Username who resubscribed",
+          "subTier": "Tier of resub. Twitch prime/1/2/3/",
+          "message": "Message of resub"
+        }
+      },
+      "subGift": {
+        "description": "Triggering when some user gift subscribtion to another user",
+        "variables": {
+          "username": "Username of who gifting subscribtion",
+          "subTier": "Tier of sub. 1/2/3",
+          "subStreak": "Cumulative streak of user months",
+          "subGiftRecipient": "Username of recipient user",
+          "subGifterCount": "Gifted subs count by $username"
+        }
+      },
+      "message": {
+        "description": "Triggering when some chat message appears",
+        "variables": {
+          "username": "Who sent message"
+        }
+      },
+      "userJoin": {
+        "description": "Triggering when some user joined channel",
+        "variables": {
+          "username": "Username of who joined chat"
+        }
+      },
+      "userPart": {
+        "description": "Triggering when some user parted channel",
+        "variables": {
+          "username": "Username of who parted chat"
+        }
+      },
+      "emoteOnly": {
+        "description": "Triggering when emote only was enabled/disabled on channel",
+        "variables": {
+          "emoteOnlyState": "Showing does emoteonly enabled or disabled"
+        }
+      },
+      "hosted": {
+        "description": "Triggering when you got hosted",
+        "variables": {
+          "username": "Username who started host",
+          "hostedViewers": "Viewers of host"
+        }
+      },
+      "hosting": {
+        "description": "Triggering when you starting host",
+        "variables": {
+          "username": "Username of target",
+          "hostingViewers": "Viewers of host"
+        }
+      },
+      "raided": {
+        "description": "Triggering when someone start to raid you",
+        "variables": {
+          "username": "Raider username",
+          "raidViewers": "Viewers"
+        }
+      },
+      "slowMode": {
+        "description": "Triggering when slow mode enabled/disabled in chat",
+        "variables": {
+          "slowModeState": "State of slow mode (enabled/disabled)",
+          "slowModeLength": "Length of slow mode"
+        }
+      },
+      "subsOnlyChat": {
+        "description": "Triggering when subscribers only chat enabled",
+        "variables": {
+          "subsOnlyChatState": "State of subscribers mode (enabled/disabled)"
+        }
+      },
+      "chatClear": {
+        "description": "Triggering when chat was cleared"
+      }
     }
   },
 	"commands": {
