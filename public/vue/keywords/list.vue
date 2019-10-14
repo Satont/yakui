@@ -1,6 +1,8 @@
 <template>
   <div>
-    <button type="button" class="btn btn-block btn-success" @click="goToCreate">Create Keyword</button>
+    <button type="button" class="btn btn-block btn-success" @click="goToCreate">
+      {{ translate('ui.create') }}
+    </button>
     <br>
     <div class="row cards">
       <div class="col-md-6" :key="index" v-for="(keyword, index) in keywords">
@@ -11,16 +13,12 @@
           </div>
           <div class="card-footer">
             <div class="btn-group d-flex" role="group" aria-label="Basic example">
-              <button
-                type="button"
-                class="btn btn-block btn-sm btn-info w-100"
-                @click="editKeyword(keyword)"
-              >Edit</button>
-              <button
-                type="button"
-                class="btn btn-sm btn-danger w-100"
-                @click="deleteKeyword(keyword.name, index)"
-              >Delete</button>
+              <button type="button" class="btn btn-block btn-sm btn-info w-100" @click="editKeyword(keyword)">
+                {{ translate('ui.edit') }}
+              </button>
+              <button type="button" class="btn btn-sm btn-danger w-100" @click="deleteKeyword(keyword.name, index)"> 
+                {{ translate('ui.delete') }}
+              </button>
             </div>
           </div>
         </div>

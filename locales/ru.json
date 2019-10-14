@@ -47,6 +47,12 @@
       "visible": "Показывать в $commands переменной",
       "aliases": "Алиасы для команды"
     },
+    "keywords": {
+      "message": "Сообщение (триггер)",
+      "response": "Ответ",
+      "cooldown": "Кулдаун",
+      "visible": "Показывать в $keywords переменной"
+    },
     "events": {
       "avaliableVariables": "Доступные переменные",
       "operations": {

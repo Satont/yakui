@@ -47,6 +47,12 @@
       "visible": "Visible in $commands variable",
       "aliases": "Aliases for command"
     },
+    "keywords": {
+      "message": "Trigger message",
+      "response": "Response",
+      "cooldown": "Cooldown",
+      "visible": "Visible in $keywords variable"
+    },
     "events": {
       "avaliableVariables": "Avaliable variables",
       "operations": {

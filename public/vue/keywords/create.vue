@@ -2,34 +2,36 @@
   <div>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default">Trigger message</span>
+        <span class="input-group-text" id="inputGroup-sizing-default">
+          {{ translate('ui.keywords.message') }}
+        </span>
       </div>
-      <input
-        type="text"
-        class="form-control"
-        placeholder="message for trigger"
-        v-model="name"
-        maxlength="100"
-      >
+      <input type="text" class="form-control" v-model="name" maxlength="100">
     </div>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default">Response</span>
+        <span class="input-group-text" id="inputGroup-sizing-default">
+          {{ translate('ui.keywords.response') }}
+        </span>
       </div>
-      <input type="text" required class="form-control" placeholder="Response of keyword" v-model="response">
+      <input type="text" required class="form-control" v-model="response">
     </div>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default">Cooldown</span>
+        <span class="input-group-text" id="inputGroup-sizing-default">
+          {{ translate('ui.keywords.cooldown') }}
+        </span>
       </div>
      <input ype="number" required class="form-control" v-model="cooldown">
       <div class="input-group-append">
-       <span class="input-group-text" id="inputGroup-sizing-default">seconds</span>
+       <span class="input-group-text" id="inputGroup-sizing-default">{{ translate('ui.abbrs.seconds') }}</span>
       </div>
     </div>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default">Visible in $keywords variable</span>
+        <span class="input-group-text" id="inputGroup-sizing-default">
+          {{ translate('ui.keywords.visible') }}
+        </span>
       </div>
      
       <div class="input-group-append">
@@ -40,7 +42,9 @@
       </div>
     </div>
     <br>
-    <button type="button" class="btn btn-block btn-success" @click="create">Create</button>
+    <button type="button" class="btn btn-block btn-success" @click="create">
+      {{ translate('ui.create') }}
+    </button>
     <br>
     <variables></variables>
   </div>
