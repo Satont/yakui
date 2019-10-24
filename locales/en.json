@@ -53,6 +53,10 @@
       "cooldown": "Cooldown",
       "visible": "Visible in $keywords variable"
     },
+    "variables": {
+      "name": "Name",
+      "value": "Value"
+    },
     "events": {
       "avaliableVariables": "Avaliable variables",
       "operations": {

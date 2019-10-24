@@ -53,6 +53,10 @@
       "cooldown": "Кулдаун",
       "visible": "Показывать в $keywords переменной"
     },
+    "variables": {
+      "name": "Имя",
+      "value": "Значение"
+    },
     "events": {
       "avaliableVariables": "Доступные переменные",
       "operations": {

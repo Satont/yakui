@@ -2,17 +2,17 @@
   <div>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default">Name</span>
+        <span class="input-group-text" id="inputGroup-sizing-default">{{ translate('ui.variables.name') }}</span>
       </div>
       <input type="text" class="form-control" v-model="name" maxlength="15">
     </div>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default">Value</span>
+        <span class="input-group-text" id="inputGroup-sizing-default">{{ translate('ui.variables.value') }}</span>
       </div>
       <input type="text" class="form-control" v-model="value">
     </div>
-    <button type="button" class="btn btn-block btn-success" @click="create">Save</button>
+    <button type="button" class="btn btn-block btn-success" @click="create">{{ translate('ui.save') }}</button>
     <br>
   </div>
 </template>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button type="button" class="btn btn-block btn-success" @click="goToCreate">Create variable</button>
+    <button type="button" class="btn btn-block btn-success" @click="goToCreate"> {{ transalte('ui.create') }} </button>
     <br>
     <div class="row cards">
       <div class="col-md-6" :key="index" v-for="(variable, index) in variables">
@@ -15,12 +15,12 @@
                 type="button"
                 class="btn btn-block btn-sm btn-info w-100"
                 @click="editVariable(variable)"
-              >Edit</button>
+              > {{ translate('ui.edit') }}</button>
               <button
                 type="button"
                 class="btn btn-sm btn-danger w-100"
                 @click="deleteVariable(variable.name, index)"
-              >Delete</button>
+              >{{ translate('ui.delete') }}</button>
             </div>
           </div>
         </div>
