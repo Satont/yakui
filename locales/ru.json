@@ -61,6 +61,11 @@
       "name": "Имя таймера",
       "interval": "Интервал между каждым сообщением"
     },
+    "overlays": {
+      "copy-link": "Копировать ссылку",
+      "name": "Имя",
+      "data": "Данные оверлея"
+    },
     "events": {
       "avaliableVariables": "Доступные переменные",
       "operations": {

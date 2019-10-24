@@ -1,13 +1,13 @@
 <template>
   <div>
-    <button type="button" class="btn btn-block btn-success" @click="goToCreate">Create overlay</button>
+    <button type="button" class="btn btn-block btn-success" @click="goToCreate">{{ translate('ui.create') }}</button>
     <br>
     <div class="row cards">
       <div class="col-md-6" :key="index" v-for="(overlay, index) in overlays">
         <div class="card bg-dark">
           <div class="card-header">
             {{ overlay.name }}
-            <span class="float-right"><button class="btn btn-sm btn-info" v-clipboard:copy="`${location}/overlay?id=${overlay.id}`">copy link</button></span>
+            <span class="float-right"><button class="btn btn-sm btn-info" v-clipboard:copy="`${location}/overlay?id=${overlay.id}`">{{ translate('ui.overlays.copy-link') }}</button></span>
           </div>
           <div class="card-body">
             <span class="badge badge-light card-span">{{ overlay.data | truncate(150, '...') }}</span>
@@ -18,12 +18,12 @@
                 type="button"
                 class="btn btn-block btn-sm btn-info w-100"
                 @click="edit(overlay)"
-              >Edit</button>
+              >{{ translate('ui.edit') }}</button>
               <button
                 type="button"
                 class="btn btn-sm btn-danger w-100"
                 @click="del(overlay.id, index)"
-              >Delete</button>
+              >{{ translate('ui.delete') }}</button>
             </div>
           </div>
         </div>

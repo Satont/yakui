@@ -61,6 +61,11 @@
       "name": "Timer name",
       "interval": "Interval beetwen messages"
     },
+    "overlays": {
+      "copy-link": "copy link",
+      "name": "Name",
+      "data": "Overlay data"
+    },
     "events": {
       "avaliableVariables": "Avaliable variables",
       "operations": {

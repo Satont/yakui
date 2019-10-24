@@ -2,16 +2,16 @@
   <div>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default">Name</span>
+        <span class="input-group-text" id="inputGroup-sizing-default">{{ translate('ui.overlays.name') }}</span>
       </div>
       <input type="text" class="form-control" v-model="name" maxlength="15">
     </div>
     <div class="form-group">
-      <label>Overlay data</label>
+      <label>{{ translate('ui.overlays.data') }}</label>
       <textarea class="form-control" v-model="data" rows="10"></textarea>
     </div>
     <variables></variables>
-    <button type="button" class="btn btn-block btn-success" @click="create">Save</button>
+    <button type="button" class="btn btn-block btn-success" @click="create">{{ translate('ui.save') }}</button>
     <br>
   </div>
 </template>
