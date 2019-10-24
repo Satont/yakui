@@ -57,6 +57,10 @@
       "name": "Имя",
       "value": "Значение"
     },
+    "timers": {
+      "name": "Имя таймера",
+      "interval": "Интервал между каждым сообщением"
+    },
     "events": {
       "avaliableVariables": "Доступные переменные",
       "operations": {

@@ -1,13 +1,13 @@
 <template>
   <div>
-    <button type="button" class="btn btn-block btn-success" @click="goToCreate">Create timer</button>
+    <button type="button" class="btn btn-block btn-success" @click="goToCreate">{{ translate('ui.create') }}</button>
     <br>
     <div class="row cards">
       <div class="col-md-6" :key="index" v-for="(timer, index) in timers">
         <div class="card bg-dark">
           <div class="card-header">
             {{ timer.name }}
-            <span class="badge badge-primary float-right">{{ timer.interval }} sec.</span>
+            <span class="badge badge-primary float-right">{{ timer.interval }} {{ translate('ui.abbrs.seconds') }}.</span>
           </div>
           <div class="card-body">
             <span
@@ -23,12 +23,12 @@
                 type="button"
                 class="btn btn-block btn-sm btn-info w-100"
                 @click="edittimer(timer)"
-              >Edit</button>
+              >{{ translate('ui.edit') }}</button>
               <button
                 type="button"
                 class="btn btn-sm btn-danger w-100"
                 @click="deletetimer(timer, index)"
-              >Delete</button>
+              >{{ translate('ui.delete') }}</button>
             </div>
           </div>
         </div>

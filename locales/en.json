@@ -57,6 +57,10 @@
       "name": "Name",
       "value": "Value"
     },
+    "timers": {
+      "name": "Timer name",
+      "interval": "Interval beetwen messages"
+    },
     "events": {
       "avaliableVariables": "Avaliable variables",
       "operations": {

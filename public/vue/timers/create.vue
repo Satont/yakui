@@ -2,13 +2,13 @@
   <div>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default">Timer name</span>
+        <span class="input-group-text" id="inputGroup-sizing-default">{{ translate('ui.timers.name') }}</span>
       </div>
-      <input type="text" class="form-control" placeholder="Name of timer" v-model="name" maxlength="15">
+      <input type="text" class="form-control" v-model="name" maxlength="15">
     </div>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default">Timer interval</span>
+        <span class="input-group-text" id="inputGroup-sizing-default">{{ translate('ui.timers.interval') }}</span>
       </div>
       <input
         type="number"
@@ -17,7 +17,7 @@
         v-model.number="interval"
       >
       <div class="input-group-append">
-        <span class="input-group-text" id="inputGroup-sizing-default">seconds</span>
+        <span class="input-group-text" id="inputGroup-sizing-default">{{ translate('ui.abbrs.seconds') }}</span>
       </div>
     </div>
     <div class="input-group mb-3" v-for="(response, index) in responses" :key="index">
@@ -29,12 +29,12 @@
         v-model="responses[index]"
       >
       <div class="input-group-append">
-        <button type="button" class="btn btn-danger" @click="deleteResponse(index)">Delete</button>
+        <button type="button" class="btn btn-danger" @click="deleteResponse(index)">{{ translate('ui.delete') }}</button>
       </div>
     </div>
 
     <button type="button" class="btn btn-block btn-success" @click="createResponse">+</button>
-    <button type="button" class="btn btn-block btn-success" @click="create">Create</button>
+    <button type="button" class="btn btn-block btn-success" @click="create">{{ translate('ui.create') }}</button>
     <br>
   </div>
 </template>
