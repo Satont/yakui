@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button type="button" class="btn btn-block btn-success" @click="goToCreate"> {{ transalte('ui.create') }} </button>
+    <button type="button" class="btn btn-block btn-success" @click="goToCreate"> {{ translate('ui.create') }} </button>
     <br>
     <div class="row cards">
       <div class="col-md-6" :key="index" v-for="(variable, index) in variables">
