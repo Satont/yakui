@@ -13,7 +13,6 @@
       <input
         type="number"
         class="form-control"
-        placeholder="Interval beetwen messages"
         v-model.number="interval"
       >
       <div class="input-group-append">
