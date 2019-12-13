@@ -8,7 +8,7 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1.0
+      - uses: actions/checkout@master
       - uses: mr-smithers-excellent/docker-build-push@v1.0
         with:
           image: satont/twobit
