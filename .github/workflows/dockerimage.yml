@@ -1,0 +1,21 @@
+name: Docker Image CI - latest
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Build & Push to Docker Hub
+        uses: opspresso/action-docker@master
+        env:
+          USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          REGISTRY: docker.pkg.github.com
+          IMAGE_NAME: "satont/twobit"
+          TAG_NAME: master:latest
