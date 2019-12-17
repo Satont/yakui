@@ -1,0 +1,25 @@
+version: "3.3"
+
+services:
+  sogebot:
+    image: docker.pkg.github.com/satont/twobit/latest
+    restart: always
+    ports:
+      - 3001:3000 # 3000 is default port for bot. Chane 3001 for whatever you wan't.
+    environment:
+      LANG: en_US.UTF-8
+      DB_HOST: localhost
+      DB_NAME: 
+      DB_PORT: 5432
+      DB_USER: 
+      DB_PASSWORD: 
+      BOT_LANG: ru
+      PANEL_PASSWORD: admin
+      PANEL_PORT: 5000
+      PANEL_USERNAME: admin
+      TWITCH_BOTUSERNAME: botusername
+      TWITCH_BROADCASTERTOKEN:
+      TWITCH_CHANNEL: yourchannel
+      TWITCH_CLIENTID: gqlfchunepwype1eewhtvxkk83p7ps # my client-id by default
+      TWITCH_TOKEN: bottoken # bot refresh token
+      TZ: Europe/Moscow # bot timezone
