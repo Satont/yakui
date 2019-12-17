@@ -4,15 +4,25 @@ on:
   push:
     branches:
       - master
+
 jobs:
-  docker:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: mr-smithers-excellent/docker-build-push@v1.0
-        with:
-          image: satont/twobit/latest
-          tag: master 
-          registry: docker.pkg.github.com
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}  
+      - name: Build & Push to GitHub Package with shasum
+        uses: opspresso/action-docker@master
+        env:
+          USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          REGISTRY: docker.pkg.github.com
+          IMAGE_NAME: "satont/twobit"
+          TAG_NAME: latest:${{ github.sha }}
+      - name: Build & Push to GitHub Package as latest
+        uses: opspresso/action-docker@master
+        env:
+          USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          REGISTRY: docker.pkg.github.com
+          IMAGE_NAME: "satont/twobit"
+          TAG_NAME: latest:master
