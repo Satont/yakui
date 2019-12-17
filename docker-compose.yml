@@ -15,7 +15,6 @@ services:
       DB_PASSWORD: 
       BOT_LANG: ru
       PANEL_PASSWORD: admin
-      PANEL_PORT: 5000
       PANEL_USERNAME: admin
       TWITCH_BOTUSERNAME: botusername
       TWITCH_BROADCASTERTOKEN:
