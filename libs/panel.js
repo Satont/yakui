@@ -1,6 +1,6 @@
 const fastify = require('fastify')()
 const path = require('path')
-const PORT = process.env.PORT || process.env.PANEL_PORT // for heroku
+const PORT = process.env.PORT || process.env.PANEL_PORT || 3000 // for heroku
 const io = require('socket.io')(fastify.server)
 const { writeHeapSnapshot } = require('v8')
 
