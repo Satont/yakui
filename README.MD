@@ -12,7 +12,7 @@
 
 - Custom commands:
 	- you can create a command with JavaScript evaluation;
-	- already in bot builder variables;
+	- already built-in variables;
 	- also supports custom variables.
 - Timers: send message in chat periodically.
 - Variables: create some variable, which can be used in timers or custom commands.
