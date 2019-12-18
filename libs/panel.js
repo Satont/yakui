@@ -1,6 +1,6 @@
 const fastify = require('fastify')()
 const path = require('path')
-const PORT = process.env.PORT || process.env.PANEL_PORT || 3000 // for heroku
+const PORT = process.env.PORT || process.env.PANEL_PORT // for heroku
 const io = require('socket.io')(fastify.server)
 const { writeHeapSnapshot } = require('v8')
 
@@ -51,7 +51,7 @@ fastify.get('/overlay', function (request, reply) {
 })
 
 // Run the server!
-fastify.listen(PORT, '0.0.0.0', (err, address) => {
+fastify.listen(PORT === 'PANEL_PORT' ? 3000 : PORT, '0.0.0.0', (err, address) => {
   if (err) throw err
   global.log.info(`server listening on ${address}`)
 })
