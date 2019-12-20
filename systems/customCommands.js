@@ -42,21 +42,30 @@ class CustomCommands {
   }
 
   async say (msg) {
-    global.log.chatOut(msg)
-    if (process.env.NODE_ENV !== 'production') return
-    global.tmi.client.say(process.env.TWITCH_CHANNEL, msg).catch(global.log.error)
+    if (process.env.NODE_ENV !== 'production') {
+      return global.log.chatOut(msg)
+    }
+    global.tmi.client.say(process.env.TWITCH_CHANNEL, msg)
+      .then(global.log.chatOut(msg))
+      .catch(global.log.error)
   }
 
   async whisper (username, message) {
-    global.log.whisperOut(`${username} ${message}`)
-    if (process.env.NODE_ENV !== 'production') return
-    await global.tmi.client.whisper(username, message).catch(global.log.error)
+    if (process.env.NODE_ENV !== 'production') {
+      return global.log.whisperOut(`${username} ${message}`)
+    }
+    global.tmi.client.whisper(username, message)
+      .then(global.log.whisperOut(`${username} ${message}`))
+      .catch(global.log.error)
   }
 
   async timeout (username, time) {
-    global.log.chatOut(username, time)
-    if (process.env.NODE_ENV !== 'production') return
-    global.tmi.client.timeout(process.env.TWITCH_CHANNEL, username, time).catch(global.log.error)
+    if (process.env.NODE_ENV !== 'production') {
+      return global.log.chatOut(username, time)
+    }
+    global.tmi.client.timeout(process.env.TWITCH_CHANNEL, username, time)
+      .then(global.log.chatOut(username, time))
+      .catch(global.log.error)
   }
 
   async sockets () {
