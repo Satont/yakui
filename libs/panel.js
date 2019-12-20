@@ -10,6 +10,7 @@ fastify.register(require('fastify-static'), { root: path.join(__dirname, '../pub
 
 async function validate (username, password, request, reply) {
   if (username !== process.env.PANEL_USERNAME || password !== process.env.PANEL_PASSWORD) {
+    console.error(`Some user trying to login with wrong credentials: ${username}/${password}. Actual credentials: ${process.env.PANEL_USERNAME}/${process.env.PANEL_PASSWORD}`)
     return new Error('Not authed')
   }
 }
