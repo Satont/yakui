@@ -50,6 +50,7 @@ class Spotify {
     if (!this.client) return false
     return this.client.getMyCurrentPlayingTrack({
     }).then(data => {
+      if (!data.body || !data.body.item) return null
       return `${data.body.item.artists.map(o => o.name).join(', ')} — ${data.body.item.name}`
     }, err => {
       global.log.error(err)
