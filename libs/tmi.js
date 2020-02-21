@@ -34,6 +34,7 @@ class TwitchTmi {
     })
 
     await this.connect()
+    await this.loadListeners()
     await this.validateBroadCasterToken()
     await this.getChannelId()
     await this.getUptimeAndViewers()
@@ -100,7 +101,6 @@ class TwitchTmi {
       .then(() => {
         this.connected = true
         this.retries = 0
-        this.loadListeners()
         return true
       })
       .catch(e => {
