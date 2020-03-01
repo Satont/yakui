@@ -52,8 +52,15 @@
                 v-bind:class="{ 'btn-success': links.settings.moderateSubscribers, 'btn-danger': !links.settings.moderateSubscribers }"
                 @click="links.settings.moderateSubscribers = !links.settings.moderateSubscribers"
               >
-                <span v-show="links.settings.moderateSubscribers">Moderate subscribers</span>
-                <span v-show="!links.settings.moderateSubscribers">Moderate subscribers</span>
+                <span>Moderate subscribers</span>
+              </button>
+               <button
+                type="button"
+                class="btn w-100"
+                v-bind:class="{ 'btn-success': links.settings.moderateVips, 'btn-danger': !links.settings.moderateVips }"
+                @click="links.settings.moderateVips = !links.settings.moderateVips"
+              >
+                <span>Moderate vips</span>
               </button>
             </div>
 
@@ -102,8 +109,15 @@
                 v-bind:class="{ 'btn-success': symbols.settings.moderateSubscribers, 'btn-danger': !symbols.settings.moderateSubscribers }"
                 @click="symbols.settings.moderateSubscribers = !symbols.settings.moderateSubscribers"
               >
-                <span v-show="symbols.settings.moderateSubscribers">Moderate subscribers</span>
-                <span v-show="!symbols.settings.moderateSubscribers">Moderate subscribers</span>
+                <span>Moderate subscribers</span>
+              </button>
+              <button
+                type="button"
+                class="btn w-100"
+                v-bind:class="{ 'btn-success': symbols.settings.moderateVips, 'btn-danger': !symbols.settings.moderateVips }"
+                @click="symbols.settings.moderateVips = !symbols.settings.moderateVips"
+              >
+                <span>Moderate vips</span>
               </button>
             </div>
             <div class="input-group input-group-sm mb-3">
@@ -167,8 +181,15 @@
                 v-bind:class="{ 'btn-success': longMessage.settings.moderateSubscribers, 'btn-danger': !longMessage.settings.moderateSubscribers }"
                 @click="longMessage.settings.moderateSubscribers = !longMessage.settings.moderateSubscribers"
               >
-                <span v-show="longMessage.settings.moderateSubscribers">Moderate subscribers</span>
-                <span v-show="!longMessage.settings.moderateSubscribers">Moderate subscribers</span>
+                <span>Moderate subscribers</span>
+              </button>
+              <button
+                type="button"
+                class="btn w-100"
+                v-bind:class="{ 'btn-success': longMessage.settings.moderateVips, 'btn-danger': !longMessage.settings.moderateVips }"
+                @click="longMessage.settings.moderateVips = !longMessage.settings.moderateVips"
+              >
+                <span>Moderate vips</span>
               </button>
             </div>
             <div class="input-group input-group-sm mb-3">
@@ -223,8 +244,15 @@
                 v-bind:class="{ 'btn-success': caps.settings.moderateSubscribers, 'btn-danger': !caps.settings.moderateSubscribers }"
                 @click="caps.settings.moderateSubscribers = !caps.settings.moderateSubscribers"
               >
-                <span v-show="caps.settings.moderateSubscribers">Moderate subscribers</span>
-                <span v-show="!caps.settings.moderateSubscribers">Moderate subscribers</span>
+                <span>Moderate subscribers</span>
+              </button>
+               <button
+                type="button"
+                class="btn w-100"
+                v-bind:class="{ 'btn-success': caps.settings.moderateVips, 'btn-danger': !caps.settings.moderateVips }"
+                @click="caps.settings.moderateVips = !caps.settings.moderateVips"
+              >
+                <span>Moderate vips</span>
               </button>
             </div>
             <div class="input-group input-group-sm mb-3">
@@ -288,8 +316,15 @@
                 v-bind:class="{ 'btn-success': color.settings.moderateSubscribers, 'btn-danger': !color.settings.moderateSubscribers }"
                 @click="color.settings.moderateSubscribers = !color.settings.moderateSubscribers"
               >
-                <span v-show="color.settings.moderateSubscribers">Moderate subscribers</span>
-                <span v-show="!color.settings.moderateSubscribers">Moderate subscribers</span>
+                <span>Moderate subscribers</span>
+              </button>
+               <button
+                type="button"
+                class="btn w-100"
+                v-bind:class="{ 'btn-success': color.settings.moderateVips, 'btn-danger': !color.settings.moderateVips }"
+                @click="color.settings.moderateVips = !color.settings.moderateVips"
+              >
+                <span>Moderate vips</span>
               </button>
             </div>
 
@@ -336,8 +371,15 @@
                 v-bind:class="{ 'btn-success': emotes.settings.moderateSubscribers, 'btn-danger': !emotes.settings.moderateSubscribers }"
                 @click="emotes.settings.moderateSubscribers = !emotes.settings.moderateSubscribers"
               >
-                <span v-show="emotes.settings.moderateSubscribers">Moderate subscribers</span>
-                <span v-show="!emotes.settings.moderateSubscribers">Moderate subscribers</span>
+                <span>Moderate subscribers</span>
+              </button>
+              <button
+                type="button"
+                class="btn w-100"
+                v-bind:class="{ 'btn-success': emotes.settings.moderateVips, 'btn-danger': !emotes.settings.moderateVips }"
+                @click="emotes.settings.moderateVips = !emotes.settings.moderateVips"
+              >
+                <span>Moderate vips</span>
               </button>
             </div>
             <div class="input-group input-group-sm mb-3">
@@ -396,6 +438,7 @@ export default {
           warnMessage: null,
           timeoutMessage: null,
           whitelist: null,
+          moderateVips: false,
         }
       },
       symbols: {
@@ -407,6 +450,7 @@ export default {
           timeout: 600,
           warnMessage: null,
           timeoutMessage: null,
+          moderateVips: false,
         }
       },
       longMessage: {
@@ -417,6 +461,7 @@ export default {
           timeout: 600,
           warnMessage: null,
           timeoutMessage: null,
+          moderateVips: false,
         }
        },
       caps: {
@@ -428,6 +473,7 @@ export default {
           timeout: 600,
           warnMessage: null,
           timeoutMessage: null,
+          moderateVips: false,
         }
       },
       color: {
@@ -437,6 +483,7 @@ export default {
           timeout: 600,
           warnMessage: null,
           timeoutMessage: null,
+          moderateVips: false,
         }
       },
       emotes: {
@@ -447,6 +494,7 @@ export default {
           timeout: 600,
           warnMessage: null,
           timeoutMessage: null,
+          moderateVips: false,
         }
       }
     };
