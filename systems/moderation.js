@@ -48,6 +48,7 @@ class Moderation {
     links.settings.whitelist = links.settings.whitelist.filter(o => o !== '')
 
     if ((userstate.subscriber && !links.settings.moderateSubscribers) || !links.enabled) return false
+    if (userstate.badges.vip !== undefined && !links.settings.moderateVips) return false
     else if (links.settings.whitelist.some(o => message.includes(o))) return true
     else if (this.permits.includes(userstate.username) || this.permits.includes(userstate['display-name'].toLowerCase())) {
       const usernameIndex = this.permits.indexOf(userstate.username)
@@ -75,7 +76,7 @@ class Moderation {
   symbols (userstate, message) {
     let symbols = this.settings.find(o => o.name === 'symbols')
     if ((userstate.subscriber && !symbols.settings.moderateSubscribers) || !symbols.enabled) return false
-
+    if (userstate.badges.vip !== undefined && !symbols.settings.moderateVips) return false
     let reg = message.match(/([^\s\u0500-\u052F\u0400-\u04FF\w]+)/g)
     let symbolsLength = 0
     if (message.length < symbols.settings.triggerLength) return false
@@ -102,6 +103,7 @@ class Moderation {
   longMessage (userstate, message) {
     let longMessage = this.settings.find(o => o.name === 'longMessage')
     if ((userstate.subscriber && !longMessage.settings.moderateSubscribers) || !longMessage.enabled) return false
+    if (userstate.badges.vip !== undefined && !longMessage.settings.moderateVips) return false
     if (message.length < longMessage.settings.triggerLength) return false
 
     if (!this.warns.includes(userstate.username) && message.length > longMessage.settings.triggerLength) {
@@ -122,6 +124,7 @@ class Moderation {
     let caps = this.settings.find(o => o.name === 'caps')
     message = message.replace(/[0-9]/g, '')
     if ((userstate.subscriber && !caps.settings.moderateSubscribers) || !caps.enabled) return false
+    if (userstate.badges.vip !== undefined && !caps.settings.moderateVips) return false
     if (message.length < caps.settings.triggerLength) return false
 
     let capsLength = 0
@@ -149,6 +152,7 @@ class Moderation {
   color (userstate, message) {
     let color = this.settings.find(o => o.name === 'color')
     if ((userstate.subscriber && !color.settings.moderateSubscribers) || !color.enabled) return false
+    if (userstate.badges.vip !== undefined && !color.settings.moderateVips) return false
 
     if(userstate["message-type"] !== 'action') {
       return false
@@ -168,6 +172,8 @@ class Moderation {
   emotes (userstate, message) {
     let emotes = this.settings.find(o => o.name === 'emotes')
     if ((userstate.subscriber && !emotes.settings.moderateSubscribers) || !emotes.enabled) return false
+    if (userstate.badges.vip !== undefined && !emotes.settings.moderateVips) return false
+
     let length = userstate.emotes ? _.flattenDeep(_.values(userstate.emotes)).length : 0
     if (!this.warns.includes(userstate.username) && (length > emotes.settings.maxCount)) {
       this.warns.push(userstate.username)
