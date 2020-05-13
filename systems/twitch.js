@@ -47,7 +47,11 @@ class Twitch {
         method: 'PUT',
         url,
         data: { channel: { status: title } },
-        headers: { Authorization: `OAuth ${global.tmi.token}`, 'Accept': 'application/vnd.twitchtv.v5+json' }
+        headers: {
+          'Client-ID': global.tmi.botClientId,
+          Authorization: `OAuth ${global.tmi.token}`, 
+          'Accept': 'application/vnd.twitchtv.v5+json'
+        }
       })
       return true
     } catch (e) {
@@ -60,6 +64,7 @@ class Twitch {
       const request = await axios.get(`https://api.twitch.tv/kraken/search/games?query=${game}&type=suggest`, {
         headers: {
           Accept: 'application/vnd.twitchtv.v5+json',
+          'Client-ID': global.tmi.botClientId,
           Authorization: `OAuth ${global.tmi.token}`
         }
       })
@@ -76,7 +81,11 @@ class Twitch {
         method: 'PUT',
         url: `https://api.twitch.tv/kraken/channels/${global.tmi.channelID}`,
         data: { channel: { game } },
-        headers: { Authorization: `OAuth ${global.tmi.token}`, 'Accept': 'application/vnd.twitchtv.v5+json' }
+        headers: {
+          'Client-ID': global.tmi.botClientId,
+          Authorization: `OAuth ${global.tmi.token}`,
+          'Accept': 'application/vnd.twitchtv.v5+json'
+        }
       })
       return true
     } catch (e) {

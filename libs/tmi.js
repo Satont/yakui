@@ -53,10 +53,28 @@ class TwitchTmi {
       await global.db('core.tokens').where('name', 'bot').update('value', data.token)
       this.token = data.token
       global.log.info('Bot token found!')
+      await this.validateBotToken()
       return data.token
     } catch (e) {
       global.log.error(e)
       process.exit(0)
+    }
+  }
+
+  async validateBotToken () {
+    let token = await global.db('core.tokens').where({ name: 'broadcaster' }).select('value').first()
+    token = await token ? token.value : ''
+    try {
+      let response = await fetch(`https://id.twitch.tv/oauth2/validate`, { headers: { Authorization: `OAuth ${token}` } })
+      response = await response.json()
+      if (response.status !== '200' && response.status) await this.getToken()
+      else {
+        this.botClientId = response.client_id
+        global.log.info('Bot token validated', response.login, response.user_id, response.client_id)
+        return true
+      }
+    } catch (e) {
+      global.log.error('Bot token wasnt validated', e)
     }
   }
 
@@ -68,6 +86,7 @@ class TwitchTmi {
       response = await response.json()
       if (response.status !== '200' && response.status) await this.getBroadcasterToken()
       else if (response.login.toLowerCase() === process.env.TWITCH_CHANNEL.toLowerCase()) {
+        this.broadcasterClientId = response.client_id
         global.log.info('Broadcaster token validated', response.login, response.user_id, response.client_id)
         this.broadcastertoken = token
         return true
@@ -114,7 +133,12 @@ class TwitchTmi {
 
   async getChannelId () {
     try {
-      const response = await fetch(`https://api.twitch.tv/helix/users?login=${process.env.TWITCH_CHANNEL}`, { headers: { 'Client-ID': process.env.TWITCH_CLIENTID } })
+      const response = await fetch(`https://api.twitch.tv/helix/users?login=${process.env.TWITCH_CHANNEL}`, { 
+        headers: { 
+          'Client-ID': this.botClientId,
+          'Authorization': `Bearer ${this.token}`
+        } 
+      })
       const data = await response.json()
       this.channelID = await data.data[0].id
       global.log.info(`Channel id is ${this.channelID}`)
@@ -129,8 +153,9 @@ class TwitchTmi {
     try {
       const response = await fetch(`https://api.twitch.tv/kraken/streams/${this.channelID}`, { 
         headers: { 
-          'Client-ID': process.env.TWITCH_CLIENTID,
-          'Accept': 'application/vnd.twitchtv.v5+json'
+          'Client-ID': this.botClientId,
+          'Accept': 'application/vnd.twitchtv.v5+json',
+          'Authorization': `OAuth ${this.token}`
         }
       })
       const stream = await response.json()
@@ -148,8 +173,9 @@ class TwitchTmi {
     try {
       const response = await fetch(`https://api.twitch.tv/kraken/channels/${this.channelID}`, { 
         headers: { 
-          'Client-ID': process.env.TWITCH_CLIENTID,
-          'Accept': 'application/vnd.twitchtv.v5+json'
+          'Client-ID': this.botClientId,
+          'Accept': 'application/vnd.twitchtv.v5+json',
+          'Authorization': `OAuth ${this.botClientId}`
         }
       })
       const data = await response.json()
@@ -170,6 +196,7 @@ class TwitchTmi {
       const response = await fetch(url, {
         method: 'GET',
         headers: {
+          'Client-ID': this.broadcasterClientId,
           Authorization: `Bearer ${this.broadcastertoken}`
         }
       })
