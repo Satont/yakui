@@ -15,6 +15,10 @@ class TwitchTmi {
   }
 
   async start () {
+    if (this.client) {
+      this.client.disconnect()
+      this.client = null
+    }
     clearInterval(this.subsCheckInterval)
     const token = await global.db('core.tokens').where({ name: 'bot' }).select('value').first()
     this.token = token.value
@@ -32,7 +36,7 @@ class TwitchTmi {
       },
       channels: [process.env.TWITCH_CHANNEL]
     })
-
+    await this.validateBotToken()
     await this.connect()
     await this.loadListeners()
     await this.validateBroadCasterToken()
@@ -62,8 +66,8 @@ class TwitchTmi {
   }
 
   async validateBotToken () {
-    let token = await global.db('core.tokens').where({ name: 'broadcaster' }).select('value').first()
-    token = await token ? token.value : ''
+    let token = await global.db('core.tokens').where({ name: 'bot' }).select('value').first()
+    token = token ? token.value : ''
     try {
       let response = await fetch(`https://id.twitch.tv/oauth2/validate`, { headers: { Authorization: `OAuth ${token}` } })
       response = await response.json()
@@ -125,7 +129,7 @@ class TwitchTmi {
       .catch(e => {
         if (e === 'Login authentication failed') return this.getToken().then(() => this.start())
         else {
-          setTimeout(() => this.connect(), this.retries * 1000)
+          setTimeout(() => this.start(), this.retries * 1000)
           this.retries++
         }
       })
@@ -140,7 +144,7 @@ class TwitchTmi {
         } 
       })
       const data = await response.json()
-      this.channelID = await data.data[0].id
+      this.channelID = data.data[0].id
       global.log.info(`Channel id is ${this.channelID}`)
     } catch (e) {
       global.log.error(e)

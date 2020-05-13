@@ -65,20 +65,20 @@ class Commons {
         {
           method: 'GET',
           headers: {
-            'Client-ID': global.tmi.broadcasterClientId,
-            Authorization: `Bearer ${global.tmi.broadcaster_token}`
+            'Client-ID': global.tmi.botClientId,
+            Authorization: `Bearer ${global.tmi.token}`
           }
         }
       )
       data = await response.json()
-      data = await data.data[0] ? data.data[0].followed_at : null
+      data = data.data[0] ? data.data[0].followed_at : null
     } catch (e) {
       global.log.error(e)
     }
-    if (_.isNil(await data)) {
+    if (_.isNil(data)) {
       return 'not followed'
     }
-    const diff = moment(moment().format()).diff(await data)
+    const diff = moment(moment().format()).diff(data)
     return humanizeDuration(moment.duration(diff), { units: ['y', 'mo', 'd', 'h', 'm'], round: true, language: process.env.BOT_LANG })
   }
 
