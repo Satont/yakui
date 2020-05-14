@@ -3,42 +3,31 @@ switch (process.env.NODE_ENV) {
   case 'development': path = '.env.dev'; break
 }
 require('dotenv').config({ path: path })
-module.exports = {
-  development: {
-    client: 'postgresql',
-    connection: {
+
+const connection = process.env.DATABASE_URL || process.env.DATABASE_URL !== '' 
+  : process.env.DATABASE_URL
+  ? {
       host: process.env.DB_HOST,
       port: process.env.DB_PORT,
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       ssl: false
-    },
-    pool: {
-      min: 2,
-      max: 5
-    },
-    migrations: {
-      tableName: 'knex_migrations'
-    }
-  },
-  production: {
-    client: 'postgresql',
-    connection: {
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-      ssl: true
-    },
-    pool: {
-      min: 2,
-      max: 5
-    },
-    migrations: {
-      tableName: 'knex_migrations'
-    }
-  }
+   }
 
+const config = {
+    client: 'postgresql',
+    connection,
+    pool: {
+      min: 2,
+      max: 5
+    },
+    migrations: {
+      tableName: 'knex_migrations'
+    }
+ }
+
+module.exports = {
+  development: config,
+  production: config,
 }
