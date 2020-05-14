@@ -16,7 +16,7 @@ const connection = process.env.DATABASE_URL && process.env.DATABASE_URL !== '' ?
 const config = {
     client: 'postgresql',
     connection,
-    pool: process.env.NODE_HOME.includes('heroku') ? undefined : {
+    pool: process.env.NODE_HOME && process.env.NODE_HOME.includes('heroku') ? undefined : {
       min: 2,
       max: 9,
       idleTimeoutMillis: 3000,

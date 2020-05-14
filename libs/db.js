@@ -13,7 +13,7 @@ const knex = require('knex')({
   client: 'pg',
   connection,
   // debug: true,
-  pool: process.env.NODE_HOME.includes('heroku') ? undefined : {
+  pool: process.env.NODE_HOME && process.env.NODE_HOME.includes('heroku') ? undefined : {
     min: 0,
     max: 5,
     idleTimeoutMillis: 3000,
