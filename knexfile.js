@@ -16,12 +16,12 @@ const connection = process.env.DATABASE_URL && process.env.DATABASE_URL !== '' ?
 const config = {
     client: 'postgresql',
     connection,
-    pool: {
+    pool: process.env.NODE_HOME.includes('heroku') ? undefined : {
       min: 2,
-      max: 5,
-      idleTimeoutMillis: 30000,
-      createTimeoutMillis: 30000,
-      acquireTimeoutMillis: 30000,
+      max: 9,
+      idleTimeoutMillis: 3000,
+      createTimeoutMillis: 3000,
+      acquireTimeoutMillis: 3000,
       propagateCreateError: false,
     },
     migrations: {

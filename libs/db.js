@@ -13,12 +13,12 @@ const knex = require('knex')({
   client: 'pg',
   connection,
   // debug: true,
-  pool: {
+  pool: process.env.NODE_HOME.includes('heroku') ? undefined : {
     min: 0,
     max: 5,
-    idleTimeoutMillis: 30000,
-    createTimeoutMillis: 30000,
-    acquireTimeoutMillis: 30000,
+    idleTimeoutMillis: 3000,
+    createTimeoutMillis: 3000,
+    acquireTimeoutMillis: 3000,
     propagateCreateError: false,
     afterCreate: function (conn, done) {
       console.log('Pool created')
