@@ -1,4 +1,4 @@
-const connection = process.env.DATABASE_URL || process.env.DATABASE_URL !== '' 
+const connection = process.env.DATABASE_URL && process.env.DATABASE_URL !== '' 
   ? process.env.DATABASE_URL
   : {
       host: process.env.DB_HOST,
