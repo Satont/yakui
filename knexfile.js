@@ -18,7 +18,8 @@ const config = {
     connection,
     pool: {
       min: 2,
-      max: 5
+      max: 5,
+      propagateCreateError: false,
     },
     migrations: {
       tableName: 'knex_migrations'

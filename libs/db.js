@@ -16,6 +16,7 @@ const knex = require('knex')({
   pool: {
     min: 0,
     max: 5,
+    propagateCreateError: false,
     afterCreate: function (conn, done) {
       console.log('Pool created')
       knex.connected = true
