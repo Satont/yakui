@@ -5,8 +5,8 @@ switch (process.env.NODE_ENV) {
 require('dotenv').config({ path: path })
 
 const connection = process.env.DATABASE_URL || process.env.DATABASE_URL !== '' 
-  : process.env.DATABASE_URL
-  ? {
+  ? process.env.DATABASE_URL
+  : {
       host: process.env.DB_HOST,
       port: process.env.DB_PORT,
       user: process.env.DB_USER,
