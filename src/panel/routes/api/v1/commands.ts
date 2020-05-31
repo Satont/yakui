@@ -114,7 +114,6 @@ router.delete('/', checkSchema({
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
-
     await Command.destroy({ where: { id: req.body.id }})
 
     res.send('Ok')

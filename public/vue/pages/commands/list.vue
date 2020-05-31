@@ -6,7 +6,7 @@
     </p>
 
     <b-card-group deck>
-      <b-card v-for="command in commands" :key="command.id" :header="'!' + command.name" text-variant="dark" header-class="p-2" body-class="p-2" footer-class="p-2 footer">
+      <b-card v-for="(command, index) in commands" :key="command.id" :header="'!' + command.name" text-variant="dark" header-class="p-2" body-class="p-2" footer-class="p-2 footer">
         <template v-slot:header>
           {{ command.name }} {{ (command.aliases && command.aliases.length) ? '(' + command.aliases.join(', ') + ')' : '' }}
         </template>
@@ -17,6 +17,7 @@
          </p>
          <p class="m-0">
            <b-button class="btn" variant="primary" size="sm" @click="edit(command)">Edit</b-button>
+           <b-button class="btn" variant="danger" size="sm" @click="del(command.id, index)">Delete</b-button>
          </p>
         </template>
       </b-card>
@@ -41,6 +42,11 @@ export default class CommandManagerList extends Vue {
 
   async edit(params) {
     await this.$router.push({ name: 'CommandManagerEdit', params })
+  }
+
+  async del(id, index) {
+    await axios.delete('/api/v1/commands', { data: { id } })
+    this.commands.splice(index, 1)
   }
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-form @submit="onSubmit">
+    <b-form v-on:submit.prevent="onSubmit">
       <b-form-group label="Command name" label-for="name">
         <b-form-input id="name" v-model="command.name" type="text" required placeholder="Enter command name"></b-form-input>
       </b-form-group>
@@ -25,6 +25,7 @@
       </b-form-group>
 
       <b-button class="btn-block" type="submit" variant="primary">Save</b-button>
+      <b-button class="btn-block" @click="del" variant="danger" v-if="command.id">Delete</b-button>
     </b-form>
   </div>
 </template>
@@ -54,9 +55,11 @@ export default class CommandManagerEdit extends Vue {
     { value: 'broadcaster', text: 'Broadcaster' },
   ]
 
-  async onSubmit() {
-    await axios.post('/api/v1/commands', this.command).catch(console.error)
-    this.$router.push({ name: 'CommandManagerList' })
+  async onSubmit(event) {
+    event.preventDefault()
+
+    await axios.post('/api/v1/commands', this.command)
+    await this.$router.push({ name: 'CommandManagerList' })
   }
 
   async created() {
@@ -69,6 +72,10 @@ export default class CommandManagerEdit extends Vue {
 
       this.command = data
     }
+  }
+
+  async del() {
+    await axios.delete('/api/v1/commands', { data: { id: this.command.id } })
   }
 }
 </script>
