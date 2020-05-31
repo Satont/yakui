@@ -25,6 +25,10 @@
         <b-form-input id="response" v-model="command.response" type="text" required placeholder="Enter command response"></b-form-input>
       </b-form-group>
 
+      <b-form-group label="Command description" label-for="description">
+        <b-form-input id="description" v-model="command.description" type="text" placeholder="Enter command description"></b-form-input>
+      </b-form-group>
+
       <b-form-group label="Command visibility" label-for="visibility">
         <b-btn v-bind:class="{ 'btn-success': command.visible, 'btn-danger': !command.visible }" v-on:click="command.visible = !command.visible">
           <span v-show="command.visible">Visible</span>
@@ -48,10 +52,11 @@ import axios from 'axios'
 export default class CommandManagerEdit extends Vue {
   command: Command = {
     name: '',
-    response: '',
+    response: null,
     cooldown: 10,
     visible: true,
     permission: 'viewers',
+    description: null,
     aliases: [],
   }
 

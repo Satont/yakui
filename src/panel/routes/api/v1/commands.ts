@@ -43,7 +43,6 @@ router.post('/', checkSchema({
     optional: true,
   },
   description: {
-    isString: true,
     in: ['body'],
     optional: true,
   },
@@ -70,9 +69,9 @@ router.post('/', checkSchema({
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
+
     const names: string[] = []
     const body: CommandType = req.body
-
     const commands = (await Command.findAll({ raw: true })).filter((c: CommandType) => c.id !== body.id)
 
     for (const command of commands) {

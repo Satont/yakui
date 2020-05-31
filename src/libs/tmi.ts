@@ -95,4 +95,14 @@ export default new class Tmi {
     this.chatClients[type]?.whisper(target, message)
     console.info(`<<<W ${message}`)
   }
+
+  getUserPermissions(badges: Map<string, string>) {
+    return {
+      broadcaster: badges.has('broadcaster'),
+      moderator: badges.has('moderator'),
+      vip: badges.has('vip'),
+      subscriber: badges.has('subscriber'),
+      viewer: true,
+    }
+  }
 }
