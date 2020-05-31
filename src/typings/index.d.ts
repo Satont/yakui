@@ -3,6 +3,7 @@ import TwitchPrivateMessage from "twitch-chat-client/lib/StandardCommands/Twitch
 export interface Command {
   id?: number,
   name: string, 
+  response?: string,
   visible?: true, 
   description?: string,
   aliases?: string[],

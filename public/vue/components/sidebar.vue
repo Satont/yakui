@@ -7,6 +7,16 @@
 </div>
 
 </template>
+
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator'
+
+@Component
+export default class NavBar extends Vue {
+  title = 'Navbar'
+}
+</script>
+
 <style scoped>
 .sidebar {
   position: fixed;

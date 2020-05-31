@@ -14,6 +14,10 @@ export default class Command extends Model<Command> {
   @Column(DataType.STRING)
   public name: string
 
+  @AllowNull(false)
+  @Column(DataType.TEXT)
+  public response: string
+
   @Default([])
   @Column(DataType.JSON)
   public aliases: string[]

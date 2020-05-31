@@ -52,6 +52,10 @@ router.put('/', checkSchema({
     in: ['body'],
     optional: true,
   },
+  response: {
+    isString: true,
+    in: ['body']
+  }
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
@@ -105,6 +109,11 @@ router.patch('/', checkSchema({
     in: ['body'],
     optional: true,
   },
+  response: {
+    isString: true,
+    in: ['body'],
+    optional: true
+  }
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
