@@ -1,5 +1,7 @@
 import TwitchPrivateMessage from "twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage"
 
+export type CommandPermission = 'viewers' | 'followers' | 'vips' | 'subscribers' | 'moderators' | 'broadcaster'
+
 export interface Command {
   id?: number,
   name: string, 
@@ -8,6 +10,7 @@ export interface Command {
   description?: string,
   aliases?: string[],
   cooldown?: number,
+  permission?: CommandPermission,
   fnc?: function
 }
 

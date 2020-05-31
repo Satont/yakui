@@ -1,6 +1,10 @@
 <template>
   <div>
     <h1>Command list</h1>
+    <p class="pb-2">
+      <b-button class="btn-block" variant="primary" size="sm" @click="create">New command</b-button>
+    </p>
+
     <b-card-group deck>
       <b-card v-for="command in commands" :key="command.id" :header="'!' + command.name" text-variant="dark" header-class="p-2" body-class="p-2" footer-class="p-2 footer">
         <template v-slot:header>
@@ -36,7 +40,11 @@ export default class Edit extends Vue {
   }
 
   edit(command) {
-    this.$router.push({ name: 'commandEdit', params: command })
+    this.$router.push({ name: 'CommandManagerEdit', params: command })
+  }
+
+  create(command) {
+    this.$router.push({ name: 'CommandManagerEdit' })
   }
 }
 </script>

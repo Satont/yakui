@@ -41,8 +41,10 @@ export default class Edit extends Vue {
   }
 
   async onSumbit() {
-
+    await axios.post('/api/v1/commands', this.command)
+    this.$router.push({ name: 'CommandManagerList' })
   }
+
   async onReset() {
 
   }

@@ -19,8 +19,8 @@ Vue.component('nav-bar', lazyLoad('components/navbar.vue'))
 const router = new VueRouter({
   routes: [
     { path: '/', component: lazyLoad('index.vue'), alias: '/home' },
-    { path: '/commands', name: 'commandsList', component: lazyLoad('pages/commands/list.vue') },
-    { path: '/commands/:id?', name: 'commandEdit', component: lazyLoad('pages/commands/edit.vue') }
+    { path: '/commands', name: 'CommandManagerList', component: lazyLoad('pages/commands/list.vue') },
+    { path: '/commands/:id?', name: 'CommandManagerEdit', component: lazyLoad('pages/commands/edit.vue') }
   ],
 })
 

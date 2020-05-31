@@ -27,67 +27,15 @@ router.get('/:id', async (req, res, next) => {
   }
 })
 
-router.put('/', checkSchema({
-  name: {
-    isString: true,
-    in: ['body'],
-  },
-  visible: {
-    isBoolean: true,
-    in: ['body'],
-    optional: true,
-  },
-  description: {
-    isString: true,
-    in: ['body'],
-    optional: true,
-  },
-  aliases: {
-    isArray: true,
-    in: ['body'],
-    optional: true,
-  },
-  cooldown: {
-    isNumeric: true,
-    in: ['body'],
-    optional: true,
-  },
-  response: {
-    isString: true,
-    in: ['body']
-  }
-}), async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    validationResult(req).throw()
-    const names: string[] = []
-    const body: CommandType = req.body
-
-    for (const command of await Command.findAll()) {
-      names.push(command.name)
-      names.push(...command.aliases)
-    }
-
-    if (names.filter(Boolean).includes(body.name) || names.filter(Boolean).some(name => body.aliases?.includes(name))) {
-      return res.status(400).send('This aliase or name already exists.')
-    }
-
-    const command: Command = await Command.create(body)
-
-    res.json(command.toJSON())
-  } catch (e) {
-    next(e)
-  }
-})
-
-router.patch('/', checkSchema({
+router.post('/', checkSchema({
   id: {
     isNumeric: true,
     in: ['body'],
+    optional: true,
   },
   name: {
     isString: true,
-    in: ['body'],
-    optional: true,
+    in: ['body']
   },
   visible: {
     isBoolean: true,
@@ -113,6 +61,11 @@ router.patch('/', checkSchema({
     isString: true,
     in: ['body'],
     optional: true
+  },
+  permission: {
+    isString: true,
+    in: ['body'],
+    optional: true
   }
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -131,15 +84,21 @@ router.patch('/', checkSchema({
       return res.status(400).send('This aliase or name already exists.')
     }
 
-    const command: Command = await Command.findOne({ where: { id: body.id }})
-
-    await command.update({
-      name: body.name,
-      aliases: body.aliases,
-      cooldown: body.cooldown,
-      description: body.description,
-      visible: body.visible,
+    const command: Command = await Command.findOrCreate({ 
+      where: { id: body.id },
+      defaults: body
     })
+
+    if (body.id) {
+      await command.update({
+        name: body.name,
+        aliases: body.aliases,
+        cooldown: body.cooldown,
+        description: body.description,
+        visible: body.visible,
+        permission: body.permission,
+      })
+    }
 
     res.json(command)
   } catch (e) {
