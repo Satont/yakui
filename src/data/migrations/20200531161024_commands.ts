@@ -4,11 +4,11 @@ export async function up(knex: Knex): Promise<any> {
   return await knex.schema.createTable('commands', table => {
     table.increments('id').primary(),
     table.string('name').notNullable().unique(),
-    table.json('aliases'),
+    table.json('aliases').defaultTo([]),
     table.integer('cooldown'),
     table.text('description'),
     table.text('response').notNullable(),
-    table.boolean('visible').defaultTo(true)
+    table.boolean('visible').notNullable().defaultTo(true)
   })
 }
 
