@@ -99,10 +99,10 @@ export default new class Tmi {
   getUserPermissions(badges: Map<string, string>) {
     return {
       broadcaster: badges.has('broadcaster'),
-      moderator: badges.has('moderator'),
-      vip: badges.has('vip'),
-      subscriber: badges.has('subscriber'),
-      viewer: true,
+      moderators: badges.has('moderator'),
+      vips: badges.has('vip'),
+      subscribers: badges.has('subscriber'),
+      viewers: true,
     }
   }
 }

@@ -59,11 +59,12 @@ export default new class Parser {
       let hasPerm = false
 
       const userPermissions = Object.entries(tmi.getUserPermissions(raw.userInfo.badges))
-      for (const perm of userPermissions) {
-        if (userPermissions.some(v => userPermissions.indexOf(v) >= userPermissions.indexOf(perm))) hasPerm = true;
-        else continue;
-      }
+      const commandPermissionIndex = userPermissions.indexOf(userPermissions.find(v => v[0] === command.permission))
 
+      if (userPermissions.some((p, index) => p[1] && index <= commandPermissionIndex)) hasPerm = true
+
+      if (!hasPerm) break;
+  
       const commandResult: string = await command.fnc.call(system, message, raw, command)
 
       if (!commandResult) break
