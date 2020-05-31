@@ -18,7 +18,8 @@ Vue.component('nav-bar', lazyLoad('components/navbar.vue'))
 
 const router = new VueRouter({
   routes: [
-    { path: '/', component: lazyLoad('index.vue'), alias: '/home' }
+    { path: '/', component: lazyLoad('index.vue'), alias: '/home' },
+    { path: '/commands', component: lazyLoad('pages/commands.vue') }
   ],
 })
 
@@ -26,9 +27,11 @@ new Vue({
   router,
   template: `
   <div>
-  <side-bar></side-bar>
-  <nav-bar></nav-bar>
-  <router-view class="main"></router-view>
+    <nav-bar></nav-bar>
+    <div class="container-fluid">
+      <side-bar></side-bar>
+      <router-view class="col-md-9 ml-sm-auto col-lg-10 px-md-4 pt-md-3"></router-view>
+    </div>
   </div>
   `
 }).$mount('#app')

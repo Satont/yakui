@@ -10,9 +10,9 @@ export default {
   }, 
   module: {
     rules: [
-      { test: /\.vue$/, loader: 'vue-loader' },
-      { test: /\.css$/, use: 'css-loader' },
-      { test: /\.ts$/, use: 'ts-loader' }
+      { test: /\.vue$/i, loader: 'vue-loader' },
+      { test: /\.css$/i,  use: ['vue-style-loader', 'css-loader'] },
+      { test: /\.ts$/i, use: 'ts-loader' }
     ]
   },
   plugins: [
