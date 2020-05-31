@@ -1,10 +1,2 @@
 node_modules
-package-lock.json
-test.js
 .env
-.env.dev
-payloads.txt
-Heap.*
-logs
-public/dist/*
-.cache

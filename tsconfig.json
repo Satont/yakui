@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "inlineSourceMap": true,
+    "outDir": "./dest",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
+    "typeRoots" : ["./src/typings", "node_modules/@types"]
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}

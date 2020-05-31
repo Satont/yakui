@@ -1,0 +1,12 @@
+{
+  "watch": ["src"],
+  "exec": "npm run migrate && ts-node src/index.ts",
+  "ext": "ts",
+  "ignore": [
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    ".git",
+    "node_modules",
+    "src/data/migrations/**"
+  ]
+}
