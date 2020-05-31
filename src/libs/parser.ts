@@ -55,7 +55,7 @@ export default new class Parser {
 
       if (!command) continue
 
-      const commandResult: string = await command.fnc.call(system, message, raw)
+      const commandResult: string = await command.fnc.call(system, message, raw, command)
 
       if (!commandResult) break
 
