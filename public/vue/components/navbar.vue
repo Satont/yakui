@@ -1,10 +1,19 @@
 <template>
   <div>
     <b-navbar toggleable="lg" type="light" variant="dark" sticky="top" class="flex-md-nowrap p-0 shadow">
-    <b-navbar-brand class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">NavBar</b-navbar-brand>
+    <b-navbar-brand class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">{{ title }}</b-navbar-brand>
   </b-navbar>
   </div>
 </template>
+
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator'
+
+@Component
+export default class NavBar extends Vue {
+  title = 'Navbar'
+}
+</script>
 
 <style scoped>
 .shadow {
