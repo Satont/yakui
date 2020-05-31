@@ -5,6 +5,14 @@
         <b-form-input id="name" v-model="command.name" type="text" required placeholder="Enter command name"></b-form-input>
       </b-form-group>
 
+       <b-form-group label="Command aliases">
+         <b-input-group size="sm" v-for="(aliase, index) in command.aliases" :key="index" class="mb-1">
+            <b-form-input v-model="command.aliases[index]" type="text" placeholder="Command aliase"></b-form-input>
+            <b-input-group-append><b-button size="sm" variant="danger" @click.prevent="delAliase(index)">Delete</b-button></b-input-group-append>
+         </b-input-group>
+         <b-button class="mt-1" block size="sm" type="success" variant="success" @click.prevent="createAliase">+</b-button>
+       </b-form-group>
+
       <b-form-group label="Command cooldown" label-for="cooldown">
         <b-form-input id="cooldown" v-model="command.cooldown" type="number" placeholder="Enter command cooldown"></b-form-input>
       </b-form-group>
@@ -44,6 +52,7 @@ export default class CommandManagerEdit extends Vue {
     cooldown: 10,
     visible: true,
     permission: 'viewers',
+    aliases: [],
   }
 
   avaliablePermissions = [
@@ -57,9 +66,14 @@ export default class CommandManagerEdit extends Vue {
 
   async onSubmit(event) {
     event.preventDefault()
+    this.filterAliases()
 
     await axios.post('/api/v1/commands', this.command)
     await this.$router.push({ name: 'CommandManagerList' })
+  }
+
+  filterAliases() {
+    this.command.aliases = this.command.aliases.filter(o => o !== '' && o)
   }
 
   async created() {
@@ -76,6 +90,14 @@ export default class CommandManagerEdit extends Vue {
 
   async del() {
     await axios.delete('/api/v1/commands', { data: { id: this.command.id } })
+  }
+
+  createAliase() {
+    this.command.aliases.push("");
+  }
+
+  delAliase(index) {
+    this.command.aliases.slice(index, 1);
   }
 }
 </script>
