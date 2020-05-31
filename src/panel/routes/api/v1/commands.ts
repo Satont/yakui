@@ -84,10 +84,10 @@ router.post('/', checkSchema({
       return res.status(400).send('This aliase or name already exists.')
     }
 
-    const command: Command = await Command.findOrCreate({ 
-      where: { id: body.id },
-      defaults: body
-    })
+    let command: Command
+
+    if (body.id) command = await Command.findOne({ where: { id: body.id } })
+    else command = await Command.create(body)
 
     if (body.id) {
       await command.update({

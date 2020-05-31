@@ -2,7 +2,7 @@
   <div>
     <h1>Command list</h1>
     <p class="pb-2">
-      <b-button class="btn-block" variant="primary" size="sm" @click="create">New command</b-button>
+      <b-button class="btn-block" variant="primary" size="sm" @click="edit">New command</b-button>
     </p>
 
     <b-card-group deck>
@@ -31,7 +31,7 @@ import { Command } from '../../../../src/typings'
 import axios from 'axios'
 
 @Component
-export default class Edit extends Vue {
+export default class CommandManagerList extends Vue {
   commands: Command[] = []
 
   async created() {
@@ -39,12 +39,8 @@ export default class Edit extends Vue {
     this.commands = data
   }
 
-  edit(command) {
-    this.$router.push({ name: 'CommandManagerEdit', params: command })
-  }
-
-  create(command) {
-    this.$router.push({ name: 'CommandManagerEdit' })
+  async edit(params) {
+    await this.$router.push({ name: 'CommandManagerEdit', params })
   }
 }
 </script>

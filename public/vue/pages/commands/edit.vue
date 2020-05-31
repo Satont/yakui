@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-form v-on:sumbit="onSumbit">
+    <b-form @submit="onSubmit">
       <b-form-group label="Command name" label-for="name">
         <b-form-input id="name" v-model="command.name" type="text" required placeholder="Enter command name"></b-form-input>
       </b-form-group>
@@ -9,8 +9,12 @@
         <b-form-input id="cooldown" v-model="command.cooldown" type="number" placeholder="Enter command cooldown"></b-form-input>
       </b-form-group>
 
+      <b-form-group label="Command permission" label-for="permission">
+        <b-form-select v-model="command.permission" :options="avaliablePermissions" size="sm"></b-form-select>
+      </b-form-group>
+
       <b-form-group label="Command response" label-for="response">
-        <b-form-input id="response" v-model="command.response" type="text" placeholder="Enter command response"></b-form-input>
+        <b-form-input id="response" v-model="command.response" type="text" required placeholder="Enter command response"></b-form-input>
       </b-form-group>
 
       <b-form-group label="Command visibility" label-for="visibility">
@@ -31,23 +35,30 @@ import { Route } from 'vue-router'
 import { Command } from '../../../../src/typings'
 import axios from 'axios'
 
-@Component
-export default class Edit extends Vue {
+@Component({})
+export default class CommandManagerEdit extends Vue {
   command: Command = {
     name: '',
     response: '',
     cooldown: 10,
     visible: true,
+    permission: 'viewers',
   }
 
-  async onSumbit() {
-    await axios.post('/api/v1/commands', this.command)
+  avaliablePermissions = [
+    { value: 'viewers', text: 'Viewers' },
+    { value: 'followers', text: 'Followers' },
+    { value: 'vips', text: 'Vips' },
+    { value: 'subscribers', text: 'Subscribers' },
+    { value: 'moderators', text: 'Moderators' },
+    { value: 'broadcaster', text: 'Broadcaster' },
+  ]
+
+  async onSubmit() {
+    await axios.post('/api/v1/commands', this.command).catch(console.error)
     this.$router.push({ name: 'CommandManagerList' })
   }
 
-  async onReset() {
-
-  }
   async created() {
     const id = this.$route.params.id as any
 
@@ -57,8 +68,6 @@ export default class Edit extends Vue {
       const { data } = await axios.get('/api/v1/commands/' + id)
 
       this.command = data
-    } else {
-      this.$router.push({ name: 'commands' })
     }
   }
 }
