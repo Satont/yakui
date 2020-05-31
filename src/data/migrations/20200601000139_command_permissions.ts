@@ -3,7 +3,7 @@ import * as Knex from "knex";
 
 export async function up(knex: Knex): Promise<any> {
   return await knex.schema.table('commands', table => {
-    table.enum('permission', ['viewers', 'followers', 'vips', 'subscribers', 'moderators', 'broadcaster']).defaultTo('viewers')
+    table.enum('permission', ['viewers', 'followers', 'vips', 'subscribers', 'moderators', 'broadcaster']).notNullable().defaultTo('viewers')
   })
 }
 
