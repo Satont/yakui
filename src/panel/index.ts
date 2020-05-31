@@ -1,13 +1,18 @@
 import express, { Request, Response } from 'express'
 import bodyparser from 'body-parser'
+import { resolve } from 'path'
 
 import v1 from './routes/api/v1'
 
 const app = express()
 
 app.use(bodyparser.json())
+app.use('/static', express.static(resolve(process.cwd(), 'public', 'dest')))
 
-app.get('/', (req, res) => res.send('Hi!'))
+app.get('/', (req, res) => {
+  res.sendFile(resolve(process.cwd(), 'public', 'index.html'))
+})
+
 
 app.use('/api/v1', v1)
 
