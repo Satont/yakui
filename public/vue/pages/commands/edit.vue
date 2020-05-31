@@ -93,11 +93,11 @@ export default class CommandManagerEdit extends Vue {
   }
 
   createAliase() {
-    this.command.aliases.push("");
+    this.command.aliases.push(null);
   }
 
   delAliase(index) {
-    this.command.aliases.slice(index, 1);
+    this.command.aliases.splice(index, 1);
   }
 }
 </script>
