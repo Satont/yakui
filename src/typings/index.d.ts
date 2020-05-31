@@ -8,7 +8,7 @@ export interface Command {
   description?: string,
   aliases?: string[],
   cooldown?: number,
-  fnc: function
+  fnc?: function
 }
 
 export interface System {
