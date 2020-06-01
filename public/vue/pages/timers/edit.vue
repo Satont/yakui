@@ -52,7 +52,7 @@ import { Command } from '../../../../src/typings'
 import axios from 'axios'
 
 @Component({})
-export default class CommandsManagerEdit extends Vue {
+export default class TimersManagerEdit extends Vue {
   command: Command = {
     name: '',
     response: null,
@@ -78,7 +78,7 @@ export default class CommandsManagerEdit extends Vue {
     this.filterAliases()
 
     await axios.post('/api/v1/commands', this.command)
-    await this.$router.push({ name: 'CommandsManagerList' })
+    await this.$router.push({ name: 'CommandManagerList' })
   }
 
   filterAliases() {

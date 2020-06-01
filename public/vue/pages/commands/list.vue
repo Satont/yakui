@@ -33,7 +33,7 @@ import { Command } from '../../../../src/typings'
 import axios from 'axios'
 
 @Component
-export default class CommandManagerList extends Vue {
+export default class CommandsManagerList extends Vue {
   commands: Command[] = []
 
   async created() {
@@ -42,7 +42,7 @@ export default class CommandManagerList extends Vue {
   }
 
   async edit(params) {
-    await this.$router.push({ name: 'CommandManagerEdit', params })
+    await this.$router.push({ name: 'CommandsManagerEdit', params })
   }
 
   async del(id, index) {
