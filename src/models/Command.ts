@@ -31,6 +31,10 @@ export default class Command extends Model<Command> {
 
   @Default(true)
   @Column(DataType.BOOLEAN)
+  public enabled: boolean
+
+  @Default(true)
+  @Column(DataType.BOOLEAN)
   public visible: boolean
 
   @Default('viewers')

@@ -76,7 +76,7 @@ export default new class Parser {
           ? tmi.whispers({ target: raw.userInfo.userName, message: commandResult }) 
           : tmi.say({ message: commandResult })
 
-      if (command.cooldown) {
+      if (command.cooldown && command.cooldown !== 0) {
         this.cooldowns.push(command.name)
         setTimeout(() => remove(this.cooldowns, o => o === command.name), command.cooldown * 1000)
       }

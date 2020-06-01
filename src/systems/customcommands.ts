@@ -6,11 +6,6 @@ import tmi from '../libs/tmi'
 export default new class CustomSystems implements System {
   commands: CommandType[] = []
 
-  constructor() {
-    this.init()
-    this.listenCommandUpdates()
-  }
-
   async init() {
     const commands: Command[] = await Command.findAll()
     for (const command of commands) {
@@ -24,6 +19,8 @@ export default new class CustomSystems implements System {
         fnc: this.fnc
       })
     }
+
+    this.listenCommandUpdates()
   }
 
   async fnc(message: string, raw: TwitchPrivateMessage, command: CommandType) {

@@ -8,6 +8,7 @@ export async function up(knex: Knex): Promise<any> {
     table.integer('cooldown'),
     table.text('description'),
     table.text('response').notNullable(),
+    table.text('enabled').defaultTo(true),
     table.boolean('visible').notNullable().defaultTo(true)
   })
 }

@@ -11,7 +11,8 @@ export interface Command {
   aliases?: string[],
   cooldown?: number,
   permission?: CommandPermission,
-  fnc?: function
+  fnc?: function,
+  enabled?: boolean,
 }
 
 export interface System {
@@ -19,5 +20,6 @@ export interface System {
     name?: string,
     fnc: function
   }>;
-  commands?: Command[]
+  commands?: Command[],
+  init?: () => void | Promise<void>
 }
