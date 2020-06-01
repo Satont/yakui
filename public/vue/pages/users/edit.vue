@@ -16,6 +16,7 @@
               <b-input size="sm" class="ml-3" v-model="bit.message"></b-input>
               <label class="ml-3">Amount</label>
               <b-input size="sm" class="ml-3" v-model="bit.amount"></b-input>
+
               <b-button size="sm" class="ml-3" variant="danger" @click.prevent="delBit(index)">Delete</b-button>
             </b-form>
          </div>
@@ -27,9 +28,12 @@
          <div v-for="(tip, index) in user.tips" :key="index" class="mb-1">
             <b-form inline>
               <label>Message</label>
-              <b-input size="sm" class="ml-3" v-model="bit.message"></b-input>
+              <b-input size="sm" class="ml-3" v-model="tip.message"></b-input>
               <label class="ml-3">Amount</label>
-              <b-input size="sm" class="ml-3" v-model="bit.amount"></b-input>
+              <b-input size="sm" class="ml-3" v-model="tip.amount"></b-input>
+              <label class="ml-3">Currency</label>
+              <b-form-select size="sm" class="ml-3" v-model="tip.currency" :options="avaliableCurrency"></b-form-select>
+
               <b-button size="sm" class="ml-3" variant="danger" @click.prevent="delTip(index)">Delete</b-button>
             </b-form>
          </div>
@@ -55,6 +59,8 @@ export default class UsersManagerEdit extends Vue {
     tips: [],
     bits: []
   }
+
+  avaliableCurrency = ['USD', 'RUB', 'EUR']
 
   async onSubmit(event) {
     event.preventDefault()
@@ -83,9 +89,23 @@ export default class UsersManagerEdit extends Vue {
     this.user.bits.push({
       amount: 0,
       message: null,
-      timestamp: new Date().getTime(),
+      timestamp: Date.now(),
       userId: (this.user as any).id
     })
+  }
+  
+  addTip() {
+    this.user.tips.push({
+      amount: 0,
+      message: null,
+      currency: 'RUB',
+      timestamp: Date.now(),
+      userId: (this.user as any).id
+    })
+  }
+
+  delTip(index) {
+    this.user.tips.splice(index, 1);
   }
 }
 </script>

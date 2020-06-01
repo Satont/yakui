@@ -12,7 +12,7 @@ export default new class Timers implements System {
     const timers: Timer[] = await Timer.findAll()
 
     for (const timer of timers) {
-      await timer.update({ last: 0, triggerTimeStamp: new Date().getTime() })
+      await timer.update({ last: 0, triggerTimeStamp: Date.now() })
       this.timers.push(timer)
     }
 
@@ -27,11 +27,11 @@ export default new class Timers implements System {
     for (const timer of this.timers) {
       if (!timer.enabled || !twitch.streamMetaData?.startedAt) continue
 
-      if ((new Date().getTime() - timer.triggerTimeStamp) > timer.interval * 1000) {
+      if ((Date.now() - timer.triggerTimeStamp) > timer.interval * 1000) {
 
         const message = await variables.parseMessage(timer.responses[timer.last])
         tmi.say({ message })
-        await timer.update({ last: ++timer.last % timer.responses.length, triggerTimeStamp: new Date().getTime() })
+        await timer.update({ last: ++timer.last % timer.responses.length, triggerTimeStamp: Date.now() })
       }
     }
   }
