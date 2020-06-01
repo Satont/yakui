@@ -1,7 +1,7 @@
 import { System } from '../typings'
 import tmi from '../libs/tmi'
 import Timer from '../models/Timer'
-import cache from '../libs/cache'
+import twitch from '../libs/twitch'
 import variables from './variables'
 
 export default new class Timers implements System {
@@ -23,7 +23,7 @@ export default new class Timers implements System {
 
     for (const timer of this.timers) {
       if ((new Date().getTime() - timer.triggerTimeStamp) > timer.interval * 1000) {
-        if (!cache.streamMetaData?.startedAt) continue
+        if (!twitch.streamMetaData?.startedAt) continue
 
         const message = await variables.parseMessage(timer.responses[timer.last])
         tmi.say({ message })

@@ -1,6 +1,7 @@
 import tmi from "./tmi"
+import humanizeDuration from 'humanize-duration'
 
-export default new class Cache {
+export default new class Twitch {
   streamMetaData: {
     viewers: number,
     game: string,
@@ -47,5 +48,18 @@ export default new class Cache {
     }
 
     setTimeout(() => this.getChannelData(), 1 * 60 * 1000)
+  }
+
+  async getFollowAge(userId: string) {
+    const follow = await tmi.clients.bot?.helix.users.getFollows({ followedUser: tmi.channel.id, user: userId })
+    if (!follow.total) return 'not follower'
+
+    return humanizeDuration(Date.now() - new Date(follow.data[0].followDate).getTime(), { units: ['y', 'mo', 'd', 'h', 'm'], round: true })
+  }
+
+  getUptime() {
+    if (!this.streamMetaData?.startedAt) return 'offline'
+
+    return humanizeDuration(Date.now() - new Date(this.streamMetaData?.startedAt).getTime(), { units: ['mo', 'd', 'h', 'm', 's'], round: true })
   }
 }

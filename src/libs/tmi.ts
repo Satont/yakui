@@ -90,7 +90,7 @@ export default new class Tmi {
         else throw new Error(e)
       })
       if (type === 'bot') {
-        import('./cache')
+        import('./twitch')
         import('./loader')
       }
     })
