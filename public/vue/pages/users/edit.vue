@@ -7,12 +7,32 @@
         <b-form-input id="messages" v-model="user.messages" type="number" required></b-form-input>
       </b-form-group>
 
-       <b-form-group label="Bits">
-         <b-input-group size="sm" v-for="(bit, index) in user.bits" :key="index" class="mb-1">
-            {{ user.bits[index] }}
-            <b-input-group-append><b-button size="sm" variant="danger" @click.prevent="delBit(index)">Delete</b-button></b-input-group-append>
-         </b-input-group>
-         <b-button class="mt-1" block size="sm" type="success" variant="success" @click.prevent="addBit">+</b-button>
+       <b-form-group>
+        <template slot="label">Bits <b-button size="sm" type="success" variant="success" @click.prevent="addBit">+</b-button></template>
+
+         <div v-for="(bit, index) in user.bits" :key="index" class="mb-1">
+            <b-form inline>
+              <label>Message</label>
+              <b-input size="sm" class="ml-3" v-model="bit.message"></b-input>
+              <label class="ml-3">Amount</label>
+              <b-input size="sm" class="ml-3" v-model="bit.amount"></b-input>
+              <b-button size="sm" class="ml-3" variant="danger" @click.prevent="delBit(index)">Delete</b-button>
+            </b-form>
+         </div>
+       </b-form-group>
+
+       <b-form-group>
+        <template slot="label">Tips <b-button size="sm" type="success" variant="success" @click.prevent="addTip">+</b-button></template>
+
+         <div v-for="(tip, index) in user.tips" :key="index" class="mb-1">
+            <b-form inline>
+              <label>Message</label>
+              <b-input size="sm" class="ml-3" v-model="bit.message"></b-input>
+              <label class="ml-3">Amount</label>
+              <b-input size="sm" class="ml-3" v-model="bit.amount"></b-input>
+              <b-button size="sm" class="ml-3" variant="danger" @click.prevent="delTip(index)">Delete</b-button>
+            </b-form>
+         </div>
        </b-form-group>
 
 
@@ -55,8 +75,8 @@ export default class UsersManagerEdit extends Vue {
     await axios.delete('/api/v1/user', { data: { id: (this.user as any).id } })
   }
 
-  delBit() {
-
+  delBit(index) {
+    this.user.bits.splice(index, 1);
   }
 
   addBit() {
