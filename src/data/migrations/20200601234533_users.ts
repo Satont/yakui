@@ -4,8 +4,8 @@ import * as Knex from "knex";
 export async function up(knex: Knex): Promise<any> {
   return await Promise.all([
     knex.schema.createTable('users', table => {
-      table.integer('id').unique().index(),
-      table.string('username'),
+      table.integer('id').primary().unique().notNullable(),
+      table.string('username').index(),
       table.integer('messages').defaultTo(0)
     }),
     knex.schema.createTable('users_tips', table => {
