@@ -36,8 +36,8 @@
         </b-btn>
       </b-form-group>
 
-      <b-button class="btn-block mb-5" variant="success" v-if="command.enabled" @click.prevent="command.enabled = !command.enabled">Enabled</b-button>
-      <b-button class="btn-block mb-5" variant="warning" v-if="command.enabled" @click.prevent="command.enabled = !command.enabled">Disabled</b-button>
+      <b-button class="btn-block" variant="success" v-if="command.enabled" @click.prevent="command.enabled = !command.enabled">Enabled</b-button>
+      <b-button class="btn-block" variant="warning" v-if="!command.enabled" @click.prevent="command.enabled = !command.enabled">Disabled</b-button>
 
       <b-button class="btn-block" type="submit" variant="primary">Save</b-button>
       <b-button class="btn-block" @click="del" variant="danger" v-if="command.id">Delete</b-button>
