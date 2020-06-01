@@ -15,6 +15,9 @@ export default new class Timers implements System {
       await timer.update({ last: 0, triggerTimeStamp: new Date().getTime() })
       this.timers.push(timer)
     }
+
+    this.process()
+    this.listenUpdates()
   }
 
   async process() {
@@ -22,13 +25,20 @@ export default new class Timers implements System {
     this.timeout = setTimeout(() => this.process(), 10000)
 
     for (const timer of this.timers) {
+      if (!timer.enabled || !twitch.streamMetaData?.startedAt) continue
+
       if ((new Date().getTime() - timer.triggerTimeStamp) > timer.interval * 1000) {
-        if (!twitch.streamMetaData?.startedAt) continue
 
         const message = await variables.parseMessage(timer.responses[timer.last])
         tmi.say({ message })
         await timer.update({ last: ++timer.last % timer.responses.length, triggerTimeStamp: new Date().getTime() })
       }
     }
+  }
+
+  listenUpdates() {
+    Timer.afterCreate(null, () => this.init())
+    Timer.afterDestroy(null, () => this.init())
+    Timer.afterUpdate(null, () => this.init())
   }
 }

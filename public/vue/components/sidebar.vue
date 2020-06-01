@@ -2,6 +2,7 @@
   <div>
   <b-nav vertical class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
     <b-nav-item active><router-link to="/commands">Команды</router-link></b-nav-item>
+    <b-nav-item active><router-link to="/timers">Таймеры</router-link></b-nav-item>
   </b-nav>
 </div>
 

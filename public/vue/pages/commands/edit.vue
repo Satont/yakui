@@ -54,7 +54,7 @@ import axios from 'axios'
 @Component({})
 export default class CommandsManagerEdit extends Vue {
   command: Command = {
-    name: '',
+    name: null,
     response: null,
     cooldown: 10,
     visible: true,

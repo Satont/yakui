@@ -20,14 +20,14 @@ export default new class CustomSystems implements System {
       })
     }
 
-    this.listenCommandUpdates()
+    this.listenUpdates()
   }
 
   async fnc(message: string, raw: TwitchPrivateMessage, command: CommandType) {
     return command.response
   }
 
-  async listenCommandUpdates() {
+  listenUpdates() {
     Command.afterCreate(null, () => this.init())
     Command.afterDestroy(null, () => this.init())
     Command.afterUpdate(null, () => this.init())

@@ -1,46 +1,27 @@
 <template>
   <div>
     <b-form v-on:submit.prevent="onSubmit">
-      <b-form-group label="Command name" label-for="name">
-        <b-form-input id="name" v-model="command.name" type="text" required placeholder="Enter command name"></b-form-input>
+      <b-form-group label="Timer name" label-for="name">
+        <b-form-input id="name" v-model="timer.name" type="text" required placeholder="Enter timer name"></b-form-input>
       </b-form-group>
 
-       <b-form-group label="Command aliases">
-         <b-input-group size="sm" v-for="(aliase, index) in command.aliases" :key="index" class="mb-1">
-            <b-form-input v-model="command.aliases[index]" type="text" placeholder="Command aliase"></b-form-input>
-            <b-input-group-append><b-button size="sm" variant="danger" @click.prevent="delAliase(index)">Delete</b-button></b-input-group-append>
+      <b-form-group label="Timer interval" label-for="interval">
+        <b-form-input id="interval" v-model="timer.interval" type="number" required placeholder="Enter timer interval"></b-form-input>
+      </b-form-group>
+
+       <b-form-group label="Timer responses">
+         <b-input-group size="sm" v-for="(response, index) in timer.responses" :key="index" class="mb-1">
+            <b-form-input v-model="timer.responses[index]" type="text" placeholder="Timer response"></b-form-input>
+            <b-input-group-append><b-button size="sm" variant="danger" @click.prevent="delResponse(index)">Delete</b-button></b-input-group-append>
          </b-input-group>
-         <b-button class="mt-1" block size="sm" type="success" variant="success" @click.prevent="createAliase">+</b-button>
+         <b-button class="mt-1" block size="sm" type="success" variant="success" @click.prevent="addResponse">+</b-button>
        </b-form-group>
 
-      <b-form-group label="Command cooldown" label-for="cooldown">
-        <b-form-input id="cooldown" v-model="command.cooldown" type="number" placeholder="Enter command cooldown"></b-form-input>
-      </b-form-group>
-
-      <b-form-group label="Command permission" label-for="permission">
-        <b-form-select v-model="command.permission" :options="avaliablePermissions" size="sm"></b-form-select>
-      </b-form-group>
-
-      <b-form-group label="Command response" label-for="response">
-        <b-form-input id="response" v-model="command.response" type="text" required placeholder="Enter command response"></b-form-input>
-      </b-form-group>
-
-      <b-form-group label="Command description" label-for="description">
-        <b-form-input id="description" v-model="command.description" type="text" placeholder="Enter command description"></b-form-input>
-      </b-form-group>
-
-      <b-form-group label="Command visibility" label-for="visibility">
-        <b-btn v-bind:class="{ 'btn-success': command.visible, 'btn-danger': !command.visible }" v-on:click="command.visible = !command.visible">
-          <span v-show="command.visible">Visible</span>
-          <span v-show="!command.visible">Not visible</span>
-        </b-btn>
-      </b-form-group>
-
-      <b-button class="btn-block mb-5" variant="success" v-if="command.enabled" @click.prevent="command.enabled = !command.enabled">Enabled</b-button>
-      <b-button class="btn-block mb-5" variant="warning" v-if="command.enabled" @click.prevent="command.enabled = !command.enabled">Disabled</b-button>
+      <b-button class="btn-block" variant="success" v-if="timer.enabled" v-on:click="timer.enabled = !timer.enabled">Enabled</b-button>
+      <b-button class="btn-block" variant="warning" v-if="!timer.enabled" v-on:click="timer.enabled = !timer.enabled">Disabled</b-button>
 
       <b-button class="btn-block" type="submit" variant="primary">Save</b-button>
-      <b-button class="btn-block" @click="del" variant="danger" v-if="command.id">Delete</b-button>
+      <b-button class="btn-block" @click="del" variant="danger" v-if="timer.id">Delete</b-button>
     </b-form>
   </div>
 </template>
@@ -48,65 +29,56 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
-import { Command } from '../../../../src/typings'
+import Timer from '../../../../src/models/Timer'
 import axios from 'axios'
 
 @Component({})
 export default class TimersManagerEdit extends Vue {
-  command: Command = {
-    name: '',
-    response: null,
-    cooldown: 10,
-    visible: true,
-    permission: 'viewers',
-    description: null,
-    aliases: [],
+  timer = {
+    name: null,
     enabled: true,
+    responses: [],
+    interval: 60,
   }
-
-  avaliablePermissions = [
-    { value: 'viewers', text: 'Viewers' },
-    { value: 'followers', text: 'Followers' },
-    { value: 'vips', text: 'Vips' },
-    { value: 'subscribers', text: 'Subscribers' },
-    { value: 'moderators', text: 'Moderators' },
-    { value: 'broadcaster', text: 'Broadcaster' },
-  ]
 
   async onSubmit(event) {
     event.preventDefault()
-    this.filterAliases()
+    this.filterResponses()
 
-    await axios.post('/api/v1/commands', this.command)
-    await this.$router.push({ name: 'CommandManagerList' })
+    if (!this.timer.responses.length) {
+      return alert('Responses cannot be empty')
+    }
+
+    await axios.post('/api/v1/timers', this.timer)
+    await this.$router.push({ name: 'TimersManagerList' })
   }
 
-  filterAliases() {
-    this.command.aliases = this.command.aliases.filter(o => o !== '' && o)
+  filterResponses() {
+    this.timer.responses = this.timer.responses.filter(o => o !== '' && o)
   }
 
   async created() {
     const id = this.$route.params.id as any
 
     if (id) {
-      this.command = this.$route.params as any
+      this.timer = this.$route.params as any
 
-      const { data } = await axios.get('/api/v1/commands/' + id)
+      const { data } = await axios.get('/api/v1/timers/' + id)
 
-      this.command = data
+      this.timer = data
     }
   }
 
   async del() {
-    await axios.delete('/api/v1/commands', { data: { id: this.command.id } })
+    await axios.delete('/api/v1/timers', { data: { id: (this.timer as any).id } })
   }
 
-  createAliase() {
-    this.command.aliases.push(null);
+  addResponse() {
+    this.timer.responses.push(null);
   }
 
-  delAliase(index) {
-    this.command.aliases.splice(index, 1);
+  delResponse(index) {
+    this.timer.responses.splice(index, 1);
   }
 }
 </script>

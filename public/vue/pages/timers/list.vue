@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Command list</h1>
+    <h1>Timers list</h1>
     <p class="pb-2">
       <b-button class="btn-block" variant="primary" size="sm" @click="edit">New timer</b-button>
     </p>
@@ -8,13 +8,13 @@
     <b-card-group deck>
       <b-card v-for="(timer, index) in timers" :key="timer.id" :header="timer.name" text-variant="dark" header-class="p-2" body-class="p-2" footer-class="p-2 footer">
         <b-list-group flush>
-          <b-list-group-item v-for="(response, index) in timer.responses" :key="index">{{ response }}</b-list-group-item>
+          <b-list-group-item v-for="(response, index) in timer.responses" :key="index" class="p-2">{{ response }}</b-list-group-item>
         </b-list-group>
         <template v-slot:footer>
-         <p class="m-0 text-right">
+         <div class="m-0 text-right">
            <b-button class="btn" variant="primary" size="sm" @click="edit(timer)">Edit</b-button>
            <b-button class="btn" variant="danger" size="sm" @click="del(timer.id, index)">Delete</b-button>
-         </p>
+         </div>
         </template>
       </b-card>
     </b-card-group>
@@ -50,8 +50,5 @@ export default class TimersManagerList extends Vue {
 <style scoped>
 .btn {
   opacity: 1 !important;
-}
-.footer {
-  display: flex; justify-content: space-between;
 }
 </style>
