@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "migrate": "knex migrate:latest",
+    "prestart": "knex migrate:latest",
     "start": "node dest/index",
     "build": "npm run build:web && npm run build:bot",
     "dev": "npm run dev:web & npm run dev:bot",

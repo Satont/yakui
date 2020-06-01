@@ -89,7 +89,10 @@ export default new class Tmi {
         if (e.message.includes('Did not receive a reply to join')) return;
         else throw new Error(e)
       })
-      if (type === 'bot') import('./loader')
+      if (type === 'bot') {
+        import('./cache')
+        import('./loader')
+      }
     })
 
     client.onJoin((channel) => {
