@@ -1,4 +1,6 @@
-import { Table, Column, Model, DataType, Default, AllowNull, PrimaryKey } from 'sequelize-typescript'
+import { Table, Column, Model, DataType, Default, AllowNull, PrimaryKey, HasMany } from 'sequelize-typescript'
+import UserBits from './UserBits'
+import UserTips from './UserTips'
  
 @Table({
   tableName: 'users',
@@ -16,4 +18,10 @@ export default class User extends Model<User> {
   @Default(0)
   @Column(DataType.INTEGER)
   public messages: number
+
+  @HasMany(() => UserBits)
+  public bits: UserBits[]
+
+  @HasMany(() => UserTips)
+  public tips: UserTips
 }

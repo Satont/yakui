@@ -1,8 +1,9 @@
 <template>
   <div>
   <b-nav vertical class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
-    <b-nav-item active><router-link to="/commands">Команды</router-link></b-nav-item>
-    <b-nav-item active><router-link to="/timers">Таймеры</router-link></b-nav-item>
+    <b-nav-item active><router-link to="/commands">Commands</router-link></b-nav-item>
+    <b-nav-item active><router-link to="/timers">Timers</router-link></b-nav-item>
+    <b-nav-item active><router-link to="/users">Users</router-link></b-nav-item>
   </b-nav>
 </div>
 

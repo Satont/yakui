@@ -1,6 +1,7 @@
 import { System } from '../typings'
 import TwitchPrivateMessage from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
 import User from '../models/User'
+import { literal } from 'sequelize'
 
 export default new class Users implements System {
   parsers = [
@@ -16,8 +17,7 @@ export default new class Users implements System {
     })
 
     if (!created) {
-      user.update({ username })
-      user.increment('messages')
+      user.update({ username, messages: literal('messages + 1') })
     }
   }
 }

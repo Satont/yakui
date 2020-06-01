@@ -25,6 +25,9 @@ const router = new VueRouter({
 
     { path: '/timers', name: 'TimersManagerList', component: lazyLoad('pages/timers/list.vue') },
     { path: '/timers/edit/:id?', name: 'TimersManagerEdit', component: lazyLoad('pages/timers/edit.vue') },
+
+    { path: '/users', name: 'UsersManagerList', component: lazyLoad('pages/users/list.vue') },
+    { path: '/users/edit/:id?', name: 'UsersManagerEdit', component: lazyLoad('pages/users/edit.vue') },
   ],
 })
 

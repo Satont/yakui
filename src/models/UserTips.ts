@@ -2,10 +2,10 @@ import { Table, Column, Model, DataType, AllowNull, PrimaryKey, ForeignKey, Belo
 import User from './User'
  
 @Table({
-  tableName: 'users_bits',
+  tableName: 'users_tips',
   timestamps: false,
 })
-export default class UserBits extends Model<UserBits> {
+export default class UserTips extends Model<UserTips> {
   @PrimaryKey
   @AutoIncrement
   @Column(DataType.INTEGER)
@@ -17,6 +17,18 @@ export default class UserBits extends Model<UserBits> {
 
   @Column(DataType.TEXT)
   public message: string
+
+  @AllowNull(false)
+  @Column(DataType.STRING)
+  public currency: string
+
+  @AllowNull(false)
+  @Column(DataType.JSON)
+  public rates: object
+
+  @AllowNull(false)
+  @Column(DataType.STRING)
+  public inMainCurrencyAmount: string
 
   @AllowNull(false)
   @Column(DataType.BIGINT)
