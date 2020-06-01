@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-navbar toggleable="lg" type="light" variant="dark" sticky="top" class="flex-md-nowrap p-0 shadow">
+    <b-navbar toggleable="lg" type="light" variant="dark" sticky class="flex-md-nowrap p-0 shadow">
     <b-navbar-brand class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#/">{{ title }}</b-navbar-brand>
     <p>
       <b-badge variant="info">Viewers: {{ streamMetaData.viewers }}</b-badge> |

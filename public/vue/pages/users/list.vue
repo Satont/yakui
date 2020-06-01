@@ -22,13 +22,13 @@
   
       <template v-slot:cell(actions)="data">
       <b-button-group size="sm">
-        <b-button @click="editUser(data.item)" variant="success"><i class="fas fa-save"></i></b-button>
+        <b-button @click="editUser(data.item)" variant="info"><i class="fas fa-pen"></i></b-button>
         <b-button @click="del(data.item.index, data.item.id)" variant="danger"><i class="fas fa-trash"></i></b-button>
       </b-button-group>
     </template>
   </b-table>
 
-  <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" align="center" v-on:input="changePage"></b-pagination>
+  <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" align="center" v-on:input="getUsers"></b-pagination>
   </div>
 </template>
 

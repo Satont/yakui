@@ -2,6 +2,7 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin')
 import { resolve } from 'path'
 
 export default {
+  mode: 'development',
   entry: './public/index.ts',
   output: {
     path: resolve(__dirname, 'public', 'dest'),

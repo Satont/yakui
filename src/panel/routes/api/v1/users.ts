@@ -25,8 +25,21 @@ router.get('/', async (req, res, next) => {
       limit: body.perPage,
       include: [UserBits, UserTips]
     })
-    console.log(users)
+
     res.json(users)
+  } catch (e) {
+    next(e)
+  }
+})
+
+router.get('/:id', async (req, res, next) => {
+  try {
+    const user: User[] = await User.findOne({
+      where: { id: req.params.id },
+      include: [UserBits, UserTips]
+    })
+
+    res.json(user)
   } catch (e) {
     next(e)
   }
