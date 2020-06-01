@@ -96,6 +96,7 @@ router.post('/', checkSchema({
         description: body.description,
         visible: body.visible,
         permission: body.permission,
+        response: body.response,
       })
     }
 

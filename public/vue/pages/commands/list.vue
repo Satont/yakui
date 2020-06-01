@@ -14,6 +14,7 @@
         <template v-slot:footer>
          <p class="m-0">
            <b-button class="btn" disabled variant="dark" size="sm">Cooldown <b-badge variant="light">{{ command.cooldown || 'off' }}</b-badge></b-button>
+           <b-button class="btn" disabled variant="dark" size="sm">Permission <b-badge variant="light">{{ command.permission }}</b-badge></b-button>
          </p>
          <p class="m-0">
            <b-button class="btn" variant="primary" size="sm" @click="edit(command)">Edit</b-button>

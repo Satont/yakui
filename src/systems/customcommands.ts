@@ -8,6 +8,7 @@ export default new class CustomSystems implements System {
 
   constructor() {
     this.init()
+    this.listenCommandUpdates()
   }
 
   async init() {
@@ -26,6 +27,12 @@ export default new class CustomSystems implements System {
   }
 
   async fnc(message: string, raw: TwitchPrivateMessage, command: CommandType) {
-    tmi.say({ message: command.response })
+    return command.response
+  }
+
+  async listenCommandUpdates() {
+    Command.afterCreate(null, () => this.init())
+    Command.afterDestroy(null, () => this.init())
+    Command.afterUpdate(null, () => this.init())
   }
 }

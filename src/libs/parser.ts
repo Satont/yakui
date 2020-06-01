@@ -5,6 +5,7 @@ import { remove } from 'lodash'
 import { System, Command } from "../typings"
 import getFiles from '../commons/getFiles'
 import tmi from "./tmi"
+import Variables from "../systems/variables"
 
 export default new class Parser {
   systems: { [x: string]: System } = {}
@@ -65,9 +66,11 @@ export default new class Parser {
 
       if (!hasPerm) break;
   
-      const commandResult: string = await command.fnc.call(system, message, raw, command)
+      let commandResult: string = await command.fnc.call(system, message, raw, command)
 
       if (!commandResult) break
+
+      commandResult = await Variables.parseMessage(commandResult, raw)
 
       this.cooldowns.includes(command.name) 
           ? tmi.whispers({ target: raw.userInfo.userName, message: commandResult }) 
