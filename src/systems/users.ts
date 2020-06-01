@@ -10,12 +10,14 @@ export default new class Users implements System {
   async parseMessage(message: string, raw: TwitchPrivateMessage) {
     const [id, username] = [raw.userInfo.userId, raw.userInfo.userName]
 
-    const [user]: [User] = await User.findOrBuild({
+    const [user, created]: [User, boolean] = await User.findOrCreate({
       where: { id },
-      defaults: { id, username }
+      defaults: { id, username, messages: 1 }
     })
 
-    user.update({ username })
-    user.increment('messages')
+    if (!created) {
+      user.update({ username })
+      user.increment('messages')
+    }
   }
 }

@@ -36,8 +36,8 @@ export default new class Tmi {
       Settings.findOne({ where: { space: 'oauth', name: `channel` } })
     ])
 
-    if (!accessToken || !refreshToken) {
-      throw (`TMI: accessToken or refreshToken for ${type} not found, client will be not initiliazed.`)
+    if (!refreshToken) {
+      throw (`TMI: refreshToken for ${type} not found, client will be not initiliazed.`)
     }
 
     if (!channel) {
@@ -47,9 +47,9 @@ export default new class Tmi {
     try {
       await this.disconnect(type)
 
-      const { clientId, scopes } = await OAuth.validate(accessToken.value, type)
+      const { clientId, scopes } = await OAuth.validate(accessToken?.value, type)
 
-      this.clients[type] = Twitch.withCredentials(clientId, accessToken.value, scopes)
+      this.clients[type] = Twitch.withCredentials(clientId, accessToken?.value, scopes)
 
       this.chatClients[type] = Chat.forTwitchClient(this.clients[type])
 

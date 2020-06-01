@@ -2,7 +2,11 @@ import axios from 'axios'
 import Settings from '../models/Settings'
 
 export default new class Oauth {
-  async validate (token: string, type: 'bot' | 'broadcaster') {
+  async validate (token: string | null, type: 'bot' | 'broadcaster') {
+    if (!token) {
+      throw `Token for ${type} was not provided, starting updating`
+    }
+
     try {
       const { data } = await axios.get('https://id.twitch.tv/oauth2/validate', { headers: {
         'Authorization': `OAuth ${token}`
@@ -23,13 +27,18 @@ export default new class Oauth {
     try {
       const { data } = await axios.get('http://bot.satont.ru/api/refresh?refresh_token=' + token)
 
-      const [accessToken, refreshToken]: [Settings, Settings] = await Promise.all([
-        Settings.findOne({ where: { space: 'oauth', name: `${type}AccessToken` } }),
-        Settings.findOne({ where: { space: 'oauth', name: `${type}RefreshToken` } })
-      ])
+      const [accessToken, accessTokenCreated]: [Settings, boolean] = await Settings.findOrCreate({ 
+        where: { space: 'oauth', name: `${type}AccessToken` },
+        defaults: { space: 'oauth', name: `${type}AccessToken`, value: data.token }
+      })
 
-      await refreshToken.update({ value: data.refresh })
-      await accessToken.update({ value: data.token })
+      const [refreshToken, refreshTokenCreated]: [Settings, boolean] = await Settings.findOrCreate({ 
+        where: { space: 'oauth', name: `${type}RefreshToken` },
+        defaults: { space: 'oauth', name: `${type}RefreshToken`, value: data.refresh },
+      })
+
+      if (!accessTokenCreated) await accessToken.update({ value: data.token })
+      if (!refreshTokenCreated) await refreshToken.update({ value: data.refresh })
 
       console.info(`Access token of ${type} was refreshed.`)
       return {
