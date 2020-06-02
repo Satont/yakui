@@ -19,12 +19,12 @@ export default new class Variables {
       .replace(/\$stream\.uptime/gimu, twitch.getUptime())
       .replace(/\$random\.(\d)-(\d)/gimu, (match, first, second) => String(random(first, second)))
 
-    if (includesOneOf(result, ['user.messages', 'user.tips', 'user.bits'])) {
+    if (includesOneOf(result, ['user.messages', 'user.tips', 'user.bits', 'user.watched'])) {
       const user = await users.getUserStats({ id: raw?.userInfo.userId })
 
       result = result
         .replace(/\$user\.messages/gimu, String(user.messages))
-        .replace(/\$user\.watched/gimu, String(user.watched))
+        .replace(/\$user\.watched/gimu, `${((user.watched / (1 * 60 * 1000)) / 60).toFixed(1)}h`)
         .replace(/\$user\.tips/gimu, String(user.totalTips))
         .replace(/\$user\.bits/gimu, String(user.totalBits))
     }

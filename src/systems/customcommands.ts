@@ -8,28 +8,24 @@ export default new class CustomSystems implements System {
 
   async init() {
     const commands: Command[] = await Command.findAll()
-    for (const command of commands) {
-      this.commands.push({
-        name: command.name,
-        cooldown: command.cooldown,
-        permission: command.permission,
-        response: command.response,
-        description: command.description,
-        aliases: command.aliases,
-        fnc: this.fnc
-      })
-    }
-
-    this.listenUpdates()
+    
+    this.commands = commands.map(command => ({
+      name: command.name,
+      cooldown: command.cooldown,
+      permission: command.permission,
+      response: command.response,
+      description: command.description,
+      aliases: command.aliases,
+      fnc: this.fnc
+    }))
+   
+    Command.afterCreate(() => this.init())
+    Command.afterDestroy(() => this.init())
+    Command.afterUpdate(() => this.init())
   }
 
   async fnc(message: string, raw: TwitchPrivateMessage, command: CommandType) {
     return command.response
   }
 
-  listenUpdates() {
-    Command.afterCreate(null, () => this.init())
-    Command.afterDestroy(null, () => this.init())
-    Command.afterUpdate(null, () => this.init())
-  }
 }

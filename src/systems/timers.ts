@@ -13,11 +13,15 @@ export default new class Timers implements System {
 
     for (const timer of timers) {
       await timer.update({ last: 0, triggerTimeStamp: Date.now() })
-      this.timers.push(timer)
     }
 
+    this.timers = timers
+
     this.process()
-    this.listenUpdates()
+
+    Timer.afterCreate(() => this.init())
+    Timer.afterDestroy(() => this.init())
+    Timer.afterUpdate(() => this.init())
   }
 
   async process() {
@@ -34,11 +38,5 @@ export default new class Timers implements System {
         await timer.update({ last: ++timer.last % timer.responses.length, triggerTimeStamp: Date.now() })
       }
     }
-  }
-
-  listenUpdates() {
-    Timer.afterCreate(null, () => this.init())
-    Timer.afterDestroy(null, () => this.init())
-    Timer.afterUpdate(null, () => this.init())
   }
 }
