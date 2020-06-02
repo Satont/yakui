@@ -90,7 +90,6 @@ router.delete('/', checkSchema({
   } catch (e) {
     next(e)
   }
-
 })
 
 

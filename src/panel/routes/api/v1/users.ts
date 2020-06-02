@@ -45,4 +45,20 @@ router.get('/:id', async (req, res, next) => {
   }
 })
 
+router.delete('/', checkSchema({
+  id: {
+    isNumeric: true,
+    in: ['body'],
+  }
+}), async (req, res, next) => {
+  try {
+    validationResult(req).throw()
+    await User.destroy({ where: { id: req.body.id }})
+
+    res.send('Ok')
+  } catch (e) {
+    next(e)
+  }
+})
+
 export default router
