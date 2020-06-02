@@ -28,7 +28,7 @@
     </template>
   </b-table>
 
-  <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" align="center" v-on:input="getUsers"></b-pagination>
+  <b-pagination v-model="currentPage" size="sm" :total-rows="totalRows" :per-page="perPage" align="center" v-on:input="getUsers" last-number first-number></b-pagination>
   </div>
 </template>
 
