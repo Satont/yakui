@@ -3,5 +3,5 @@ export default (what: string, arrayOfStrings: string[]) => {
     throw new Error('includesOneOf only accepts an array')
   }
 
-  return arrayOfStrings.some(str => this.includes(str))
+  return arrayOfStrings.some(str => what.includes(str))
 }
