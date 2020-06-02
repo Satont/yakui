@@ -12,7 +12,7 @@ export default class UserTips extends Model<UserTips> {
   public id: number
 
   @AllowNull(false)
-  @Column(DataType.BIGINT)
+  @Column(DataType.REAL)
   public amount: number
 
   @Column(DataType.TEXT)
@@ -27,8 +27,8 @@ export default class UserTips extends Model<UserTips> {
   public rates: object
 
   @AllowNull(false)
-  @Column(DataType.STRING)
-  public inMainCurrencyAmount: string
+  @Column(DataType.REAL)
+  public inMainCurrencyAmount: number
 
   @AllowNull(false)
   @Column(DataType.BIGINT)

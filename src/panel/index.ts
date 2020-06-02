@@ -4,6 +4,8 @@ import { resolve } from 'path'
 
 import v1 from './routes/api/v1'
 
+const PORT = process.env.PORT || 3000
+
 const app = express()
 
 app.use(bodyparser.json())
@@ -17,15 +19,16 @@ app.get('/', (req, res) => {
 app.use('/api/v1', v1)
 
 app.use((err, req: Request, res: Response, next) => {
-  if (err['errors'] && !res.headersSent) return res.status(400).send(err['errors'])
+  console.log(err)
+  if (err['errors'] && !res.headersSent) {
+    return res.status(400).send(err['errors'])
+  }
   else if (!res.headersSent) {
     res.status(500).send(err)
   }
   else next()
-
-  console.error(err)
 })
 
-app.listen(process.env.PORT || 3000, () => {
-  console.info(`PANEL: initiliazed on ${process.env.PORT || 3000} port.`)
+app.listen(PORT, () => {
+  console.info(`PANEL: initiliazed on ${PORT} port.`)
 })

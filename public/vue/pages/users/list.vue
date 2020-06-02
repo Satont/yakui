@@ -53,8 +53,8 @@ export default class UsersManagerList extends Vue {
     { key: 'index', label: '#', tdClass: 'indexes' },
     { key: 'username', sortable: true },
     { key: 'messages', sortable: true },
-    { key: 'tips', sortable: true },
-    { key: 'bits', sortable: true },
+    { key: 'totalTips', sortable: false, label: 'tips' },
+    { key: 'totalBits', sortable: false, label: 'bits' },
     { key: 'actions', sortable: false, label: 'Actions' }
   ]
 

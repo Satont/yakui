@@ -19,9 +19,23 @@ export default class User extends Model<User> {
   @Column(DataType.INTEGER)
   public messages: number
 
+  @Column(DataType.VIRTUAL)
+  get totalBits() {
+    if (this.bits) {
+      return this.bits.reduce((previous, current) => previous + Number(current.amount), 0)
+    } else return 0
+  }
+
+  @Column(DataType.VIRTUAL)
+  get totalTips() {
+    if (this.tips) {
+      return this.tips.reduce((previous, current) => previous + Number(current.inMainCurrencyAmount), 0)
+    } else return 0
+  }
+
   @HasMany(() => UserBits)
   public bits: UserBits[]
 
   @HasMany(() => UserTips)
-  public tips: UserTips
+  public tips: UserTips[]
 }
