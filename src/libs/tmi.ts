@@ -7,6 +7,11 @@ import OAuth from './oauth'
 import Parser from './parser'
 
 export default new class Tmi {
+  private isAlreadyUpdating = {
+    bot: false,
+    broadcaster: false,
+  }
+
   clients: {
     broadcaster: Twitch | null,
     bot: Twitch | null,
@@ -30,19 +35,24 @@ export default new class Tmi {
   }
 
   async connect(type: 'bot' | 'broadcaster') {
+    if (this.isAlreadyUpdating[type]) return;
+    this.isAlreadyUpdating[type] = true
+
     const [accessToken, refreshToken, channel] = await Promise.all([
       Settings.findOne({ where: { space: 'oauth', name: `${type}AccessToken` } }),
       Settings.findOne({ where: { space: 'oauth', name: `${type}RefreshToken` } }),
       Settings.findOne({ where: { space: 'oauth', name: `channel` } })
     ])
 
-    if (!refreshToken) {
+    if (!refreshToken || refreshToken?.value === '') {
       throw (`TMI: refreshToken for ${type} not found, client will be not initiliazed.`)
     }
 
-    if (!channel) {
+    if (!channel || channel?.value === '') {
       throw (`TMI: Channel not setted.`)
     }
+  
+    console.info(`TMI: Starting initiliaze ${type} client`)
 
     try {
       await this.disconnect(type)
@@ -56,10 +66,14 @@ export default new class Tmi {
       this.listeners(type)
       await this.getChannel(channel.value)
       await this.chatClients[type].connect()
+
     } catch (e) {
       console.log(e)
-      await OAuth.refresh(refreshToken.value, type)
-      this.connect(type)
+      OAuth.refresh(refreshToken.value, type)
+        .then(() => this.connect(type))
+    } finally {
+      this.listenUpdates()
+      this.isAlreadyUpdating[type] = false
     }
   }
 
@@ -73,8 +87,12 @@ export default new class Tmi {
 
   async disconnect(type: 'bot' | 'broadcaster') {
     const client = this.chatClients[type] 
+
     if (client) {
       await client.quit()
+  
+      console.info(`TMI: ${type} disconnecting from server`)
+      this.clients[type] = null
       this.chatClients[type] = null
     }
   }
@@ -82,6 +100,10 @@ export default new class Tmi {
   async listeners(type: 'bot' | 'broadcaster') {
     const client = this.chatClients[type]
     
+    client.onDisconnect((manually, reason) => {
+      console.info(`TMI: ${type} disconnected from server`, !manually ? reason.message : undefined)
+    })
+
     client.onConnect(() => {
       console.info(`TMI: ${type.charAt(0).toUpperCase() + type.substring(1)} client connected`)
       this.connected[type] = true
@@ -125,5 +147,20 @@ export default new class Tmi {
       subscribers: badges.has('subscriber'),
       viewers: true,
     }
+  }
+
+  private listenUpdates() {
+    Settings.afterCreate(async (value) => {
+      if (value.space !== 'oauth') return;
+
+      this.connect('bot')
+      this.connect('broadcaster')
+    })
+    Settings.afterUpdate((value) => {
+      if (value.space !== 'oauth') return;
+
+      this.connect('bot')
+      this.connect('broadcaster')
+    })
   }
 }

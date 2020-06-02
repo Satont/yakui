@@ -58,7 +58,7 @@ export default class UsersManagerList extends Vue {
     { key: 'actions', sortable: false, label: 'Actions' }
   ]
 
-  async created() {
+  created() {
     this.getUsers()
   }
 
