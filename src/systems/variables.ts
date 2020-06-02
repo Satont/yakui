@@ -24,6 +24,7 @@ export default new class Variables {
 
       result = result
         .replace(/\$user\.messages/gimu, String(user.messages))
+        .replace(/\$user\.watched/gimu, String(user.watched))
         .replace(/\$user\.tips/gimu, String(user.totalTips))
         .replace(/\$user\.bits/gimu, String(user.totalBits))
     }

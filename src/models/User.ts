@@ -19,6 +19,10 @@ export default class User extends Model<User> {
   @Column(DataType.INTEGER)
   public messages: number
 
+  @Default(0)
+  @Column(DataType.BIGINT)
+  public watched: number
+
   @Column(DataType.VIRTUAL)
   get totalBits() {
     if (this.bits) {

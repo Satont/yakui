@@ -9,16 +9,23 @@
       <template v-slot:cell(index)="data">
         {{ data.index + 1 }}
       </template>
+
       <template v-slot:cell(username)="data">
         {{ data.value }}
       </template>
+
       <template v-slot:cell(messages)="data">
         {{ data.value }}
+      </template>
+
+       <template v-slot:cell(watched)="data">
+         {{ data.value }}
       </template>
 
       <template v-slot:cell(tips)="data">
         {{ data.value }}
       </template>
+
       <template v-slot:cell(bits)="data">
         {{ data.value }}
       </template>
@@ -37,6 +44,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
+
 import axios from 'axios'
 import User from '../../../../src/models/User'
 
@@ -53,6 +61,7 @@ export default class UsersManagerList extends Vue {
     { key: 'index', label: '#', tdClass: 'indexes' },
     { key: 'username', sortable: true },
     { key: 'messages', sortable: true },
+    { key: 'watched', sortable: true, label: 'Watched (hours)', formatter: value => this.watchedHours(value) },
     { key: 'totalTips', sortable: false, label: 'tips' },
     { key: 'totalBits', sortable: false, label: 'bits' },
     { key: 'actions', sortable: false, label: 'Actions' }
@@ -80,6 +89,12 @@ export default class UsersManagerList extends Vue {
     }})
 
     this.users = data
+  }
+
+  watchedHours(time) {
+    const minutes = Number(time) / (1 * 60 * 1000)
+    const hours = (minutes / 60).toFixed(1)
+    return `${hours}h`
   }
 
 }
