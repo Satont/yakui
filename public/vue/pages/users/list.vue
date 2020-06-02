@@ -1,6 +1,9 @@
 <template>
   <div>
-    <h1>Users list</h1>
+    <div class="title">
+      <h1>Users list</h1> 
+      <b-pagination v-model="currentPage" size="sm" :total-rows="totalRows" :per-page="perPage" align="right" v-on:input="getUsers" last-number first-number></b-pagination>
+    </div>
 
     <b-table id="table" striped hover primary-key dark :items="users" :fields="fields" @sort-changed="getUsers" no-local-sorting>
       <template v-slot:cell(index)="data">
@@ -28,7 +31,6 @@
     </template>
   </b-table>
 
-  <b-pagination v-model="currentPage" size="sm" :total-rows="totalRows" :per-page="perPage" align="center" v-on:input="getUsers" last-number first-number></b-pagination>
   </div>
 </template>
 
@@ -86,5 +88,8 @@ export default class UsersManagerList extends Vue {
 <style scoped>
 .btn {
   opacity: 1 !important;
+}
+.title {
+  display: flex; justify-content: space-between;
 }
 </style>
