@@ -4,7 +4,7 @@
       <h1>{{ user.username }}</h1>
 
       <b-form-group label="Messages" label-for="messages">
-        <b-form-input id="messages" v-model="user.messages" type="number" required></b-form-input>
+        <b-form-input id="messages" size="sm" v-model="user.messages" type="number" required></b-form-input>
       </b-form-group>
 
        <b-form-group>
