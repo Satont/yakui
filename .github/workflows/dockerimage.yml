@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Docker Push to Docker Hub
-       uses: opspresso/action-docker@v0.2.8
+      uses: opspresso/action-docker@v0.2.8
       with:
         args: --docker
       env:
