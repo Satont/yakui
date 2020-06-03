@@ -44,7 +44,7 @@ export default new class Test implements System {
   }
 
   async permit(opts: CommandOptions) {
-    return 'qwe'
+    console.log(opts.argument)
   }
 
   async parse(opts: ParserOptions) {

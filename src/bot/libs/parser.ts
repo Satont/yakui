@@ -46,12 +46,17 @@ export default new class Parser {
       message = message.replace('!', '').trim()
       let msgArray = message.toLowerCase().split(' ')
 
+      let findedBy: string
       let command: Command | null = null
 
       for (let i = 0, len = message.split(' ').length; i < len; i++) {
-        const find = system.commands.find(o => o.name === msgArray.join(' ') || o.aliases?.includes(msgArray.join(' ')))
+        const query = msgArray.join(' ')
+        const find = system.commands.find(o => o.name === query || o.aliases?.includes(query))
         if (!find) msgArray.pop()
-        else command = find
+        else {
+          findedBy = query
+          command = find
+        }
       }
 
       if (!command) continue
@@ -65,8 +70,14 @@ export default new class Parser {
       if (userPermissions.some((p, index) => p[1] && index <= commandPermissionIndex)) hasPerm = true
 
       if (!hasPerm) break;
-  
-      let commandResult: string = await command.fnc.call(system, { message, raw, command })
+      
+      if (command.cooldown && command.cooldown !== 0) {
+        this.cooldowns.push(command.name)
+        setTimeout(() => this.cooldowns.splice(this.cooldowns.indexOf(command.name)), command.cooldown * 1000)
+      }
+
+      const argument = message.replace(new RegExp(`^${findedBy}`), '').trimLeft()
+      let commandResult: string = await command.fnc.call(system, { message, raw, command, argument })
 
       if (!commandResult) break
 
@@ -76,10 +87,6 @@ export default new class Parser {
           ? tmi.whispers({ target: raw.userInfo.userName, message: commandResult }) 
           : tmi.say({ message: commandResult })
 
-      if (command.cooldown && command.cooldown !== 0) {
-        this.cooldowns.push(command.name)
-        setTimeout(() => remove(this.cooldowns, o => o === command.name), command.cooldown * 1000)
-      }
     }
   }
 }
