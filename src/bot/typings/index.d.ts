@@ -35,3 +35,13 @@ export interface System {
   commands?: Command[],
   init?: () => void | Promise<void>
 }
+
+export interface ModerationWarnings {
+  links: string[],
+  blacklist: string[],
+  symbols: string[],
+  longMessage: string[],
+  caps: string[],
+  color: string[],
+  emotes: string[],
+}

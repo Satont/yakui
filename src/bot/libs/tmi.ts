@@ -135,6 +135,11 @@ export default new class Tmi {
     console.info(`${moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')} <<< ${message}`)
   }
 
+  async timeout({ username, duration, reason }: { username: string, duration: number, reason?: string }) {
+    await this.chatClients.bot?.timeout(this.channel.name, username, duration, reason)
+    console.info(`${moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')} +timeout ${username} | ${duration}s | ${reason ?? ''}`)
+  }
+
   async whispers({ type = 'bot', message, target }: { type?: 'bot' | 'broadcaster', message: string, target: string }) {
     this.chatClients[type]?.whisper(target, message)
     console.info(`${moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')} <<<W ${message}`)
@@ -145,7 +150,7 @@ export default new class Tmi {
       broadcaster: badges.has('broadcaster'),
       moderators: badges.has('moderator'),
       vips: badges.has('vip'),
-      subscribers: badges.has('subscriber'),
+      subscribers: (badges.has('subscriber') || badges.has(('founder'))),
       viewers: true,
     }
   }
