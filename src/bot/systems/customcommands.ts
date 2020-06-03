@@ -1,7 +1,6 @@
 import { System, Command as CommandType } from '../typings'
 import TwitchPrivateMessage from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
 import Command from '../models/Command'
-import tmi from '../libs/tmi'
 
 export default new class CustomCommands implements System {
   commands: CommandType[] = []
