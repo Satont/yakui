@@ -6,12 +6,12 @@ import includesOneOf from '../commons/includesOneOf'
 import users from './users'
 
 export default new class Variables {
-  async parseMessage(message: string, raw?: TwitchPrivateMessage) {
-    let result = message
+  async parseMessage(opts: { message: string, raw: TwitchPrivateMessage }) {
+    let result = opts.message
 
     result = result
-      .replace(/\$sender/gimu, '@' + raw?.userInfo.userName)
-      .replace(/\$followage/gimu, await twitch.getFollowAge(raw?.userInfo.userId))
+      .replace(/\$sender/gimu, '@' + opts.raw?.userInfo.userName)
+      .replace(/\$followage/gimu, await twitch.getFollowAge(opts.raw?.userInfo.userId))
       .replace(/\$stream\.viewers/gimu, String(twitch.streamMetaData?.viewers ?? 0))
       .replace(/\$channel\.views/gimu, String(twitch.channelMetaData?.views ?? 0))
       .replace(/\$channel\.game/gimu, twitch.streamMetaData?.game)
@@ -20,7 +20,7 @@ export default new class Variables {
       .replace(/\$random\.(\d)-(\d)/gimu, (match, first, second) => String(random(first, second)))
 
     if (includesOneOf(result, ['user.messages', 'user.tips', 'user.bits', 'user.watched'])) {
-      const user = await users.getUserStats({ id: raw?.userInfo.userId })
+      const user = await users.getUserStats({ id: opts.raw?.userInfo.userId })
 
       result = result
         .replace(/\$user\.messages/gimu, String(user.messages))

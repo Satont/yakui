@@ -80,7 +80,7 @@ export default new class Parser {
 
       if (!commandResult) break
 
-      commandResult = await Variables.parseMessage(commandResult, raw)
+      commandResult = await Variables.parseMessage({ message: commandResult, raw })
 
       this.cooldowns.includes(command.name) 
           ? tmi.whispers({ target: raw.userInfo.userName, message: commandResult }) 
