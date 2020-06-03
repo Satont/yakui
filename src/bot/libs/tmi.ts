@@ -138,9 +138,14 @@ export default new class Tmi {
     })
 
     if (type === 'bot') {
+      client.onAction(async (channel, user, message, raw) => {
+        (raw as any).isAction = true
+        console.info(`${moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')} >>> ${user}: ${message}`)
+        await Parser.parse(message, raw)
+      })
       client.onPrivmsg(async (channel, user, message, raw) => {
         console.info(`${moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')} >>> ${user}: ${message}`)
-        Parser.parse(message, raw)
+        await Parser.parse(message, raw)
       })
     }
   }

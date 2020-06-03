@@ -218,6 +218,8 @@ export default new class Moderation implements System {
     const username = opts.raw.userInfo.userName.toLowerCase()
     const type = 'emotes'
 
+    if ((opts.raw as any).isAction) return false
+
     if (this.doesWarned({ type, username })) {
       tmi.timeout({ username, duration: settings.timeout.time, reason: settings.timeout.message })
 
