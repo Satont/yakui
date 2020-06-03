@@ -27,6 +27,8 @@ export default new class Twitch {
   }
 
   private async getStreamData() {
+    setTimeout(() => this.getStreamData(), 1 * 60 * 1000)
+
     const data = await tmi?.clients?.bot?.helix.streams.getStreamByUserId(tmi.channel.id)
 
     if (data && !this.streamMetaData.startedAt) onStreamStart()
@@ -39,17 +41,17 @@ export default new class Twitch {
       startedAt: data?.startDate ?? null
     }
 
-    setTimeout(() => this.getStreamData(), 1 * 60 * 1000)
   }
 
   private async getChannelData() {
+    setTimeout(() => this.getChannelData(), 1 * 60 * 1000)
+    
     const data = await tmi?.clients?.bot?.helix.users.getUserById(tmi.channel.id)
 
     this.channelMetaData = {
       views: data?.views ?? 0
     }
 
-    setTimeout(() => this.getChannelData(), 1 * 60 * 1000)
   }
 
   async getFollowAge(userId: string) {
