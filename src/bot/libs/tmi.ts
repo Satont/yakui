@@ -39,8 +39,6 @@ export default new class Tmi {
   constructor() {
     this.connect('bot')
     this.connect('broadcaster')
-
-    this.listenDbUpdates()
   }
 
   async connect(type: 'bot' | 'broadcaster') {
@@ -171,7 +169,7 @@ export default new class Tmi {
     }
   }
 
-  private listenDbUpdates() {
+  listenDbUpdates() {
     Settings.afterSave((value => {
       if (value.space !== 'oauth') return;
       setTimeout(() => {

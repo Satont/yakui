@@ -18,9 +18,6 @@ export default new class Timers implements System {
     this.timers = timers
 
     this.process()
-
-    Timer.afterSave(() => this.init())
-    Timer.afterDestroy(() => this.init())
   }
 
   async process() {
@@ -37,5 +34,10 @@ export default new class Timers implements System {
         await timer.update({ last: ++timer.last % timer.responses.length, triggerTimeStamp: Date.now() })
       }
     }
+  }
+
+  listenDbUpdates() {
+    Timer.afterSave(() => this.init())
+    Timer.afterDestroy(() => this.init())
   }
 }

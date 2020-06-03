@@ -36,4 +36,5 @@ export interface System {
   init?: () => void | Promise<void>,
   onStreamEnd?: () => void | Promise<void>,
   onStreamStart?: () => void | Promise<void>,
+  listenDbUpdates?: () => void | Promise<void>
 }
