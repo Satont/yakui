@@ -33,7 +33,9 @@ export interface System {
     fnc: function
   }>;
   commands?: Command[],
-  init?: () => void | Promise<void>
+  init?: () => void | Promise<void>,
+  onStreamEnd?: () => void | Promise<void>,
+  onStreamStart?: () => void | Promise<void>,
 }
 
 export interface ModerationWarnings {

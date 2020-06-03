@@ -24,6 +24,18 @@ export default new class Test implements System {
     emotes: [],
   }
 
+  onStreamEnd() {
+    for (const [type] of Object.entries(this.warnings)) {
+      this[type] = []
+    }
+  }
+
+  onStreamStart() {
+    for (const [type] of Object.entries(this.warnings)) {
+      this[type] = []
+    }
+  }
+
   private checkDoesWarned({ type, username }: { type: keyof ModerationWarnings, username: string }) {
     return this.warnings[type].includes(username.toLowerCase())
   }

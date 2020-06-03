@@ -1,5 +1,8 @@
 import { resolve } from 'path'
 import getFiles from '../commons/getFiles'
+import { System } from '../typings';
+
+export const loadedSystems: System[] = []
 
 const loader = async () => {
   for await (const file of getFiles(resolve(__dirname, '..', 'systems'))) {
@@ -9,6 +12,7 @@ const loader = async () => {
 
     if (typeof loadedFile.default.init !== 'undefined') await loadedFile.default.init()
     console.log(`System ${loadedFile.default.constructor.name.toUpperCase()} loaded`)
+    loadedSystems.push(loadedFile.default)
   }
 
   for await (const file of getFiles(resolve(__dirname, '..', 'customSystems'))) {
@@ -18,6 +22,7 @@ const loader = async () => {
 
     if (typeof loadedFile.default.init !== 'undefined') await loadedFile.default.init()
     console.log(`Custom System ${loadedFile.default.constructor.name.toUpperCase()} loaded`)
+    loadedSystems.push(loadedFile.default)
   }
 }
 
