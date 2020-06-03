@@ -27,14 +27,12 @@ export default new class Twitch {
 
   private async getStreamData() {
     const data = await tmi?.clients?.bot?.helix.streams.getStreamByUserId(tmi.channel.id)
- 
-    if (data) {
-      this.streamMetaData = {
-        viewers: data.viewers,
-        game: (await data.getGame())?.name ?? 'No data',
-        title: data.title ?? 'No data',
-        startedAt: data.startDate
-      }
+
+    this.streamMetaData = {
+      viewers: data?.viewers ?? 0,
+      game: (await data?.getGame())?.name ?? 'No data',
+      title: data?.title ?? 'No data',
+      startedAt: data?.startDate ?? null
     }
 
     setTimeout(() => this.getStreamData(), 1 * 60 * 1000)
