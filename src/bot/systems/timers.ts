@@ -33,7 +33,7 @@ export default new class Timers implements System {
 
       if ((Date.now() - timer.triggerTimeStamp) > timer.interval * 1000) {
 
-        const message = await variables.parseMessage(timer.responses[timer.last])
+        const message = await variables.parseMessage({ message: timer.responses[timer.last] })
         tmi.say({ message })
         await timer.update({ last: ++timer.last % timer.responses.length, triggerTimeStamp: Date.now() })
       }
