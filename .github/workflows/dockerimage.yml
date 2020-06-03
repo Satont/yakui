@@ -1,0 +1,22 @@
+name: Publish Docker
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Docker Push to Docker Hub
+       uses: opspresso/action-docker@v0.2.8
+      with:
+        args: --docker
+      env:
+        USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+        PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+        DOCKERFILE: "Dockerfile"
+        IMAGE_NAME: "twobit/latest"
+        TAG_NAME: ${{ github.sha }}
+        LATEST: "true"
