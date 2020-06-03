@@ -65,6 +65,10 @@ export default new class Moderation implements System {
     if (userPermissions.broadcaster || userPermissions.moderators) return false
     if (await this.links(opts, userPermissions)) return true
     if (await this.symbols(opts, userPermissions)) return true
+    if (await this.longMessage(opts, userPermissions)) return true
+    if (await this.caps(opts, userPermissions)) return true
+    if (await this.color(opts, userPermissions)) return true
+    if (await this.emotes(opts, userPermissions)) return true
   }
 
   async links(opts: ParserOptions, permissions: UserPermissions) {
