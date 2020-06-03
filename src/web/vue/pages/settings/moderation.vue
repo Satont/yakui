@@ -109,6 +109,109 @@
           </div>
         </div>
 
+        <div class="col-md-6">
+          <div class="card bg-dark">
+            <div class="card-header">Caps</div>
+            <div class="card-body">
+              <div class="btn-group btn-group-sm d-flex mb-3">
+                <b-btn size="sm" class="w-100" v-bind:class="{ 'btn-success': settings.caps.enabled, 'btn-danger': !settings.caps.enabled }" @click="settings.caps.enabled = !settings.caps.enabled">
+                  <span v-show="settings.caps.enabled">Enabled</span>
+                  <span v-show="!settings.caps.enabled">Disabled</span>
+                </b-btn>
+                <b-btn class="w-100" v-bind:class="{ 'btn-success': settings.caps.subscribers, 'btn-danger': !settings.caps.subscribers }" @click="settings.caps.subscribers = !settings.caps.subscribers">
+                  <span>Moderate subscribers</span>
+                </b-btn>
+                <b-btn class="w-100" v-bind:class="{ 'btn-success': settings.caps.vips, 'btn-danger': !settings.caps.vips }" @click="settings.caps.vips = !settings.caps.vips">
+                  <span>Moderate vips</span>
+                </b-btn>
+              </div>
+
+              <b-input-group size="sm" prepend="Trigger length" append="max percentage">
+                <b-form-input type="number" v-model.number="settings.caps.trigger['length']"></b-form-input>
+                <b-form-input type="text" v-model.trim="settings.caps.trigger.percent"></b-form-input>
+              </b-input-group>
+
+              <b-input-group size="sm" class="mt-1" prepend="Timeout time" append="message">
+                <b-form-input type="number" v-model.number="settings.caps.timeout.time"></b-form-input>
+                <b-form-input type="text" v-model.trim="settings.caps.timeout.message"></b-form-input>
+              </b-input-group>
+
+              <b-input-group size="sm" class="mt-1" prepend="Warning time" append="message">
+                <b-form-input type="number" v-model.number="settings.caps.warning.time"></b-form-input>
+                <b-form-input type="text" v-model.trim="settings.caps.warning.message"></b-form-input>
+              </b-input-group>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="card bg-dark">
+            <div class="card-header">Color</div>
+            <div class="card-body">
+              <div class="btn-group btn-group-sm d-flex mb-3">
+                <b-btn size="sm" class="w-100" v-bind:class="{ 'btn-success': settings.color.enabled, 'btn-danger': !settings.color.enabled }" @click="settings.color.enabled = !settings.color.enabled">
+                  <span v-show="settings.color.enabled">Enabled</span>
+                  <span v-show="!settings.color.enabled">Disabled</span>
+                </b-btn>
+                <b-btn class="w-100" v-bind:class="{ 'btn-success': settings.color.subscribers, 'btn-danger': !settings.color.subscribers }" @click="settings.color.subscribers = !settings.color.subscribers">
+                  <span>Moderate subscribers</span>
+                </b-btn>
+                <b-btn class="w-100" v-bind:class="{ 'btn-success': settings.color.vips, 'btn-danger': !settings.color.vips }" @click="settings.color.vips = !settings.color.vips">
+                  <span>Moderate vips</span>
+                </b-btn>
+              </div>
+
+              <b-input-group size="sm" class="mt-1" prepend="Timeout time" append="message">
+                <b-form-input type="number" v-model.number="settings.color.timeout.time"></b-form-input>
+                <b-form-input type="text" v-model.trim="settings.color.timeout.message"></b-form-input>
+              </b-input-group>
+
+              <b-input-group size="sm" class="mt-1" prepend="Warning time" append="message">
+                <b-form-input type="number" v-model.number="settings.color.warning.time"></b-form-input>
+                <b-form-input type="text" v-model.trim="settings.color.warning.message"></b-form-input>
+              </b-input-group>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="card bg-dark">
+            <div class="card-header">Emotes</div>
+            <div class="card-body">
+              <div class="btn-group btn-group-sm d-flex mb-3">
+                <b-btn size="sm" class="w-100" v-bind:class="{ 'btn-success': settings.emotes.enabled, 'btn-danger': !settings.emotes.enabled }" @click="settings.emotes.enabled = !settings.emotes.enabled">
+                  <span v-show="settings.emotes.enabled">Enabled</span>
+                  <span v-show="!settings.emotes.enabled">Disabled</span>
+                </b-btn>
+                <b-btn class="w-100" v-bind:class="{ 'btn-success': settings.emotes.subscribers, 'btn-danger': !settings.emotes.subscribers }" @click="settings.emotes.subscribers = !settings.emotes.subscribers">
+                  <span>Moderate subscribers</span>
+                </b-btn>
+                <b-btn class="w-100" v-bind:class="{ 'btn-success': settings.emotes.vips, 'btn-danger': !settings.emotes.vips }" @click="settings.emotes.vips = !settings.emotes.vips">
+                  <span>Moderate vips</span>
+                </b-btn>
+              </div>
+
+
+              <b-input-group size="sm" prepend="Trigger length" >
+                <b-form-input type="number" v-model.number="settings.emotes.trigger['length']"></b-form-input>
+              </b-input-group>
+
+              <b-input-group size="sm" class="mt-1" prepend="Timeout time" append="message">
+                <b-form-input type="number" v-model.number="settings.emotes.timeout.time"></b-form-input>
+                <b-form-input type="text" v-model.trim="settings.emotes.timeout.message"></b-form-input>
+              </b-input-group>
+
+              <b-input-group size="sm" class="mt-1" prepend="Warning time" append="message">
+                <b-form-input type="number" v-model.number="settings.emotes.warning.time"></b-form-input>
+                <b-form-input type="text" v-model.trim="settings.emotes.warning.message"></b-form-input>
+              </b-input-group>
+
+            </div>
+          </div>
+        </div>
+
       </div>
     </b-form>
   </div>
@@ -168,7 +271,53 @@ export default class ModerationSettings extends Vue {
       trigger: {
         length: 300,
       },
-    }
+    },
+    caps: {
+      enabled: false,
+      vips: false,
+      subscribers: false,
+      timeout: {
+        time: 600,
+        message: 'to much caps'
+      },
+      warning: {
+        time: 10,
+        message: 'to much caps [warn]'
+      },
+      trigger: {
+        length: 15,
+        percent: 50
+      },
+    },
+    color: {
+      enabled: false,
+      vips: false,
+      subscribers: false,
+      timeout: {
+        time: 600,
+        message: '/me disallowed'
+      },
+      warning: {
+        time: 10,
+        message: '/me disallowed [warn]'
+      },
+    },
+    emotes: {
+      enabled: false,
+      vips: false,
+      subscribers: false,
+      timeout: {
+        time: 600,
+        message: '/me disallowed'
+      },
+      warning: {
+        time: 10,
+        message: '/me disallowed [warn]'
+      },
+      trigger: {
+        length: 10
+      }
+    },
   }
 
   async save() {
