@@ -18,7 +18,7 @@ export default new class Variables {
       .replace(/\$channel\.views/gimu, String(twitch.channelMetaData?.views ?? 0))
       .replace(/\$channel\.game/gimu, twitch.streamMetaData?.game)
       .replace(/\$channel\.title/gimu, twitch.streamMetaData?.title)
-      .replace(/\$stream\.uptime/gimu, twitch.getUptime())
+      .replace(/\$stream\.uptime/gimu, twitch.uptime)
       .replace(/\$random\.(\d)-(\d)/gimu, (match, first, second) => String(random(first, second)))
 
     if (includesOneOf(result, ['user.messages', 'user.tips', 'user.bits', 'user.watched']) && userInfo) {

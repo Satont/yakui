@@ -59,7 +59,7 @@ export default new class Twitch {
     return humanizeDuration(Date.now() - new Date(follow.data[0].followDate).getTime(), { units: ['y', 'mo', 'd', 'h', 'm'], round: true })
   }
 
-  getUptime() {
+  get uptime() {
     if (!this.streamMetaData?.startedAt) return 'offline'
 
     return humanizeDuration(Date.now() - new Date(this.streamMetaData?.startedAt).getTime(), { units: ['mo', 'd', 'h', 'm', 's'], round: true })
