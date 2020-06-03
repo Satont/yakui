@@ -147,7 +147,76 @@ export default new class Moderation implements System {
     if (opts.message.length < settings.trigger.length) return false;
 
     const username = opts.raw.userInfo.userName.toLowerCase()
-    const type = 'symbols'
+    const type = 'longMessage'
+
+    if (this.doesWarned({ type, username })) {
+      tmi.timeout({ username, duration: settings.timeout.time, reason: settings.timeout.message })
+
+      this.removeFromWarned({ type, username})
+      return true
+    } else {
+      tmi.timeout({ username, duration: settings.warning.time, reason: settings.warning.message })
+      this.warnings[type].push(username)
+      return true
+    }
+  }
+
+  async caps(opts: ParserOptions, permissions: UserPermissions) {
+    const settings = this.settings.longMessage
+
+    if (!settings.enabled) return false
+    if (!settings.subscribers && permissions.subscribers) return false;
+    if (!settings.vips && permissions.vips) return false;
+
+    if (opts.message.length < settings.trigger.length) return false;
+
+    const username = opts.raw.userInfo.userName.toLowerCase()
+    const type = 'caps'
+    let message = opts.message
+
+    let capsLength = 0
+
+    for (const emote of opts.raw.parseEmotes()) {
+      message = message.slice(emote.position, emote.length)
+    }
+
+    for (let i = 0; i < message.length; i++) {
+      if (message.charAt(i) == message.charAt(i).toUpperCase()) {
+        capsLength += 1
+      }
+    }
+
+    const check = Math.ceil(capsLength / (message.length / 100)) > settings.trigger.length
+
+    if (!check) return false
+
+    if (this.doesWarned({ type, username })) {
+      tmi.timeout({ username, duration: settings.timeout.time, reason: settings.timeout.message })
+
+      this.removeFromWarned({ type, username})
+      return true
+    } else {
+      tmi.timeout({ username, duration: settings.warning.time, reason: settings.warning.message })
+      this.warnings[type].push(username)
+      return true
+    }
+  }
+
+  async color(opts: ParserOptions, permissions: UserPermissions) {
+    return false
+  }
+
+  async emotes(opts: ParserOptions, permissions: UserPermissions) {
+    const settings = this.settings.longMessage
+
+    if (!settings.enabled) return false
+    if (!settings.subscribers && permissions.subscribers) return false;
+    if (!settings.vips && permissions.vips) return false;
+
+    if (opts.raw.emoteOffsets.size < settings.trigger.length) return false;
+
+    const username = opts.raw.userInfo.userName.toLowerCase()
+    const type = 'emotes'
 
     if (this.doesWarned({ type, username })) {
       tmi.timeout({ username, duration: settings.timeout.time, reason: settings.timeout.message })
