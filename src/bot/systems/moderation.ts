@@ -46,7 +46,7 @@ export default new class Moderation implements System {
     for (const [type] of Object.entries(this.warnings)) this[type] = []
   }
 
-  private checkDoesWarned({ type, username }: { type: keyof Warnings, username: string }) {
+  private doesWarned({ type, username }: { type: keyof Warnings, username: string }) {
     return this.warnings[type].includes(username.toLowerCase())
   }
   private removeFromWarned({ type, username }: { type: keyof Warnings, username: string }) {
@@ -76,7 +76,7 @@ export default new class Moderation implements System {
       return false
     }
 
-    if (this.checkDoesWarned({ type, username })) {
+    if (this.doesWarned({ type, username })) {
       tmi.timeout({ username, duration: 600, reason: 'links disallowed' })
 
       this.removeFromWarned({ type, username})
