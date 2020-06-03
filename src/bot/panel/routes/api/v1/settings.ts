@@ -29,7 +29,6 @@ router.get('/', checkSchema({
 
 router.post('/', async (req, res, next) => {
   const body: { space: string, name: string, value: any }[] = req.body
-
   try {
     for (const data of body) {
       const [item, created]: [Settings, boolean] = await Settings.findOrCreate({

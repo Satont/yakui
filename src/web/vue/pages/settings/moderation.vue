@@ -331,9 +331,10 @@ export default class ModerationSettings extends Vue {
 
   async created() {
     const { data } = await axios.get('/api/v1/settings?space=' + this.settings.space)
-    for (const item of data) {
+    console.log(data)
+    /* for (const item of data) {
       this.settings[item.name] = item.value
-    }
+    } */
   }
 }
 </script>

@@ -1,4 +1,4 @@
-import { Table, Column, Model, DataType, PrimaryKey, AutoIncrement } from 'sequelize-typescript'
+import { Table, Column, Model, DataType, PrimaryKey, AutoIncrement, BeforeSave, BeforeUpdate, BeforeCreate, BeforeUpsert, BeforeValidate, Validate } from 'sequelize-typescript'
  
 @Table({
   tableName: 'settings',
@@ -16,6 +16,12 @@ export default class Settings extends Model<Settings> {
   @Column(DataType.STRING)
   public name: string
 
+  @Validate({ asAny() {} })
   @Column(DataType.TEXT)
-  public value: string
+  get value() {
+    return JSON.parse(this.getDataValue('value') as any)
+  }
+  set value(v) {
+    this.setDataValue('value', JSON.stringify(v))
+  }
 }

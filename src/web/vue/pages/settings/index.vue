@@ -1,7 +1,7 @@
 <template>
   <b-tabs content-class="mt-3" align="center">
-    <b-tab title="OAuth" active><OAuth /></b-tab>
-    <b-tab title="Moderation"><Moderation /></b-tab>
+    <b-tab title="OAuth" active lazy><OAuth /></b-tab>
+    <b-tab title="Moderation" lazy><Moderation /></b-tab>
   </b-tabs>
 </template>
 
