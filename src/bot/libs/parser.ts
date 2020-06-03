@@ -1,6 +1,5 @@
 import TwitchPrivateMessage from "twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage"
 import { resolve } from 'path'
-import { remove } from 'lodash'
 
 import { System, Command } from "../typings"
 import getFiles from '../commons/getFiles'
