@@ -1,8 +1,9 @@
 <template>
   <div>
     <b-form @submit.prevent="save">
-      <b-button class="btn-block" variant="success" v-if="settings.enabled" @click.prevent="settings.settings = !settings.enabled">Enabled</b-button>
-      <b-button class="btn-block" variant="warning" v-if="!settings.enabled" @click.prevent="settings.settings = !settings.enabled">Disabled</b-button>
+      <b-button class="btn-block" variant="success" v-if="settings.enabled" @click="settings.enabled = !settings.enabled">Enabled</b-button>
+      <b-button class="btn-block" variant="warning" v-if="!settings.enabled" @click="settings.enabled = !settings.enabled">Disabled</b-button>
+  
       <b-button class="btn-block" type="submit" variant="primary">Save</b-button>
 
       <div class="row cards mt-3">
@@ -331,10 +332,10 @@ export default class ModerationSettings extends Vue {
 
   async created() {
     const { data } = await axios.get('/api/v1/settings?space=' + this.settings.space)
-    console.log(data)
-    /* for (const item of data) {
+
+    for (const item of data) {
       this.settings[item.name] = item.value
-    } */
+    }
   }
 }
 </script>

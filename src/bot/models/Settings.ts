@@ -16,10 +16,9 @@ export default class Settings extends Model<Settings> {
   @Column(DataType.STRING)
   public name: string
 
-  @Validate({ asAny() {} })
   @Column(DataType.TEXT)
   get value() {
-    return JSON.parse(this.getDataValue('value') as any)
+    return JSON.parse(this.getDataValue('value') as string)
   }
   set value(v) {
     this.setDataValue('value', JSON.stringify(v))

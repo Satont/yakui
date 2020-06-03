@@ -17,8 +17,7 @@ router.get('/', checkSchema({
     const space = req.query.space as string
 
     const settings = await Settings.findAll({ 
-      where: { space },
-      raw: true, 
+      where: { space }
     })
 
     res.send(settings)
