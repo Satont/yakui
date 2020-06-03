@@ -29,7 +29,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
-import Timer from '../../../../src/models/Timer'
+import Timer from '../../../../bot/models/Timer'
 import axios from 'axios'
 
 @Component({})

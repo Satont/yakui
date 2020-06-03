@@ -17,7 +17,7 @@ const config: Config = {
   connection,
   migrations: {
     extension: 'ts',
-    directory: 'src/data/migrations',
+    directory: 'src/bot/data/migrations',
     tableName: 'migrations',
   }
 }

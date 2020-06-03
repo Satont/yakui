@@ -46,7 +46,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 
 import axios from 'axios'
-import User from '../../../../src/models/User'
+import User from '../../../../bot/models/User'
 
 @Component
 export default class UsersManagerList extends Vue {

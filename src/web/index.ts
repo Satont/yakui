@@ -6,7 +6,6 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import './css/main.css'
 
-
 Vue.prototype.lazyLoad = (path: string) => import(`./vue/${path}`)
 
 Vue.use(VueRouter)

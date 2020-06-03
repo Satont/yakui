@@ -29,7 +29,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
-import { Command } from '../../../../src/typings'
+import { Command } from '../../../../bot/typings'
 import axios from 'axios'
 
 @Component
