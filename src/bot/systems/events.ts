@@ -1,4 +1,4 @@
-import { parse, evalAsync } from 'expression-eval'
+import safeEval from 'safe-eval'
 import { get } from 'lodash'
 
 import tmi from '../libs/tmi'
@@ -32,9 +32,9 @@ export default new class Events implements System {
   }
 
   async filter(filter: string, opts: any) {
-    const context = this.replaceVariables(opts)
+    const toEval = `(async function evaluation () { return ${filter} })()`
 
-    const run = await evalAsync(parse(filter), context)
+    const run = await safeEval(toEval, this.replaceVariables(opts))
 
     return run
   }
