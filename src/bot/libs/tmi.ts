@@ -5,6 +5,7 @@ import moment from 'moment'
 import Settings from '../models/Settings'
 import OAuth from './oauth'
 import Parser from './parser'
+import { UserPermissions } from '../typings'
 
 export default new class Tmi {
   private isAlreadyUpdating = {
@@ -159,7 +160,7 @@ export default new class Tmi {
     console.info(`${moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')} <<<W ${message}`)
   }
 
-  getUserPermissions(badges: Map<string, string>) {
+  getUserPermissions(badges: Map<string, string>): UserPermissions {
     return {
       broadcaster: badges.has('broadcaster'),
       moderators: badges.has('moderator'),

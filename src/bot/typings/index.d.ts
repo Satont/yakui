@@ -38,3 +38,11 @@ export interface System {
   onStreamStart?: () => void | Promise<void>,
   listenDbUpdates?: () => void | Promise<void>
 }
+
+export interface UserPermissions {
+  broadcaster: boolean,
+  moderators: boolean,
+  vips: boolean,
+  subscribers: boolean,
+  viewers: boolean,
+}
