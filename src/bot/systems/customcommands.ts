@@ -3,7 +3,7 @@ import TwitchPrivateMessage from 'twitch-chat-client/lib/StandardCommands/Twitch
 import Command from '../models/Command'
 import tmi from '../libs/tmi'
 
-export default new class CustomSystems implements System {
+export default new class CustomCommands implements System {
   commands: CommandType[] = []
 
   async init() {
