@@ -70,7 +70,7 @@ export default new class Parser {
 
       if (!hasPerm) break;
       
-      if (command.cooldown && command.cooldown !== 0) {
+      if (command.cooldown && command.cooldown !== 0 && !this.cooldowns.includes(command.name) ) {
         this.cooldowns.push(command.name)
         setTimeout(() => this.cooldowns.splice(this.cooldowns.indexOf(command.name)), command.cooldown * 1000)
       }
