@@ -8,7 +8,6 @@ RUN apk add --no-cache bash
 COPY . /app
 WORKDIR /app
 
-
 RUN npm in stall
 RUN npm prune --production
 
