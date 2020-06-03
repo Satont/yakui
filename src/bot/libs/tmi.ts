@@ -15,23 +15,32 @@ export default new class Tmi {
   clients: {
     broadcaster: Twitch | null,
     bot: Twitch | null,
+  } = {
+    broadcaster: null,
+    bot: null,
   }
   chatClients: {
     broadcaster: Chat | null,
     bot: Chat | null,
+  } = {
+    broadcaster: null,
+    bot: null,
   }
   connected: {
     bot: boolean,
     broadcaster: boolean,
-  } = { bot: false, broadcaster: false }
+  } = { 
+    bot: false,
+    broadcaster: false,
+  }
 
   channel: { name: string, id: string }
 
   constructor() {
-    this.clients = { bot: null, broadcaster: null }
-    this.chatClients = { bot: null, broadcaster: null }
     this.connect('bot')
     this.connect('broadcaster')
+
+    this.listenDbUpdates()
   }
 
   async connect(type: 'bot' | 'broadcaster') {
@@ -41,17 +50,23 @@ export default new class Tmi {
     const [accessToken, refreshToken, channel] = await Promise.all([
       Settings.findOne({ where: { space: 'oauth', name: `${type}AccessToken` } }),
       Settings.findOne({ where: { space: 'oauth', name: `${type}RefreshToken` } }),
-      Settings.findOne({ where: { space: 'oauth', name: `channel` } })
+      Settings.findOne({ where: { space: 'oauth', name: 'channel' } })
     ])
 
-    if (!refreshToken || refreshToken?.value === '') {
+    if (!accessToken || !refreshToken || !channel) {
       this.isAlreadyUpdating[type] = false
-      throw (`TMI: refreshToken for ${type} not found, client will be not initiliazed.`)
+      return
     }
 
-    if (!channel || channel?.value === '') {
+    if (refreshToken.value === '') {
       this.isAlreadyUpdating[type] = false
-      throw (`TMI: Channel not setted.`)
+      throw `TMI: refreshToken for ${type} not found, client will be not initiliazed.`
+    }
+
+    if (channel.value === '') {
+      this.isAlreadyUpdating[type] = false
+      console.log(accessToken, refreshToken, channel)
+      throw `TMI (${type}): Channel not setted.`
     }
   
     console.info(`TMI: Starting initiliaze ${type} client`)
@@ -74,7 +89,6 @@ export default new class Tmi {
       OAuth.refresh(refreshToken.value, type)
         .then(() => this.connect(type))
     } finally {
-      this.listenUpdates()
       this.isAlreadyUpdating[type] = false
     }
   }
@@ -157,12 +171,13 @@ export default new class Tmi {
     }
   }
 
-  private listenUpdates() {
+  private listenDbUpdates() {
     Settings.afterSave((value => {
       if (value.space !== 'oauth') return;
-
-      this.connect('bot')
-      this.connect('broadcaster')
+      setTimeout(() => {
+        this.connect('bot')
+        this.connect('broadcaster')
+      }, 5000)
     }))
   }
 }
