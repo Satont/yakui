@@ -19,9 +19,8 @@ export default new class Timers implements System {
 
     this.process()
 
-    Timer.afterCreate(() => this.init())
+    Timer.afterSave(() => this.init())
     Timer.afterDestroy(() => this.init())
-    Timer.afterUpdate(() => this.init())
   }
 
   async process() {

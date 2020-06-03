@@ -18,9 +18,8 @@ export default new class CustomCommands implements System {
       fnc: this.fnc
     }))
    
-    Command.afterCreate(() => this.init())
     Command.afterDestroy(() => this.init())
-    Command.afterUpdate(() => this.init())
+    Command.afterSave(() => this.init())
   }
 
   async fnc(opts: CommandOptions) {

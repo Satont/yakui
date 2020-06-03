@@ -45,10 +45,12 @@ export default new class Tmi {
     ])
 
     if (!refreshToken || refreshToken?.value === '') {
+      this.isAlreadyUpdating[type] = false
       throw (`TMI: refreshToken for ${type} not found, client will be not initiliazed.`)
     }
 
     if (!channel || channel?.value === '') {
+      this.isAlreadyUpdating[type] = false
       throw (`TMI: Channel not setted.`)
     }
   
@@ -156,17 +158,11 @@ export default new class Tmi {
   }
 
   private listenUpdates() {
-    Settings.afterCreate(async (value) => {
+    Settings.afterSave((value => {
       if (value.space !== 'oauth') return;
 
       this.connect('bot')
       this.connect('broadcaster')
-    })
-    Settings.afterUpdate((value) => {
-      if (value.space !== 'oauth') return;
-
-      this.connect('bot')
-      this.connect('broadcaster')
-    })
+    }))
   }
 }

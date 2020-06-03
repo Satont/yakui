@@ -1,4 +1,4 @@
-import { Table, Column, Model, DataType, PrimaryKey, AutoIncrement, BeforeSave, BeforeUpdate, BeforeCreate, BeforeUpsert, BeforeValidate, Validate } from 'sequelize-typescript'
+import { Table, Column, Model, DataType, PrimaryKey, AutoIncrement } from 'sequelize-typescript'
  
 @Table({
   tableName: 'settings',
