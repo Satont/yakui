@@ -65,7 +65,6 @@ export default new class Users implements System {
     if (!twitch.streamMetaData?.startedAt) return;
 
     for (const chatter of this.chatters) {
-      console.log(chatter)
       const [user, created]: [User, boolean] = await User.findOrCreate({
         where: { id: chatter.id },
         defaults: { id: chatter.id, username: chatter.username }
