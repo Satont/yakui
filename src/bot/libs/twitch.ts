@@ -1,5 +1,6 @@
 import tmi from "./tmi"
 import humanizeDuration from 'humanize-duration'
+import { onStreamStart, onStreamEnd } from "./eventsCaller"
 
 export default new class Twitch {
   streamMetaData: {
@@ -27,6 +28,9 @@ export default new class Twitch {
 
   private async getStreamData() {
     const data = await tmi?.clients?.bot?.helix.streams.getStreamByUserId(tmi.channel.id)
+
+    if (data && !this.streamMetaData.startedAt) onStreamStart()
+    else if (!data && this.streamMetaData.startedAt) onStreamEnd()
 
     this.streamMetaData = {
       viewers: data?.viewers ?? 0,
