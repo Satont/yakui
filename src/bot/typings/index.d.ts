@@ -15,6 +15,18 @@ export interface Command {
   enabled?: boolean,
 }
 
+export interface CommandOptions {
+  message: string,
+  raw: TwitchPrivateMessage
+  command: Command,
+  argument: string,
+}
+
+export interface ParserOptions {
+  message: string,
+  raw: TwitchPrivateMessage
+}
+
 export interface System {
   parsers?: Array<{ 
     name?: string,

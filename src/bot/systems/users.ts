@@ -2,7 +2,7 @@ import TwitchPrivateMessage from 'twitch-chat-client/lib/StandardCommands/Twitch
 import { literal } from 'sequelize'
 import { chunk as makeChunk } from 'lodash'
 
-import { System } from '../typings'
+import { System, ParserOptions } from '../typings'
 import User from '../models/User'
 import tmi from '../libs/tmi'
 import UserTips from '../models/UserTips'
@@ -24,8 +24,8 @@ export default new class Users implements System {
     await this.countWatched()
   }
 
-  async parseMessage(message: string, raw: TwitchPrivateMessage) {
-    const [id, username] = [raw.userInfo.userId, raw.userInfo.userName]
+  async parseMessage(opts: ParserOptions) {
+    const [id, username] = [opts.raw.userInfo.userId, opts.raw.userInfo.userName]
 
     const [user, created]: [User, boolean] = await User.findOrCreate({
       where: { id },

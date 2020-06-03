@@ -16,17 +16,17 @@ export default new class Parser {
     this.loadSystems()
   }
 
-  parse(message: string, raw: TwitchPrivateMessage) {
+  async parse(message: string, raw: TwitchPrivateMessage) {
     const isCommand = message.startsWith('!')
 
     if (isCommand) {
-      this.parseCommand(message, raw)
+      await this.parseCommand(message, raw)
     }
 
     for (let system of Object.values(this.systems)) {
       if (typeof system.parsers === 'undefined') continue
       for (let parser of system.parsers) {
-        parser['fnc'].apply(system, [message, raw])
+        await parser.fnc.call(system, { message, raw })
       }
     }
   }
@@ -66,7 +66,7 @@ export default new class Parser {
 
       if (!hasPerm) break;
   
-      let commandResult: string = await command.fnc.call(system, message, raw, command)
+      let commandResult: string = await command.fnc.call(system, { message, raw, command })
 
       if (!commandResult) break
 

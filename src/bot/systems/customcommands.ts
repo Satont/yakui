@@ -1,4 +1,4 @@
-import { System, Command as CommandType } from '../typings'
+import { System, Command as CommandType, CommandOptions } from '../typings'
 import TwitchPrivateMessage from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
 import Command from '../models/Command'
 
@@ -23,8 +23,8 @@ export default new class CustomCommands implements System {
     Command.afterUpdate(() => this.init())
   }
 
-  async fnc(message: string, raw: TwitchPrivateMessage, command: CommandType) {
-    return command.response
+  async fnc(opts: CommandOptions) {
+    return opts.command.response
   }
 
 }
