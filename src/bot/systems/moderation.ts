@@ -36,7 +36,6 @@ export default new class Moderation implements System {
     for (const item of settings) {
       this.settings[item.name] = item.value
     }
-    console.log(this.settings)
   }
 
   onStreamEnd() {
