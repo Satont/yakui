@@ -12,7 +12,7 @@ export default new class Variables {
     const userInfo = opts.raw?.userInfo
 
     result = result
-      .replace(/\$sender/gimu, '@' + userInfo.userName ?? tmi.chatClients?.bot?.currentNick)
+      .replace(/\$sender/gimu, '@' + userInfo?.userName ?? tmi.chatClients?.bot?.currentNick)
       .replace(/\$followage/gimu, userInfo ? await twitch.getFollowAge(userInfo.userId) : 'invalid')
       .replace(/\$stream\.viewers/gimu, String(twitch.streamMetaData?.viewers ?? 0))
       .replace(/\$channel\.views/gimu, String(twitch.channelMetaData?.views ?? 0))
@@ -22,7 +22,7 @@ export default new class Variables {
       .replace(/\$random\.(\d)-(\d)/gimu, (match, first, second) => String(random(first, second)))
 
     if (includesOneOf(result, ['user.messages', 'user.tips', 'user.bits', 'user.watched']) && userInfo) {
-      const user = await users.getUserStats({ id: userInfo.userId })
+      const user = await users.getUserStats({ id: userInfo?.userId })
 
       result = result
         .replace(/\$user\.messages/gimu, String(user.messages))

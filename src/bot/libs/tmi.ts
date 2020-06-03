@@ -6,6 +6,7 @@ import Settings from '../models/Settings'
 import OAuth from './oauth'
 import Parser from './parser'
 import { UserPermissions } from '../typings'
+import events from '../systems/events'
 
 export default new class Tmi {
   private isAlreadyUpdating = {
@@ -138,14 +139,30 @@ export default new class Tmi {
     })
 
     if (type === 'bot') {
-      client.onAction(async (channel, user, message, raw) => {
+      client.onAction(async (channel, username, message, raw) => {
         (raw as any).isAction = true
-        console.info(`${moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')} >>> ${user}: ${message}`)
+        console.info(`${moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')} >>> ${username}: ${message}`)
+        events.fire({ name: 'message', opts: { username, message } })
         await Parser.parse(message, raw)
       })
-      client.onPrivmsg(async (channel, user, message, raw) => {
-        console.info(`${moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')} >>> ${user}: ${message}`)
+      client.onPrivmsg(async (channel, username, message, raw) => {
+        if (raw.isCheer) {
+          events.fire({ name: 'bits', opts: { amount: raw.totalBits, message }})
+        } else {
+          console.info(`${moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')} >>> ${username}: ${message}`)
+          events.fire({ name: 'message', opts: { username, message } })
+          await Parser.parse(message, raw)
+        }
         await Parser.parse(message, raw)
+      })
+      client.onHost((channel, username, viewers) => {
+        events.fire({ name: 'host', opts: { username, viewers } })
+      })
+      client.onHosted((channel, username, auto, viewers) => {
+        events.fire({ name: 'hosted', opts: { username, viewers } })
+      })
+      client.onRaid((channel, username, { viewerCount }) => {
+        events.fire({ name: 'raided', opts: { username, viewers: viewerCount } })
       })
     }
   }

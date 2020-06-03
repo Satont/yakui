@@ -14,8 +14,9 @@ Vue.component('nav-bar', () => import('./vue/components/navbar.vue'))
 
 const router = new VueRouter({
   routes: [
-    { path: '/', component: () => import('./vue/index.vue'), alias: '/home' },
-    { path: '/settings', component: () => import('./vue/pages/settings/index.vue') },
+    { path: '/', name: 'Home', component: () => import('./vue/index.vue'), alias: '/home' },
+    { path: '/settings', name: 'SettingsManager', component: () => import('./vue/pages/settings/index.vue') },
+    { path: '/events', name: 'EventsManager', component: () => import('./vue/pages/events/index.vue') },
 
     { path: '/commands', name: 'CommandsManagerList', component: () => import('./vue/pages/commands/list.vue') },
     { path: '/commands/edit/:id?', name: 'CommandsManagerEdit', component: () => import('./vue/pages/commands/edit.vue') },
