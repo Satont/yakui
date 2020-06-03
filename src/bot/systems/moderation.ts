@@ -29,8 +29,14 @@ export default new class Moderation implements System {
   settings: ISettings | null = null
 
   async init() {
-    const settings = await Settings.findAll({ where: { space: 'moderation' } })
+    const settings: Settings[] = await Settings.findAll({ where: { space: 'moderation' } })
     if (!settings.length) return;
+    this.settings = {} as any
+
+    for (const item of settings) {
+      this.settings[item.name] = item.value
+    }
+    console.log(this.settings)
   }
 
   onStreamEnd() {
