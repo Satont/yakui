@@ -54,7 +54,9 @@ export default new class Moderation implements System {
   }
 
   async permit(opts: CommandOptions) {
-    console.log(opts.argument)
+    this.permits.push(opts.argument.trim())
+
+    return `$sender permit added for ${opts.argument}`
   }
 
   async parse(opts: ParserOptions) {
