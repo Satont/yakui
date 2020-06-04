@@ -1,7 +1,7 @@
 import TwitchPrivateMessage from "twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage"
 import { resolve } from 'path'
 
-import { System, Command } from "../typings"
+import { System, Command } from "../../../typings"
 import getFiles from '../commons/getFiles'
 import tmi from "./tmi"
 import Variables from "../systems/variables"

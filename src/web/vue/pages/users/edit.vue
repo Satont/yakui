@@ -15,7 +15,7 @@
               <label>Message</label>
               <b-input size="sm" class="ml-3" v-model="bit.message"></b-input>
               <label class="ml-3">Amount</label>
-              <b-input size="sm" class="ml-3" type="number" v-model="bit.amount"></b-input>
+              <b-input size="sm" class="ml-3" type="number" v-model.number="bit.amount"></b-input>
 
               <b-button size="sm" class="ml-3" variant="danger" @click.prevent="del('bits', index)">Delete</b-button>
             </b-form>
@@ -30,7 +30,7 @@
               <label>Message</label>
               <b-input size="sm" class="ml-3" v-model="tip.message"></b-input>
               <label class="ml-3">Amount</label>
-              <b-input size="sm" class="ml-3" type="number" v-model="tip.amount"></b-input>
+              <b-input size="sm" class="ml-3" type="number" v-model.number="tip.amount"></b-input>
               <label class="ml-3">Currency</label>
               <b-form-select size="sm" class="ml-3" v-model="tip.currency" :options="avaliableCurrency"></b-form-select>
 
@@ -54,6 +54,7 @@ import axios from 'axios'
 @Component({})
 export default class UsersManagerEdit extends Vue {
   user = {
+    id: null,
     username: '',
     messages: 0,
     tips: [],
@@ -95,7 +96,7 @@ export default class UsersManagerEdit extends Vue {
       amount: 0,
       message: null,
       timestamp: Date.now(),
-      userId: (this.user as any).id
+      userId: this.user.id
     })
   }
   
@@ -105,7 +106,7 @@ export default class UsersManagerEdit extends Vue {
       message: null,
       currency: 'RUB',
       timestamp: Date.now(),
-      userId: (this.user as any).id
+      userId: this.user.id
     })
   }
 }

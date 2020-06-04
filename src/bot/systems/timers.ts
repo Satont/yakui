@@ -1,4 +1,4 @@
-import { System } from '../typings'
+import { System } from '../../../typings'
 import tmi from '../libs/tmi'
 import Timer from '../models/Timer'
 import twitch from '../libs/twitch'

@@ -1,4 +1,4 @@
-import { System, Command as CommandType, CommandOptions } from '../typings'
+import { System, Command as CommandType, CommandOptions } from '../../../typings'
 import TwitchPrivateMessage from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
 import Command from '../models/Command'
 

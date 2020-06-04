@@ -1,5 +1,5 @@
 import { Table, Column, Model, DataType, PrimaryKey, AutoIncrement, Default, AllowNull } from 'sequelize-typescript'
-import { CommandPermission } from '../typings'
+import { CommandPermission } from '../../../typings'
  
 @Table({
   tableName: 'commands',

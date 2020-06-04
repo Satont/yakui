@@ -11,7 +11,7 @@
     "dev:bot": "nodemon",
     "dev:web": "webpack --config webpack.ts --watch",
     "build:web": "webpack --config webpack.ts",
-    "build:bot": "tsc"
+    "build:bot": "tsc --project src/bot/tsconfig.json"
   },
   "engines": {
     "node": ">=12"

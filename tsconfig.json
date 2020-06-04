@@ -3,14 +3,13 @@
     "target": "es6",
     "module": "commonjs",
     "inlineSourceMap": true,
-    "outDir": "./dest",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
     "typeRoots" : [
-      "./src/bot/typings", 
+      "typings", 
       "node_modules/@types"
     ]
   },
@@ -20,5 +19,5 @@
     "src/**/*.vue",
     "src/**/*.d.ts"
   ],
-  "exclude": ["src/web", "node_modules"]
+  "exclude": ["node_modules"]
 }

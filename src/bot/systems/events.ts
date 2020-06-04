@@ -2,7 +2,7 @@ import safeEval from 'safe-eval'
 import { get } from 'lodash'
 
 import tmi from '../libs/tmi'
-import { System } from '../typings'
+import { System } from '../../../typings'
 import Event from '../models/Event'
 
 export default new class Events implements System {

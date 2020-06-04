@@ -5,7 +5,7 @@ import moment from 'moment'
 import Settings from '../models/Settings'
 import OAuth from './oauth'
 import Parser from './parser'
-import { UserPermissions } from '../typings'
+import { UserPermissions } from '../../../typings'
 import events from '../systems/events'
 
 export default new class Tmi {

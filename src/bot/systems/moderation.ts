@@ -1,5 +1,5 @@
-import { System, Command, CommandOptions, ParserOptions, UserPermissions } from '../typings'
-import { Warnings, ISettings } from '../typings/moderation'
+import { System, Command, CommandOptions, ParserOptions, UserPermissions } from '../../../typings'
+import { Warnings, ISettings } from '../../../typings/moderation'
 import tmi from '../libs/tmi'
 import Settings from '../models/Settings'
 

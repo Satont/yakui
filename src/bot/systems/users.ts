@@ -2,7 +2,7 @@ import TwitchPrivateMessage from 'twitch-chat-client/lib/StandardCommands/Twitch
 import { literal } from 'sequelize'
 import { chunk as makeChunk } from 'lodash'
 
-import { System, ParserOptions } from '../typings'
+import { System, ParserOptions } from '../../../typings'
 import User from '../models/User'
 import tmi from '../libs/tmi'
 import UserTips from '../models/UserTips'
