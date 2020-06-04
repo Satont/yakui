@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": "./",
     "target": "es6",
     "module": "commonjs",
     "inlineSourceMap": true,
@@ -14,10 +15,9 @@
     ]
   },
   "include": [
-    "src/**/*.js",
+    "./",
     "src/**/*.ts",
     "src/**/*.vue",
-    "src/**/*.d.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["src/bot", "node_modules"]
 }
