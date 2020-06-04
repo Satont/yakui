@@ -11,13 +11,13 @@
         <template slot="label">Bits <b-button size="sm" type="success" variant="success" @click.prevent="addBit">+</b-button></template>
 
          <div v-for="(bit, index) in user.bits" :key="index" class="mb-1">
-            <b-form inline>
+            <b-form inline v-if="!bit.delete">
               <label>Message</label>
               <b-input size="sm" class="ml-3" v-model="bit.message"></b-input>
               <label class="ml-3">Amount</label>
               <b-input size="sm" class="ml-3" type="number" v-model="bit.amount"></b-input>
 
-              <b-button size="sm" class="ml-3" variant="danger" @click.prevent="delBit(index)">Delete</b-button>
+              <b-button size="sm" class="ml-3" variant="danger" @click.prevent="del('bits', index)">Delete</b-button>
             </b-form>
          </div>
        </b-form-group>
@@ -34,14 +34,14 @@
               <label class="ml-3">Currency</label>
               <b-form-select size="sm" class="ml-3" v-model="tip.currency" :options="avaliableCurrency"></b-form-select>
 
-              <b-button size="sm" class="ml-3" variant="danger" @click.prevent="delTip(index)">Delete</b-button>
+              <b-button size="sm" class="ml-3" variant="danger" @click.prevent="del('tips', index)">Delete</b-button>
             </b-form>
          </div>
        </b-form-group>
 
 
       <b-button class="btn-block" type="submit" variant="primary">Save</b-button>
-      <b-button class="btn-block" @click="del" variant="danger" v-if="user.id">Delete</b-button>
+      <b-button class="btn-block" @click="delUser" variant="danger" v-if="user.id">Delete</b-button>
     </b-form>
   </div>
 </template>
@@ -59,30 +59,35 @@ export default class UsersManagerEdit extends Vue {
     tips: [],
     bits: []
   }
+  delete = {
+    bits: [],
+    tips: []
+  }
 
   avaliableCurrency = ['USD', 'RUB', 'EUR']
 
   async onSubmit(event) {
     event.preventDefault()
 
-    await axios.post('/api/v1/users', this.user)
+    await axios.post('/api/v1/users', { user: this.user, delete: this.delete })
     await this.$router.push({ name: 'UsersManagerList' })
   }
 
   async created() {
     const id = this.$route.params.id as any
-    console.log(this.$route.params)
+
     this.user = this.$route.params as any
     const { data } = await axios.get('/api/v1/users/' + id)
     this.user = data
   }
 
-  async del() {
+  async delUser() {
     await axios.delete('/api/v1/user', { data: { id: (this.user as any).id } })
   }
 
-  delBit(index) {
-    this.user.bits.splice(index, 1);
+  del(where, index) {
+    this.delete[where].push(this.user[where][index].id)
+    this.user[where].splice(index, 1);
   }
 
   addBit() {
@@ -102,10 +107,6 @@ export default class UsersManagerEdit extends Vue {
       timestamp: Date.now(),
       userId: (this.user as any).id
     })
-  }
-
-  delTip(index) {
-    this.user.tips.splice(index, 1);
   }
 }
 </script>

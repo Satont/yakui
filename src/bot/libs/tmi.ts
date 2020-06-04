@@ -153,7 +153,6 @@ export default new class Tmi {
           events.fire({ name: 'message', opts: { username, message } })
           await Parser.parse(message, raw)
         }
-        await Parser.parse(message, raw)
       })
       client.onHost((channel, username, viewers) => {
         events.fire({ name: 'host', opts: { username, viewers } })

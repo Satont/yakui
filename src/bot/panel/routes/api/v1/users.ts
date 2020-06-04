@@ -61,40 +61,52 @@ router.delete('/', checkSchema({
 })
 
 router.post('/', checkSchema({
-  id: {
-    isNumeric: true,
+  user: {
     in: ['body'],
   }
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
+
     const user: User = await User.findOne({ 
-      where: { id: req.body.id },
+      where: { id: req.body.user?.id },
       include: [UserBits, UserTips]
     })
 
     if (!user) throw new Error('User not found')
 
-    for (let bit of req.body.bits){
-      const [instance, created]: [UserBits, boolean] = await UserBits.findOrCreate({
-        where: { id: bit.id },
-        defaults: bit
-      })
-      if (!created) await instance.update(bit)
+    for (let bit of req.body.user.bits) {
+      if (bit.id) {
+        const [instance, created]: [UserBits, boolean] = await UserBits.findOrCreate({
+          where: { id: bit.id },
+          defaults: bit
+        })
+        if (!created) await instance.update(bit)
+      } else await UserBits.create(bit)
     }
 
-    for (let tip of req.body.tips){
-      const [instance, created]: [UserTips, boolean] = await UserTips.findOrCreate({
-        where: { id: tip.id },
-        defaults: tip
-      })
-      if (!created) await instance.update(tip)
+    for (let bit of req.body.delete.bits) {
+      await UserBits.destroy({ where: { id: bit }})
     }
 
-    delete req.body.bits
-    delete req.body.tips
+    for (let tip of req.body.user.tips){
+      if (tip.id) {
+        const [instance, created]: [UserTips, boolean] = await UserBits.findOrCreate({
+          where: { id: tip.id },
+          defaults: tip
+        })
+        if (!created) await instance.update(tip)
+      } else await UserBits.create(tip)
+    }
 
-    await user.update(req.body)
+    for (let tip of req.body.delete.bits) {
+      await UserBits.destroy({ where: { id: tip }})
+    }
+
+    delete req.body.user.bits
+    delete req.body.user.tips
+
+    await user.update(req.body.user)
 
     res.send('Ok')
   } catch (e) {
