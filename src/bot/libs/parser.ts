@@ -69,11 +69,6 @@ export default new class Parser {
       if (userPermissions.some((p, index) => p[1] && index <= commandPermissionIndex)) hasPerm = true
 
       if (!hasPerm) break;
-      
-      if (command.cooldown && command.cooldown !== 0 && !this.cooldowns.includes(command.name) ) {
-        this.cooldowns.push(command.name)
-        setTimeout(() => this.cooldowns.splice(this.cooldowns.indexOf(command.name)), command.cooldown * 1000)
-      }
 
       const argument = message.replace(new RegExp(`^${findedBy}`), '').trimLeft()
       let commandResult: string = await command.fnc.call(system, { message, raw, command, argument })
@@ -86,6 +81,10 @@ export default new class Parser {
           ? tmi.whispers({ target: raw.userInfo.userName, message: commandResult }) 
           : tmi.say({ message: commandResult })
 
+      if (command.cooldown && command.cooldown !== 0 && !this.cooldowns.includes(command.name) ) {
+        this.cooldowns.push(command.name)
+        setTimeout(() => this.cooldowns.splice(this.cooldowns.indexOf(command.name)), command.cooldown * 1000)
+      }
     }
   }
 }
