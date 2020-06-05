@@ -1,10 +1,7 @@
 node_modules
-package-lock.json
-test.js
 .env
-.env.dev
-payloads.txt
-Heap.*
-logs
-public/dist/*
+dest
+public/dest
 .cache
+src/bot/customSystems/*
+!src/bot/customSystems/.gitkeep

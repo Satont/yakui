@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "target": "es6",
+    "module": "commonjs",
+    "inlineSourceMap": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
+    "typeRoots" : [
+      "typings", 
+      "node_modules/@types"
+    ]
+  },
+  "include": [
+    "./",
+    "src/**/*.ts",
+    "src/**/*.vue",
+  ],
+  "exclude": ["src/bot", "node_modules"]
+}
