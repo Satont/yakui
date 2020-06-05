@@ -81,15 +81,17 @@ export default new class Tmi {
       this.chatClients[type] = Chat.forTwitchClient(this.clients[type])
 
       this.listeners(type)
-      await this.getChannel(channel.value)
+      if (type === 'bot') await this.getChannel(channel.value)
       await this.chatClients[type].connect()
-
     } catch (e) {
       console.log(e)
       OAuth.refresh(refreshToken.value, type)
         .then(() => this.connect(type))
     } finally {
       this.isAlreadyUpdating[type] = false
+      import('./twitch')
+      import('./loader')
+      import('./currency')
     }
   }
 
@@ -128,14 +130,14 @@ export default new class Tmi {
         if (e.message.includes('Did not receive a reply to join')) return;
         else throw new Error(e)
       })
-      if (type === 'bot') {
-        import('./twitch')
-        import('./loader')
-      }
     })
 
     client.onJoin((channel) => {
       console.info(`TMI: Bot joined ${channel.replace('#', '')}`)
+    })
+
+    client.onPart((channel) => {
+      console.info(`TMI: Bot parted ${channel.replace('#', '')}`)
     })
 
     if (type === 'bot') {
