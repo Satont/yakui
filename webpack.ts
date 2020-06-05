@@ -3,7 +3,7 @@ import { resolve } from 'path'
 
 export default {
   mode: 'development',
-  entry: './src/web/index.ts',
+  entry: './src/panel/index.ts',
   output: {
     path: resolve(__dirname, 'public', 'dest'),
     publicPath: resolve(__dirname, 'public', 'dest'),
