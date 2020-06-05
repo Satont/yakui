@@ -59,11 +59,10 @@ export default new class Moderation implements System {
   }
 
   async parse(opts: ParserOptions) {
-    console.log('called', this.settings?.enabled)
     if (!this.settings || !this.settings.enabled) return false
-
     const userPermissions = tmi.getUserPermissions(opts.raw.userInfo.badges) 
     if (userPermissions.broadcaster || userPermissions.moderators) return false
+    console.log(await this.links(opts, userPermissions))
     if (await this.links(opts, userPermissions)) return true
     if (await this.symbols(opts, userPermissions)) return true
     if (await this.longMessage(opts, userPermissions)) return true
