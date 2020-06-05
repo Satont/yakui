@@ -1,4 +1,4 @@
-name: Build Web
+name: Build Web and Bot
 
 on: [push]
 
@@ -18,3 +18,5 @@ jobs:
       run: npm install
     - name: build web
       run: npm run build:web
+    - name: build bot
+      run: npm run build:bot

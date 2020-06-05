@@ -19,4 +19,3 @@ jobs:
         DOCKERFILE: "Dockerfile"
         IMAGE_NAME: "twobit/latest"
         TAG_NAME: ${{ github.sha }}
-        LATEST: "true"
