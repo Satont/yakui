@@ -1,4 +1,5 @@
 console.time('start')
+import 'source-map-support/register'
 import('reflect-metadata')
 require('dotenv').config()
 import { connected } from './libs/db'
