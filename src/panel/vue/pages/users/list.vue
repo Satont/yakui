@@ -53,7 +53,7 @@ export default class UsersManagerList extends Vue {
   users: User[] = []
   sortDesc = false
   sortyBy= 'username'
-  page=  1
+  page = 1
   perPage = 30
   currentPage = 1
   totalRows = 0
@@ -81,14 +81,19 @@ export default class UsersManagerList extends Vue {
   }
 
   async getUsers(o?) {
+    this.sortyBy = o?.sortBy ?? this.sortyBy
+    this.sortDesc = o?.sortDesc ?? this.sortDesc 
+    this.currentPage = o?.currentPage ?? this.currentPage
+  
     const { data } = await axios.get('/api/v1/users', { params: {
-      sortBy: o?.sortBy ?? this.sortyBy, 
-      sortDesc: o?.sortDesc ?? this.sortDesc, 
-      page: o?.currentPage ?? this.currentPage, 
+      sortBy: this.sortyBy, 
+      sortDesc: this.sortDesc, 
+      page: this.currentPage, 
       perPage: this.perPage
     }})
 
-    this.users = data
+    this.users = data.users
+    this.totalRows = data.total
   }
 
   watchedHours(time) {
