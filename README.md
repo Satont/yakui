@@ -48,7 +48,7 @@ version: "3.2"
 
 services:
   twobit:
-    image: twobit/latest
+    image: twobit:latest
     restart: always
     env_file:
       - .env
