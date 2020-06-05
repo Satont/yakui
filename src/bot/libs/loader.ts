@@ -17,6 +17,18 @@ const loader = async () => {
     loadedSystems.push(loadedFile)
   }
 
+  for await (const file of getFiles(resolve(__dirname, '..', 'integrations'))) {
+    if (!file.endsWith('.js') && !file.endsWith('.ts')) continue;
+    
+    const loadedFile: System = (await import(resolve(__dirname, '..', 'integrations', file))).default
+
+    if (typeof loadedFile.init !== 'undefined') await loadedFile.init()
+    if (typeof loadedFile.listenDbUpdates !== 'undefined') await loadedFile.listenDbUpdates()
+
+    console.log(`Integration ${loadedFile.constructor.name.toUpperCase()} loaded`)
+    loadedSystems.push(loadedFile)
+  }
+
   for await (const file of getFiles(resolve(__dirname, '..', 'customSystems'))) {
     if (!file.endsWith('.js') && !file.endsWith('.ts')) continue;
 

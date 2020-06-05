@@ -17,6 +17,7 @@ const router = new VueRouter({
     { path: '/', name: 'Home', component: () => import('./vue/index.vue'), alias: '/home' },
     { path: '/settings', name: 'SettingsManager', component: () => import('./vue/pages/settings/index.vue') },
     { path: '/events', name: 'EventsManager', component: () => import('./vue/pages/events/index.vue') },
+    { path: '/integrations', name: 'IntegrationsManager', component: () => import('./vue/pages/integrations/index.vue') },
 
     { path: '/commands', name: 'CommandsManagerList', component: () => import('./vue/pages/commands/list.vue') },
     { path: '/commands/edit/:id?', name: 'CommandsManagerEdit', component: () => import('./vue/pages/commands/edit.vue') },

@@ -31,7 +31,7 @@ export default new class Events implements System {
     }
   }
 
-  async filter(filter: string, opts: any) {
+  private async filter(filter: string, opts: any) {
     const toEval = `(async function evaluation () { return ${filter} })()`
 
     const run = await safeEval(toEval, this.replaceVariables(opts))
@@ -53,6 +53,7 @@ export default new class Events implements System {
       $username: get(opts, 'username', ''),
       $amount: get(opts, 'amount', ''),
       $message: get(opts, 'message', ''),
+      $currency: get(opts, 'currency', ''),
       '$sub.tier': get(opts, 'sub.tier', 0),
       '$sub.months': get(opts, 'sub.months', 0),
       '$subgift.recipient': get(opts, 'subgift.recipient', ''),
@@ -60,6 +61,10 @@ export default new class Events implements System {
       '$hosted.viewers': get(opts, 'hosted.viewers', 0),
       '$raid.viewers': get(opts, 'raid.viewers', 0),
     }
+  }
+
+  onDonation(data) {
+    this.fire( { name: 'tip', opts: data })
   }
 
   listenDbUpdates() {

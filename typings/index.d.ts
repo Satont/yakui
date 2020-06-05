@@ -36,6 +36,7 @@ export interface System {
   init?: () => void | Promise<void>,
   onStreamEnd?: () => void | Promise<void>,
   onStreamStart?: () => void | Promise<void>,
+  onDonation?: (data) => void | Promise<void>,
   listenDbUpdates?: () => void | Promise<void>
 }
 
@@ -45,4 +46,11 @@ export interface UserPermissions {
   vips: boolean,
   subscribers: boolean,
   viewers: boolean,
+}
+export type DonationData = {
+  userId?: number,
+  username: string,
+  amount: number,
+  message: string,
+  currency: string,
 }
