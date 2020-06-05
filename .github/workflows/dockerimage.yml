@@ -17,3 +17,4 @@ jobs:
           DOCKERFILE: "Dockerfile"
           IMAGE_NAME: "satont/twobit"
           TAG_NAME: ${{ github.sha }}
+          LATEST: "true"
