@@ -65,13 +65,12 @@ export default class UsersManagerEdit extends Vue {
     tips: []
   }
 
-  avaliableCurrency = ['USD', 'RUB', 'EUR']
+  avaliableCurrency = ["RUB", "USD", "EUR", "CAD", "HKD", "ISK", "PHP", "DKK", "HUF", "CZK", "GBP", "RON", "SEK", "IDR", "INR", "BRL", "HRK", "JPY", "THB", "CHF", "EUR", "MYR", "BGN", "TRY", "CNY", "NOK", "NZD", "ZAR", "MXN", "SGD", "AUD", "ILS", "KRW", "PLN"]
 
   async onSubmit(event) {
     event.preventDefault()
 
     await axios.post('/api/v1/users', { user: this.user, delete: this.delete })
-    await this.$router.push({ name: 'UsersManagerList' })
   }
 
   async created() {

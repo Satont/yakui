@@ -15,7 +15,9 @@ export default new class Currency {
     this.updateRates()
   }
 
-  exchange({ amount, from, to }: { amount: number, from: currency, to: currency }) {
+  exchange({ amount, from, to }: { amount: number, from: currency, to?: currency }) {
+    if (!to) to = this.botCurrency
+
     if (from.toLowerCase() === to.toLowerCase()) return amount
 
     if (this.rates[from] === undefined) throw `${from} code was not found`
@@ -46,7 +48,6 @@ export default new class Currency {
       }
 
       console.info('CURRENCY: Successfuly updated')
-      console.log(this.exchange({ amount: 60, from: 'USD', to: 'EUR' }))
     } catch (e) {
       console.error('CURRENCY: Cannot update', e)
     } finally {

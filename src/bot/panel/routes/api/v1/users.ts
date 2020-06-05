@@ -3,6 +3,7 @@ import { checkSchema, validationResult } from 'express-validator'
 import User from '../../../../models/User'
 import UserBits from '../../../../models/UserBits'
 import UserTips from '../../../../models/UserTips'
+import currency from '../../../../libs/currency'
 
 const router = Router({
   mergeParams: true
@@ -84,18 +85,24 @@ router.post('/', checkSchema({
       await UserBits.destroy({ where: { id: bit }})
     }
 
+    for (let tip of req.body.delete.tips) {
+      await UserTips.destroy({ where: { id: tip }})
+    }
+
     for (let tip of req.body.user.tips) {
+      tip = {
+        ...tip,
+        inMainCurrencyAmount: currency.exchange({ amount: tip.amount, from: tip.currency }),
+        rates: currency.rates
+      }
+    
       if (tip.id) {
-        const [instance, created]: [UserTips, boolean] = await UserBits.findOrCreate({
+        const [instance, created]: [UserTips, boolean] = await UserTips.findOrCreate({
           where: { id: tip.id },
           defaults: tip
         })
         if (!created) await instance.update(tip)
-      } else await UserBits.create(tip)
-    }
-
-    for (let tip of req.body.delete.bits) {
-      await UserBits.destroy({ where: { id: tip }})
+      } else await UserTips.create(tip)
     }
 
     delete req.body.user.bits
