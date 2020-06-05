@@ -8,7 +8,8 @@ RUN apk add --no-cache bash
 COPY . /app
 WORKDIR /app
 
-RUN npm in stall
+RUN npm install
+RUN npm run build
 RUN npm prune --production
 
 EXPOSE 3000
