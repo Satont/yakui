@@ -8,6 +8,7 @@ const PORT = process.env.PORT || 3000
 
 const app = express()
 
+app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json())
 app.use('/static', express.static(resolve(process.cwd(), 'public', 'dest')))
 

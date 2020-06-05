@@ -10,22 +10,17 @@ const router = Router({
 
 router.get('/', async (req, res, next) => {
   try {
-    const body: {
-      sortBy: string,
-      sortDesc: boolean,
-      page: number,
-      perPage: number
-    } = req.query as any
+    const body = req.query as any
 
-    const users: User[] = await User.findAll({
-      order: [ [body.sortBy, body.sortDesc ? 'DESC': 'ASC'] ],
-      offset: (body.page - 1) * body.perPage,
-      limit: body.perPage,
-      attributes: { include: ['totalTips', 'totalTips' ]},
-      include: [UserBits, UserTips],
+    const { count, rows }: { count: number, rows: User[] } = await User.findAndCountAll({
+      order: [ [body.sortBy, Boolean(Number(body.sortDesc)) ? 'DESC': 'ASC'] ],
+      offset: (Number(body.page) - 1) * Number(body.perPage),
+      limit: Number(body.perPage),
+      attributes: { include: ['totalTips', 'totalBits' ]},
+      include: [UserBits, UserTips]
     })
 
-    res.json(users)
+    res.json({ users: rows, total: count })
   } catch (e) {
     next(e)
   }
@@ -89,7 +84,7 @@ router.post('/', checkSchema({
       await UserBits.destroy({ where: { id: bit }})
     }
 
-    for (let tip of req.body.user.tips){
+    for (let tip of req.body.user.tips) {
       if (tip.id) {
         const [instance, created]: [UserTips, boolean] = await UserBits.findOrCreate({
           where: { id: tip.id },

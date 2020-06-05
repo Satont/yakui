@@ -105,7 +105,7 @@ export default new class Tmi {
     const client = this.chatClients[type] 
 
     if (client) {
-      client.part(this.channel.name)
+      client.part(this.channel?.name)
       client.quit()
   
       console.info(`TMI: ${type} disconnecting from server`)
@@ -124,7 +124,7 @@ export default new class Tmi {
     client.onConnect(() => {
       console.info(`TMI: ${type.charAt(0).toUpperCase() + type.substring(1)} client connected`)
       this.connected[type] = true
-      client.join(this.channel.name).catch((e) => {
+      client.join(this.channel?.name).catch((e) => {
         if (e.message.includes('Did not receive a reply to join')) return;
         else throw new Error(e)
       })
