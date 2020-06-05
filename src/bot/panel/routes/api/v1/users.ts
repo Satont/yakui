@@ -12,13 +12,14 @@ const router = Router({
 router.get('/', async (req, res, next) => {
   try {
     const body = req.query as any
-    
+
     const { count, rows }: { count: number, rows: User[] } = await User.findAndCountAll({
-      order: [ [body.sortBy, Boolean(body.sortDesc) ? 'DESC': 'ASC'] ],
+      order: [ [body.sortBy, JSON.parse(body.sortDesc) ? 'DESC': 'ASC'] ],
       offset: (Number(body.page) - 1) * Number(body.perPage),
       limit: Number(body.perPage),
       attributes: { include: ['totalTips', 'totalBits' ]},
-      include: [UserBits, UserTips]
+      include: [UserBits, UserTips],
+      logging: true,
     })
 
     res.json({ users: rows, total: count })

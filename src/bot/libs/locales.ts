@@ -27,7 +27,7 @@ export default new class Locales {
     const lang = resolve(langsDir, `${locale.value}.json`)
     this.lang = JSON.parse(readFileSync(lang, 'utf-8'))
 
-    console.info(`LOCALES: Lang ${this.lang.lang?.name || locale.value} loaded`)
+    console.info(`LOCALES: ${this.lang.lang?.name || locale.value} lang loaded`)
   }
 
   translate(...args: any[]) {
