@@ -65,7 +65,7 @@ export default class UsersManagerEdit extends Vue {
     tips: []
   }
 
-  avaliableCurrency = ["RUB", "USD", "EUR", "CAD", "HKD", "ISK", "PHP", "DKK", "HUF", "CZK", "GBP", "RON", "SEK", "IDR", "INR", "BRL", "HRK", "JPY", "THB", "CHF", "EUR", "MYR", "BGN", "TRY", "CNY", "NOK", "NZD", "ZAR", "MXN", "SGD", "AUD", "ILS", "KRW", "PLN"]
+  avaliableCurrency = ["RUB", "USD", "EUR", "CAD", "HKD", "ISK", "PHP", "DKK", "HUF", "CZK", "GBP", "RON", "SEK", "IDR", "INR", "BRL", "HRK", "JPY", "THB", "CHF", "MYR", "BGN", "TRY", "CNY", "NOK", "NZD", "ZAR", "MXN", "SGD", "AUD", "ILS", "KRW", "PLN"]
 
   async onSubmit(event) {
     event.preventDefault()

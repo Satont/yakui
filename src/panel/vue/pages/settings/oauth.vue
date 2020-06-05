@@ -27,7 +27,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import axios from 'axios'
 
 @Component
-export default class GeneralSettings extends Vue {
+export default class Oauth extends Vue {
   settings = {
     space: 'oauth',
     botAccessToken: '',

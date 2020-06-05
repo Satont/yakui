@@ -1,6 +1,7 @@
 import tmi from "./tmi"
 import humanizeDuration from 'humanize-duration'
 import { onStreamStart, onStreamEnd } from "./eventsCaller"
+import locales from './locales'
 
 export default new class Twitch {
   streamMetaData: {
@@ -40,7 +41,6 @@ export default new class Twitch {
       title: data?.title ?? 'No data',
       startedAt: data?.startDate ?? null
     }
-
   }
 
   private async getChannelData() {
@@ -51,19 +51,26 @@ export default new class Twitch {
     this.channelMetaData = {
       views: data?.views ?? 0
     }
-
   }
 
   async getFollowAge(userId: string) {
     const follow = await tmi.clients.bot?.helix.users.getFollows({ followedUser: tmi.channel.id, user: userId })
     if (!follow.total) return 'not follower'
 
-    return humanizeDuration(Date.now() - new Date(follow.data[0].followDate).getTime(), { units: ['y', 'mo', 'd', 'h', 'm'], round: true })
+    return humanizeDuration(Date.now() - new Date(follow.data[0].followDate).getTime(), { 
+      units: ['y', 'mo', 'd', 'h', 'm'],
+      round: true,
+      language: locales.translate('lang.code')
+    })
   }
 
   get uptime() {
     if (!this.streamMetaData?.startedAt) return 'offline'
 
-    return humanizeDuration(Date.now() - new Date(this.streamMetaData?.startedAt).getTime(), { units: ['mo', 'd', 'h', 'm', 's'], round: true })
+    return humanizeDuration(Date.now() - new Date(this.streamMetaData?.startedAt).getTime(), { 
+      units: ['mo', 'd', 'h', 'm', 's'],
+      round: true,
+      language: locales.translate('lang.code')
+    })
   }
 }
