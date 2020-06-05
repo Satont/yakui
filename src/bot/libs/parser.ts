@@ -22,7 +22,7 @@ export default new class Parser {
     for (let system of Object.values(loadedSystems)) {
       if (typeof system.parsers === 'undefined') continue
       for (let parser of system.parsers) {
-        await parser.fnc.apply(system, [{ message, raw }])
+        await parser.fnc.call(system, { message, raw })
       }
     }
   }
@@ -60,7 +60,7 @@ export default new class Parser {
       if (!hasPerm) break;
 
       const argument = message.replace(new RegExp(`^${findedBy}`), '').trimLeft()
-      let commandResult: string = await command.fnc.apply(system, [{ message, raw, command, argument }])
+      let commandResult: string = await command.fnc.call(system, { message, raw, command, argument })
 
       if (!commandResult) break
 
