@@ -14,10 +14,10 @@ export default new class Variables {
     result = result
       .replace(/\$sender/gimu, '@' + userInfo?.userName ?? tmi.chatClients?.bot?.currentNick)
       .replace(/\$followage/gimu, userInfo ? await twitch.getFollowAge(userInfo.userId) : 'invalid')
-      .replace(/\$stream\.viewers/gimu, String(twitch.streamMetaData?.viewers ?? 0))
-      .replace(/\$channel\.views/gimu, String(twitch.channelMetaData?.views ?? 0))
-      .replace(/\$channel\.game/gimu, twitch.streamMetaData?.game)
-      .replace(/\$channel\.title/gimu, twitch.streamMetaData?.title)
+      .replace(/\$stream\.viewers/gimu, String(twitch.streamMetaData.viewers))
+      .replace(/\$channel\.views/gimu, String(twitch.channelMetaData.views))
+      .replace(/\$channel\.game/gimu, twitch.channelMetaData.game)
+      .replace(/\$channel\.title/gimu, twitch.channelMetaData.title)
       .replace(/\$stream\.uptime/gimu, twitch.uptime)
       .replace(/\$random\.(\d)-(\d)/gimu, (match, first, second) => String(random(first, second)))
 

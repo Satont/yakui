@@ -8,5 +8,4 @@ router.get('/', (req, res) => {
   res.json({ bot: { username: tmi.chatClients?.bot?.currentNick }, channelMetaData: twitch.channelMetaData, streamMetaData: twitch.streamMetaData })
 })
 
-
 export default router

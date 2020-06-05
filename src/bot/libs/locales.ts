@@ -15,6 +15,7 @@ export default new class Locales {
 
   constructor() {
     this.init()
+    this.listenDbChanges()
   }
 
   async init() {
@@ -35,5 +36,18 @@ export default new class Locales {
 
     if (!result) return get(this.lang, 'errors.langStringNotFound')
     return parameterizedString(result, ...args.slice(1))
+  }
+
+  listenDbChanges() {
+    Settings.afterCreate((instance) => {
+      if (instance.name !== 'locale') return
+      
+      this.init()
+    })
+    Settings.afterUpdate((instance) => {
+      if (instance.name !== 'locale') return
+      
+      this.init()
+    })
   }
 }

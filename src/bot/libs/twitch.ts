@@ -6,20 +6,20 @@ import locales from './locales'
 export default new class Twitch {
   streamMetaData: {
     viewers: number,
-    game: string,
-    title: string,
     startedAt: Date
   } = {
     viewers: 0,
-    game: 'No data',
-    title: 'No data',
     startedAt: null
   }
 
   channelMetaData: {
-    views: number
+    views: number,
+    game: string,
+    title: string,
   } = {
-    views: 0
+    views: 0,
+    game: 'No data',
+    title: 'No data'
   }
 
   constructor() {
@@ -37,8 +37,6 @@ export default new class Twitch {
 
     this.streamMetaData = {
       viewers: data?.viewers ?? 0,
-      game: (await data?.getGame())?.name ?? 'No data',
-      title: data?.title ?? 'No data',
       startedAt: data?.startDate ?? null
     }
   }
@@ -46,10 +44,15 @@ export default new class Twitch {
   private async getChannelData() {
     setTimeout(() => this.getChannelData(), 1 * 60 * 1000)
     
-    const data = await tmi?.clients?.bot?.helix.users.getUserById(tmi.channel.id)
-
+    const channel = await tmi?.clients?.bot?.kraken.users.getUser(tmi.channel.id)
+    if (!channel) return
+    
+    const data = await (await tmi?.clients?.bot?.kraken.users.getUser(tmi.channel.id)).getChannel()
+  
     this.channelMetaData = {
-      views: data?.views ?? 0
+      views: data?.views ?? 0,
+      game: data?.game ?? 'No data',
+      title: data?.status ?? 'No data'
     }
   }
 
