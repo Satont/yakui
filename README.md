@@ -48,7 +48,7 @@ version: "3.2"
 
 services:
   twobit:
-    image: twobit:latest
+    image: satont/twobit
     restart: always
     env_file:
       - .env
