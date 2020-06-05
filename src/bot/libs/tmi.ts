@@ -140,8 +140,10 @@ export default new class Tmi {
 
     if (type === 'bot') {
       client.onAction(async (channel, username, message, raw) => {
+        if (username === client.currentNick) {
+          console.info(`${moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')} <<< ${message}`)
+        } else console.info(`${moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')} >>> ${username}: ${message}`);
         (raw as any).isAction = true
-        console.info(`${moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')} >>> ${username}: ${message}`)
         events.fire({ name: 'message', opts: { username, message } })
         await Parser.parse(message, raw)
       })
