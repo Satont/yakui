@@ -38,11 +38,11 @@ export default new class Moderation implements System {
   }
 
   onStreamEnd() {
-    for (const [type] of Object.entries(this.warnings)) this[type] = []
+    for (const [type] of Object.entries(this.warnings)) this.warnings[type] = []
   }
 
   onStreamStart() {
-    for (const [type] of Object.entries(this.warnings)) this[type] = []
+    for (const [type] of Object.entries(this.warnings)) this.warnings[type] = []
   }
 
   private doesWarned({ type, username }: { type: keyof Warnings, username: string }) {
