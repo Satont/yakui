@@ -59,6 +59,7 @@ export default new class Moderation implements System {
   }
 
   async parse(opts: ParserOptions) {
+    console.log('called', this.settings?.enabled)
     if (!this.settings || !this.settings.enabled) return false
 
     const userPermissions = tmi.getUserPermissions(opts.raw.userInfo.badges) 

@@ -95,7 +95,7 @@ export default new class Tmi {
 
   private async getChannel(name: string) {
     const user = await this.clients.bot?.helix.users.getUserByName(name)
-
+    if (!user) return
     this.channel = { name: user.name, id: user.id }
 
     console.log(`TMI: Channel name: ${this.channel.name}, channelId: ${this.channel.id}`)

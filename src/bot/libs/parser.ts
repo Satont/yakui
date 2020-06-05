@@ -1,19 +1,16 @@
 import TwitchPrivateMessage from "twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage"
-import { resolve } from 'path'
 
 import { System, Command } from "../../../typings"
-import getFiles from '../commons/getFiles'
 import tmi from "./tmi"
 import Variables from "../systems/variables"
+
+import { loadedSystems } from './loader'
 
 export default new class Parser {
   systems: { [x: string]: System } = {}
   inited = false;
   cooldowns: string[] = []
 
-  constructor() {
-    this.loadSystems()
-  }
 
   async parse(message: string, raw: TwitchPrivateMessage) {
     const isCommand = message.startsWith('!')
@@ -22,24 +19,16 @@ export default new class Parser {
       await this.parseCommand(message, raw)
     }
 
-    for (let system of Object.values(this.systems)) {
+    for (let system of Object.values(loadedSystems)) {
       if (typeof system.parsers === 'undefined') continue
       for (let parser of system.parsers) {
-        await parser.fnc.call(system, { message, raw })
+        await parser.fnc.apply(system, [{ message, raw }])
       }
     }
   }
 
-  private async loadSystems() {
-    for await (const file of getFiles(resolve(__dirname, '..', 'systems'))) {
-      const loadedFile = await import(resolve(__dirname, '..', 'systems', file))
-      this.systems[loadedFile.default.constructor.name.toLowerCase()] = loadedFile.default
-    }
-    this.inited = true
-  }
-
   private async parseCommand(message: string, raw: TwitchPrivateMessage) {
-    for (let system of Object.values(this.systems)) {
+    for (let system of Object.values(loadedSystems)) {
       if (typeof system.commands === 'undefined') continue
 
       message = message.replace('!', '').trim()
@@ -71,7 +60,7 @@ export default new class Parser {
       if (!hasPerm) break;
 
       const argument = message.replace(new RegExp(`^${findedBy}`), '').trimLeft()
-      let commandResult: string = await command.fnc.call(system, { message, raw, command, argument })
+      let commandResult: string = await command.fnc.apply(system, [{ message, raw, command, argument }])
 
       if (!commandResult) break
 
