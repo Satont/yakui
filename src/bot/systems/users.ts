@@ -1,8 +1,7 @@
-import TwitchPrivateMessage from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
 import { literal } from 'sequelize'
 import { chunk as makeChunk } from 'lodash'
 
-import { System, ParserOptions } from '../../../typings'
+import { System, ParserOptions, Command, CommandOptions } from '../../../typings'
 import User from '../models/User'
 import tmi from '../libs/tmi'
 import UserTips from '../models/UserTips'
@@ -17,6 +16,9 @@ export default new class Users implements System {
 
   parsers = [
     { fnc: this.parseMessage }
+  ]
+  commands: Command[] = [
+    { name: 'sayb', permission: 'broadcaster', fnc: this.sayb }
   ]
 
   async init() {
@@ -87,5 +89,9 @@ export default new class Users implements System {
       console.log(users)
       this.chatters.push(...users)
     }
+  }
+
+  private sayb(opts: CommandOptions) {
+    tmi.chatClients?.broadcaster?.say(tmi.channel?.name, opts.argument)
   }
 }

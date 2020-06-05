@@ -118,7 +118,7 @@ export default new class Tmi {
     const client = this.chatClients[type]
     
     client.onDisconnect((manually, reason) => {
-      console.info(`TMI: ${type} disconnected from server`, !manually ? reason.message : undefined)
+      console.info(`TMI: ${type} disconnected from server `, !manually ? reason.message : 'manually')
     })
 
     client.onConnect(() => {
