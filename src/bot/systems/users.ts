@@ -86,12 +86,19 @@ export default new class Users implements System {
     for (const chunk of makeChunk((await tmi.clients?.bot?.unsupported.getChatters(tmi.channel?.name)).allChatters, 100)) {
 
       const users = (await tmi.clients?.bot?.helix.users.getUsersByNames(chunk)).map(user => ({ username: user.name, id: user.id }))
-      console.log(users)
+
       this.chatters.push(...users)
     }
   }
 
   private sayb(opts: CommandOptions) {
     tmi.chatClients?.broadcaster?.say(tmi.channel?.name, opts.argument)
+  }
+
+  hasPermission(badges: Map<string, string>, searchForPermission: string) {
+    const userPerms = Object.entries(tmi.getUserPermissions(badges))
+    const commandPermissionIndex = userPerms.indexOf(userPerms.find(v => v[0] === searchForPermission))
+
+    return userPerms.some((p, index) => p[1] && index <= commandPermissionIndex)
   }
 }

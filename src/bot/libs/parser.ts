@@ -5,6 +5,7 @@ import tmi from "./tmi"
 import Variables from "../systems/variables"
 
 import { loadedSystems } from './loader'
+import users from "../systems/users"
 
 export default new class Parser {
   systems: { [x: string]: System } = {}
@@ -49,15 +50,7 @@ export default new class Parser {
 
       if (!command) continue
 
-
-      let hasPerm = false
-
-      const userPermissions = Object.entries(tmi.getUserPermissions(raw.userInfo.badges))
-      const commandPermissionIndex = userPermissions.indexOf(userPermissions.find(v => v[0] === command.permission))
-
-      if (userPermissions.some((p, index) => p[1] && index <= commandPermissionIndex)) hasPerm = true
-
-      if (!hasPerm) break;
+      if (!users.hasPermission(raw.userInfo.badges, command.permission)) break;
 
       const argument = message.replace(new RegExp(`^${findedBy}`), '').trimLeft()
       let commandResult: string = await command.fnc.call(system, { message, raw, command, argument })
