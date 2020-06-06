@@ -1,4 +1,4 @@
-import Twitch from 'twitch'
+import Twitch, { AccessToken } from 'twitch'
 import Chat from 'twitch-chat-client'
 import moment from 'moment'
 
@@ -83,6 +83,8 @@ export default new class Tmi {
       this.listeners(type)
       if (type === 'bot') await this.getChannel(channel.value)
       await this.chatClients[type].connect()
+      
+      await this.intervaledUpdateAccessToken(type, { access_token: accessToken.value, refresh_token: refreshToken.value })
     } catch (e) {
       console.log(e)
       OAuth.refresh(refreshToken.value, type)
@@ -93,6 +95,18 @@ export default new class Tmi {
       import('./loader')
       import('./currency')
     }
+  }
+
+  private async intervaledUpdateAccessToken(type: 'bot' | 'broadcaster', data) {
+
+    const { access_token, refresh_token } = await OAuth.refresh(data.refresh_token, type)
+
+    this.clients[type]._getAuthProvider().setAccessToken(new AccessToken({
+      access_token: data.access_token,
+      refresh_token: data.refresh_token
+    }))
+
+    setTimeout(() => this.intervaledUpdateAccessToken(type, { access_token, refresh_token }), 10 * 60 * 1000)
   }
 
   private async getChannel(name: string) {
