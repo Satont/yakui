@@ -5,8 +5,8 @@
     <p>
       <b-badge variant="info">Viewers: {{ streamMetaData.viewers }}</b-badge> |
       <b-badge variant="info">Views: {{ channelMetaData.views }}</b-badge> |
-      <b-badge variant="info">Title: {{ streamMetaData.title }}</b-badge> |
-      <b-badge variant="info">Game: {{ streamMetaData.game }}</b-badge> |
+      <b-badge variant="info">Title: {{ channelMetaData.title }}</b-badge> |
+      <b-badge variant="info">Game: {{ channelMetaData.game }}</b-badge> |
       <b-badge variant="info">Uptime: {{ uptime }}</b-badge> |
     </p>
   </b-navbar>
@@ -24,19 +24,19 @@ export default class NavBar extends Vue {
   uptime: string = 'offline'
   streamMetaData: {
     viewers: number,
-    game: string,
-    title: string,
     startedAt: Date | null
   } = {
     viewers: 0,
-    game: 'No data',
-    title: 'No data',
     startedAt: null
   }
   channelMetaData: {
+    game: string,
+    title: string,
     views: number
   } = {
-    views: 0
+    views: 0,
+    game: 'No data',
+    title: 'No data',
   }
 
   created() {
