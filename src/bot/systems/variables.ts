@@ -70,10 +70,7 @@ export default new class Variables {
         SELECT 
           "users"."id", 
           "users"."username", 
-          COALESCE(
-            SUM("users_tips"."inMainCurrencyAmount"), 
-            0
-          ) AS "value" 
+          (SUM("users_tips"."inMainCurrencyAmount")) AS "value" 
         FROM 
           "users"
           INNER JOIN "users_tips" ON "users"."id" = "users_tips"."userId"
@@ -91,10 +88,7 @@ export default new class Variables {
         SELECT 
           "users"."id", 
           "users"."username", 
-          COALESCE(
-            SUM("users_bits"."amount"), 
-            0
-          ) AS "value" 
+          (SUM("users_bits"."amount")) AS "value" 
         FROM 
           "users"
           INNER JOIN "users_bits" ON "users"."id" = "users_bits"."userId"
