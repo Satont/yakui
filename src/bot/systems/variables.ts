@@ -22,7 +22,7 @@ export default new class Variables {
       .replace(/\$channel\.game/gimu, twitch.channelMetaData.game)
       .replace(/\$channel\.title/gimu, twitch.channelMetaData.title)
       .replace(/\$stream\.uptime/gimu, twitch.uptime)
-      .replace(/\$random\.(\d)-(\d)/gimu, (match, first, second) => String(random(first, second)))
+      .replace(/\$random\.(\d+)-(\d+)/gimu, (match, first, second) => String(random(first, second)))
 
 
     if (/\$top\.bits/gimu.test(result)) {
