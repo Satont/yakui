@@ -3,7 +3,7 @@ import { resolve } from 'path'
 
 export let connected = false
 
-const sequelize = new Sequelize({
+export const sequelize = new Sequelize({
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT),
   database: process.env.DB_NAME,

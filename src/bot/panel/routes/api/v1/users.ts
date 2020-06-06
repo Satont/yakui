@@ -19,7 +19,6 @@ router.get('/', async (req, res, next) => {
       limit: Number(body.perPage),
       attributes: { include: ['totalTips', 'totalBits' ]},
       include: [UserBits, UserTips],
-      logging: true,
     })
 
     res.json({ users: rows, total: count })
