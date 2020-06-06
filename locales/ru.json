@@ -2,5 +2,8 @@
   "lang": {
     "name": "Russian",
     "code": "ru"
+  },
+  "song": {
+    "notPlaying": "сейчас ничего не играет"
   }
 }

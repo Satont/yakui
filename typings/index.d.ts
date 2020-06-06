@@ -40,6 +40,10 @@ export interface System {
   listenDbUpdates?: () => void | Promise<void>
 }
 
+export interface Integration extends System {
+  
+}
+
 export interface UserPermissions {
   broadcaster: boolean,
   moderators: boolean,
