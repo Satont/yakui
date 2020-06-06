@@ -64,7 +64,7 @@ export default new class Variables {
     } else if (type === 'messages') {
       result = await UserModel.findAll({ limit: 10, order: [[type, 'DESC']], attributes: ['username', [type, 'value']], raw: true })
 
-      return result.map((result, index) => `${index + 1} ${result.username} - ${result.value}`).join(', ')
+      return result.map((result, index) => `${index + 1}. ${result.username} - ${result.value}`).join(', ')
     } else if (type === 'tips') {
       const query = await sequelize.query(`
         SELECT 
