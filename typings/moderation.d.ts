@@ -21,6 +21,7 @@ export interface ISettings {
     vips: boolean,
     timeout: ITimeoutWarning,
     warning: ITimeoutWarning,
+    clips: boolean,
   },
   symbols: {
     enabled: boolean,

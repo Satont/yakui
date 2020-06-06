@@ -1,5 +1,5 @@
-import { System, Command, CommandOptions, ParserOptions, UserPermissions } from '../../../typings'
-import { Warnings, ISettings } from '../../../typings/moderation'
+import { System, Command, CommandOptions, ParserOptions, UserPermissions } from 'typings'
+import { Warnings, ISettings } from 'typings/moderation'
 import tmi from '../libs/tmi'
 import Settings from '../models/Settings'
 
@@ -78,6 +78,7 @@ export default new class Moderation implements System {
     if (!settings.vips && permissions.vips) return false;
 
     if (opts.message.search(urlRegexp) < 0) return false;
+    if (!settings.clips && (/.*(clips.twitch.tv\/)(\w+)/g.test(opts.message) || /.*(www.twitch.tv\/\w+\/clip\/)(\w+)/g.test(opts.message))) return false;
 
     const username = opts.raw.userInfo.userName.toLowerCase()
     const type = 'links'

@@ -23,6 +23,9 @@
                 <b-btn class="w-100" v-bind:class="{ 'btn-success': settings.links.vips, 'btn-danger': !settings.links.vips }" @click="settings.links.vips = !settings.links.vips">
                   <span>Moderate vips</span>
                 </b-btn>
+                <b-btn class="w-100" v-bind:class="{ 'btn-success': settings.links.clips, 'btn-danger': !settings.links.clips }" @click="settings.links.clips = !settings.links.clips">
+                  <span>Moderate Clips</span>
+                </b-btn>
               </div>
 
               <b-input-group size="sm" prepend="Timeout time" append="message">
@@ -238,7 +241,8 @@ export default class ModerationSettings extends Vue {
       warning: {
         time: 10,
         message: 'links disallowed [warn]'
-      }
+      },
+      clips: false,
     },
     symbols: {
       enabled: false,
