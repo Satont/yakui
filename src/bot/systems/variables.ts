@@ -58,11 +58,11 @@ export default new class Variables {
     let result: Array<{ username: string, value: number }> = []
 
     if (type === 'watched') {
-      result = await UserModel.findAll({ limit: 10, order: [[type, 'DESC']], attributes: ['username', [type, 'value']] })
+      result = await UserModel.findAll({ limit: 10, order: [[type, 'DESC']], attributes: ['username', [type, 'value']], raw: true })
 
-      return result.map((result, index) => `${index + 1}. ${result.username} - ${((result.value / (1 * 60 * 1000)) / 60).toFixed(1)}h}`).join(', ')
+      return result.map((result, index) => `${index + 1}. ${result.username} - ${((result.value / (1 * 60 * 1000)) / 60).toFixed(1)}h`).join(', ')
     } else if (type === 'messages') {
-      result = await UserModel.findAll({ limit: 10, order: [[type, 'DESC']], attributes: ['username', [type, 'value']] })
+      result = await UserModel.findAll({ limit: 10, order: [[type, 'DESC']], attributes: ['username', [type, 'value']], raw: true })
 
       return result.map((result, index) => `${index + 1} ${result.username} - ${result.value}`).join(', ')
     } else if (type === 'tips') {
