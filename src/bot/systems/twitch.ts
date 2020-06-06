@@ -96,8 +96,10 @@ export default new class Twitch implements System {
   async setGame(opts: CommandOptions) {
     if (!opts.argument.trim().length) return
 
+    const suggestedGame = await tmi.clients?.bot?.helix.games.getGameByName(opts.argument)
+
     await tmi.clients?.bot?.kraken.channels.updateChannel(tmi.channel?.id, {
-      game: opts.argument
+      game: suggestedGame.name
     })
 
     return '$sender ✅'
