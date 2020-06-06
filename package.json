@@ -8,7 +8,7 @@
     "start": "node dest/index",
     "build": "npm run build:web && npm run build:bot",
     "dev": "npm run dev:web & npm run dev:bot",
-    "dev:bot": "nodemon --signal SIGTERM",
+    "dev:bot": "nodemon",
     "dev:web": "webpack --config webpack.ts --watch",
     "build:web": "webpack --config webpack.ts",
     "build:bot": "tsc --project src/bot/tsconfig.json"
