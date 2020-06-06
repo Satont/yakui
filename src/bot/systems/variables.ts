@@ -60,9 +60,11 @@ export default new class Variables {
     if (type === 'watched') {
       result = await UserModel.findAll({ limit: 10, order: [[type, 'DESC']], attributes: ['username', [type, 'value']] })
 
-      return result.map((result, index) => `${index}. ${result.username} - ${((result.value / (1 * 60 * 1000)) / 60).toFixed(1)}h}`).join(', ')
+      return result.map((result, index) => `${index + 1}. ${result.username} - ${((result.value / (1 * 60 * 1000)) / 60).toFixed(1)}h}`).join(', ')
     } else if (type === 'messages') {
       result = await UserModel.findAll({ limit: 10, order: [[type, 'DESC']], attributes: ['username', [type, 'value']] })
+
+      return result.map((result, index) => `${index + 1} ${result.username} - ${result.value}`).join(', ')
     } else if (type === 'tips') {
       const query = await sequelize.query(`
         SELECT 
