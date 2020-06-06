@@ -20,7 +20,7 @@ export default new class Parser {
       await this.parseCommand(message, raw)
     }
 
-    for (let system of Object.values(loadedSystems)) {
+    for (const system of loadedSystems) {
       if (typeof system.parsers === 'undefined') continue
       for (let parser of system.parsers) {
         await parser.fnc.call(system, { message, raw })
@@ -29,10 +29,11 @@ export default new class Parser {
   }
 
   private async parseCommand(message: string, raw: TwitchPrivateMessage) {
-    for (let system of Object.values(loadedSystems)) {
+    message = message.substring(1).trim()
+
+    for (const system of loadedSystems) {
       if (typeof system.commands === 'undefined') continue
 
-      message = message.replace('!', '').trim()
       let msgArray = message.toLowerCase().split(' ')
 
       let findedBy: string
@@ -52,7 +53,8 @@ export default new class Parser {
 
       if (!users.hasPermission(raw.userInfo.badges, command.permission)) break;
 
-      const argument = message.replace(new RegExp(`^${findedBy}`), '').trimLeft()
+      const argument = message.replace(new RegExp(`^${findedBy}`), '').trim()
+
       let commandResult: string = await command.fnc.call(system, { message, raw, command, argument })
 
       if (!commandResult) break
@@ -67,6 +69,8 @@ export default new class Parser {
         this.cooldowns.push(command.name)
         setTimeout(() => this.cooldowns.splice(this.cooldowns.indexOf(command.name)), command.cooldown * 1000)
       }
+
+      break;
     }
   }
 }
