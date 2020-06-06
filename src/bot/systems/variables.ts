@@ -13,6 +13,7 @@ import { System } from 'typings'
 import Variable from '../models/Variable'
 import spotify from '../integrations/spotify'
 import locales from '../libs/locales'
+import { loadedSystems } from '../libs/loader'
 
 export default new class Variables implements System {
   variables: Variable[] = []
@@ -35,7 +36,11 @@ export default new class Variables implements System {
       .replace(/\$random\.(\d+)-(\d+)/gimu, (match, first, second) => String(_.random(first, second)))
 
     if (/\$song/gimu.test(result)) {
-      result = await this.getSong(result)
+      result = result.replace(/\$song/gimu, await this.getSong(result))
+    }
+
+    if (/\$commands/gimu.test(result)) {
+      result = result.replace(/\$commands/gimu, this.getCommandList(result).join(', '))
     }
 
     if (/\$top\.bits/gimu.test(result)) {
@@ -190,10 +195,17 @@ export default new class Variables implements System {
     } else return false
   }
 
-  async getSong(result) {
+  async getSong(result: string) {
     const spotifySong = await spotify.getSong()
-    if (spotifySong) return result.replace(/\$song/gimu, spotifySong)
-    else return result.replace(/\$song/gimu, locales.translate('song.notPlaying'))
+    if (spotifySong) return result
+    else return locales.translate('song.notPlaying')
+  }
+
+  getCommandList(result: string) {
+    const commands = _.flatten(loadedSystems
+      .map(system => system.commands?.filter(c => c.visible ?? true).map(c => c.name)))
+
+    return commands.filter(Boolean)
   }
 
   listenDbUpdates() {

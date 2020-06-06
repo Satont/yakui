@@ -18,7 +18,7 @@ export default new class Users implements System {
     { fnc: this.parseMessage }
   ]
   commands: Command[] = [
-    { name: 'sayb', permission: 'broadcaster', fnc: this.sayb }
+    { name: 'sayb', permission: 'broadcaster', fnc: this.sayb, visible: false }
   ]
 
   async init() {

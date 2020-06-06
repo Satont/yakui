@@ -6,7 +6,7 @@ export interface Command {
   id?: number,
   name: string, 
   response?: string,
-  visible?: true, 
+  visible?: boolean, 
   description?: string,
   aliases?: string[],
   cooldown?: number,
