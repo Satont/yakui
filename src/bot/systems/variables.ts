@@ -1,5 +1,5 @@
 import TwitchPrivateMessage from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
-import { random } from 'lodash'
+import _ from 'lodash'
 
 import twitch from './twitch'
 import includesOneOf from '../commons/includesOneOf'
@@ -8,6 +8,7 @@ import tmi from '../libs/tmi'
 import UserModel from '../models/User'
 import { sequelize } from '../libs/db'
 import currency from '../libs/currency'
+import Axios from 'axios'
 
 export default new class Variables {
   async parseMessage(opts: { message: string, raw?: TwitchPrivateMessage }) {
@@ -22,7 +23,7 @@ export default new class Variables {
       .replace(/\$channel\.game/gimu, twitch.channelMetaData.game)
       .replace(/\$channel\.title/gimu, twitch.channelMetaData.title)
       .replace(/\$stream\.uptime/gimu, twitch.uptime)
-      .replace(/\$random\.(\d+)-(\d+)/gimu, (match, first, second) => String(random(first, second)))
+      .replace(/\$random\.(\d+)-(\d+)/gimu, (match, first, second) => String(_.random(first, second)))
 
 
     if (/\$top\.bits/gimu.test(result)) {
@@ -49,6 +50,10 @@ export default new class Variables {
         .replace(/\$user\.watched/gimu, `${((user.watched / (1 * 60 * 1000)) / 60).toFixed(1)}h`)
         .replace(/\$user\.tips/gimu, String(user.totalTips))
         .replace(/\$user\.bits/gimu, String(user.totalBits))
+    }
+
+    if (result.includes('(api|')) {
+      result = await this.makeApiRequest(result)
     }
 
     return result
@@ -103,5 +108,46 @@ export default new class Variables {
     } else {
       return 'unknown type'
     }
+  }
+
+  async makeApiRequest(result: string) {
+    const match = result.match(/\((api)\|(POST|GET)\|(\S+)\)/)
+    if (match.length) {
+      // '(api|GET|https://qwe.ru)' = ["(api|GET|https://qwe.ru)", "api", "GET", "https://qwe.ru", index: 0, input: "(api|GET|https://qwe.ru)", groups: undefined]
+      result = result.replace(match[0], '')
+      const method: 'GET' | 'POST' = match[2] as any
+      const url = match[3]
+
+      try {
+        let { data } = await Axios({ method, url })
+        // search for api datas in message
+        const rData = result.match(/\(api\.(?!_response)(\S*?)\)/gi)
+        if (_.isNil(rData)) {
+          if (_.isObject(data)) {
+            // Stringify object
+            result = result.replace('(api._response)', JSON.stringify(data))
+          } else { result = result.replace('(api._response)', data.toString().replace(/^"(.*)"/, '$1')) };
+        } else {
+          if (_.isBuffer(data)) { data = JSON.parse(data.toString()) };
+          for (const tag of rData) {
+            let path = data
+            const ids = tag.replace('(api.', '').replace(')', '').split('.')
+            _.each(ids, function (id) {
+              const isArray = id.match(/(\S+)\[(\d+)\]/i)
+              if (isArray) {
+                path = path[isArray[1]][isArray[2]]
+              } else {
+                path = path[id]
+              }
+            })
+            result = result.replace(tag, !_.isNil(path) ? path : 'possible you parsing api wrong')
+          }
+        }
+
+        return result
+      } catch (e) {
+        return `error: ${e.message}`
+      }
+    } else return result
   }
 }
