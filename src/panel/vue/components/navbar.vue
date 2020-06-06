@@ -1,14 +1,16 @@
 <template>
   <div>
     <b-navbar toggleable="lg" type="light" variant="dark" sticky class="flex-md-nowrap p-0 shadow">
-    <b-navbar-brand class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#/">{{ title }}</b-navbar-brand>
-    <p>
-      <b-badge variant="info">Viewers: {{ streamMetaData.viewers }}</b-badge> |
-      <b-badge variant="info">Views: {{ channelMetaData.views }}</b-badge> |
-      <b-badge variant="info">Title: {{ channelMetaData.title }}</b-badge> |
-      <b-badge variant="info">Game: {{ channelMetaData.game }}</b-badge> |
-      <b-badge variant="info">Uptime: {{ uptime }}</b-badge> |
-    </p>
+    <b-navbar-brand class="navbar-brand col-md-1 col-lg-1 mr-0 px-3" href="#/">{{ title }}</b-navbar-brand>
+
+    <b-nav align='center'>
+      <b-nav-item>Viewers: {{ streamMetaData.viewers }}</b-nav-item>
+      <b-nav-item>Views: {{ channelMetaData.views }}</b-nav-item>
+      <b-nav-item>Title: {{ channelMetaData.title }}</b-nav-item>
+      <b-nav-item>Game: {{ channelMetaData.game }}</b-nav-item>
+      <b-nav-item>Uptime: {{ uptime }}</b-nav-item>
+    </b-nav>
+
   </b-navbar>
   </div>
 </template>
@@ -77,15 +79,29 @@ export default class NavBar extends Vue {
   background-color: rgba(0, 0, 0, .25);
   box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
   color: #fff;
+  text-align: center;
 }
 
 .navbar-light .navbar-brand:hover, .navbar-light .navbar-brand:focus {
     color: #fff;
 }
 
+.nav > li > .nav-link, .nav-link:hover, .nav-link:focus {
+  cursor: default !important;
+  color: #fff;
+}
+
+.nav-justified .nav-item {
+  flex-basis: unset !important;
+}
+
 .navbar .navbar-toggler {
   top: .25rem;
   right: 1rem;
+}
+
+.navbar-light .navbar-text {
+  color: #fff;
 }
 
 .navbar .form-control {

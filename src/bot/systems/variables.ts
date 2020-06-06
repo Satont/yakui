@@ -176,8 +176,8 @@ export default new class Variables implements System {
 
     if (isAdmin && text.length) {
       const match = response.match(/\$_(\S*)/g)
-      const variable = this.variables.find(v => v.name === match[0].replace('$_', ''))
-      if (match && variable) {
+      if (match) {
+        const variable = this.variables.find(v => v.name === match[0].replace('$_', ''))
         await variable.update({ response: text })
         tmi.say({ message: `@${raw.userInfo.userName} ✅` })
         return true;

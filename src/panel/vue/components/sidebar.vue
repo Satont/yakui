@@ -1,14 +1,14 @@
 <template>
   <div>
-  <b-nav vertical class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
-    <b-nav-item active><router-link to="/events">Events</router-link></b-nav-item>
-    <b-nav-item active><router-link to="/integrations">Integrations</router-link></b-nav-item>
-    <b-nav-item active><router-link to="/settings">Settings</router-link></b-nav-item>
-    <b-nav-item active><router-link to="/commands">Commands</router-link></b-nav-item>
-    <b-nav-item active><router-link to="/timers">Timers</router-link></b-nav-item>
-    <b-nav-item active><router-link to="/users">Users</router-link></b-nav-item>
-    <b-nav-item active><router-link to="/keywords">Keywords</router-link></b-nav-item>
-    <b-nav-item active><router-link to="/variables">Variables</router-link></b-nav-item>
+  <b-nav vertical class="col-md-1 col-lg-1 d-md-block bg-dark sidebar collapse" active-class="router-link-exact-active">
+    <b-nav-item router-link to="/events"><i class="fas fa-calendar-alt"></i> Events</b-nav-item>
+    <b-nav-item router-link to="/integrations"><i class="fas fa-hands-helping"></i> Integrations</b-nav-item>
+    <b-nav-item router-link to="/settings"><i class="fas fa-cogs"></i> Settings</b-nav-item>
+    <b-nav-item router-link to="/commands"><i class="fas fa-bars"></i> Commands</b-nav-item>
+    <b-nav-item router-link to="/timers"><i class="fas fa-history"></i> Timers</b-nav-item>
+    <b-nav-item router-link to="/users"><i class="fas fa-users"></i> Users</b-nav-item>
+    <b-nav-item router-link to="/keywords"><i class="far fa-keyboard"></i> Keywords</b-nav-item>
+    <b-nav-item outer-link to="/variables"><i class="fas fa-superscript"></i> Variables</b-nav-item>
   </b-nav>
 </div>
 
@@ -59,6 +59,11 @@ export default class NavBar extends Vue {
 .sidebar .nav-link {
   font-weight: 500;
   color: #fff;
+  text-align: center;
+}
+
+.sidebar > .nav-item > .nav-link i {
+  display: block;
 }
 
 .sidebar .nav-link .feather {
@@ -66,8 +71,9 @@ export default class NavBar extends Vue {
   color: #999;
 }
 
-.sidebar .nav-link.active {
+.sidebar .nav-link.router-link-exact-active {
   color: #fff;
+  background: rgba(94, 123, 154, 0.25);
 }
 
 .sidebar .nav-link:hover .feather,
