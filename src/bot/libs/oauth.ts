@@ -42,8 +42,8 @@ export default new class Oauth {
 
       console.info(`Access token of ${type} was refreshed.`)
       return {
-        access_token: data.access_token,
-        refresh_token: data.refresh_token
+        access_token: data.token,
+        refresh_token: data.refresh
       }
     } catch (e) {
       console.error(e)

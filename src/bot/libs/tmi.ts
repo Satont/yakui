@@ -98,7 +98,6 @@ export default new class Tmi {
   }
 
   private async intervaledUpdateAccessToken(type: 'bot' | 'broadcaster', data) {
-
     const { access_token, refresh_token } = await OAuth.refresh(data.refresh_token, type)
 
     this.clients[type]._getAuthProvider().setAccessToken(new AccessToken({
