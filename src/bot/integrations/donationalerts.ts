@@ -2,7 +2,7 @@ import Centrifuge from 'centrifuge'
 import axios from 'axios'
 import WebSocket from 'ws'
 
-import { System } from 'typings';
+import { Integration } from 'typings';
 import Settings from '../models/Settings';
 import { onDonation } from '../libs/eventsCaller'
 import currency, { currency as currencyType } from '../libs/currency'
@@ -20,7 +20,7 @@ type DonationAlertsEvent = {
   billing_system: string;
 }
 
-export default new class Donationalerts implements System {
+export default new class Donationalerts implements Integration {
   socket: Centrifuge = null
 
   async init() {

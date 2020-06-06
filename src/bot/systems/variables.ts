@@ -11,6 +11,8 @@ import currency from '../libs/currency'
 import Axios from 'axios'
 import { System } from 'typings'
 import Variable from '../models/Variable'
+import spotify from '../integrations/spotify'
+import locales from '../libs/locales'
 
 export default new class Variables implements System {
   variables: Variable[] = []
@@ -32,6 +34,9 @@ export default new class Variables implements System {
       .replace(/\$stream\.uptime/gimu, twitch.uptime)
       .replace(/\$random\.(\d+)-(\d+)/gimu, (match, first, second) => String(_.random(first, second)))
 
+    if (/\$song/gimu.test(result)) {
+      result = await this.getSong(result)
+    }
 
     if (/\$top\.bits/gimu.test(result)) {
       result = result.replace(/\$top\.bits/gimu, await this.getTop('bits'))
@@ -183,6 +188,12 @@ export default new class Variables implements System {
         return true;
       } else return false
     } else return false
+  }
+
+  async getSong(result) {
+    const spotifySong = await spotify.getSong()
+    if (spotifySong) return result.replace(/\$song/gimu, spotifySong)
+    else return result.replace(/\$song/gimu, locales.translate('song.notPlaying'))
   }
 
   listenDbUpdates() {

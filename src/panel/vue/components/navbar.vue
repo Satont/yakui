@@ -40,12 +40,15 @@ export default class NavBar extends Vue {
     game: 'No data',
     title: 'No data',
   }
+  updateTimeout = null
 
   created() {
     this.fetchMetaData()
   }
 
   async fetchMetaData() {
+    clearTimeout(this.updateTimeout)
+    this.updateTimeout = setTimeout(() => this.fetchMetaData(), 1000);
     const { data } = await axios.get('/api/v1/metaData')
 
     this.title = data.bot?.username?.toUpperCase() ?? 'Bot'
@@ -56,7 +59,6 @@ export default class NavBar extends Vue {
 
     this.updateUptime()
 
-    setTimeout(() => this.fetchMetaData(), 1000);
   }
 
   updateUptime() {
