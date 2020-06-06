@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express'
 import bodyparser from 'body-parser'
 import { resolve } from 'path'
+import http from 'http'
 
 import v1 from './routes/api/v1'
 
@@ -30,6 +31,8 @@ app.use((err, req: Request, res: Response, next) => {
   else next()
 })
 
-app.listen(PORT, () => {
-  console.info(`PANEL: initiliazed on ${PORT} port.`)
+const server = http.createServer(app).listen(PORT, () => {
+  console.info(`PANEL: Server initiliazed on ${PORT}`)
 })
+
+process.on('SIGTERM', () => server.close())
