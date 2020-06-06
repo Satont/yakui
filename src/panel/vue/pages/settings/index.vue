@@ -3,6 +3,7 @@
     <b-tab title="General" active><General /></b-tab>
     <b-tab title="OAuth" lazy><OAuth /></b-tab>
     <b-tab title="Moderation" lazy><Moderation /></b-tab>
+    <b-tab title="Users" lazy><Users /></b-tab>
   </b-tabs>
 </template>
 
@@ -12,12 +13,14 @@ import axios from 'axios'
 import OAuth from './oauth.vue'
 import Moderation from './moderation.vue'
 import General from './general.vue'
+import Users from './users.vue'
 
 @Component({
   components: {
     OAuth,
     Moderation,
-    General
+    General,
+    Users
   }
 })
 export default class Index extends Vue {
