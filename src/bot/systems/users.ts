@@ -1,7 +1,7 @@
 import { literal } from 'sequelize'
 import { chunk as makeChunk } from 'lodash'
 
-import { System, ParserOptions, Command, CommandOptions } from '../../../typings'
+import { System, ParserOptions, Command, CommandOptions, CommandPermission } from '../../../typings'
 import User from '../models/User'
 import tmi from '../libs/tmi'
 import UserTips from '../models/UserTips'
@@ -97,7 +97,7 @@ export default new class Users implements System {
     tmi.chatClients?.broadcaster?.say(tmi.channel?.name, opts.argument)
   }
 
-  hasPermission(badges: Map<string, string>, searchForPermission: string) {
+  hasPermission(badges: Map<string, string>, searchForPermission: CommandPermission) {
     const userPerms = Object.entries(tmi.getUserPermissions(badges))
     const commandPermissionIndex = userPerms.indexOf(userPerms.find(v => v[0] === searchForPermission))
 

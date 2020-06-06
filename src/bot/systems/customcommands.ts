@@ -7,7 +7,6 @@ export default new class CustomCommands implements System {
 
   async init() {
     const commands: Command[] = await Command.findAll()
-    
     this.commands = commands.map(command => ({
       name: command.name,
       cooldown: command.cooldown,

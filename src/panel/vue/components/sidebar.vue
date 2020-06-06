@@ -8,6 +8,7 @@
     <b-nav-item active><router-link to="/timers">Timers</router-link></b-nav-item>
     <b-nav-item active><router-link to="/users">Users</router-link></b-nav-item>
     <b-nav-item active><router-link to="/keywords">Keywords</router-link></b-nav-item>
+    <b-nav-item active><router-link to="/variables">Variables</router-link></b-nav-item>
   </b-nav>
 </div>
 

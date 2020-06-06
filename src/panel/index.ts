@@ -30,6 +30,9 @@ const router = new VueRouter({
 
     { path: '/users', name: 'UsersManagerList', component: () => import('./vue/pages/users/list.vue') },
     { path: '/users/edit/:id?', name: 'UsersManagerEdit', component: () => import('./vue/pages/users/edit.vue') },
+
+    { path: '/variables', name: 'CustomVariablesManagerList', component: () => import('./vue/pages/variables/list.vue') },
+    { path: '/variables/edit/:id?', name: 'CustomVariablesManagerEdit', component: () => import('./vue/pages/variables/edit.vue') },
   ],
 })
 

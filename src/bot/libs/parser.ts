@@ -6,6 +6,7 @@ import Variables from "../systems/variables"
 
 import { loadedSystems } from './loader'
 import users from "../systems/users"
+import variables from "../systems/variables"
 
 export default new class Parser {
   systems: { [x: string]: System } = {}
@@ -58,6 +59,13 @@ export default new class Parser {
       let commandResult: string = await command.fnc.call(system, { message, raw, command, argument })
 
       if (!commandResult) break
+
+
+      // set custom variable
+      if (await variables.changeCustomVariable({ raw, response: commandResult, text: argument })) {
+        break
+      }
+      //
 
       commandResult = await Variables.parseMessage({ message: commandResult, raw })
 

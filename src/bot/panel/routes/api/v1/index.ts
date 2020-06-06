@@ -6,12 +6,14 @@ import settings from './settings'
 import events from './events'
 import metaData from './metaData'
 import keywords from './keywords'
+import variables from './variables'
 
 const router = Router()
 
 router.get('/', (req, res) => {
   res.send('This is api v1')
 })
+router.use('/metaData', metaData)
 
 router.use('/commands', commands)
 router.use('/timers', timers)
@@ -19,6 +21,6 @@ router.use('/users', users)
 router.use('/settings', settings)
 router.use('/events', events)
 router.use('/keywords', keywords)
-router.use('/metaData', metaData)
+router.use('/variables', variables)
 
 export default router

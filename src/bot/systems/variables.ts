@@ -9,12 +9,19 @@ import UserModel from '../models/User'
 import { sequelize } from '../libs/db'
 import currency from '../libs/currency'
 import Axios from 'axios'
+import { System } from 'typings'
+import Variable from '../models/Variable'
 
-export default new class Variables {
+export default new class Variables implements System {
+  variables: Variable[] = []
+
+  async init() {
+    this.variables = await Variable.findAll()
+  }
+
   async parseMessage(opts: { message: string, raw?: TwitchPrivateMessage }) {
     let result = opts.message
     const userInfo = opts.raw?.userInfo
-
     result = result
       .replace(/\$sender/gimu, '@' + userInfo?.userName ?? tmi.chatClients?.bot?.currentNick)
       .replace(/\$followage/gimu, userInfo ? await twitch.getFollowAge(userInfo.userId) : 'invalid')
@@ -27,7 +34,7 @@ export default new class Variables {
 
 
     if (/\$top\.bits/gimu.test(result)) {
-        result = result.replace(/\$top\.bits/gimu, await this.getTop('bits'))
+      result = result.replace(/\$top\.bits/gimu, await this.getTop('bits'))
     }
 
     if (/\$top\.tips/gimu.test(result)) {
@@ -41,6 +48,8 @@ export default new class Variables {
     if (/\$top\.messages/gimu.test(result)) {
       result = result.replace(/\$top\.messages/gimu, await this.getTop('messages'))
     }
+
+    result = await this.parseCustomVariables(result)
 
     if (includesOneOf(result, ['user.messages', 'user.tips', 'user.bits', 'user.watched']) && userInfo) {
       const user = await users.getUserStats({ id: userInfo?.userId })
@@ -149,5 +158,35 @@ export default new class Variables {
         return `error: ${e.message}`
       }
     } else return result
+  }
+
+  async parseCustomVariables(result: string) {
+    for (const variable of this.variables) {
+      const match = result.match(new RegExp(`\\$_${variable.name}`))
+      if (!match) continue
+
+      result = result.replace(match[0], variable.response)
+    }
+
+    return result
+  }
+
+  async changeCustomVariable({ raw, text, response }: { raw: TwitchPrivateMessage, response: string, text: string }) {
+    const isAdmin = users.hasPermission(raw.userInfo.badges, 'moderators') || users.hasPermission(raw.userInfo.badges, 'broadcaster')
+
+    if (isAdmin && text.length) {
+      const match = response.match(/\$_(\S*)/g)
+      const variable = this.variables.find(v => v.name === match[0].replace('$_', ''))
+      if (match && variable) {
+        await variable.update({ response: text })
+        tmi.say({ message: `@${raw.userInfo.userName} ✅` })
+        return true;
+      } else return false
+    } else return false
+  }
+
+  listenDbUpdates() {
+    Variable.afterSave(() => this.init())
+    Variable.afterDestroy(() => this.init())
   }
 }
