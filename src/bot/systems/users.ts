@@ -7,8 +7,15 @@ import tmi from '../libs/tmi'
 import UserTips from '../models/UserTips'
 import UserBits from '../models/UserBits'
 import twitch from './twitch'
+import Settings from '../models/Settings'
 
 export default new class Users implements System {
+  private settings: { 
+    enabled: boolean
+  } = { 
+    enabled: true
+  }
+
   private countWatchedTimeout: NodeJS.Timeout = null
   private getChattersTimeout: NodeJS.Timeout = null
 
@@ -22,12 +29,16 @@ export default new class Users implements System {
   ]
 
   async init() {
+    const enabled: Settings = await Settings.findOne({ where: { space: 'users', name: 'enabled' } })
+    this.settings.enabled = enabled?.value ?? true
+    if (!this.settings.enabled) return;
+
     await this.getChatters()
     await this.countWatched()
   }
 
   async parseMessage(opts: ParserOptions) {
-    if (opts.message.startsWith('!')) return;
+    if (!this.settings.enabled || opts.message.startsWith('!')) return
 
     const [id, username] = [opts.raw.userInfo.userId, opts.raw.userInfo.userName]
 
@@ -66,6 +77,7 @@ export default new class Users implements System {
   private async countWatched() {
     clearTimeout(this.countWatchedTimeout)
     this.countWatchedTimeout = setTimeout(() => this.countWatched(), 1 * 60 * 1000)
+
     if (!twitch.streamMetaData?.startedAt) return;
 
     for (const chatter of this.chatters) {
@@ -82,6 +94,7 @@ export default new class Users implements System {
   private async getChatters() {
     clearTimeout(this.getChattersTimeout)
     this.getChattersTimeout = setTimeout(() => this.countWatched(), 5 * 60 * 1000)
+
     this.chatters = []
     if (!twitch.streamMetaData?.startedAt) return;
 
@@ -102,5 +115,13 @@ export default new class Users implements System {
     const commandPermissionIndex = userPerms.indexOf(userPerms.find(v => v[0] === searchForPermission))
 
     return userPerms.some((p, index) => p[1] && index <= commandPermissionIndex)
+  }
+
+  listenDbUpdates() {
+    Settings.afterSave(instance => {
+      if (instance.space !== 'users') return
+
+      this.init()
+    })
   }
 }
