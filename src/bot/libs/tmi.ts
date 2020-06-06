@@ -91,7 +91,7 @@ export default new class Tmi {
         .then(() => this.connect(type))
     } finally {
       this.isAlreadyUpdating[type] = false
-      import('./twitch')
+      import('../systems/twitch')
       import('./loader')
       import('./currency')
     }

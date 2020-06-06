@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import twitch from '../../../../libs/twitch'
+import twitch from '../../../../systems/twitch'
 import tmi from '../../../../libs/tmi'
 
 const router = Router()

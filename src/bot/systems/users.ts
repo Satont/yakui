@@ -6,7 +6,7 @@ import User from '../models/User'
 import tmi from '../libs/tmi'
 import UserTips from '../models/UserTips'
 import UserBits from '../models/UserBits'
-import twitch from '../libs/twitch'
+import twitch from './twitch'
 
 export default new class Users implements System {
   private countWatchedTimeout: NodeJS.Timeout = null

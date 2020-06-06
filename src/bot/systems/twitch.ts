@@ -1,9 +1,15 @@
-import tmi from "./tmi"
+import tmi from "../libs/tmi"
 import humanizeDuration from 'humanize-duration'
-import { onStreamStart, onStreamEnd } from "./eventsCaller"
-import locales from './locales'
+import { onStreamStart, onStreamEnd } from "../libs/eventsCaller"
+import locales from '../libs/locales'
+import { System, Command, CommandOptions } from "typings"
 
-export default new class Twitch {
+export default new class Twitch implements System {
+  commands: Command[] = [
+    { name: 'title', fnc: this.setTitle, permission: 'moderators' },
+    { name: 'game', fnc: this.setGame, permission: 'moderators' }
+  ]
+
   streamMetaData: {
     viewers: number,
     startedAt: Date
@@ -75,5 +81,25 @@ export default new class Twitch {
       round: true,
       language: locales.translate('lang.code')
     })
+  }
+
+  async setTitle(opts: CommandOptions) {
+    if (!opts.argument.trim().length) return
+
+    await tmi.clients?.bot?.kraken.channels.updateChannel(tmi.channel?.id, {
+      status: opts.argument
+    })
+
+    return '$sender ✅'
+  }
+
+  async setGame(opts: CommandOptions) {
+    if (!opts.argument.trim().length) return
+
+    await tmi.clients?.bot?.kraken.channels.updateChannel(tmi.channel?.id, {
+      game: opts.argument
+    })
+
+    return '$sender ✅'
   }
 }

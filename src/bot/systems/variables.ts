@@ -1,7 +1,7 @@
 import TwitchPrivateMessage from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
 import { random } from 'lodash'
 
-import twitch from '../libs/twitch'
+import twitch from './twitch'
 import includesOneOf from '../commons/includesOneOf'
 import users from './users'
 import tmi from '../libs/tmi'

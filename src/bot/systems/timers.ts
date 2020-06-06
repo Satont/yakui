@@ -1,7 +1,7 @@
 import { System } from '../../../typings'
 import tmi from '../libs/tmi'
 import Timer from '../models/Timer'
-import twitch from '../libs/twitch'
+import twitch from './twitch'
 import variables from './variables'
 
 export default new class Timers implements System {
