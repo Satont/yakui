@@ -25,6 +25,9 @@ const router = new VueRouter({
     { path: '/timers', name: 'TimersManagerList', component: () => import('./vue/pages/timers/list.vue') },
     { path: '/timers/edit/:id?', name: 'TimersManagerEdit', component: () => import('./vue/pages/timers/edit.vue') },
 
+    { path: '/keywords', name: 'KeywordsManagerList', component: () => import('./vue/pages/keywords/list.vue') },
+    { path: '/keywords/edit/:id?', name: 'KeywordsManagerEdit', component: () => import('./vue/pages/keywords/edit.vue') },
+
     { path: '/users', name: 'UsersManagerList', component: () => import('./vue/pages/users/list.vue') },
     { path: '/users/edit/:id?', name: 'UsersManagerEdit', component: () => import('./vue/pages/users/edit.vue') },
   ],

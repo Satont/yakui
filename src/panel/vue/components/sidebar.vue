@@ -2,11 +2,12 @@
   <div>
   <b-nav vertical class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
     <b-nav-item active><router-link to="/events">Events</router-link></b-nav-item>
-     <b-nav-item active><router-link to="/integrations">Integrations</router-link></b-nav-item>
+    <b-nav-item active><router-link to="/integrations">Integrations</router-link></b-nav-item>
     <b-nav-item active><router-link to="/settings">Settings</router-link></b-nav-item>
     <b-nav-item active><router-link to="/commands">Commands</router-link></b-nav-item>
     <b-nav-item active><router-link to="/timers">Timers</router-link></b-nav-item>
     <b-nav-item active><router-link to="/users">Users</router-link></b-nav-item>
+    <b-nav-item active><router-link to="/keywords">Keywords</router-link></b-nav-item>
   </b-nav>
 </div>
 
