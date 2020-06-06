@@ -27,6 +27,8 @@ export default new class Users implements System {
   }
 
   async parseMessage(opts: ParserOptions) {
+    if (opts.message.startsWith('!')) return;
+
     const [id, username] = [opts.raw.userInfo.userId, opts.raw.userInfo.userName]
 
     const [user, created]: [User, boolean] = await User.findOrCreate({
