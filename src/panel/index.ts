@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router'
+import VueRouter, { Route } from 'vue-router'
 import VueClipboard from 'vue-clipboard2'
 import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
@@ -9,6 +9,7 @@ import './css/main.css'
 Vue.use(VueRouter)
 Vue.use(VueClipboard)
 Vue.use(BootstrapVue)
+Vue.component('loading', () => import('./vue/components/loadingAnimation.vue'))
 Vue.component('side-bar', () => import('./vue/components/sidebar.vue'))
 Vue.component('nav-bar', () => import('./vue/components/navbar.vue'))
 
@@ -37,15 +38,28 @@ const router = new VueRouter({
   ],
 })
 
-new Vue({
+const app = new Vue({
+  data: {
+    loading: false,
+  },
   router,
   template: `
   <div>
     <nav-bar></nav-bar>
     <div class="container-fluid">
       <side-bar></side-bar>
-      <router-view class="col-md-11 ml-sm-auto col-lg-11 px-md-4 pt-md-3"></router-view>
+      <loading v-if="$root.loading"></loading>
+      <router-view v-if="!$root.loading" class="col-md-11 ml-sm-auto col-lg-11 px-md-4 pt-md-3"></router-view>
     </div>
   </div>
   `
 }).$mount('#app')
+
+router.beforeEach((to, from, next) => {
+  app.loading = true
+	next()
+})
+
+router.afterEach((to, from) => {
+  app.loading = false
+})
