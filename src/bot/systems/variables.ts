@@ -109,7 +109,7 @@ export default new class Variables implements System {
         raw: true
       })
 
-      return result.map((result, index) => `${index + 1}. ${result.username} - ${((result.value / (1 * 60 * 1000)) / 60).toFixed(1)}h`).join(', ')
+      return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${((result.value / (1 * 60 * 1000)) / 60).toFixed(1)}h`).join(', ')
     } else if (type === 'messages') {
       result = await UserModel.findAll({ 
         limit: 10,
@@ -119,7 +119,7 @@ export default new class Variables implements System {
         raw: true
       })
 
-      return result.map((result, index) => `${index + 1}. ${result.username} - ${result.value}`).join(', ')
+      return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ')
     } else if (type === 'tips') {
       const query = await sequelize.query(`
         SELECT 
@@ -138,7 +138,7 @@ export default new class Variables implements System {
           10`)
       result = query[0]
       
-      return result.map((result, index) => `${index + 1}. ${result.username} - ${result.value}${currency.botCurrency}`).join(', ')
+      return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}${currency.botCurrency}`).join(', ')
     } else if (type === 'bits') {
       const query = await sequelize.query(`
         SELECT 
@@ -156,7 +156,7 @@ export default new class Variables implements System {
         LIMIT 
           10`)
       result = query[0]
-      return result.map((result, index) => `${index}. ${result.username} - ${result.value}`).join(', ')
+      return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ')
     } else {
       return 'unknown type'
     }
