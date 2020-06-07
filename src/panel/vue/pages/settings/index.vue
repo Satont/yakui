@@ -1,5 +1,5 @@
 <template>
-  <b-tabs content-class="mt-3" pills card vertical end>
+  <b-tabs content-class="mt-3" nav-class="sticky-top" pills vertical end>
     <b-tab title="General" title-link-class="text-white" active><General /></b-tab>
     <b-tab title="OAuth" title-link-class="text-white" lazy><OAuth /></b-tab>
     <b-tab title="Moderation" title-link-class="text-white" lazy><Moderation /></b-tab>
@@ -28,11 +28,14 @@ export default class Index extends Vue {
 }
 </script>
 
-<style scoped>
+<style>
 .nav-link {
   color: #fff !important;
 }
 .nav-link, .nav-link:hover, .nav-link:focus {
   color: #fff !important;
+}
+.sticky-top {
+  top: 30px !important;
 }
 </style>
