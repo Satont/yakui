@@ -2,7 +2,7 @@ import safeEval from 'safe-eval'
 import { get } from 'lodash'
 
 import tmi from '../libs/tmi'
-import { System, DonationData } from '../../../typings'
+import { System, DonationData, HostType } from '../../../typings'
 import Event from '../models/Event'
 
 export default new class Events implements System {
@@ -65,6 +65,18 @@ export default new class Events implements System {
 
   onDonation(data: DonationData ) {
     this.fire( { name: 'tip', opts: data })
+  }
+
+  onHosted({ viewers, username }: HostType) {
+    this.fire({ name: 'hosted', opts: { username, viewers } })
+  }
+
+  onHosting({ viewers, username }: HostType) {
+    this.fire({ name: 'host', opts: { username, viewers } })
+  }
+
+  onRaided({ viewers, username }: HostType) {
+    this.fire({ name: 'raided', opts: { username, viewers } })
   }
 
   listenDbUpdates() {
