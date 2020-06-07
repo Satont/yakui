@@ -6,7 +6,7 @@
       </b-form-group>
 
       <b-form-group label="Timer interval" label-for="interval">
-        <b-form-input id="interval" v-model="timer.interval" type="number" required placeholder="Enter timer interval"></b-form-input>
+        <b-form-input id="interval" v-model.number="timer.interval" type="number" required placeholder="Enter timer interval"></b-form-input>
       </b-form-group>
 
        <b-form-group label="Timer responses">
