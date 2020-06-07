@@ -3,7 +3,8 @@ import 'source-map-support/register'
 import('reflect-metadata')
 require('dotenv').config()
 import { connected } from './libs/db'
-import Locales from './libs/locales'
+import { error } from './libs/logger'
+import { inspect } from 'util'
 
 const start = async () => {
   if (!connected) return setTimeout(() => start(), 1000)
@@ -15,7 +16,7 @@ const start = async () => {
 start()
   .then(console.timeEnd('start'))
 
-
+error()
 process.on('unhandledRejection', (reason) => {
-  console.error(reason)
+  error(`${inspect(reason)}`)
 })

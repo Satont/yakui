@@ -7,6 +7,7 @@ import OAuth from './oauth'
 import Parser from './parser'
 import { UserPermissions } from '../../../typings'
 import events from '../systems/events'
+import { info, error, chatOut, chatIn, timeout, whisperOut } from './logger'
 
 export default new class Tmi {
   private isAlreadyUpdating = {
@@ -60,16 +61,17 @@ export default new class Tmi {
 
     if (refreshToken.value === '') {
       this.isAlreadyUpdating[type] = false
-      throw `TMI: refreshToken for ${type} not found, client will be not initiliazed.`
+      info(`TMI: refreshToken for ${type} not found, client will be not initiliazed.`)
+      return
     }
 
     if (channel.value === '') {
       this.isAlreadyUpdating[type] = false
-      console.log(accessToken, refreshToken, channel)
-      throw `TMI (${type}): Channel not setted.`
+      error(`TMI (${type}): Channel not setted.`)
+      return
     }
-  
-    console.info(`TMI: Starting initiliaze ${type} client`)
+
+    info(`TMI: Starting initiliaze ${type} client`)
 
     try {
       await this.disconnect(type)
@@ -86,7 +88,7 @@ export default new class Tmi {
       
       await this.intervaledUpdateAccessToken(type, { access_token: accessToken.value, refresh_token: refreshToken.value })
     } catch (e) {
-      console.log(e)
+      error(e)
       OAuth.refresh(refreshToken.value, type)
         .then(() => this.connect(type))
     } finally {
@@ -113,7 +115,7 @@ export default new class Tmi {
     if (!user) return
     this.channel = { name: user.name, id: user.id }
 
-    console.log(`TMI: Channel name: ${this.channel.name}, channelId: ${this.channel.id}`)
+    info(`TMI: Channel name: ${this.channel.name}, channelId: ${this.channel.id}`)
   }
 
   async disconnect(type: 'bot' | 'broadcaster') {
@@ -123,7 +125,7 @@ export default new class Tmi {
       client.part(this.channel?.name)
       client.quit()
   
-      console.info(`TMI: ${type} disconnecting from server`)
+      info(`TMI: ${type} disconnecting from server`)
       this.clients[type] = null
       this.chatClients[type] = null
     }
@@ -133,11 +135,11 @@ export default new class Tmi {
     const client = this.chatClients[type]
     
     client.onDisconnect((manually, reason) => {
-      console.info(`TMI: ${type} disconnected from server `, !manually ? reason.message : 'manually')
+      info(`TMI: ${type} disconnected from server `, !manually ? reason.message : 'manually')
     })
 
     client.onConnect(() => {
-      console.info(`TMI: ${type.charAt(0).toUpperCase() + type.substring(1)} client connected`)
+      info(`TMI: ${type.charAt(0).toUpperCase() + type.substring(1)} client connected`)
       this.connected[type] = true
       client.join(this.channel?.name).catch((e) => {
         if (e.message.includes('Did not receive a reply to join')) return;
@@ -146,27 +148,27 @@ export default new class Tmi {
     })
 
     client.onJoin((channel) => {
-      console.info(`TMI: Bot joined ${channel.replace('#', '')}`)
+      info(`TMI: Bot joined ${channel.replace('#', '')}`)
     })
 
     client.onPart((channel) => {
-      console.info(`TMI: Bot parted ${channel.replace('#', '')}`)
+      info(`TMI: Bot parted ${channel.replace('#', '')}`)
     })
 
     if (type === 'bot') {
       client.onAction(async (channel, username, message, raw) => {
-        if (username === client.currentNick) {
-          console.info(`${moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')} <<< ${message}`)
-        } else console.info(`${moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')} >>> ${username}: ${message}`);
+        chatIn(`${username}[${raw.userInfo.userId}]: ${message}`)
+
         (raw as any).isAction = true
         events.fire({ name: 'message', opts: { username, message } })
         await Parser.parse(message, raw)
       })
       client.onPrivmsg(async (channel, username, message, raw) => {
+        chatIn(`${username}[${raw.userInfo.userId}]: ${message}`)
+
         if (raw.isCheer) {
           events.fire({ name: 'bits', opts: { amount: raw.totalBits, message }})
         } else {
-          console.info(`${moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')} >>> ${username}: ${message}`)
           events.fire({ name: 'message', opts: { username, message } })
           await Parser.parse(message, raw)
         }
@@ -185,17 +187,17 @@ export default new class Tmi {
 
   async say({ type = 'bot', message }: { type?: 'bot' | 'broadcaster', message: string }) {
     this.chatClients[type]?.say(this.channel.name, message)
-    console.info(`${moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')} <<< ${message}`)
+    chatOut(message)
   }
 
   async timeout({ username, duration, reason }: { username: string, duration: number, reason?: string }) {
     await this.chatClients.bot?.timeout(this.channel.name, username, duration, reason)
-    console.info(`${moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')} +timeout ${username} | ${duration}s | ${reason ?? ''}`)
+    timeout(`${username} | ${duration}s | ${reason ?? ''}`)
   }
 
   async whispers({ type = 'bot', message, target }: { type?: 'bot' | 'broadcaster', message: string, target: string }) {
     this.chatClients[type]?.whisper(target, message)
-    console.info(`${moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')} <<<W ${message}`)
+    whisperOut(`${target}: ${message}`)
   }
 
   getUserPermissions(badges: Map<string, string>): UserPermissions {

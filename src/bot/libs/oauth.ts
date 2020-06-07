@@ -1,5 +1,6 @@
 import axios from 'axios'
 import Settings from '../models/Settings'
+import { info, error } from './logger'
 
 export default new class Oauth {
   async validate (token: string | null, type: 'bot' | 'broadcaster') {
@@ -19,6 +20,7 @@ export default new class Oauth {
         scopes: data.scopes
       }
     } catch (e) {
+      error(e)
       throw (`Can't validate access token of ${type}`)
     }
   }
@@ -40,13 +42,13 @@ export default new class Oauth {
       if (!accessTokenCreated) await accessToken.update({ value: data.token })
       if (!refreshTokenCreated) await refreshToken.update({ value: data.refresh })
 
-      console.info(`Access token of ${type} was refreshed.`)
+      info(`Access token of ${type} was refreshed.`)
       return {
         access_token: data.token,
         refresh_token: data.refresh
       }
     } catch (e) {
-      console.error(e)
+      error(e)
       throw new Error(`Can't refresh access token of ${type}`)
     }
   }

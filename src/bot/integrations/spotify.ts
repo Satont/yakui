@@ -3,7 +3,7 @@ import axios from 'axios'
 
 import { Integration } from "typings";
 import Settings from "../models/Settings";
-import { body } from 'express-validator';
+import { info } from '../libs/logger';
 
 
 export default new class Spotify implements Integration {
@@ -27,7 +27,7 @@ export default new class Spotify implements Integration {
       accessToken: access_token.value
     })
 
-    console.info('SPOTIFY: Successfuly initiliazed.')
+    info('SPOTIFY: Successfuly initiliazed.')
 
     this.refreshTimeout = setTimeout(() => this.refreshTokens(), 1 * 60 * 60 * 1000);
   }
