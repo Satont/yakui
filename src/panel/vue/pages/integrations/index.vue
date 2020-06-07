@@ -6,6 +6,7 @@
           <b-nav-item to="/integrations">DonationAlerts</b-nav-item>
           <b-nav-item to="/integrations/spotify">Spotify</b-nav-item>
           <b-nav-item to="/integrations/qiwi">Qiwi</b-nav-item>
+          <b-nav-item to="/integrations/satontapi">Satont api</b-nav-item>
         </b-nav>
       </b-card-header>
 

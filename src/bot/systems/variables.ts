@@ -15,6 +15,7 @@ import spotify from '../integrations/spotify'
 import locales from '../libs/locales'
 import { loadedSystems } from '../libs/loader'
 import evaluate from '../commons/eval'
+import satontapi from '../integrations/satontapi'
 
 export default new class Variables implements System {
   variables: Variable[] = []
@@ -63,6 +64,13 @@ export default new class Variables implements System {
     if (/(\(eval)(.*)(\))/gimu.test(result)) {
       const toEval = result.match(/(\(eval)(.*)(\))/)[2].trim()
       result = result.replace(/(\(eval)(.*)(\))/gimu, await evaluate({ raw: opts.raw, param: opts.argument, message: toEval }))
+    }
+
+    if (/\$faceit\.[a-z]{3}/gimu.test(result)) {
+      const faceitData = await satontapi.getFaceitData()
+      if (faceitData) result = result
+          .replace(/\$faceit\.elo/, String(faceitData.elo))
+          .replace(/\$faceit\.lvl/, String(faceitData.lvl))
     }
 
     result = await this.parseCustomVariables(result)
@@ -203,7 +211,9 @@ export default new class Variables implements System {
 
   async getSong(result: string) {
     const spotifySong = await spotify.getSong()
+    const satontSong = await satontapi.getSong()
     if (spotifySong) return result
+    else if (satontSong) return satontSong
     else return locales.translate('song.notPlaying')
   }
 
