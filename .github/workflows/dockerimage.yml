@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: "!contains(steps.log.outputs.MESSAGE, '[skip-docker]')"
     steps:
       - uses: actions/checkout@master
       - name: Docker Build & Push to Docker Hub

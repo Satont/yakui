@@ -8,6 +8,7 @@ jobs:
     strategy:
       matrix:
         node-version: [14.x]
+    if: "!contains(steps.log.outputs.MESSAGE, '[skip-ci]')"
     steps:
     - uses: actions/checkout@v1
     - name: Use Node.js ${{ matrix.node-version }}
