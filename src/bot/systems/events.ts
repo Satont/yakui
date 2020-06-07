@@ -4,6 +4,7 @@ import { get } from 'lodash'
 import tmi from '../libs/tmi'
 import { System, DonationData, HostType } from '../../../typings'
 import Event from '../models/Event'
+import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove } from 'typings/webhooks'
 
 export default new class Events implements System {
   alreadyListen = false
@@ -77,6 +78,18 @@ export default new class Events implements System {
 
   onRaided({ viewers, username }: HostType) {
     this.fire({ name: 'raided', opts: { username, viewers } })
+  }
+
+  onUserFollow({ from_name }: IWebHookUserFollow) {
+    this.fire({ name: 'follow', opts: { username: from_name}})
+  }
+
+  onAddModerator({ event_data: { user_name: username } }: IWebHookModeratorAdd) {
+    this.fire({ name: 'newmod', opts: { username }})
+  }
+
+  onRemoveModerator({ event_data: { user_name: username } }: IWebHookModeratorRemove) {
+    this.fire({ name: 'removemod', opts: { username }})
   }
 
   listenDbUpdates() {

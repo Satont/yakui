@@ -3,6 +3,9 @@
     <h1>Events</h1>
 
     <div id="navigation">
+      <a @click="show = 'follow'" class="btn btn-primary btn-sm">Follow</a>
+      <a @click="show = 'newmod'" class="btn btn-primary btn-sm">New Moderator</a>
+      <a @click="show = 'removemod'" class="btn btn-primary btn-sm">Moderator Removed</a>
       <a @click="show = 'tip'" class="btn btn-primary btn-sm">Tip</a>
       <a @click="show = 'message'" class="btn btn-primary btn-sm">Message</a>
       <a @click="show = 'bits'" class="btn btn-primary btn-sm">Bits</a>
@@ -59,7 +62,28 @@ import Event from '../../../../bot/models/Event'
 
 export default Vue.extend({
   data: () => ({
-    show: 'tip',
+    show: 'follow',
+    follow: {
+      variables: [
+        { name: '$username', description: 'Username of user who followed' },
+      ],
+      description: 'Triggering when channel got new follower.',
+      operations: []
+    },
+    newmod: {
+      variables: [
+        { name: '$username', description: 'Username of user who got moderated' },
+      ],
+      description: 'Triggering when channel got new moderator.',
+      operations: []
+    },
+    removemod: {
+      variables: [
+        { name: '$username', description: 'Username of user who lost moderation' },
+      ],
+      description: 'Triggering when channel lost some moderator.',
+      operations: []
+    },
     message: {
       variables: [
         { name: '$username', description: 'Username of user who donated' },
