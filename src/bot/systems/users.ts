@@ -27,7 +27,9 @@ export default new class Users implements System {
     { fnc: this.parseMessage }
   ]
   commands: Command[] = [
-    { name: 'sayb', permission: 'broadcaster', fnc: this.sayb, visible: false }
+    { name: 'sayb', permission: 'broadcaster', fnc: this.sayb, visible: false },
+    { name: 'ignore add', permission: 'moderators', fnc: this.ignoreAdd, visible: false },
+    { name: 'ignore remove', permission: 'moderators', fnc: this.ignoreRemove, visible: false }
   ]
 
   async init() {
@@ -117,7 +119,7 @@ export default new class Users implements System {
     }
   }
 
-  private sayb(opts: CommandOptions) {
+  sayb(opts: CommandOptions) {
     tmi.chatClients?.broadcaster?.say(tmi.channel?.name, opts.argument)
   }
 
@@ -127,6 +129,33 @@ export default new class Users implements System {
 
     return userPerms.some((p, index) => p[1] && index <= commandPermissionIndex)
   }
+
+  async ignoreAdd(opts: CommandOptions) {
+    if (!opts.argument.length) return;
+    const [ignoredUsers]: [Settings] = await Settings.findOrCreate({ where: { space: 'users', name: 'ignoredUsers' }, defaults: { value: [] } })
+    
+    await ignoredUsers.update({ value: [...ignoredUsers.value, opts.argument.toLowerCase() ].filter(Boolean) })
+
+    return '$sender ✅'
+  }
+
+  async ignoreRemove(opts: CommandOptions) {
+    if (!opts.argument.length) return;
+    const ignoredUsers: Settings = await Settings.findOne({ where: { space: 'users', name: 'ignoredUsers' } })
+    
+    if (!ignoredUsers || !ignoredUsers?.value.length) return
+    if (!ignoredUsers.value.includes(opts.argument.toLowerCase())) return
+
+    const users = ignoredUsers.value
+    users.splice(ignoredUsers.value.indexOf(opts.argument.toLowerCase()), 1)
+
+    await ignoredUsers.update({
+      value: users
+    })
+
+    return '$sender ✅'
+  }
+
 
   listenDbUpdates() {
     Settings.afterSave(instance => {
