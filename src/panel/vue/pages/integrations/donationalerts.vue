@@ -8,7 +8,7 @@
         <b-form-input id="access_token" v-model="settings.access_token" type="password" placeholder="DonationAlerts access_token"></b-form-input>
       </b-form-group>
 
-      <b-button class="btn-block mb-2" type="submit" href="https://bot.satont.ru/en/integrations/" target="_blank" variant="success">Generate token</b-button>
+      <b-button class="btn-block mb-2" type="submit" href="https://bot.satont.ru/en/integrations/#Donationalerts" target="_blank" variant="success">Generate token</b-button>
       <b-button class="btn-block" type="submit" variant="primary">Save</b-button>
     </b-form>
   </div>
