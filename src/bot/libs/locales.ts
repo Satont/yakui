@@ -24,7 +24,7 @@ export default new class Locales {
       where: { space: 'general', name: 'locale' },
       defaults: { value: 'ru' }
     })
-
+    
     const lang = resolve(langsDir, `${locale.value}.json`)
     this.lang = JSON.parse(readFileSync(lang, 'utf-8'))
 
