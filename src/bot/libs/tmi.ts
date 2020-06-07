@@ -8,6 +8,7 @@ import Parser from './parser'
 import { UserPermissions } from '../../../typings'
 import events from '../systems/events'
 import { info, error, chatOut, chatIn, timeout, whisperOut } from './logger'
+import { onHosting, onHosted, onRaided } from './eventsCaller'
 
 export default new class Tmi {
   private isAlreadyUpdating = {
@@ -174,13 +175,13 @@ export default new class Tmi {
         }
       })
       client.onHost((channel, username, viewers) => {
-        events.fire({ name: 'host', opts: { username, viewers } })
+        onHosting({ username, viewers })
       })
       client.onHosted((channel, username, auto, viewers) => {
-        events.fire({ name: 'hosted', opts: { username, viewers } })
+        onHosted({ username, viewers })
       })
       client.onRaid((channel, username, { viewerCount }) => {
-        events.fire({ name: 'raided', opts: { username, viewers: viewerCount } })
+        onRaided({ username, viewers: viewerCount })
       })
     }
   }
