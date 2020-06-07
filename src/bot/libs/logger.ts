@@ -5,7 +5,7 @@ import chalk from 'chalk'
 import { inspect } from 'util'
 
 const { format } = winston
-const { combine, printf, errors, splat } = format;
+const { combine, printf, simple } = format;
 
 declare module 'winston' {
   export interface Logger {
@@ -40,7 +40,6 @@ const levels: winston.config.AbstractConfigSetLevels = {
   timeout: 1
 }
 
-
 const logDir = './logs'
 
 if (!fs.existsSync(logDir)) fs.mkdirSync(logDir)
@@ -50,19 +49,19 @@ const log = winston.createLogger({
   format: combine(
     printf(info => {
       let level: string
-      if (info.level === 'info') level = chalk.blue('!!!')
-      if (info.level === 'chatIn') level = '>>>'
-      if (info.level === 'chatOut') level = '<<<'
-      if (info.level === 'whisperOut') level = '<<< whispers'
+      if (info.level === 'info') level = chalk.magenta('!!!')
+      if (info.level === 'chatIn') level = chalk.cyan('>>>')
+      if (info.level === 'chatOut') level = chalk.cyan('<<<')
+      if (info.level === 'whisperOut') level = chalk.cyan('<<< whispers')
       if (info.level === 'error') level = chalk.red('!!! ERROR !!!')
-      if (info.level === 'sub') level = '+sub'
-      if (info.level === 'resub') level = '+resub'
-      if (info.level === 'subgift') level = '+subgift'
-      if (info.level === 'bits') level = '+cheer'
-      if (info.level === 'hosted') level = '+hosted'
-      if (info.level === 'raided') level = '+raided'
-      if (info.level === 'hosting') level = '?hosting'
-      if (info.level === 'timeout') level = '+timeout'
+      if (info.level === 'sub') level = chalk.cyanBright('+sub')
+      if (info.level === 'resub') level = chalk.cyanBright('+resub')
+      if (info.level === 'subgift') level = chalk.cyanBright('+subgift')
+      if (info.level === 'bits') level = chalk.cyanBright('+cheer')
+      if (info.level === 'hosted') level = chalk.cyanBright('+hosted')
+      if (info.level === 'raided') level = chalk.cyanBright('+raided')
+      if (info.level === 'hosting') level = chalk.cyanBright('?hosting')
+      if (info.level === 'timeout') level = chalk.cyanBright('+timeout')
 
       if (typeof info.message === 'object') info.message = inspect(info.message)
       const timestamp = moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')
@@ -71,11 +70,11 @@ const log = winston.createLogger({
     }),
   ),
   exceptionHandlers: [
-    new winston.transports.File({ filename: logDir + '/exceptions.log', maxsize: 5242880, maxFiles: 10, tailable: true }),
+    new winston.transports.File({ filename: logDir + '/exceptions.log', maxsize: 5242880, maxFiles: 10, tailable: true, format: simple() }),
     new winston.transports.Console()
   ],
   transports: [
-    new winston.transports.File({ filename: logDir + '/bot.log', maxsize: 5242880, maxFiles: 10, tailable: true }),
+    new winston.transports.File({ filename: logDir + '/bot.log', maxsize: 5242880, maxFiles: 10, tailable: true, format: simple() }),
     new winston.transports.Console()
   ]
 })
