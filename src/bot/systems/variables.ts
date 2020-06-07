@@ -46,19 +46,19 @@ export default new class Variables implements System {
     }
 
     if (/\$top\.bits/gimu.test(result)) {
-      result = result.replace(/\$top\.bits/gimu, await this.getTop('bits'))
+      result = result.replace(/\$top\.bits/gimu, await this.getTop('bits', opts.argument))
     }
 
     if (/\$top\.tips/gimu.test(result)) {
-      result = result.replace(/\$top\.tips/gimu, await this.getTop('tips'))
+      result = result.replace(/\$top\.tips/gimu, await this.getTop('tips', opts.argument))
     }
 
     if (/\$top\.time/gimu.test(result)) {
-      result = result.replace(/\$top\.time/gimu, await this.getTop('watched'))
+      result = result.replace(/\$top\.time/gimu, await this.getTop('watched', opts.argument))
     }
 
     if (/\$top\.messages/gimu.test(result)) {
-      result = result.replace(/\$top\.messages/gimu, await this.getTop('messages'))
+      result = result.replace(/\$top\.messages/gimu, await this.getTop('messages', opts.argument))
     }
 
     if (/(\(eval)(.*)(\))/gimu.test(result)) {
@@ -92,15 +92,32 @@ export default new class Variables implements System {
     return result
   }
 
-  async getTop(type: 'watched' | 'tips' | 'bits' | 'messages') {
+  async getTop(type: 'watched' | 'tips' | 'bits' | 'messages', page: string = '1') {
     let result: Array<{ username: string, value: number }> = []
+    if (isNaN(Number(page))) page = '1'
+    if (Number(page) <= 0) page = '1'
+
+    const offset = (Number(page) - 1) * 10
 
     if (type === 'watched') {
-      result = await UserModel.findAll({ limit: 10, order: [[type, 'DESC']], attributes: ['username', [type, 'value']], raw: true })
+      result = await UserModel.findAll({ 
+        limit: 10, 
+        order: [[type, 'DESC']],
+        attributes: ['username',
+        [type, 'value']],
+        offset,
+        raw: true
+      })
 
       return result.map((result, index) => `${index + 1}. ${result.username} - ${((result.value / (1 * 60 * 1000)) / 60).toFixed(1)}h`).join(', ')
     } else if (type === 'messages') {
-      result = await UserModel.findAll({ limit: 10, order: [[type, 'DESC']], attributes: ['username', [type, 'value']], raw: true })
+      result = await UserModel.findAll({ 
+        limit: 10,
+        order: [[type, 'DESC']],
+        attributes: ['username', [type, 'value']],
+        offset,
+        raw: true
+      })
 
       return result.map((result, index) => `${index + 1}. ${result.username} - ${result.value}`).join(', ')
     } else if (type === 'tips') {
@@ -115,7 +132,8 @@ export default new class Variables implements System {
         GROUP BY 
           "users"."id" 
         ORDER BY 
-          value DESC 
+          value DESC
+        OFFSET ${offset} ROWS
         LIMIT 
           10`)
       result = query[0]
@@ -133,7 +151,8 @@ export default new class Variables implements System {
         GROUP BY 
           "users"."id" 
         ORDER BY 
-          value DESC 
+          value DESC
+        OFFSET ${offset} ROWS
         LIMIT 
           10`)
       result = query[0]
