@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs'
 import { resolve} from 'path'
 import { get } from 'lodash'
-import Settings from '../models/Settings'
+import Settings from '@bot/models/Settings'
 import { info } from './logger'
 
 const parameterizedString = (...args) => {
@@ -24,7 +24,7 @@ export default new class Locales {
       where: { space: 'general', name: 'locale' },
       defaults: { value: 'ru' }
     })
-
+    
     const lang = resolve(langsDir, `${locale.value}.json`)
     this.lang = JSON.parse(readFileSync(lang, 'utf-8'))
 

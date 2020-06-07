@@ -2,12 +2,12 @@ import { literal } from 'sequelize'
 import { chunk as makeChunk } from 'lodash'
 
 import { System, ParserOptions, Command, CommandOptions, CommandPermission } from '../../../typings'
-import User from '../models/User'
-import tmi from '../libs/tmi'
-import UserTips from '../models/UserTips'
-import UserBits from '../models/UserBits'
+import User from '@bot/models/User'
+import tmi from '@bot/libs/tmi'
+import UserTips from '@bot/models/UserTips'
+import UserBits from '@bot/models/UserBits'
 import twitch from './twitch'
-import Settings from '../models/Settings'
+import Settings from '@bot/models/Settings'
 
 export default new class Users implements System {
   settings: { 

@@ -1,6 +1,6 @@
 import { System, ParserOptions } from "typings";
-import Keyword from '../models/Keyword'
-import tmi from "../libs/tmi";
+import Keyword from '@bot/models/Keyword'
+import tmi from "@bot/libs/tmi";
 import variables from './variables'
 import { isRegExp } from 'lodash'
 

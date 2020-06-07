@@ -1,6 +1,6 @@
-import { System } from '../../../typings'
-import tmi from '../libs/tmi'
-import Timer from '../models/Timer'
+import { System } from 'typings'
+import tmi from '@bot/libs/tmi'
+import Timer from '@bot/models/Timer'
 import twitch from './twitch'
 import variables from './variables'
 

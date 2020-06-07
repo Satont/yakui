@@ -3,12 +3,12 @@ import axios from 'axios'
 import WebSocket from 'ws'
 
 import { Integration } from 'typings';
-import Settings from '../models/Settings';
-import { onDonation } from '../libs/eventsCaller'
-import currency, { currency as currencyType } from '../libs/currency'
-import User from '../models/User'
-import UserTips from '../models/UserTips';
-import { info } from '../libs/logger';
+import Settings from '@bot/models/Settings';
+import { onDonation } from '@bot/libs/eventsCaller'
+import currency, { currency as currencyType } from '@bot/libs/currency'
+import User from '@bot/models/User'
+import UserTips from '@bot/models/UserTips';
+import { info } from '@bot/libs/logger';
 
 type DonationAlertsEvent = {
   id: string;

@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
-import Keyword from '../../../../models/Keyword'
+import Keyword from '@bot/models/Keyword'
 
 const router = Router({
   mergeParams: true

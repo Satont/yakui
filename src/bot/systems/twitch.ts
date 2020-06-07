@@ -1,7 +1,7 @@
-import tmi from "../libs/tmi"
+import tmi from "@bot/libs/tmi"
 import humanizeDuration from 'humanize-duration'
-import { onStreamStart, onStreamEnd } from "../libs/eventsCaller"
-import locales from '../libs/locales'
+import { onStreamStart, onStreamEnd } from "@bot/libs/eventsCaller"
+import locales from '@bot/libs/locales'
 import { System, Command, CommandOptions } from "typings"
 
 export default new class Twitch implements System {

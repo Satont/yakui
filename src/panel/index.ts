@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import VueRouter, { Route } from 'vue-router'
+import VueRouter from 'vue-router'
 import VueClipboard from 'vue-clipboard2'
 import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'

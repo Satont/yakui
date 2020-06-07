@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
-import Variable from '../../../../models/Variable'
+import Variable from '@bot/models/Variable'
 
 const router = Router({
   mergeParams: true

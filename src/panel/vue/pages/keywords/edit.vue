@@ -25,7 +25,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
-import Keyword from '../../../../bot/models/Keyword'
+import Keyword from '@bot/models/Keyword'
 import axios from 'axios'
 
 @Component({})

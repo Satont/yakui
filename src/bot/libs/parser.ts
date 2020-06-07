@@ -1,12 +1,12 @@
 import TwitchPrivateMessage from "twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage"
 
-import { System, Command } from "../../../typings"
+import { System, Command } from "typings"
 import tmi from "./tmi"
-import Variables from "../systems/variables"
+import Variables from "@bot/systems/variables"
 
 import { loadedSystems } from './loader'
-import users from "../systems/users"
-import variables from "../systems/variables"
+import users from "@bot/systems/users"
+import variables from "@bot/systems/variables"
 
 export default new class Parser {
   systems: { [x: string]: System } = {}

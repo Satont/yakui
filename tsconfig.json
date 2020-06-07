@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
     "baseUrl": "./",
+    "paths": {
+      "@bot/*": ["src/bot/*"],
+      "@web/*": ["src/web/*"]
+    },
     "target": "es6",
     "module": "commonjs",
     "inlineSourceMap": true,
@@ -12,12 +16,13 @@
     "typeRoots" : [
       "typings", 
       "node_modules/@types"
-    ]
+    ],
   },
   "include": [
     "./",
+    "./src",
     "src/**/*.ts",
     "src/**/*.vue",
   ],
-  "exclude": ["src/bot", "node_modules"]
+  "exclude": ["node_modules"]
 }

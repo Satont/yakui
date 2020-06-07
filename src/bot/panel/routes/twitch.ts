@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { IWebHookModeratorRemove, IWebHookModeratorAdd, IWebHookUserFollow, IWebHookStreamChanged } from 'typings/webhooks'
-import { onAddModerator, onRemoveModerator, onUserFollow, onStreamChange } from "../../../bot/libs/eventsCaller";
-import { error } from "../../../bot/libs/logger";
+import { onAddModerator, onRemoveModerator, onUserFollow, onStreamChange } from "@bot/libs/eventsCaller";
+import { error } from "@bot/libs/logger";
 
 const router = Router()
 

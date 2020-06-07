@@ -1,12 +1,12 @@
 import axios from 'axios'
 
 import { Integration } from 'typings'
-import Settings from '../models/Settings'
-import User  from '../models/User'
-import UserTips from '../models/UserTips'
-import currency from '../libs/currency'
-import { onDonation } from '../libs/eventsCaller'
-import { info, error } from '../libs/logger'
+import Settings from '@bot/models/Settings'
+import User  from '@bot/models/User'
+import UserTips from '@bot/models/UserTips'
+import currency from '@bot/libs/currency'
+import { onDonation } from '@bot/libs/eventsCaller'
+import { info, error } from '@bot/libs/logger'
 
 export default new class Qiwi implements Integration {
   pollTimeout: NodeJS.Timeout = null

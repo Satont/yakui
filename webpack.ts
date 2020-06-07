@@ -22,7 +22,10 @@ export default {
   resolve: {
     extensions: ['.ts', '.js', '.vue'],
     alias: {
-      'vue$': 'vue/dist/vue.esm.js'
+      'vue$': 'vue/dist/vue.esm.js',
+      '@': resolve(__dirname, 'src'),
+      '@bot': resolve(__dirname, 'src', 'bot'),
+      '@web': resolve(__dirname, 'src', 'web')
     }
   }
 }

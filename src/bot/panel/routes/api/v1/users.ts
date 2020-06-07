@@ -1,9 +1,9 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
-import User from '../../../../models/User'
-import UserBits from '../../../../models/UserBits'
-import UserTips from '../../../../models/UserTips'
-import currency from '../../../../libs/currency'
+import User from '@bot/models/User'
+import UserBits from '@bot/models/UserBits'
+import UserTips from '@bot/models/UserTips'
+import currency from '@bot/libs/currency'
 
 const router = Router({
   mergeParams: true

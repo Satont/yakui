@@ -1,9 +1,9 @@
 import safeEval from 'safe-eval'
 import { get } from 'lodash'
 
-import tmi from '../libs/tmi'
-import { System, DonationData, HostType } from '../../../typings'
-import Event from '../models/Event'
+import tmi from '@bot/libs/tmi'
+import { System, DonationData, HostType } from 'typings'
+import Event from '@bot/models/Event'
 import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove } from 'typings/webhooks'
 
 export default new class Events implements System {

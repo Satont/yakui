@@ -1,5 +1,5 @@
 import axios from 'axios'
-import Settings from '../models/Settings'
+import Settings from '@bot/models/Settings'
 import { info, error } from './logger'
 
 export default new class Oauth {

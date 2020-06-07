@@ -2,8 +2,8 @@ import SpotifyApi from 'spotify-web-api-node'
 import axios from 'axios'
 
 import { Integration } from "typings";
-import Settings from "../models/Settings";
-import { info, error } from '../libs/logger';
+import Settings from "@bot/models/Settings";
+import { info, error } from '@bot/libs/logger';
 
 
 export default new class Spotify implements Integration {
