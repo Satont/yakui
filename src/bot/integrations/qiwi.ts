@@ -13,6 +13,7 @@ export default new class Qiwi implements Integration {
   token: string = null
 
   async init() {
+    clearTimeout(this.pollTimeout)
     const [enabled, token]: [Settings, Settings] = await Promise.all([
       Settings.findOne({ where: { space: 'qiwi', name: 'enabled' } }),
       Settings.findOne({ where: { space: 'qiwi', name: 'token' } })
