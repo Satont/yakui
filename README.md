@@ -49,7 +49,9 @@ version: "3.2"
 services:
   twobit:
     image: satont/twobit
-    restart: always
+		restart: always
+		volumes:
+			- ./logs:/app/logs/
     env_file:
       - .env
     ports:
