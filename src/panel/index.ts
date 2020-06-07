@@ -35,6 +35,7 @@ const router = new VueRouter({
         { path: '', alias: 'donationalerts', name: 'DonationAlerts', component: () => import('./vue/pages/integrations/donationalerts.vue') },
         { path: 'spotify', name: 'Spotify', component: () => import('./vue/pages/integrations/spotify.vue') },
         { path: 'qiwi', name: 'Qiwi', component: () => import('./vue/pages/integrations/qiwi.vue') },
+        { path: 'satontapi', name: 'Satont api', component: () => import('./vue/pages/integrations/satontapi.vue') },
       ]
     },
 
