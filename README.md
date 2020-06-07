@@ -5,30 +5,30 @@
 ## Features
 
 - Custom commands:
-	- you can create a command with JavaScript evaluation;
-	- already built-in variables;
-	- also supports custom variables.
+  - you can create a command with JavaScript evaluation;
+  - already built-in variables;
+  - also supports custom variables.
 - Timers: send message in chat periodically.
 - Variables: create some variable, which can be used in timers or custom commands.
 - Moderation system.
 - Users stats counting:
-	- messages;
-	- time on stream;
-	- bits;
-	- tips;
-	- time of follow.
+  - messages;
+  - time on stream;
+  - bits;
+  - tips;
+  - time of follow.
 - Integrations:
-	- Streamlabs;
-	- DonationAlerts;
-	- Qiwi Donate;
-	- Spotify.
+  - Streamlabs;
+  - DonationAlerts;
+  - Qiwi Donate;
+  - Spotify.
 - Keywords system.
 - Points system:
-	- count user points per watching or chatting.
+  - count user points per watching or chatting.
 - Overlays system:
-	- you can create some overlay and use it in your OBS!
+  - you can create some overlay and use it in your OBS!
 - Events system:
-	- trigger tip, bit, host and do something!
+  - trigger tip, bit, host and do something!
 
 
 ## Installation
@@ -49,9 +49,9 @@ version: "3.2"
 services:
   twobit:
     image: satont/twobit
-		restart: always
-		volumes:
-			- ./logs:/app/logs/
+    restart: always
+    volumes:
+      - ./logs:/app/logs/
     env_file:
       - .env
     ports:
