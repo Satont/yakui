@@ -61,7 +61,7 @@ export default new class Tmi {
 
     if (refreshToken.value === '') {
       this.isAlreadyUpdating[type] = false
-      error(`TMI: refreshToken for ${type} not found, client will be not initiliazed.`)
+      info(`TMI: refreshToken for ${type} not found, client will be not initiliazed.`)
       return
     }
 
@@ -96,7 +96,6 @@ export default new class Tmi {
       import('../systems/twitch')
       import('./loader')
       import('./currency')
-      throw new Error('test')
     }
   }
 

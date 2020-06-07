@@ -2,9 +2,10 @@ import winston from 'winston'
 import moment from 'moment'
 import fs from 'fs'
 import chalk from 'chalk'
+import { inspect } from 'util'
 
 const { format } = winston
-const { combine, printf } = format;
+const { combine, printf, errors, splat } = format;
 
 declare module 'winston' {
   export interface Logger {
@@ -53,7 +54,7 @@ const log = winston.createLogger({
       if (info.level === 'chatIn') level = '>>>'
       if (info.level === 'chatOut') level = '<<<'
       if (info.level === 'whisperOut') level = '<<< whispers'
-      if (info.level === 'error') level = '!!! ERROR !!!'
+      if (info.level === 'error') level = chalk.red('!!! ERROR !!!')
       if (info.level === 'sub') level = '+sub'
       if (info.level === 'resub') level = '+resub'
       if (info.level === 'subgift') level = '+subgift'
@@ -63,8 +64,7 @@ const log = winston.createLogger({
       if (info.level === 'hosting') level = '?hosting'
       if (info.level === 'timeout') level = '+timeout'
 
-      if (typeof info.message === 'object') info.message = JSON.stringify(info.message, null, 4)
-
+      if (typeof info.message === 'object') info.message = inspect(info.message)
       const timestamp = moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')
       
       return `${timestamp} ${level} ${info.message}`
