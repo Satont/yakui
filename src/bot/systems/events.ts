@@ -2,7 +2,7 @@ import safeEval from 'safe-eval'
 import { get } from 'lodash'
 
 import tmi from '../libs/tmi'
-import { System } from '../../../typings'
+import { System, DonationData } from '../../../typings'
 import Event from '../models/Event'
 
 export default new class Events implements System {
@@ -63,7 +63,7 @@ export default new class Events implements System {
     }
   }
 
-  onDonation(data) {
+  onDonation(data: DonationData ) {
     this.fire( { name: 'tip', opts: data })
   }
 
