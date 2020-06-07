@@ -21,6 +21,10 @@ declare module 'winston' {
     hosting: winston.LeveledLogMethod;
     donate: winston.LeveledLogMethod;
     timeout: winston.LeveledLogMethod;
+    moded: winston.LeveledLogMethod;
+    unmoded: winston.LeveledLogMethod;
+    follow: winston.LeveledLogMethod;
+    unfollow: winston.LeveledLogMethod;
   }
 }
 const levels: winston.config.AbstractConfigSetLevels = { 
@@ -37,7 +41,11 @@ const levels: winston.config.AbstractConfigSetLevels = {
   raided: 1,
   donate: 1,
   hosting: 1,
-  timeout: 1
+  timeout: 1,
+  moded: 1,
+  unmoded: 1,
+  follow: 1,
+  unfollow: 1
 }
 
 const logDir = './logs'
@@ -63,6 +71,10 @@ const log = winston.createLogger({
       if (info.level === 'hosting') level = chalk.cyanBright('?hosting')
       if (info.level === 'timeout') level = chalk.cyanBright('+timeout')
       if (info.level === 'donate') level = chalk.cyanBright('+donate')
+      if (info.level === 'moded') level = chalk.cyanBright('+moderator')
+      if (info.level === 'unmoded') level = chalk.cyanBright('-moderator')
+      if (info.level === 'follow') level = chalk.cyanBright('+follow')
+      if (info.level === 'unfollow') level = chalk.cyanBright('-follow')
 
       if (typeof info.message === 'object') info.message = inspect(info.message)
       const timestamp = moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')
@@ -94,3 +106,7 @@ export const hosting = log.hosting.bind(log)
 export const donate = log.donate.bind(log)
 export const timeout = log.timeout.bind(log)
 export const raided = log.raided.bind(log)
+export const moded = log.moded.bind(log)
+export const unmoded = log.unmoded.bind(log)
+export const follow = log.follow.bind(log)
+export const unfollow = log.unfollow.bind(log)

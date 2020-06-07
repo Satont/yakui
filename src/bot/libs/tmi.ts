@@ -97,6 +97,7 @@ export default new class Tmi {
       import('../systems/twitch')
       import('./loader')
       import('./currency')
+      import('./webhooks')
     }
   }
 

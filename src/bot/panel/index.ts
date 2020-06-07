@@ -7,18 +7,20 @@ import basicAuth from 'express-basic-auth'
 
 import v1 from './routes/api/v1'
 import { info } from '../libs/logger'
+import twitch from './routes/twitch'
 
 const PORT = process.env.PORT || 3000
 
 const app = express()
 
+app.use(bodyparser.urlencoded({ extended: false }));
+app.use(bodyparser.json())
+app.use('/twitch', twitch)
 app.use(basicAuth({
   users: { [process.env.PANEL_USER || 'admin']: process.env.PANEL_PASSWORD || 'admin' },
   challenge: true,
   unauthorizedResponse: () => 'Unauthorized'
 }))
-app.use(bodyparser.urlencoded({ extended: false }));
-app.use(bodyparser.json())
 app.use('/static', express.static(resolve(process.cwd(), 'public', 'dest')))
 app.use(history({
   index: '/',

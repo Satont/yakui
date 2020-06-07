@@ -1,6 +1,7 @@
 import { loadedSystems } from './loader'
 import { DonationData, HostType } from 'typings'
-import { info, donate, hosted, hosting, raided } from './logger'
+import { info, donate, hosted, hosting, raided, moded, unmoded, follow } from './logger'
+import { IWebHookModeratorAdd, IWebHookModeratorRemove, IWebHookUserFollow, IWebHookStreamChanged } from 'typings/webhooks'
 
 export const onStreamStart = () => {
   info(`TWITCH: Stream started`)
@@ -48,3 +49,36 @@ export const onRaided = ({ username, viewers }: HostType) => {
     if (typeof system.onRaided === 'function') system.onRaided({ username, viewers })
   }
 }
+
+export const onAddModerator = (data: IWebHookModeratorAdd) => {
+  moded(data.event_data.user_name)
+
+  for (const system of loadedSystems) {
+    if (typeof system.onAddModerator === 'function') system.onAddModerator(data)
+  }
+}
+
+export const onRemoveModerator = (data: IWebHookModeratorRemove) => {
+  unmoded(data.event_data.user_name)
+
+  for (const system of loadedSystems) {
+    if (typeof system.onRemoveModerator === 'function') system.onRemoveModerator(data)
+  }
+}
+
+export const onUserFollow = (data: IWebHookUserFollow) => {
+  follow(data.from_name)
+
+  for (const system of loadedSystems) {
+    if (typeof system.onUserFollow === 'function') system.onUserFollow(data)
+  }
+}
+
+export const onStreamChange = (data: IWebHookStreamChanged) => {
+  info(`STREAM CHANGED | TITLE: ${data.title} | GAME ${data.game_id}`)
+
+  for (const system of loadedSystems) {
+    if (typeof system.onStreamChange === 'function') system.onStreamChange(data)
+  }
+}
+

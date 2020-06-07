@@ -5,6 +5,10 @@
         <b-form-select id="lang" v-model="settings.locale" :options="['ru', 'en']" size="sm"></b-form-select>
       </b-form-group>
 
+      <b-form-group label="Site url" label-for="siteUrl">
+        <b-form-input id="siteUrl" v-model="settings.siteUrl" size="sm"></b-form-input>
+      </b-form-group>
+
       <b-button class="btn-block" type="submit" variant="primary">Save</b-button>
     </b-form>
   </div>
@@ -21,7 +25,8 @@ import { Settings } from '../helpers/mixins'
 export default class General extends Vue {
   settings = {
     space: 'general',
-    locale: 'ru'
+    locale: 'ru',
+    siteUrl: window.location.origin
   }
 }
 </script>

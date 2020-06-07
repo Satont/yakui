@@ -106,7 +106,7 @@ export default new class Donationalerts implements Integration {
       const user: User = await User.findOne({ where: { username: data.username.toLowerCase() }})
 
       const donationData = { 
-        userId: user.id,
+        userId: user?.id,
         amount: data.amount,
         currency: data.currency,
         rates: currency.rates,
@@ -115,11 +115,19 @@ export default new class Donationalerts implements Integration {
         timestamp: Date.now()
       }
     
-      if (data.billing_system !== 'fake' || !user) {
+      if (data.billing_system !== 'fake' && user) {
         await UserTips.create(donationData)
       }
 
-      onDonation(data)
+      onDonation({
+        username: data.username?.trim() ?? 'Anonymous',
+        userId: user?.id,
+        amount: data.amount,
+        currency: data.currency,
+        inMainCurrencyAmount: currency.exchange({ from: data.currency, amount: data.amount }),
+        message: data.message,
+        timestamp: Date.now()
+      })
     })
   }
 
