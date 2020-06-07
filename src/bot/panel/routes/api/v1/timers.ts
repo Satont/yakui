@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
-import Timer from '../../../../models/Timer'
+import Timer from '@bot/models/Timer'
 
 const router = Router({
   mergeParams: true

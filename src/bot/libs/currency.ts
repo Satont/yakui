@@ -1,4 +1,4 @@
-import Settings from "../models/Settings"
+import Settings from "@bot/models/Settings"
 import axios from "axios"
 import { info, error } from "./logger"
 

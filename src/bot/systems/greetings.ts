@@ -1,7 +1,7 @@
 import { System, ParserOptions } from "typings";
-import Greeting from "../models/Greeting";
+import Greeting from "@bot/models/Greeting";
 import variables from "./variables";
-import tmi from "../libs/tmi";
+import tmi from "@bot/libs/tmi";
 
 export default new class Greetings implements System {
   sended: string[] = []

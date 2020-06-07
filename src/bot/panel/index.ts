@@ -6,7 +6,7 @@ import http from 'http'
 import basicAuth from 'express-basic-auth'
 
 import v1 from './routes/api/v1'
-import { info } from '../libs/logger'
+import { info } from '@bot/libs/logger'
 import twitch from './routes/twitch'
 
 const PORT = process.env.PORT || 3000

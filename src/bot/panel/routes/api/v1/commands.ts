@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
-import Command from '../../../../models/Command'
-import { Command as CommandType } from '../../../../../../typings/index'
+import Command from '@bot/models/Command'
+import { Command as CommandType } from 'typings'
 
 const router = Router({
   mergeParams: true

@@ -1,6 +1,6 @@
 import { Integration } from "typings";
-import Settings from "../models/Settings";
-import { error } from '../libs/logger'
+import Settings from "@bot/models/Settings";
+import { error } from '@bot/libs/logger'
 import axios from 'axios'
 
 

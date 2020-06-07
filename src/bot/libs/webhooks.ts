@@ -1,5 +1,5 @@
 import tmi from "./tmi"
-import Settings from '../models/Settings'
+import Settings from '@bot/models/Settings'
 import { info, error } from "./logger"
 
 

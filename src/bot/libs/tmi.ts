@@ -1,12 +1,11 @@
 import Twitch, { AccessToken } from 'twitch'
 import Chat from 'twitch-chat-client'
-import moment from 'moment'
 
-import Settings from '../models/Settings'
+import Settings from '@bot/models/Settings'
 import OAuth from './oauth'
 import Parser from './parser'
-import { UserPermissions } from '../../../typings'
-import events from '../systems/events'
+import { UserPermissions } from 'typings'
+import events from '@bot/systems/events'
 import { info, error, chatOut, chatIn, timeout, whisperOut } from './logger'
 import { onHosting, onHosted, onRaided } from './eventsCaller'
 

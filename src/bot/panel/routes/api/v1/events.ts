@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import Event from '../../../../models/Event'
+import Event from '@bot/models/Event'
 
 const router = Router()
 

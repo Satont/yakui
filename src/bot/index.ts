@@ -1,6 +1,8 @@
-console.time('start')
-import 'source-map-support/register'
+import 'module-alias/register'
 import('reflect-metadata')
+import 'source-map-support/register'
+console.time('start')
+
 require('dotenv').config()
 import { connected } from './libs/db'
 import { error } from './libs/logger'

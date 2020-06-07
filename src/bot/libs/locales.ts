@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs'
 import { resolve} from 'path'
 import { get } from 'lodash'
-import Settings from '../models/Settings'
+import Settings from '@bot/models/Settings'
 import { info } from './logger'
 
 const parameterizedString = (...args) => {

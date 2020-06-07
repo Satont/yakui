@@ -1,6 +1,6 @@
 import { resolve } from 'path'
-import getFiles from '../commons/getFiles'
-import { System } from '../../../typings';
+import getFiles from '@bot/commons/getFiles'
+import { System } from 'typings';
 import { info } from './logger';
 
 export const loadedSystems: System[] = []
