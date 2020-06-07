@@ -22,7 +22,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
-import Variable from '../../../../bot/models/Variable'
+import Variable from '@bot/models/Variable'
 import axios from 'axios'
 
 @Component({})

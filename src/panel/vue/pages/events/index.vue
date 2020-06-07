@@ -58,7 +58,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import axios from 'axios'
-import Event from '../../../../bot/models/Event'
+import Event from '@bot/models/Event'
 
 export default Vue.extend({
   data: () => ({

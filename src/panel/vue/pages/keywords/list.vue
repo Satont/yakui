@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import Keyword from '../../../../bot/models/Keyword'
+import Keyword from '@bot/models/Keyword'
 import { Route } from 'vue-router'
 import axios from 'axios'
 
