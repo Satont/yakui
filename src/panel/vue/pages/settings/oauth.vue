@@ -6,14 +6,14 @@
       </b-form-group>
 
       <b-form-group label="Bot">
-        <b-form-input size="sm" v-model="settings.botAccessToken" type="text" placeholder="Enter bot access_token"></b-form-input>
-        <b-form-input size="sm" class="mt-1" v-model="settings.botRefreshToken" type="text" placeholder="Enter bot refresh_token"></b-form-input>
+        <b-form-input size="sm" v-model="settings.botAccessToken" type="password" placeholder="Enter bot access_token"></b-form-input>
+        <b-form-input size="sm" class="mt-1" v-model="settings.botRefreshToken" type="password" placeholder="Enter bot refresh_token"></b-form-input>
         <b-btn class="mt-1" block size="sm" variant="info" href="https://bot.satont.ru/helpers/" target="_blank">Generate tokens</b-btn>
       </b-form-group>
 
        <b-form-group label="Broadcaster">
-        <b-form-input size="sm" v-model="settings.broadcasterAccessToken" type="text"  placeholder="Enter broadcaster access_token"></b-form-input>
-        <b-form-input size="sm" class="mt-1" v-model="settings.broadcasterRefreshToken" type="text" placeholder="Enter broadcaster refresh_token"></b-form-input>
+        <b-form-input size="sm" v-model="settings.broadcasterAccessToken" type="password" placeholder="Enter broadcaster access_token"></b-form-input>
+        <b-form-input size="sm" class="mt-1" v-model="settings.broadcasterRefreshToken" type="password" placeholder="Enter broadcaster refresh_token"></b-form-input>
         <b-btn class="mt-1" block size="sm" variant="info" href="https://bot.satont.ru/helpers/" target="_blank">Generate tokens</b-btn>
       </b-form-group>
 
