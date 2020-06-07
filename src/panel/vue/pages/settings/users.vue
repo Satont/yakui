@@ -4,23 +4,43 @@
       <b-button class="btn-block" variant="success" v-if="settings.enabled" @click="settings.enabled = !settings.enabled">Enabled</b-button>
       <b-button class="btn-block" variant="warning" v-if="!settings.enabled" @click="settings.enabled = !settings.enabled">Disabled</b-button>
 
+      <label for="textarea" class="mt-2">Ignored users</label>
+      <b-form-textarea  id="textarea" v-model="settings.ignoredUsers" placeholder="1 line = 1 user" rows="3" max-rows="8"></b-form-textarea>
+
       <b-button class="btn-block mt-1" type="submit" variant="primary">Save</b-button>
     </b-form>
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Watch } from 'vue-property-decorator'
 import axios from 'axios'
-import { Settings } from '../helpers/mixins'
 
-@Component({
-  mixins: [Settings]
-})
+@Component
 export default class General extends Vue {
   settings = {
     space: 'users',
-    enabled: true
+    enabled: true,
+    ignoredUsers: ''
+  }
+
+  async save() {
+    const space = this.settings.space
+    const data = Object.entries(this.settings)
+      .filter(v => v[0] !== 'space')
+      .map((item) => ({ space, name: item[0], value: item[1] }))
+
+    await axios.post('/api/v1/settings', [
+      { space: this.settings.space, name: 'enabled', value: this.settings.enabled },
+      { space: this.settings.space, name: 'ignoredUsers', value: this.settings.ignoredUsers.split('\n').filter(Boolean).map(u => u.toLowerCase()) }
+    ])
+  }
+
+  async created() {
+    const { data } = await axios.get('/api/v1/settings?space=' + this.settings.space)
+
+    this.settings.enabled = data.find(item => item.name === 'enabled')?.value ?? true
+    this.settings.ignoredUsers = data.find(item => item.name === 'ignoredUsers')?.value?.join('\n') ?? ''
   }
 }
 </script>

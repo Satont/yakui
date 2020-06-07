@@ -10,10 +10,12 @@ import twitch from './twitch'
 import Settings from '../models/Settings'
 
 export default new class Users implements System {
-  private settings: { 
-    enabled: boolean
+  settings: { 
+    enabled: boolean,
+    ignoredUsers: string[]
   } = { 
-    enabled: true
+    enabled: true,
+    ignoredUsers: []
   }
 
   private countWatchedTimeout: NodeJS.Timeout = null
@@ -29,8 +31,14 @@ export default new class Users implements System {
   ]
 
   async init() {
-    const enabled: Settings = await Settings.findOne({ where: { space: 'users', name: 'enabled' } })
+    const [enabled, ignoredUsers]: [Settings, Settings] = await Promise.all([
+      Settings.findOne({ where: { space: 'users', name: 'enabled' } }),
+      Settings.findOne({ where: { space: 'users', name: 'ignoredUsers' } }),
+    ])
+
+    this.settings.ignoredUsers = ignoredUsers?.value?.filter(Boolean) ?? []
     this.settings.enabled = enabled?.value ?? true
+
     if (!this.settings.enabled) return;
 
     await this.getChatters()
@@ -39,6 +47,7 @@ export default new class Users implements System {
 
   async parseMessage(opts: ParserOptions) {
     if (!this.settings.enabled || opts.message.startsWith('!')) return
+    if (this.settings.ignoredUsers.includes(opts.raw.userInfo.userName)) return;
 
     const [id, username] = [opts.raw.userInfo.userId, opts.raw.userInfo.userName]
 
@@ -81,6 +90,8 @@ export default new class Users implements System {
     if (!twitch.streamMetaData?.startedAt) return;
 
     for (const chatter of this.chatters) {
+      if (this.settings.ignoredUsers.includes(chatter.username.toLowerCase())) continue
+
       const [user, created]: [User, boolean] = await User.findOrCreate({
         where: { id: chatter.id },
         defaults: { id: chatter.id, username: chatter.username }

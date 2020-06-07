@@ -7,6 +7,7 @@ import users from './users'
 import tmi from '../libs/tmi'
 import UserModel from '../models/User'
 import { sequelize } from '../libs/db'
+import { Op } from 'sequelize'
 import currency from '../libs/currency'
 import Axios from 'axios'
 import { System } from 'typings'
@@ -99,9 +100,13 @@ export default new class Variables implements System {
 
     const offset = (Number(page) - 1) * 10
 
+    const ignored = [...users.settings.ignoredUsers, tmi.channel.name.toLowerCase()]
+    const limit = 10
+
     if (type === 'watched') {
       result = await UserModel.findAll({ 
-        limit: 10, 
+        limit,
+        where: { username: { [Op.notIn]: ignored } },
         order: [[type, 'DESC']],
         attributes: ['username',
         [type, 'value']],
@@ -112,7 +117,8 @@ export default new class Variables implements System {
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${((result.value / (1 * 60 * 1000)) / 60).toFixed(1)}h`).join(', ')
     } else if (type === 'messages') {
       result = await UserModel.findAll({ 
-        limit: 10,
+        limit,
+        where: { username: { [Op.notIn]: ignored } },
         order: [[type, 'DESC']],
         attributes: ['username', [type, 'value']],
         offset,
@@ -125,19 +131,21 @@ export default new class Variables implements System {
         SELECT 
           "users"."id", 
           "users"."username", 
-          (SUM("users_tips"."inMainCurrencyAmount")) AS "value" 
+          (SUM("users_tips"."inMainCurrencyAmount")) AS "value"
         FROM 
           "users"
-          INNER JOIN "users_tips" ON "users"."id" = "users_tips"."userId"
+        INNER JOIN "users_tips" ON "users"."id" = "users_tips"."userId"
+        WHERE "users"."username" NOT IN(:usernames)
         GROUP BY 
           "users"."id" 
         ORDER BY 
           value DESC
         OFFSET ${offset} ROWS
         LIMIT 
-          10`)
+          ${limit}`, {
+            replacements: { usernames: ignored }
+          })
       result = query[0]
-      
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}${currency.botCurrency}`).join(', ')
     } else if (type === 'bits') {
       const query = await sequelize.query(`
@@ -148,13 +156,17 @@ export default new class Variables implements System {
         FROM 
           "users"
           INNER JOIN "users_bits" ON "users"."id" = "users_bits"."userId"
+        WHERE "users"."username" NOT IN(:usernames)
         GROUP BY 
           "users"."id" 
         ORDER BY 
           value DESC
         OFFSET ${offset} ROWS
         LIMIT 
-          10`)
+        ${limit}`, {
+          replacements: { usernames: ignored }
+        })
+
       result = query[0]
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ')
     } else {
