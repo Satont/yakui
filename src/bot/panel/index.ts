@@ -3,6 +3,7 @@ import bodyparser from 'body-parser'
 import history from 'connect-history-api-fallback'
 import { resolve } from 'path'
 import http from 'http'
+import basicAuth from 'express-basic-auth'
 
 import v1 from './routes/api/v1'
 
@@ -10,6 +11,11 @@ const PORT = process.env.PORT || 3000
 
 const app = express()
 
+app.use(basicAuth({
+  users: { [process.env.PANEL_USER || 'admin']: process.env.PANEL_PASSWORD || 'admin' },
+  challenge: true,
+  unauthorizedResponse: () => 'Unauthorized'
+}))
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json())
 app.use('/static', express.static(resolve(process.cwd(), 'public', 'dest')))
