@@ -1,6 +1,7 @@
 import { resolve } from 'path'
 import getFiles from '../commons/getFiles'
 import { System } from '../../../typings';
+import { info } from './logger';
 
 export const loadedSystems: System[] = []
 
@@ -13,7 +14,7 @@ const loader = async () => {
     if (typeof loadedFile.init !== 'undefined') await loadedFile.init()
     if (typeof loadedFile.listenDbUpdates !== 'undefined') await loadedFile.listenDbUpdates()
 
-    console.log(`System ${loadedFile.constructor.name.toUpperCase()} loaded`)
+    info(`System ${loadedFile.constructor.name.toUpperCase()} loaded`)
     loadedSystems.push(loadedFile)
   }
 
@@ -25,7 +26,7 @@ const loader = async () => {
     if (typeof loadedFile.init !== 'undefined') await loadedFile.init()
     if (typeof loadedFile.listenDbUpdates !== 'undefined') await loadedFile.listenDbUpdates()
 
-    console.log(`Integration ${loadedFile.constructor.name.toUpperCase()} loaded`)
+    info(`Integration ${loadedFile.constructor.name.toUpperCase()} loaded`)
     loadedSystems.push(loadedFile)
   }
 
@@ -37,7 +38,7 @@ const loader = async () => {
     if (typeof loadedFile.init !== 'undefined') await loadedFile.init()
     if (typeof loadedFile.listenDbUpdates !== 'undefined') await loadedFile.listenDbUpdates()
     
-    console.log(`Custom System ${loadedFile.constructor.name.toUpperCase()} loaded`)
+    info(`Custom System ${loadedFile.constructor.name.toUpperCase()} loaded`)
     loadedSystems.push(loadedFile)
   }
 }

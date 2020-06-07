@@ -6,6 +6,7 @@ import http from 'http'
 import basicAuth from 'express-basic-auth'
 
 import v1 from './routes/api/v1'
+import { info } from '../libs/logger'
 
 const PORT = process.env.PORT || 3000
 
@@ -42,7 +43,7 @@ app.use((err, req: Request, res: Response, next) => {
 })
 
 const server = http.createServer(app).listen(PORT, () => {
-  console.info(`PANEL: Server initiliazed on ${PORT}`)
+  info(`PANEL: Server initiliazed on ${PORT}`)
 })
 
 process.on('SIGTERM', () => server.close())

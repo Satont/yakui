@@ -5,3 +5,4 @@ public/dest
 .cache
 src/bot/customSystems/*
 !src/bot/customSystems/.gitkeep
+logs

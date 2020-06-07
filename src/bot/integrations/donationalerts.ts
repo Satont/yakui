@@ -8,6 +8,7 @@ import { onDonation } from '../libs/eventsCaller'
 import currency, { currency as currencyType } from '../libs/currency'
 import User from '../models/User'
 import UserTips from '../models/UserTips';
+import { info } from '../libs/logger';
 
 type DonationAlertsEvent = {
   id: string;
@@ -41,7 +42,7 @@ export default new class Donationalerts implements Integration {
   async connect(token: string) {
     if (!token.trim().length) throw 'DONATIONALERTS: token is empty'
 
-    console.info('DONATIONALERTS: Starting init')
+    info('DONATIONALERTS: Starting init')
 
     if (this.socket) this.socket.disconnect()
 
@@ -80,26 +81,26 @@ export default new class Donationalerts implements Integration {
 
   async listeners(opts: { token: string, id: number }) {
     this.socket.on('disconnect', (reason: unknown) => {
-      console.info('DONATIONALERTS: disconnected from socket: ', reason)
+      info('DONATIONALERTS: disconnected from socket: ', reason)
     })
     
     this.socket.on('connect', () => {
-      console.info('DONATIONALERTS: successfuly connected to socket')
+      info('DONATIONALERTS: successfuly connected to socket')
     })
 
     const channel = this.socket.subscribe(`$alerts:donation_${opts.id}`)
 
     channel.on('join', () => {
-      console.info('DONATIONALERTS: successfuly joined in donations channel')
+      info('DONATIONALERTS: successfuly joined in donations channel')
     })
     channel.on('leaved', (reason) => {
-      console.info('DONATIONALERTS: disconnected from donations channel: ', reason)
+      info('DONATIONALERTS: disconnected from donations channel: ', reason)
     })
     channel.on('leaved', (error) => {
-      console.info('DONATIONALERTS: some error occured: ', error)
+      info('DONATIONALERTS: some error occured: ', error)
     })
     channel.on('unsubscribe', (reason) => {
-      console.info('DONATIONALERTS: unsibscribed from donations channel: ', reason)
+      info('DONATIONALERTS: unsibscribed from donations channel: ', reason)
     })
     channel.on('publish', async ({ data }: { data: DonationAlertsEvent }) => {
       const user: User = await User.findOne({ where: { username: data.username.toLowerCase() }})

@@ -2,6 +2,7 @@ import { readFileSync } from 'fs'
 import { resolve} from 'path'
 import { get } from 'lodash'
 import Settings from '../models/Settings'
+import { info } from './logger'
 
 const parameterizedString = (...args) => {
   const params = args.slice(1)
@@ -27,7 +28,7 @@ export default new class Locales {
     const lang = resolve(langsDir, `${locale.value}.json`)
     this.lang = JSON.parse(readFileSync(lang, 'utf-8'))
 
-    console.info(`LOCALES: ${this.lang.lang?.name || locale.value} lang loaded`)
+    info(`LOCALES: ${this.lang.lang?.name || locale.value} lang loaded`)
   }
 
   translate(...args: any[]) {

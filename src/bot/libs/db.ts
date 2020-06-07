@@ -1,5 +1,6 @@
 import { Sequelize } from 'sequelize-typescript'
 import { resolve } from 'path'
+import { info, error } from './logger'
 
 export let connected = false
 
@@ -15,9 +16,9 @@ export const sequelize = new Sequelize({
 })
 
 sequelize.authenticate()
-  .then(() => console.info('Connected to DB'))
+  .then(() => info('Connected to DB'))
   .then(() => connected = true)
   .catch((e) => {
-    console.error('Can\'t connect to db', e)
+    error('Can\'t connect to db', e)
     process.exit(1)
   })
