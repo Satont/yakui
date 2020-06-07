@@ -13,6 +13,7 @@ Vue.component('side-bar', () => import('./vue/components/sidebar.vue'))
 Vue.component('nav-bar', () => import('./vue/components/navbar.vue'))
 
 const router = new VueRouter({
+  mode: 'history',
   routes: [
     { path: '/', name: 'Home', component: () => import('./vue/index.vue'), alias: '/home' },
     { path: '/settings', name: 'SettingsManager', component: () => import('./vue/pages/settings/index.vue') },

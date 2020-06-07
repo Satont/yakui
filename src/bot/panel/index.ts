@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express'
 import bodyparser from 'body-parser'
+import history from 'connect-history-api-fallback'
 import { resolve } from 'path'
 import http from 'http'
 
@@ -12,11 +13,14 @@ const app = express()
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json())
 app.use('/static', express.static(resolve(process.cwd(), 'public', 'dest')))
+app.use(history({
+  index: '/',
+  htmlAcceptHeaders: ['text/html', 'application/xhtml+xml']
+}))
 
 app.get('/', (req, res) => {
   res.sendFile(resolve(process.cwd(), 'public', 'index.html'))
 })
-
 
 app.use('/api/v1', v1)
 
