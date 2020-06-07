@@ -1,7 +1,7 @@
 <template>
   <div>
-  <b-nav vertical class="col-md-1 col-lg-1 d-md-block bg-dark sidebar collapse" active-class="router-link-exact-active">
-    <b-nav-item router-link to="/"><i class="fas fa-home"></i> Home</b-nav-item>
+  <b-nav vertical class="col-md-1 col-lg-1 d-md-block bg-dark sidebar collapse" active-class="router-link-active">
+    <b-nav-item router-link to="/" exact><i class="fas fa-home"></i> Home</b-nav-item>
     <b-nav-item router-link to="/events"><i class="fas fa-calendar-alt"></i> Events</b-nav-item>
     <b-nav-item router-link to="/integrations"><i class="fas fa-hands-helping"></i> Integrations</b-nav-item>
     <b-nav-item router-link to="/settings"><i class="fas fa-cogs"></i> Settings</b-nav-item>
@@ -72,7 +72,7 @@ export default class NavBar extends Vue {
   color: #999;
 }
 
-.sidebar .nav-link.router-link-exact-active {
+.sidebar .nav-link.router-link-exact-active, .nav-link.router-link-active {
   color: #fff;
   background: rgba(94, 123, 154, 0.25);
 }

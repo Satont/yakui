@@ -17,7 +17,16 @@ const router = new VueRouter({
   mode: 'history',
   routes: [
     { path: '/', name: 'Home', component: () => import('./vue/index.vue'), alias: '/home' },
-    { path: '/settings', name: 'SettingsManager', component: () => import('./vue/pages/settings/index.vue') },
+    {
+      path: '/settings',
+      component: () => import('./vue/pages/settings/index.vue'),
+      children: [
+        { path: '', name: 'General', component: () => import('./vue/pages/settings/general.vue') },
+        { path: 'oauth', name: 'OAuth', component: () => import('./vue/pages/settings/oauth.vue') },
+        { path: 'moderation', name: 'Moderation', component: () => import('./vue/pages/settings/moderation.vue') },
+        { path: 'users', name: 'Users', component: () => import('./vue/pages/settings/users.vue') },
+      ]
+    },
     { path: '/events', name: 'EventsManager', component: () => import('./vue/pages/events/index.vue') },
     { path: '/integrations', name: 'IntegrationsManager', component: () => import('./vue/pages/integrations/index.vue') },
 

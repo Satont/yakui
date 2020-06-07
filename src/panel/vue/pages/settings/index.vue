@@ -1,10 +1,20 @@
 <template>
-  <b-tabs content-class="mt-3" nav-class="sticky-top" pills vertical end>
-    <b-tab title="General" title-link-class="text-white" active><General /></b-tab>
-    <b-tab title="OAuth" title-link-class="text-white" lazy><OAuth /></b-tab>
-    <b-tab title="Moderation" title-link-class="text-white" lazy><Moderation /></b-tab>
-    <b-tab title="Users" title-link-class="text-white" lazy><Users /></b-tab>
-  </b-tabs>
+  <div>
+    <b-card bg-variant="dark" text-variant="white" title="Card Title" no-body>
+      <b-card-header header-tag="nav">
+        <b-nav card-header pills>
+          <b-nav-item to="/settings">General</b-nav-item>
+          <b-nav-item to="/settings/oauth">OAuth</b-nav-item>
+          <b-nav-item to="/settings/moderation">Moderation</b-nav-item>
+          <b-nav-item to="/settings/users">Users</b-nav-item>
+        </b-nav>
+      </b-card-header>
+
+      <b-card-body class="text-center">
+        <router-view></router-view>
+      </b-card-body>
+    </b-card>
+  </div>
 </template>
 
 <script lang="ts">
