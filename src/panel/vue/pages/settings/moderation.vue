@@ -224,8 +224,11 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import axios from 'axios'
+import { Settings } from './mixins'
 
-@Component
+@Component({
+  mixins: [Settings]
+})
 export default class ModerationSettings extends Vue {
   settings = {
     space: 'moderation',
@@ -323,23 +326,6 @@ export default class ModerationSettings extends Vue {
         length: 10
       }
     },
-  }
-
-  async save() {
-    const space = this.settings.space
-    const data = Object.entries(this.settings)
-      .filter(v => v[0] !== 'space')
-      .map((item) => ({ space, name: item[0], value: item[1] }))
-
-    await axios.post('/api/v1/settings', data)
-  }
-
-  async created() {
-    const { data } = await axios.get('/api/v1/settings?space=' + this.settings.space)
-
-    for (const item of data) {
-      this.settings[item.name] = item.value
-    }
   }
 }
 </script>
