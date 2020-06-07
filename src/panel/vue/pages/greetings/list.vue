@@ -13,8 +13,8 @@
           <b-card-text>{{ greeting.message }} </b-card-text>
           <template v-slot:footer>
           <div class="m-0 text-right">
-            <b-button class="btn" variant="primary" size="sm" @click="edit(command)">Edit</b-button>
-            <b-button class="btn" variant="danger" size="sm" @click="del(command.id, index)">Delete</b-button>
+            <b-button class="btn" variant="primary" size="sm" @click="edit(greeting)">Edit</b-button>
+            <b-button class="btn" variant="danger" size="sm" @click="del(greeting.id, index)">Delete</b-button>
           </div>
           </template>
         </b-card>
