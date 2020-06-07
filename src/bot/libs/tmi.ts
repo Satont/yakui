@@ -157,14 +157,14 @@ export default new class Tmi {
 
     if (type === 'bot') {
       client.onAction(async (channel, username, message, raw) => {
-        chatIn(`${username}[${raw.userInfo.userId}]: ${message}`)
+        chatIn(`${username} [${raw.userInfo.userId}]: ${message}`)
 
         (raw as any).isAction = true
         events.fire({ name: 'message', opts: { username, message } })
         await Parser.parse(message, raw)
       })
       client.onPrivmsg(async (channel, username, message, raw) => {
-        chatIn(`${username}[${raw.userInfo.userId}]: ${message}`)
+        chatIn(`${username} [${raw.userInfo.userId}]: ${message}`)
 
         if (raw.isCheer) {
           events.fire({ name: 'bits', opts: { amount: raw.totalBits, message }})

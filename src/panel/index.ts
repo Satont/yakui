@@ -34,6 +34,7 @@ const router = new VueRouter({
       children: [
         { path: '', alias: 'donationalerts', name: 'DonationAlerts', component: () => import('./vue/pages/integrations/donationalerts.vue') },
         { path: 'spotify', name: 'Spotify', component: () => import('./vue/pages/integrations/spotify.vue') },
+        { path: 'qiwi', name: 'Qiwi', component: () => import('./vue/pages/integrations/qiwi.vue') },
       ]
     },
 
