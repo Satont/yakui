@@ -16,7 +16,6 @@ const start = async () => {
 start()
   .then(console.timeEnd('start'))
 
-error()
 process.on('unhandledRejection', (reason) => {
   error(`${inspect(reason)}`)
 })

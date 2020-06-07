@@ -62,6 +62,7 @@ const log = winston.createLogger({
       if (info.level === 'raided') level = chalk.cyanBright('+raided')
       if (info.level === 'hosting') level = chalk.cyanBright('?hosting')
       if (info.level === 'timeout') level = chalk.cyanBright('+timeout')
+      if (info.level === 'donate') level = chalk.cyanBright('+donate')
 
       if (typeof info.message === 'object') info.message = inspect(info.message)
       const timestamp = moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')
