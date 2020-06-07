@@ -8,16 +8,19 @@ jobs:
     strategy:
       matrix:
         node-version: [14.x]
-    if: "!contains(steps.log.outputs.MESSAGE, '[skip-ci]')"
     steps:
     - uses: actions/checkout@v1
     - name: Use Node.js ${{ matrix.node-version }}
+      if: "!contains(steps.log.outputs.MESSAGE, '[skip-ci]')"
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
     - name: install dependencies
+      if: "!contains(steps.log.outputs.MESSAGE, '[skip-ci]')"
       run: npm install
     - name: build web
+      if: "!contains(steps.log.outputs.MESSAGE, '[skip-ci]')"
       run: npm run build:web
     - name: build bot
+      if: "!contains(steps.log.outputs.MESSAGE, '[skip-ci]')"
       run: npm run build:bot
