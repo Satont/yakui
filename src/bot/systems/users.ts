@@ -106,7 +106,7 @@ export default new class Users implements System {
 
   private async getChatters() {
     clearTimeout(this.getChattersTimeout)
-    this.getChattersTimeout = setTimeout(() => this.countWatched(), 5 * 60 * 1000)
+    this.getChattersTimeout = setTimeout(() => this.getChatters(), 5 * 60 * 1000)
 
     this.chatters = []
     if (!twitch.streamMetaData?.startedAt) return;
