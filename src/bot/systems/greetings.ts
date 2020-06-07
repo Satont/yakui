@@ -1,5 +1,4 @@
 import { System, ParserOptions } from "typings";
-import Settings from "../models/Settings";
 import Greeting from "../models/Greeting";
 import variables from "./variables";
 import tmi from "../libs/tmi";
@@ -31,11 +30,6 @@ export default new class Greetings implements System {
   }
 
   listenDbUpdates() {
-    Settings.afterSave(instance => {
-      if (instance.space !== 'greetings') return
-
-      this.init()
-    })
     Greeting.afterSave(() => this.init())
     Greeting.afterDestroy(() => this.init())
   }
