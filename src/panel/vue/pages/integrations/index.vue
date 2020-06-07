@@ -1,22 +1,25 @@
 <template>
-  <b-tabs content-class="mt-3" nav-class="sticky-top" pills vertical end>
-    <b-tab title="DonationAlerts" title-link-class="text-white" active><DonationAlerts /></b-tab>
-    <b-tab title="Spotify" title-link-class="text-white"><Spotify /></b-tab>
-  </b-tabs>
+  <div>
+    <b-card bg-variant="dark" text-variant="white" title="Card Title" no-body>
+      <b-card-header header-tag="nav">
+        <b-nav card-header pills>
+          <b-nav-item to="/integrations">DonationAlerts</b-nav-item>
+          <b-nav-item to="/integrations/spotify">Spotify</b-nav-item>
+        </b-nav>
+      </b-card-header>
+
+      <b-card-body class="text-center">
+        <router-view></router-view>
+      </b-card-body>
+    </b-card>
+  </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import axios from 'axios'
-import DonationAlerts from './donationalerts.vue'
-import Spotify from './spotify.vue'
 
-@Component({
-  components: {
-    DonationAlerts,
-    Spotify,
-  }
-})
+@Component
 export default class Index extends Vue {
 
 }
