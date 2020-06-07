@@ -243,7 +243,7 @@ export default new class Variables implements System {
   async getSong(result: string) {
     const spotifySong = await spotify.getSong()
     const satontSong = await satontapi.getSong()
-    if (spotifySong) return result
+    if (spotifySong) return spotifySong
     else if (satontSong) return satontSong
     else return locales.translate('song.notPlaying')
   }
