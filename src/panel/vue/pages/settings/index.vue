@@ -1,9 +1,9 @@
 <template>
-  <b-tabs content-class="mt-3" align="center">
-    <b-tab title="General" active><General /></b-tab>
-    <b-tab title="OAuth" lazy><OAuth /></b-tab>
-    <b-tab title="Moderation" lazy><Moderation /></b-tab>
-    <b-tab title="Users" lazy><Users /></b-tab>
+  <b-tabs content-class="mt-3" pills card vertical end>
+    <b-tab title="General" title-link-class="text-white" active><General /></b-tab>
+    <b-tab title="OAuth" title-link-class="text-white" lazy><OAuth /></b-tab>
+    <b-tab title="Moderation" title-link-class="text-white" lazy><Moderation /></b-tab>
+    <b-tab title="Users" title-link-class="text-white" lazy><Users /></b-tab>
   </b-tabs>
 </template>
 
@@ -27,3 +27,12 @@ export default class Index extends Vue {
 
 }
 </script>
+
+<style scoped>
+.nav-link {
+  color: #fff !important;
+}
+.nav-link, .nav-link:hover, .nav-link:focus {
+  color: #fff !important;
+}
+</style>
