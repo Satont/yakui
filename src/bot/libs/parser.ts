@@ -70,8 +70,8 @@ export default new class Parser {
       commandResult = await Variables.parseMessage({ message: commandResult, raw, argument })
 
       if (!commandResult.length) break;
-
-      this.cooldowns.includes(command.name) 
+      const userPerms = tmi.getUserPermissions(raw.userInfo.badges)
+      this.cooldowns.includes(command.name) && (!userPerms.broadcaster && !userPerms.moderators)
           ? tmi.whispers({ target: raw.userInfo.userName, message: commandResult }) 
           : tmi.say({ message: commandResult })
 
