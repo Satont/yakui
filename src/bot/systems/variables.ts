@@ -14,6 +14,7 @@ import Variable from '../models/Variable'
 import spotify from '../integrations/spotify'
 import locales from '../libs/locales'
 import { loadedSystems } from '../libs/loader'
+import evaluate from '../commons/eval'
 
 export default new class Variables implements System {
   variables: Variable[] = []
@@ -22,7 +23,7 @@ export default new class Variables implements System {
     this.variables = await Variable.findAll()
   }
 
-  async parseMessage(opts: { message: string, raw?: TwitchPrivateMessage }) {
+  async parseMessage(opts: { message: string, raw?: TwitchPrivateMessage, argument?: string }) {
     let result = opts.message
     const userInfo = opts.raw?.userInfo
     result = result
@@ -57,6 +58,11 @@ export default new class Variables implements System {
 
     if (/\$top\.messages/gimu.test(result)) {
       result = result.replace(/\$top\.messages/gimu, await this.getTop('messages'))
+    }
+
+    if (/(\(eval)(.*)(\))/gimu.test(result)) {
+      const toEval = result.match(/(\(eval)(.*)(\))/)[2].trim()
+      result = result.replace(/(\(eval)(.*)(\))/gimu, await evaluate({ raw: opts.raw, param: opts.argument, message: toEval }))
     }
 
     result = await this.parseCustomVariables(result)
