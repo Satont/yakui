@@ -1,7 +1,7 @@
 <template>
-  <b-tabs content-class="mt-3" align="center">
-    <b-tab title="DonationAlerts" active><DonationAlerts /></b-tab>
-    <b-tab title="Spotify"><Spotify /></b-tab>
+  <b-tabs content-class="mt-3" nav-class="sticky-top" pills vertical end>
+    <b-tab title="DonationAlerts" title-link-class="text-white" active><DonationAlerts /></b-tab>
+    <b-tab title="Spotify" title-link-class="text-white"><Spotify /></b-tab>
   </b-tabs>
 </template>
 
@@ -21,3 +21,16 @@ export default class Index extends Vue {
 
 }
 </script>
+
+
+<style scoped>
+.nav-link {
+  color: #fff !important;
+}
+.nav-link, .nav-link:hover, .nav-link:focus {
+  color: #fff !important;
+}
+.sticky-top {
+  top: 30px !important;
+}
+</style>

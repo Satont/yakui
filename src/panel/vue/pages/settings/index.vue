@@ -28,7 +28,7 @@ export default class Index extends Vue {
 }
 </script>
 
-<style>
+<style scoped>
 .nav-link {
   color: #fff !important;
 }
