@@ -5,7 +5,7 @@ import chalk from 'chalk'
 import { inspect } from 'util'
 
 const { format } = winston
-const { combine, printf, simple } = format;
+const { combine, printf } = format;
 
 declare module 'winston' {
   export interface Logger {
@@ -83,11 +83,27 @@ const log = winston.createLogger({
     }),
   ),
   exceptionHandlers: [
-    new winston.transports.File({ filename: logDir + '/exceptions.log', maxsize: 5242880, maxFiles: 10, tailable: true, format: simple() }),
+    new winston.transports.File({ 
+      filename: logDir + '/exceptions.log', 
+      maxsize: 5242880, 
+      maxFiles: 10, 
+      tailable: true, 
+    }),
     new winston.transports.Console()
   ],
   transports: [
-    new winston.transports.File({ filename: logDir + '/bot.log', maxsize: 5242880, maxFiles: 10, tailable: true, format: simple() }),
+    new winston.transports.File({ 
+      filename: logDir + '/bot.log', 
+      maxsize: 5242880, 
+      maxFiles: 10, 
+      tailable: true,
+      format: printf(info => {
+        if (typeof info.message === 'object') info.message = inspect(info.message)
+        const timestamp = moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')
+      
+        return `${timestamp} ${info.level}: ${info.message}`
+      })
+    }),
     new winston.transports.Console()
   ]
 })
