@@ -17,9 +17,15 @@ app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json())
 app.use('/twitch', twitch)
 app.use(basicAuth({
-  users: { [process.env.PANEL_USER || 'admin']: process.env.PANEL_PASSWORD || 'admin' },
   challenge: true,
-  unauthorizedResponse: () => 'Unauthorized'
+  realm: Math.random().toString(36).substring(7),
+  unauthorizedResponse: () => 'Unauthorized',
+  authorizeAsync: true,
+  authorizer: (username, password, cb) => {
+    if (username === (process.env.PANEL_USER || 'admin') && password === (process.env.PANEL_PASSWORD || 'admin')) {
+      return cb(null, true)
+    } else return cb(null, false)
+  },
 }))
 app.use('/static', express.static(resolve(process.cwd(), 'public', 'dest')))
 app.use(history({
