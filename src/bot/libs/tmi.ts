@@ -87,16 +87,13 @@ export default new class Tmi {
       await this.chatClients[type].connect()
       
       await this.intervaledUpdateAccessToken(type, { access_token: accessToken.value, refresh_token: refreshToken.value })
+      this.loadLibs()
     } catch (e) {
       error(e)
       OAuth.refresh(refreshToken.value, type)
         .then(() => this.connect(type))
     } finally {
       this.isAlreadyUpdating[type] = false
-      import('../systems/twitch')
-      import('./loader')
-      import('./currency')
-      import('./webhooks')
     }
   }
 
@@ -219,5 +216,12 @@ export default new class Tmi {
         this.connect('broadcaster')
       }, 5000)
     }))
+  }
+
+  private loadLibs() {
+    import('@bot/systems/twitch')
+    import('./loader')
+    import('./currency')
+    import('./webhooks')
   }
 }
