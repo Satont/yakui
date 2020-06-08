@@ -5,7 +5,7 @@
   "scripts": {
     "migrate": "knex migrate:latest",
     "prestart": "knex migrate:latest",
-    "start": "node dest/index",
+    "start": "cross-env NODE_ENV=production node dest/index",
     "build": "npm run build:web && npm run build:bot",
     "dev": "npm run dev:web & npm run dev:bot",
     "dev:bot": "nodemon",
@@ -45,6 +45,7 @@
     "centrifuge": "^2.6.2",
     "chalk": "^4.0.0",
     "connect-history-api-fallback": "^1.6.0",
+    "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-basic-auth": "^1.2.0",

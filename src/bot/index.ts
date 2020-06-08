@@ -1,5 +1,5 @@
+import './moduleAlias'
 import 'reflect-metadata'
-import 'module-alias/register'
 import 'source-map-support/register'
 console.time('start')
 
@@ -16,7 +16,6 @@ const start = async () => {
 }
 
 start()
-  .then(console.timeEnd('start'))
 
 process.on('unhandledRejection', (reason) => {
   error(`${inspect(reason)}`)
