@@ -2,6 +2,7 @@ import { Router } from "express";
 import { IWebHookModeratorRemove, IWebHookModeratorAdd, IWebHookUserFollow, IWebHookStreamChanged } from 'typings/webhooks'
 import { onAddModerator, onRemoveModerator, onUserFollow, onStreamChange } from "@bot/libs/eventsCaller";
 import { error } from "@bot/libs/logger";
+import { inspect } from "util";
 
 const router = Router()
 
@@ -26,7 +27,7 @@ router.post('/webhooks/callback', (req, res, next) => {
       onStreamChange(item as IWebHookStreamChanged)
       continue
     } else {
-      error(`EXPRESS WEBHOOKS: Unknown event ${item}`)
+      error(`EXPRESS WEBHOOKS: Unknown event ${inspect(item)}`)
     }
   }
 

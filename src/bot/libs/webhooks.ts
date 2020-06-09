@@ -14,7 +14,7 @@ export default new class WebHooks {
   }
 
   async init() {
-    clearTimeout(this.initTimeout) 
+    clearTimeout(this.initTimeout)
     const url: Settings = await Settings.findOne({ where: { space: 'general', name: 'siteUrl' } })
     if (!url) return
 
@@ -46,7 +46,7 @@ export default new class WebHooks {
           await tmi.clients.bot.helix.webHooks.unsubscribeFromModeratorEvents(channelId, options)
         break;
       }
-      info(`WEBHOOKS: Unsibscribed from ${type} topic, ${tmi.channel.name} [${tmi.channel.id}`)
+      info(`WEBHOOKS: Unsibscribed from ${type} topic, ${tmi.channel.name} [${tmi.channel.id}]`)
     } catch (e) {
       error(e)
     }
