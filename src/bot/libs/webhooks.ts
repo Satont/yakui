@@ -24,7 +24,7 @@ export default new class WebHooks {
     this.unsubscribe('streams').then(() => this.subscribe('streams'))
     this.unsubscribe('moderator').then(() => this.subscribe('moderator'))
 
-    setTimeout((() => this.init()), this.validityInSeconds * 1000)
+    this.initTimeout = setTimeout((() => this.init()), this.validityInSeconds * 1000)
   }
 
   async unsubscribe(type: 'follows' | 'streams' | 'moderator') {

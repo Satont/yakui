@@ -5,6 +5,10 @@ import locales from '@bot/libs/locales'
 import { System, Command, CommandOptions } from "typings"
 
 export default new class Twitch implements System {
+  private intervals = {
+    streamData: null,
+    channelData: null,
+  }
   commands: Command[] = [
     { name: 'title', fnc: this.setTitle, permission: 'moderators', visible: false, },
     { name: 'game', fnc: this.setGame, permission: 'moderators', visible: false }
@@ -34,7 +38,8 @@ export default new class Twitch implements System {
   }
 
   private async getStreamData() {
-    setTimeout(() => this.getStreamData(), 1 * 60 * 1000)
+    clearInterval(this.intervals.streamData)
+    this.intervals.streamData = setTimeout(() => this.getStreamData(), 1 * 60 * 1000)
 
     const data = await tmi?.clients?.bot?.helix.streams.getStreamByUserId(tmi.channel.id)
 
@@ -48,13 +53,14 @@ export default new class Twitch implements System {
   }
 
   private async getChannelData() {
-    setTimeout(() => this.getChannelData(), 1 * 60 * 1000)
-    
+    clearInterval(this.intervals.channelData)
+    this.intervals.channelData = setTimeout(() => this.getChannelData(), 1 * 60 * 1000)
+
     const channel = await tmi?.clients?.bot?.kraken.users.getUser(tmi.channel.id)
     if (!channel) return
-    
+
     const data = await (await tmi?.clients?.bot?.kraken.users.getUser(tmi.channel.id)).getChannel()
-  
+
     this.channelMetaData = {
       views: data?.views ?? 0,
       game: data?.game ?? 'No data',
@@ -66,7 +72,7 @@ export default new class Twitch implements System {
     const follow = await tmi.clients.bot?.helix.users.getFollows({ followedUser: tmi.channel.id, user: userId })
     if (!follow.total) return 'not follower'
 
-    return humanizeDuration(Date.now() - new Date(follow.data[0].followDate).getTime(), { 
+    return humanizeDuration(Date.now() - new Date(follow.data[0].followDate).getTime(), {
       units: ['y', 'mo', 'd', 'h', 'm'],
       round: true,
       language: locales.translate('lang.code')
@@ -76,7 +82,7 @@ export default new class Twitch implements System {
   get uptime() {
     if (!this.streamMetaData?.startedAt) return 'offline'
 
-    return humanizeDuration(Date.now() - new Date(this.streamMetaData?.startedAt).getTime(), { 
+    return humanizeDuration(Date.now() - new Date(this.streamMetaData?.startedAt).getTime(), {
       units: ['mo', 'd', 'h', 'm', 's'],
       round: true,
       language: locales.translate('lang.code')

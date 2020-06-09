@@ -10,6 +10,9 @@ import { info, error, chatOut, chatIn, timeout, whisperOut } from './logger'
 import { onHosting, onHosted, onRaided } from './eventsCaller'
 
 export default new class Tmi {
+  private intervals = {
+    updateAccessToken: null
+  }
   private isAlreadyUpdating = {
     bot: false,
     broadcaster: false,
@@ -100,6 +103,8 @@ export default new class Tmi {
   }
 
   private async intervaledUpdateAccessToken(type: 'bot' | 'broadcaster', data) {
+    clearInterval(this.intervals.updateAccessToken)
+    this.intervals.updateAccessToken = setTimeout(() => this.intervaledUpdateAccessToken(type, { access_token, refresh_token }), 10 * 60 * 1000)
     const { access_token, refresh_token } = await OAuth.refresh(data.refresh_token, type)
 
     this.clients[type]._getAuthProvider().setAccessToken(new AccessToken({
@@ -107,7 +112,6 @@ export default new class Tmi {
       refresh_token: data.refresh_token
     }))
 
-    setTimeout(() => this.intervaledUpdateAccessToken(type, { access_token, refresh_token }), 10 * 60 * 1000)
   }
 
   private async getChannel(name: string) {
