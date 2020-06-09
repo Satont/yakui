@@ -37,7 +37,7 @@ export default new class Timers implements System {
   }
 
   listenDbUpdates() {
-    Timer.afterSave(() => this.init())
+    Timer.afterCreate(() => this.init())
     Timer.afterDestroy(() => this.init())
   }
 }
