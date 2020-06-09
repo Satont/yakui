@@ -5,6 +5,7 @@ import locales from '@bot/libs/locales'
 import { System, Command, CommandOptions } from "typings"
 import { INewSubscriber, INewResubscriber } from "typings/events"
 import Settings from "@bot/models/Settings"
+import { info } from "@bot/libs/logger"
 
 export default new class Twitch implements System {
   private intervals = {
@@ -103,6 +104,7 @@ export default new class Twitch implements System {
     if (!tmi.clients.broadcaster) return;
     const data = await tmi.clients.broadcaster.kraken.channels.getChannelSubscriptionCount(tmi.channel.id)
     this.channelMetaData.subs = data
+    info(`TWITCH: Subscribers count found: ${data}`)
   }
 
   async getFollowAge(userId: string) {
