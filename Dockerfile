@@ -10,5 +10,8 @@ RUN npm run build
 #RUN npm prune --production
 
 EXPOSE 3000
+EXPOSE 9229
 
-CMD npm start
+COPY docker.sh /
+RUN chmod +x /docker.sh
+ENTRYPOINT ["/docker.sh"]
