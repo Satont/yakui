@@ -1,5 +1,6 @@
 import TwitchPrivateMessage from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
 import _ from 'lodash'
+import hd from 'humanize-duration'
 
 import twitch from './twitch'
 import includesOneOf from '@bot/commons/includesOneOf'
@@ -37,6 +38,23 @@ export default new class Variables implements System {
       .replace(/\$channel\.title/gimu, twitch.channelMetaData.title)
       .replace(/\$stream\.uptime/gimu, twitch.uptime)
       .replace(/\$random\.(\d+)-(\d+)/gimu, (match, first, second) => String(_.random(first, second)))
+      .replace(/\$subs/gimu, String(twitch.channelMetaData.subs))
+      .replace(/\$subs.last.sub.username/gimu, twitch.channelMetaData.latestSubscriber.username)
+      .replace(/\$subs.last.sub.ago/gimu, hd(Date.now() - twitch.channelMetaData.latestSubscriber.timestamp, {
+        units: ['mo', 'd', 'h', 'm'],
+        round: true,
+        language: locales.translate('lang.code')
+      }))
+      .replace(/\$subs.last.sub.tier/gimu, twitch.channelMetaData.latestSubscriber.tier)
+      .replace(/\$subs.last.resub.username/gimu, twitch.channelMetaData.latestReSubscriber.username)
+      .replace(/\$subs.last.resub.ago/gimu, hd(Date.now() - twitch.channelMetaData.latestReSubscriber.timestamp, {
+        units: ['mo', 'd', 'h', 'm'],
+        round: true,
+        language: locales.translate('lang.code')
+      }))
+      .replace(/\$subs.last.resub.tier/gimu, twitch.channelMetaData.latestReSubscriber.tier)
+      .replace(/\$subs.last.resub.months/gimu, String(twitch.channelMetaData.latestReSubscriber.months))
+      .replace(/\$subs.last.resub.overallMonths/gimu, String(twitch.channelMetaData.latestReSubscriber.overallMonths))
 
     if (/\$song/gimu.test(result)) {
       result = result.replace(/\$song/gimu, await this.getSong(result))
@@ -104,7 +122,7 @@ export default new class Variables implements System {
     const limit = 10
 
     if (type === 'watched') {
-      result = await UserModel.findAll({ 
+      result = await UserModel.findAll({
         limit,
         where: { username: { [Op.notIn]: ignored } },
         order: [[type, 'DESC']],
@@ -116,7 +134,7 @@ export default new class Variables implements System {
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${((result.value / (1 * 60 * 1000)) / 60).toFixed(1)}h`).join(', ')
     } else if (type === 'messages') {
-      result = await UserModel.findAll({ 
+      result = await UserModel.findAll({
         limit,
         where: { username: { [Op.notIn]: ignored } },
         order: [[type, 'DESC']],
@@ -128,20 +146,20 @@ export default new class Variables implements System {
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ')
     } else if (type === 'tips') {
       const query = await sequelize.query(`
-        SELECT 
-          "users"."id", 
-          "users"."username", 
+        SELECT
+          "users"."id",
+          "users"."username",
           (SUM("users_tips"."inMainCurrencyAmount")) AS "value"
-        FROM 
+        FROM
           "users"
         INNER JOIN "users_tips" ON "users"."id" = "users_tips"."userId"
         WHERE "users"."username" NOT IN(:usernames)
-        GROUP BY 
-          "users"."id" 
-        ORDER BY 
+        GROUP BY
+          "users"."id"
+        ORDER BY
           value DESC
         OFFSET ${offset} ROWS
-        LIMIT 
+        LIMIT
           ${limit}`, {
             replacements: { usernames: ignored }
           })
@@ -149,20 +167,20 @@ export default new class Variables implements System {
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}${currency.botCurrency}`).join(', ')
     } else if (type === 'bits') {
       const query = await sequelize.query(`
-        SELECT 
-          "users"."id", 
-          "users"."username", 
-          (SUM("users_bits"."amount")) AS "value" 
-        FROM 
+        SELECT
+          "users"."id",
+          "users"."username",
+          (SUM("users_bits"."amount")) AS "value"
+        FROM
           "users"
           INNER JOIN "users_bits" ON "users"."id" = "users_bits"."userId"
         WHERE "users"."username" NOT IN(:usernames)
-        GROUP BY 
-          "users"."id" 
-        ORDER BY 
+        GROUP BY
+          "users"."id"
+        ORDER BY
           value DESC
         OFFSET ${offset} ROWS
-        LIMIT 
+        LIMIT
         ${limit}`, {
           replacements: { usernames: ignored }
         })

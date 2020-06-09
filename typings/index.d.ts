@@ -1,14 +1,14 @@
 import TwitchPrivateMessage from "twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage"
-import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove } from "./webhooks"
+import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove, INewSubscriber, INewResubscriber } from "./events"
 
 export type CommandPermission = 'viewers' | 'followers' | 'vips' | 'subscribers' | 'moderators' | 'broadcaster'
 export type HostType = { viewers: number, username: string }
 
 export interface Command {
   id?: number,
-  name: string, 
+  name: string,
   response?: string,
-  visible?: boolean, 
+  visible?: boolean,
   description?: string,
   aliases?: string[],
   cooldown?: number,
@@ -30,7 +30,7 @@ export interface ParserOptions {
 }
 
 export interface System {
-  parsers?: Array<{ 
+  parsers?: Array<{
     name?: string,
     fnc: function
   }>;
@@ -47,10 +47,12 @@ export interface System {
   onRemoveModerator?: (data: IWebHookModeratorRemove) => void | Promise<void>,
   onUserFollow?: (data: IWebHookUserFollow) => void | Promise<void>,
   onStreamChange?: (data: IWebHookStreamChanged) => void | Promise<void>,
+  onSubscribe?: (data: INewSubscribe) => void | Promise<void>,
+  onReSubscribe?: (data: INewResubscriber) => void | Promise<void>
 }
 
 export interface Integration extends System {
-  
+
 }
 
 export interface UserPermissions {

@@ -4,7 +4,7 @@ import { get } from 'lodash'
 import tmi from '@bot/libs/tmi'
 import { System, DonationData, HostType } from 'typings'
 import Event from '@bot/models/Event'
-import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove } from 'typings/webhooks'
+import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove, INewResubscriber, INewSubscriber } from 'typings/events'
 
 export default new class Events implements System {
   alreadyListen = false
@@ -57,6 +57,7 @@ export default new class Events implements System {
       $currency: get(opts, 'currency', ''),
       '$sub.tier': get(opts, 'sub.tier', 0),
       '$sub.months': get(opts, 'sub.months', 0),
+      '$sub.overallMonths': get(opts, 'sub.overallMonths', 0),
       '$subgift.recipient': get(opts, 'subgift.recipient', ''),
       '$host.viewers': get(opts, 'host.viewers', 0),
       '$hosted.viewers': get(opts, 'hosted.viewers', 0),
@@ -81,7 +82,7 @@ export default new class Events implements System {
   }
 
   onUserFollow({ from_name }: IWebHookUserFollow) {
-    this.fire({ name: 'follow', opts: { username: from_name}})
+    this.fire({ name: 'follow', opts: { username: from_name } })
   }
 
   onAddModerator({ event_data: { user_name: username } }: IWebHookModeratorAdd) {
@@ -90,6 +91,34 @@ export default new class Events implements System {
 
   onRemoveModerator({ event_data: { user_name: username } }: IWebHookModeratorRemove) {
     this.fire({ name: 'removemod', opts: { username }})
+  }
+
+  onSubscribe(data: INewSubscriber) {
+    this.fire({
+      name: 'sub',
+      opts: {
+        sub: {
+          tier: data.tier,
+        },
+        message: data.message,
+        username: data.username
+      }
+    })
+  }
+
+  onReSubscribe(data: INewResubscriber) {
+    this.fire({
+      name: 'resub',
+      opts: {
+        sub: {
+          tier: data.tier,
+          months: data.months,
+          overallMonths: data.overallMonths,
+        },
+        message: data.message,
+        username: data.username
+      }
+    })
   }
 
   listenDbUpdates() {

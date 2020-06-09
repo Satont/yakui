@@ -1,7 +1,7 @@
 import { loadedSystems } from './loader'
 import { DonationData, HostType } from 'typings'
-import { info, donate, hosted, hosting, raided, moded, unmoded, follow } from './logger'
-import { IWebHookModeratorAdd, IWebHookModeratorRemove, IWebHookUserFollow, IWebHookStreamChanged } from 'typings/webhooks'
+import { info, donate, hosted, hosting, raided, moded, unmoded, follow, sub, resub } from './logger'
+import { IWebHookModeratorAdd, IWebHookModeratorRemove, IWebHookUserFollow, IWebHookStreamChanged, INewSubscriber, INewResubscriber } from 'typings/events'
 
 export const onStreamStart = () => {
   info(`TWITCH: Stream started`)
@@ -82,3 +82,18 @@ export const onStreamChange = (data: IWebHookStreamChanged) => {
   }
 }
 
+export const onSubscribe = (data: INewSubscriber) => {
+  sub(`${data.username}, tier: ${data.tier}`)
+
+  for (const system of loadedSystems) {
+    if (typeof system.onSubscribe === 'function') system.onSubscribe(data)
+  }
+}
+
+export const onReSubscribe = (data: INewResubscriber) => {
+  resub(`${data.username}, tier: ${data.tier}, months: ${data.months}, overlayMonths: ${data.overallMonths}`)
+
+  for (const system of loadedSystems) {
+    if (typeof system.onReSubscribe === 'function') system.onReSubscribe(data)
+  }
+}

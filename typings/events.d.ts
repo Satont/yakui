@@ -43,3 +43,15 @@ export interface IWebHookStreamChanged {
   language: string,
   thumbnail_url: string
 }
+
+export interface INewSubscriber {
+  isPrime: boolean,
+  username: string,
+  tier: string,
+  message?: string,
+}
+
+export interface INewResubscriber extends INewSubscriber {
+  months?: number,
+  overallMonths?: number
+}

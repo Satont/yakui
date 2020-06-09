@@ -3,11 +3,14 @@ import humanizeDuration from 'humanize-duration'
 import { onStreamStart, onStreamEnd } from "@bot/libs/eventsCaller"
 import locales from '@bot/libs/locales'
 import { System, Command, CommandOptions } from "typings"
+import { INewSubscriber, INewResubscriber } from "typings/events"
+import Settings from "@bot/models/Settings"
 
 export default new class Twitch implements System {
   private intervals = {
     streamData: null,
     channelData: null,
+    subscribers: null,
   }
   commands: Command[] = [
     { name: 'title', fnc: this.setTitle, permission: 'moderators', visible: false, },
@@ -26,15 +29,40 @@ export default new class Twitch implements System {
     views: number,
     game: string,
     title: string,
+    subs?: number,
+    latestSubscriber?: {
+      username: string,
+      tier: string,
+      timestamp: number,
+    },
+    latestReSubscriber?: {
+      username: string,
+      tier: string,
+      months: number,
+      overallMonths: number,
+      timestamp: number,
+    }
   } = {
     views: 0,
     game: 'No data',
-    title: 'No data'
+    title: 'No data',
+    subs: 0,
+    latestReSubscriber: null,
+    latestSubscriber: null,
   }
 
-  constructor() {
+  async init() {
+    const [latestSubscriber, latestReSubscriber] = await Promise.all([
+      Settings.findOne({ where: { space: 'twitch', name: 'latestSubscriber' } }),
+      Settings.findOne({ where: { space: 'twitch', name: 'latestReSubscriber' } })
+    ])
+
+    if (latestSubscriber) this.channelMetaData.latestSubscriber = latestSubscriber.value
+    if (latestReSubscriber) this.channelMetaData.latestReSubscriber = latestReSubscriber.value
+
     this.getStreamData()
     this.getChannelData()
+    this.getChannelSubscribers()
   }
 
   private async getStreamData() {
@@ -66,6 +94,15 @@ export default new class Twitch implements System {
       game: data?.game ?? 'No data',
       title: data?.status ?? 'No data'
     }
+  }
+
+  private async getChannelSubscribers() {
+    clearInterval(this.intervals.subscribers)
+    this.intervals.subscribers = setTimeout(() => this.getChannelSubscribers(), 1 * 60 * 1000)
+
+    if (!tmi.clients.broadcaster) return;
+    const data = await tmi.clients.broadcaster.kraken.channels.getChannelSubscriptionCount(tmi.channel.id)
+    this.channelMetaData.subs = data
   }
 
   async getFollowAge(userId: string) {
@@ -109,5 +146,33 @@ export default new class Twitch implements System {
     })
 
     return '$sender ✅'
+  }
+
+  async onSubscribe(data: INewSubscriber) {
+    const defaults = { username: data.username, tier: data.tier, timestamp: Date.now() }
+    this.channelMetaData.latestSubscriber = defaults
+
+    const [instance, created]: [Settings, boolean] = await Settings.findOrCreate({
+      where: { space: 'twitch', name: 'latestSubscriber' },
+      defaults,
+    })
+
+    if (!created) {
+      await instance.update(defaults)
+    }
+  }
+
+  async onReSubscribe(data: INewResubscriber) {
+    const defaults = { username: data.username, tier: data.tier, timestamp: Date.now(), months: data.months, overallMonths: data.overallMonths }
+    this.channelMetaData.latestReSubscriber = defaults
+
+    const [instance, created]: [Settings, boolean] = await Settings.findOrCreate({
+      where: { space: 'twitch', name: 'latestReSubscriber' },
+      defaults,
+    })
+
+    if (!created) {
+      await instance.update(defaults)
+    }
   }
 }

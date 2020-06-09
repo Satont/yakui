@@ -7,7 +7,8 @@ import Parser from './parser'
 import { UserPermissions } from 'typings'
 import events from '@bot/systems/events'
 import { info, error, chatOut, chatIn, timeout, whisperOut } from './logger'
-import { onHosting, onHosted, onRaided } from './eventsCaller'
+import { onHosting, onHosted, onRaided, onSubscribe, onReSubscribe } from './eventsCaller'
+import { INewSubscriber } from 'typings/events'
 
 export default new class Tmi {
   private intervals = {
@@ -185,6 +186,14 @@ export default new class Tmi {
       })
       client.onRaid((channel, username, { viewerCount }) => {
         onRaided({ username, viewers: viewerCount })
+      })
+      client.onSub((channel, username, subInfo, msg) => {
+        const tier = isNaN(Number(subInfo.plan)) ? 'Twitch prime' : String(Number(subInfo.plan) / 1000)
+        onSubscribe({ username, tier, isPrime: subInfo.isPrime, message: subInfo.message })
+      })
+      client.onResub((channel, username, subInfo, msg) => {
+        const tier = isNaN(Number(subInfo.plan)) ? 'Twitch prime' : String(Number(subInfo.plan) / 1000)
+        onReSubscribe({ username, tier, message: subInfo.message, months: subInfo.months, overallMonths: subInfo.streak, isPrime: subInfo.isPrime })
       })
     }
   }
