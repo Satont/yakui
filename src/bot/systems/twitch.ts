@@ -102,9 +102,9 @@ export default new class Twitch implements System {
     this.intervals.subscribers = setTimeout(() => this.getChannelSubscribers(), 1 * 60 * 1000)
 
     if (!tmi.clients.broadcaster) return;
-    const data = await tmi.clients.broadcaster.kraken.channels.getChannelSubscriptionCount(tmi.channel.id)
-    this.channelMetaData.subs = data
-    info(`TWITCH: Subscribers count found: ${data}`)
+    const data = await (await tmi.clients.broadcaster.helix.subscriptions.getSubscriptionsPaginated(tmi.channel.id)).getAll()
+    this.channelMetaData.subs = data.length - 1
+    info(`TWITCH: Subscribers count found: ${data.length - 1}`)
   }
 
   async getFollowAge(userId: string) {

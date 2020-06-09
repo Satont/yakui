@@ -87,12 +87,14 @@ export default new class Tmi {
       this.chatClients[type] = Chat.forTwitchClient(this.clients[type])
 
       this.listeners(type)
-      if (type === 'bot') await this.getChannel(channel.value)
+      if (type === 'bot') {
+        await this.getChannel(channel.value)
+        await import('./webhooks')
+        await this.loadLibs()
+      }
       await this.chatClients[type].connect()
 
       await this.intervaledUpdateAccessToken(type, { access_token: accessToken.value, refresh_token: refreshToken.value })
-      if (type === 'bot') await import('./webhooks')
-      await this.loadLibs()
     } catch (e) {
       error(e)
       OAuth.refresh(refreshToken.value, type)
