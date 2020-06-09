@@ -70,7 +70,7 @@ export default new class Twitch implements System {
     clearInterval(this.intervals.streamData)
     this.intervals.streamData = setTimeout(() => this.getStreamData(), 1 * 60 * 1000)
 
-    const data = await tmi?.clients?.bot?.helix.streams.getStreamByUserId(tmi.channel.id)
+    const data = await tmi?.clients?.bot?.helix.streams.getStreamByUserId(tmi.channel?.id)
 
     if (data && !this.streamMetaData.startedAt) onStreamStart()
     else if (!data && this.streamMetaData.startedAt) onStreamEnd()
@@ -85,10 +85,10 @@ export default new class Twitch implements System {
     clearInterval(this.intervals.channelData)
     this.intervals.channelData = setTimeout(() => this.getChannelData(), 1 * 60 * 1000)
 
-    const channel = await tmi?.clients?.bot?.kraken.users.getUser(tmi.channel.id)
+    const channel = await tmi?.clients?.bot?.kraken.users.getUser(tmi.channel?.id)
     if (!channel) return
 
-    const data = await (await tmi?.clients?.bot?.kraken.users.getUser(tmi.channel.id)).getChannel()
+    const data = await (await tmi?.clients?.bot?.kraken.users.getUser(tmi.channel?.id)).getChannel()
 
     this.channelMetaData = {
       views: data?.views ?? 0,
@@ -102,7 +102,7 @@ export default new class Twitch implements System {
     this.intervals.subscribers = setTimeout(() => this.getChannelSubscribers(), 1 * 60 * 1000)
 
     if (!tmi.clients.broadcaster) return;
-    const data = await (await tmi.clients.broadcaster.helix.subscriptions.getSubscriptionsPaginated(tmi.channel.id)).getAll()
+    const data = await (await tmi.clients.broadcaster.helix.subscriptions.getSubscriptionsPaginated(tmi.channel?.id)).getAll()
     this.channelMetaData.subs = data.length - 1
     info(`TWITCH: Subscribers count found: ${data.length - 1}`)
   }

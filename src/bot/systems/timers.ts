@@ -31,7 +31,7 @@ export default new class Timers implements System {
 
         const message = await variables.parseMessage({ message: timer.responses[timer.last] })
         tmi.say({ message })
-        await timer.update({ last: ++timer.last % timer.responses.length, triggerTimeStamp: Date.now() })
+        timer.update({ last: ++timer.last % timer.responses.length, triggerTimeStamp: Date.now() })
       }
     }
   }
