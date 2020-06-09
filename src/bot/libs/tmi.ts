@@ -32,7 +32,7 @@ export default new class Tmi {
   connected: {
     bot: boolean,
     broadcaster: boolean,
-  } = { 
+  } = {
     bot: false,
     broadcaster: false,
   }
@@ -85,8 +85,9 @@ export default new class Tmi {
       this.listeners(type)
       if (type === 'bot') await this.getChannel(channel.value)
       await this.chatClients[type].connect()
-      
+
       await this.intervaledUpdateAccessToken(type, { access_token: accessToken.value, refresh_token: refreshToken.value })
+      if (type === 'bot') await import('./webhooks')
       await this.loadLibs()
     } catch (e) {
       error(e)
@@ -118,12 +119,12 @@ export default new class Tmi {
   }
 
   async disconnect(type: 'bot' | 'broadcaster') {
-    const client = this.chatClients[type] 
+    const client = this.chatClients[type]
 
     if (client) {
       client.part(this.channel?.name)
       client.quit()
-  
+
       info(`TMI: ${type} disconnecting from server`)
       this.clients[type] = null
       this.chatClients[type] = null
@@ -132,7 +133,7 @@ export default new class Tmi {
 
   async listeners(type: 'bot' | 'broadcaster') {
     const client = this.chatClients[type]
-    
+
     client.onDisconnect((manually, reason) => {
       info(`TMI: ${type} disconnected from server `, !manually ? reason.message : 'manually')
     })
@@ -223,6 +224,5 @@ export default new class Tmi {
     await import('@bot/systems/twitch')
     await import('./loader')
     await import('./currency')
-    await import('./webhooks')
   }
 }
