@@ -7,9 +7,13 @@ import Parser from './parser'
 import { UserPermissions } from 'typings'
 import events from '@bot/systems/events'
 import { info, error, chatOut, chatIn, timeout, whisperOut } from './logger'
-import { onHosting, onHosted, onRaided } from './eventsCaller'
+import { onHosting, onHosted, onRaided, onSubscribe, onReSubscribe } from './eventsCaller'
+import { INewSubscriber } from 'typings/events'
 
 export default new class Tmi {
+  private intervals = {
+    updateAccessToken: null
+  }
   private isAlreadyUpdating = {
     bot: false,
     broadcaster: false,
@@ -32,7 +36,7 @@ export default new class Tmi {
   connected: {
     bot: boolean,
     broadcaster: boolean,
-  } = { 
+  } = {
     bot: false,
     broadcaster: false,
   }
@@ -83,11 +87,14 @@ export default new class Tmi {
       this.chatClients[type] = Chat.forTwitchClient(this.clients[type])
 
       this.listeners(type)
-      if (type === 'bot') await this.getChannel(channel.value)
+      if (type === 'bot') {
+        await this.getChannel(channel.value)
+        await import('./webhooks')
+        await this.loadLibs()
+      }
       await this.chatClients[type].connect()
-      
+
       await this.intervaledUpdateAccessToken(type, { access_token: accessToken.value, refresh_token: refreshToken.value })
-      await this.loadLibs()
     } catch (e) {
       error(e)
       OAuth.refresh(refreshToken.value, type)
@@ -99,6 +106,8 @@ export default new class Tmi {
   }
 
   private async intervaledUpdateAccessToken(type: 'bot' | 'broadcaster', data) {
+    clearInterval(this.intervals.updateAccessToken)
+    this.intervals.updateAccessToken = setTimeout(() => this.intervaledUpdateAccessToken(type, { access_token, refresh_token }), 10 * 60 * 1000)
     const { access_token, refresh_token } = await OAuth.refresh(data.refresh_token, type)
 
     this.clients[type]._getAuthProvider().setAccessToken(new AccessToken({
@@ -106,7 +115,6 @@ export default new class Tmi {
       refresh_token: data.refresh_token
     }))
 
-    setTimeout(() => this.intervaledUpdateAccessToken(type, { access_token, refresh_token }), 10 * 60 * 1000)
   }
 
   private async getChannel(name: string) {
@@ -118,12 +126,12 @@ export default new class Tmi {
   }
 
   async disconnect(type: 'bot' | 'broadcaster') {
-    const client = this.chatClients[type] 
+    const client = this.chatClients[type]
 
     if (client) {
       client.part(this.channel?.name)
       client.quit()
-  
+
       info(`TMI: ${type} disconnecting from server`)
       this.clients[type] = null
       this.chatClients[type] = null
@@ -132,7 +140,7 @@ export default new class Tmi {
 
   async listeners(type: 'bot' | 'broadcaster') {
     const client = this.chatClients[type]
-    
+
     client.onDisconnect((manually, reason) => {
       info(`TMI: ${type} disconnected from server `, !manually ? reason.message : 'manually')
     })
@@ -181,6 +189,14 @@ export default new class Tmi {
       client.onRaid((channel, username, { viewerCount }) => {
         onRaided({ username, viewers: viewerCount })
       })
+      client.onSub((channel, username, subInfo, msg) => {
+        const tier = isNaN(Number(subInfo.plan)) ? 'Twitch prime' : String(Number(subInfo.plan) / 1000)
+        onSubscribe({ username, tier, isPrime: subInfo.isPrime, message: subInfo.message })
+      })
+      client.onResub((channel, username, subInfo, msg) => {
+        const tier = isNaN(Number(subInfo.plan)) ? 'Twitch prime' : String(Number(subInfo.plan) / 1000)
+        onReSubscribe({ username, tier, message: subInfo.message, months: subInfo.months, overallMonths: subInfo.streak, isPrime: subInfo.isPrime })
+      })
     }
   }
 
@@ -223,6 +239,5 @@ export default new class Tmi {
     await import('@bot/systems/twitch')
     await import('./loader')
     await import('./currency')
-    await import('./webhooks')
   }
 }
