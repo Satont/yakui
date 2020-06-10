@@ -90,11 +90,9 @@ export default new class Twitch implements System {
 
     const data = await (await tmi?.clients?.bot?.kraken.users.getUser(tmi.channel?.id)).getChannel()
 
-    this.channelMetaData = {
-      views: data?.views ?? 0,
-      game: data?.game ?? 'No data',
-      title: data?.status ?? 'No data'
-    }
+    this.channelMetaData.views = data?.views ?? 0,
+    this.channelMetaData.game = data?.game ?? 'No data',
+    this.channelMetaData.title = data?.status ?? 'No data'
   }
 
   private async getChannelSubscribers() {
