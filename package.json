@@ -45,7 +45,7 @@
     "bootstrap": "^4.5.0",
     "bootstrap-vue": "^2.15.0",
     "centrifuge": "^2.6.2",
-    "chalk": "^4.0.0",
+    "chalk": "^4.1.0",
     "connect-history-api-fallback": "^1.6.0",
     "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
