@@ -4,6 +4,9 @@ import { CleanWebpackPlugin } from 'clean-webpack-plugin'
 import { resolve } from 'path'
 
 export default {
+  devServer: {
+    historyApiFallback: true
+  },
   mode: 'development',
   entry: {
     panel: './src/panel/index.ts',

@@ -27,19 +27,20 @@ app.get('/oauth', (req, res) => {
 app.get('/oauth/validate', validate)
 app.get('/oauth/refresh', refresh)
 
-app.get('/', (req, res) => {
-  res.sendFile(resolve(process.cwd(), 'public', 'index.html'))
-})
-
 app.get('/public', (req, res) => {
   res.send('This is feature public page.')
 })
 
+app.use('/api/v1', v1)
+
 app.use(history({
   index: '/',
-  htmlAcceptHeaders: ['text/html', 'application/xhtml+xml']
+  htmlAcceptHeaders: ['text/html', 'application/xhtml+xml'],
 }))
-app.use('/api/v1', v1)
+
+app.get('/', (req, res) => {
+  res.sendFile(resolve(process.cwd(), 'public', 'index.html'))
+})
 
 app.use((err, req: Request, res: Response, next) => {
   console.log(err)
