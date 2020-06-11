@@ -19,7 +19,7 @@ export default new class WebHooks {
     if (!url) return
 
     this.callBackUrl = `${url.value}/twitch/webhooks/callback`
-
+    if (!tmi.channel?.id) return setTimeout(() => this.init(), 5000)
     this.unsubscribe('follows').then(() => this.subscribe('follows'))
     this.unsubscribe('streams').then(() => this.subscribe('streams'))
     this.unsubscribe('moderator').then(() => this.subscribe('moderator'))

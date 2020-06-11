@@ -133,7 +133,7 @@ export default new class Tmi {
 
     if (client) {
       client.part(this.channel?.name)
-      client.quit()
+      await client.quit()
 
       info(`TMI: ${type} disconnecting from server`)
       this.clients[type] = null

@@ -69,6 +69,7 @@ export default new class Twitch implements System {
   private async getStreamData() {
     clearInterval(this.intervals.streamData)
     this.intervals.streamData = setTimeout(() => this.getStreamData(), 1 * 60 * 1000)
+    if (!tmi.channel?.id) return
 
     const data = await tmi?.clients?.bot?.helix.streams.getStreamByUserId(tmi.channel?.id)
 
@@ -84,6 +85,7 @@ export default new class Twitch implements System {
   private async getChannelData() {
     clearInterval(this.intervals.channelData)
     this.intervals.channelData = setTimeout(() => this.getChannelData(), 1 * 60 * 1000)
+    if (!tmi.channel?.id) return
 
     const channel = await tmi?.clients?.bot?.kraken.users.getUser(tmi.channel?.id)
     if (!channel) return
@@ -99,14 +101,14 @@ export default new class Twitch implements System {
     clearInterval(this.intervals.subscribers)
     this.intervals.subscribers = setTimeout(() => this.getChannelSubscribers(), 1 * 60 * 1000)
 
-    if (!tmi.clients.broadcaster) return;
+    if (!tmi.clients.broadcaster || !tmi.channel?.id) return;
     const data = await (await tmi.clients.broadcaster.helix.subscriptions.getSubscriptionsPaginated(tmi.channel?.id)).getAll()
     this.channelMetaData.subs = data.length - 1
     info(`TWITCH: Subscribers count found: ${data.length - 1}`)
   }
 
   async getFollowAge(userId: string) {
-    const follow = await tmi.clients.bot?.helix.users.getFollows({ followedUser: tmi.channel.id, user: userId })
+    const follow = await tmi.clients.bot?.helix.users.getFollows({ followedUser: tmi.channel?.id, user: userId })
     if (!follow.total) return 'not follower'
 
     return humanizeDuration(Date.now() - new Date(follow.data[0].followDate).getTime(), {
