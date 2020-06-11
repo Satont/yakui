@@ -16,6 +16,7 @@ export default {
     chunkFilename: '[name].[contenthash].js',
     pathinfo: false,
   },
+  performance: { hints: false },
   module: {
     rules: [
       { test: /\.vue$/i, loader: 'vue-loader' },
@@ -32,6 +33,9 @@ export default {
     new HtmlPlugin({
       filename: '../login.html', template: 'src/login/index.html', chunks: ['login']
     }),
+    new HtmlPlugin({
+      filename: '../oauth.html', template: 'src/oauth/index.html', chunks: []
+    }),
   ],
   resolve: {
     extensions: ['.ts', '.js', '.vue'],
@@ -39,7 +43,8 @@ export default {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve(__dirname, 'src'),
       '@bot': resolve(__dirname, 'src', 'bot'),
-      '@web': resolve(__dirname, 'src', 'web')
+      '@panel': resolve(__dirname, 'src', 'panel'),
+      '@login': resolve(__dirname, 'src', 'login')
     }
   }
 }

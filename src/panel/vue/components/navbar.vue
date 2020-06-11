@@ -1,15 +1,28 @@
 <template>
   <div>
     <b-navbar toggleable="lg" type="light" variant="dark" sticky class="flex-md-nowrap p-0 shadow">
-    <b-navbar-brand class="navbar-brand col-md-1 col-lg-1 mr-0 px-3" router-link to="/">{{ title }}</b-navbar-brand>
+      <b-navbar-brand class="navbar-brand col-md-1 col-lg-1 mr-0 px-3" router-link to="/">{{ title }}</b-navbar-brand>
 
-    <b-nav align='center'>
-      <b-nav-item>Viewers: {{ streamMetaData.viewers }}</b-nav-item>
-      <b-nav-item>Views: {{ channelMetaData.views }}</b-nav-item>
-      <b-nav-item>Title: {{ channelMetaData.title }}</b-nav-item>
-      <b-nav-item>Game: {{ channelMetaData.game }}</b-nav-item>
-      <b-nav-item>Uptime: {{ uptime }}</b-nav-item>
-    </b-nav>
+      <b-nav align='center'>
+        <b-nav-item>Viewers: {{ streamMetaData.viewers }}</b-nav-item>
+        <b-nav-item>Views: {{ channelMetaData.views }}</b-nav-item>
+        <b-nav-item>Title: {{ channelMetaData.title }}</b-nav-item>
+        <b-nav-item>Game: {{ channelMetaData.game }}</b-nav-item>
+        <b-nav-item>Uptime: {{ uptime }}</b-nav-item>
+      </b-nav>
+
+
+      <div class="ml-auto ml-2 mr-2">
+        <b-dropdown right no-caret variant="dark" class="text-white" size="sm">
+          <template v-slot:button-content>
+            <b-img :src="$root.loggedUser.profile_image_url" style="width: 30px;border-radius: 30px;"></b-img>
+            {{ $root.loggedUser.display_name }}
+          </template>
+          <b-dropdown-text>
+            <b-btn block size="sm" @click="logout" variant="danger">Sign Out</b-btn>
+          </b-dropdown-text>
+        </b-dropdown>
+      </div>
 
   </b-navbar>
   </div>
@@ -53,7 +66,7 @@ export default class NavBar extends Vue {
 
     this.title = data.bot?.username?.toUpperCase() ?? 'Bot'
     document.title = this.title
-    
+
     this.streamMetaData = data.streamMetaData
     this.channelMetaData = data.channelMetaData
 
@@ -66,6 +79,14 @@ export default class NavBar extends Vue {
     else {
       this.uptime = humanizeDuration(Date.now() - new Date(this.streamMetaData.startedAt).getTime(), { units: ['mo', 'd', 'h', 'm', 's'], round: true })
     }
+  }
+
+  logout() {
+    localStorage.setItem('code', '')
+    localStorage.setItem('accessToken', '')
+    localStorage.setItem('refreshToken', '')
+    localStorage.setItem('userType', '')
+    window.location.replace(window.location.origin + '/public')
   }
 }
 </script>
@@ -85,12 +106,17 @@ export default class NavBar extends Vue {
 }
 
 .navbar-light .navbar-brand:hover, .navbar-light .navbar-brand:focus {
-    color: #fff;
+  color: #fff;
 }
 
 .nav > li > .nav-link, .nav-link:hover, .nav-link:focus {
   cursor: default !important;
   color: #fff;
+}
+
+.nav > .nav-link {
+  white-space: nowrap;
+  color: #fff !important;
 }
 
 .nav-justified .nav-item {

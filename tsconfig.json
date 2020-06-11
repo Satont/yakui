@@ -3,7 +3,7 @@
     "baseUrl": "./",
     "paths": {
       "@bot/*": ["src/bot/*"],
-      "@web/*": ["src/panel/*"],
+      "@panel/*": ["src/panel/*"],
       "@login/*": ["src/login/*"]
     },
     "target": "es6",

@@ -10,12 +10,14 @@ import twitch from './twitch'
 import Settings from '@bot/models/Settings'
 
 export default new class Users implements System {
-  settings: { 
+  settings: {
     enabled: boolean,
-    ignoredUsers: string[]
-  } = { 
+    ignoredUsers: string[],
+    admins: string[]
+  } = {
     enabled: true,
-    ignoredUsers: []
+    ignoredUsers: [],
+    admins: []
   }
 
   private countWatchedTimeout: NodeJS.Timeout = null
@@ -71,12 +73,12 @@ export default new class Users implements System {
       id = byName.id
     }
 
-    let user = await User.findOne({ 
+    let user = await User.findOne({
       where: { id },
       include: [UserTips, UserBits],
       attributes: { include: ['totalTips', 'totalTips' ]},
     })
-    
+
     if (!user) user = await User.create({
       id,
       username
@@ -133,7 +135,7 @@ export default new class Users implements System {
   async ignoreAdd(opts: CommandOptions) {
     if (!opts.argument.length) return;
     const [ignoredUsers]: [Settings] = await Settings.findOrCreate({ where: { space: 'users', name: 'ignoredUsers' }, defaults: { value: [] } })
-    
+
     await ignoredUsers.update({ value: [...ignoredUsers.value, opts.argument.toLowerCase() ].filter(Boolean) })
 
     return '$sender ✅'
@@ -142,7 +144,7 @@ export default new class Users implements System {
   async ignoreRemove(opts: CommandOptions) {
     if (!opts.argument.length) return;
     const ignoredUsers: Settings = await Settings.findOne({ where: { space: 'users', name: 'ignoredUsers' } })
-    
+
     if (!ignoredUsers || !ignoredUsers?.value.length) return
     if (!ignoredUsers.value.includes(opts.argument.toLowerCase())) return
 
