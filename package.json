@@ -25,7 +25,7 @@
     "@types/humanize-duration": "^3.18.0",
     "@types/jsonwebtoken": "^8.5.0",
     "@types/lodash": "^4.14.155",
-    "@types/node": "^14.0.12",
+    "@types/node": "^14.0.13",
     "@types/serve-favicon": "^2.5.0",
     "@types/spotify-web-api-node": "^4.0.1",
     "@types/tmi.js": "^1.4.0",
