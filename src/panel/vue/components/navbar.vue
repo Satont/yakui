@@ -61,7 +61,7 @@ export default class NavBar extends Vue {
 
   async fetchMetaData() {
     clearTimeout(this.updateTimeout)
-    this.updateTimeout = setTimeout(() => this.fetchMetaData(), 1000);
+    this.updateTimeout = setTimeout(() => this.fetchMetaData(), 10000);
     const { data } = await axios.get('/api/v1/metaData')
 
     this.title = data.bot?.username?.toUpperCase() ?? 'Bot'

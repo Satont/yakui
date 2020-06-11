@@ -35,7 +35,7 @@ export const validate = async (req: Request, res: Response) => {
     const botAdmins: Settings = await Settings.findOne({ where: { space: 'users', name: 'botAdmins' } })
     if (botAdmins) admins.push(...botAdmins.value)
 
-    const haveCasterPermission = admins.includes(username)
+    const haveCasterPermission = !admins.length ? true : admins.includes(username)
 
     const accessToken = jwt.sign({
       userId,
@@ -65,7 +65,7 @@ export const refresh = async (req: Request, res: Response) => {
     const botAdmins: Settings = await Settings.findOne({ where: { space: 'users', name: 'botAdmins' } })
     if (botAdmins) admins.push(...botAdmins.value)
 
-    const haveCasterPermission = admins.includes(data.username)
+    const haveCasterPermission = !admins.length ? true : admins.includes(data.username)
 
     const accessToken = jwt.sign({
         userId: data.userId,
