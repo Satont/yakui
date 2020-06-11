@@ -3,7 +3,8 @@
     "baseUrl": "./",
     "paths": {
       "@bot/*": ["src/bot/*"],
-      "@web/*": ["src/web/*"]
+      "@panel/*": ["src/panel/*"],
+      "@login/*": ["src/login/*"]
     },
     "target": "es6",
     "module": "commonjs",
@@ -14,7 +15,7 @@
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
     "typeRoots" : [
-      "typings", 
+      "typings",
       "node_modules/@types"
     ],
   },

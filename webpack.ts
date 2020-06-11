@@ -1,14 +1,25 @@
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
+import VueLoaderPlugin from 'vue-loader/lib/plugin'
+import HtmlPlugin from 'html-webpack-plugin'
+import { CleanWebpackPlugin } from 'clean-webpack-plugin'
 import { resolve } from 'path'
 
 export default {
+  devServer: {
+    historyApiFallback: true
+  },
   mode: 'development',
-  entry: './src/panel/index.ts',
+  entry: {
+    panel: './src/panel/index.ts',
+    login: './src/login/index.ts',
+  },
   output: {
     path: resolve(__dirname, 'public', 'dest'),
-    publicPath: resolve(__dirname, 'public', 'dest'),
-    filename: 'build.js'
-  }, 
+    publicPath: '/static/',
+    filename: '[name].[contenthash].js',
+    chunkFilename: '[name].[contenthash].js',
+    pathinfo: false,
+  },
+  performance: { hints: false },
   module: {
     rules: [
       { test: /\.vue$/i, loader: 'vue-loader' },
@@ -17,7 +28,17 @@ export default {
     ]
   },
   plugins: [
-    new VueLoaderPlugin()
+    new CleanWebpackPlugin(),
+    new VueLoaderPlugin(),
+    new HtmlPlugin({
+      filename: '../index.html', template: 'src/panel/index.html', chunks: ['panel']
+    }),
+    new HtmlPlugin({
+      filename: '../login.html', template: 'src/login/index.html', chunks: ['login']
+    }),
+    new HtmlPlugin({
+      filename: '../oauth.html', template: 'src/oauth/index.html', chunks: []
+    }),
   ],
   resolve: {
     extensions: ['.ts', '.js', '.vue'],
@@ -25,7 +46,8 @@ export default {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve(__dirname, 'src'),
       '@bot': resolve(__dirname, 'src', 'bot'),
-      '@web': resolve(__dirname, 'src', 'web')
+      '@panel': resolve(__dirname, 'src', 'panel'),
+      '@login': resolve(__dirname, 'src', 'login')
     }
   }
 }

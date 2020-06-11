@@ -72,7 +72,7 @@ export default new class Parser {
       if (!commandResult.length) break;
       const userPerms = tmi.getUserPermissions(raw.userInfo.badges)
       this.cooldowns.includes(command.name) && (!userPerms.broadcaster && !userPerms.moderators)
-          ? tmi.whispers({ target: raw.userInfo.userName, message: commandResult }) 
+          ? tmi.whispers({ target: raw.userInfo.userName, message: commandResult })
           : tmi.say({ message: commandResult })
 
       if (command.cooldown && command.cooldown !== 0 && !this.cooldowns.includes(command.name) ) {
