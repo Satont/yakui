@@ -48,6 +48,7 @@ export default new class Tmi {
   constructor() {
     this.connect('bot')
     this.connect('broadcaster')
+    this.listenDbUpdates()
   }
 
   async connect(type: 'bot' | 'broadcaster') {
