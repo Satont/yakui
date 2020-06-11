@@ -12,7 +12,10 @@ import { INewSubscriber } from 'typings/events'
 
 export default new class Tmi {
   private intervals = {
-    updateAccessToken: null
+    updateAccessToken: {
+      bot: null,
+      broadcaster: null,
+    }
   }
   private isAlreadyUpdating = {
     bot: false,
@@ -106,8 +109,8 @@ export default new class Tmi {
   }
 
   private async intervaledUpdateAccessToken(type: 'bot' | 'broadcaster', data) {
-    clearInterval(this.intervals.updateAccessToken)
-    this.intervals.updateAccessToken = setTimeout(() => this.intervaledUpdateAccessToken(type, { access_token, refresh_token }), 10 * 60 * 1000)
+    clearInterval(this.intervals.updateAccessToken[type])
+    this.intervals.updateAccessToken[type] = setTimeout(() => this.intervaledUpdateAccessToken(type, { access_token, refresh_token }), 10 * 60 * 1000)
     const { access_token, refresh_token } = await OAuth.refresh(data.refresh_token, type)
 
     this.clients[type]._getAuthProvider().setAccessToken(new AccessToken({
