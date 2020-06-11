@@ -8,7 +8,6 @@ import { UserPermissions } from 'typings'
 import events from '@bot/systems/events'
 import { info, error, chatOut, chatIn, timeout, whisperOut } from './logger'
 import { onHosting, onHosted, onRaided, onSubscribe, onReSubscribe } from './eventsCaller'
-import { INewSubscriber } from 'typings/events'
 
 export default new class Tmi {
   private intervals = {

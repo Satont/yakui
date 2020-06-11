@@ -2,7 +2,6 @@ import tmi from "./tmi"
 import Settings from '@bot/models/Settings'
 import { info, error } from "./logger"
 
-
 export default new class WebHooks {
   private callBackUrl: string = null
   private validityInSeconds = 864000
