@@ -48,8 +48,18 @@ export default new class Twitch implements System {
     game: 'No data',
     title: 'No data',
     subs: 0,
-    latestReSubscriber: null,
-    latestSubscriber: null,
+    latestSubscriber: {
+      username: 'No data',
+      tier: 'No data',
+      timestamp: undefined,
+    },
+    latestReSubscriber: {
+      username: 'No data',
+      tier: 'No data',
+      months: 0,
+      overallMonths: 0,
+      timestamp: undefined,
+    },
   }
 
   async init() {
