@@ -229,7 +229,7 @@ export default new class Tmi {
   }
 
   listenDbUpdates() {
-    Settings.afterSave((value => {
+    Settings.afterCreate((value => {
       if (value.space !== 'oauth') return;
       setTimeout(() => {
         this.connect('bot')
