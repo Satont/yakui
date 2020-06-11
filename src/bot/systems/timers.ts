@@ -28,7 +28,6 @@ export default new class Timers implements System {
       if (!timer.enabled || !twitch.streamMetaData?.startedAt) continue
 
       if ((Date.now() - timer.triggerTimeStamp) > timer.interval * 1000) {
-
         const message = await variables.parseMessage({ message: timer.responses[timer.last] })
         tmi.say({ message })
         timer.update({ last: ++timer.last % timer.responses.length, triggerTimeStamp: Date.now() })
@@ -37,7 +36,9 @@ export default new class Timers implements System {
   }
 
   listenDbUpdates() {
-    Timer.afterCreate(() => this.init())
+    Timer.afterSave((instance, options) => {
+      if (options.fields.includes('responses')) this.init()
+    })
     Timer.afterDestroy(() => this.init())
   }
 }
