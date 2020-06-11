@@ -16,7 +16,7 @@ const app = express()
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json())
 app.use('/twitch', twitch)
-app.use(basicAuth({
+/* app.use(basicAuth({
   challenge: true,
   realm: Math.random().toString(36).substring(7),
   unauthorizedResponse: () => 'Unauthorized',
@@ -26,12 +26,16 @@ app.use(basicAuth({
       return cb(null, true)
     } else return cb(null, false)
   },
-}))
+})) */
 app.use('/static', express.static(resolve(process.cwd(), 'public', 'dest')))
 app.use(history({
   index: '/',
   htmlAcceptHeaders: ['text/html', 'application/xhtml+xml']
 }))
+
+app.get('/login', (req, res) => {
+  res.sendFile(resolve(process.cwd(), 'public', 'login.html'))
+})
 
 app.get('/', (req, res) => {
   res.sendFile(resolve(process.cwd(), 'public', 'index.html'))

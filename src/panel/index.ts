@@ -28,7 +28,7 @@ const router = new VueRouter({
       ]
     },
     { path: '/events', name: 'EventsManager', component: () => import('./vue/pages/events/index.vue') },
-    { 
+    {
       path: '/integrations',
       component: () => import('./vue/pages/integrations/index.vue'),
       children: [
