@@ -7,6 +7,9 @@
       <label for="textarea" class="mt-2">Ignored users</label>
       <b-form-textarea  id="textarea" v-model="settings.ignoredUsers" placeholder="1 line = 1 user" rows="3" max-rows="8"></b-form-textarea>
 
+      <label for="textarea" class="mt-2">Bot admins</label>
+      <b-form-textarea  id="textarea" v-model="settings.botAdmins" placeholder="1 line = 1 user" rows="3" max-rows="8"></b-form-textarea>
+
       <b-button class="btn-block mt-1" type="submit" variant="primary">Save</b-button>
     </b-form>
   </div>
@@ -21,7 +24,8 @@ export default class General extends Vue {
   settings = {
     space: 'users',
     enabled: true,
-    ignoredUsers: ''
+    ignoredUsers: '',
+    botAdmins: ''
   }
 
   async save() {
@@ -32,7 +36,8 @@ export default class General extends Vue {
 
     await axios.post('/api/v1/settings', [
       { space: this.settings.space, name: 'enabled', value: this.settings.enabled },
-      { space: this.settings.space, name: 'ignoredUsers', value: this.settings.ignoredUsers.split('\n').filter(Boolean).map(u => u.toLowerCase()) }
+      { space: this.settings.space, name: 'ignoredUsers', value: this.settings.ignoredUsers.split('\n').filter(Boolean).map(u => u.toLowerCase()) },
+      { space: this.settings.space, name: 'botAdmins', value: this.settings.botAdmins.split('\n').filter(Boolean).map(u => u.toLowerCase()) }
     ])
   }
 
@@ -41,6 +46,7 @@ export default class General extends Vue {
 
     this.settings.enabled = data.find(item => item.name === 'enabled')?.value ?? true
     this.settings.ignoredUsers = data.find(item => item.name === 'ignoredUsers')?.value?.join('\n') ?? ''
+    this.settings.botAdmins = data.find(item => item.name === 'botAdmins')?.value?.join('\n') ?? ''
   }
 }
 </script>

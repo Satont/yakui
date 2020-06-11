@@ -58,6 +58,9 @@ export default class NavBar extends Vue {
   created() {
     this.fetchMetaData()
   }
+  updated() {
+    this.fetchMetaData()
+  }
 
   async fetchMetaData() {
     clearTimeout(this.updateTimeout)
