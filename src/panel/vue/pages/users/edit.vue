@@ -77,12 +77,19 @@ export default class UsersManagerEdit extends Vue {
     const id = this.$route.params.id as any
 
     this.user = this.$route.params as any
-    const { data } = await axios.get('/api/v1/users/' + id)
+    const { data } = await axios.get('/api/v1/users/' + id, { headers: {
+      'x-twitch-token': localStorage.getItem('accessToken')
+    }})
     this.user = data
   }
 
   async delUser() {
-    await axios.delete('/api/v1/user', { data: { id: (this.user as any).id } })
+    await axios.delete('/api/v1/user', {
+      data: { id: (this.user as any).id },
+      headers: {
+        'x-twitch-token': localStorage.getItem('accessToken')
+      }
+    })
   }
 
   del(where, index) {
@@ -98,7 +105,7 @@ export default class UsersManagerEdit extends Vue {
       userId: this.user.id
     })
   }
-  
+
   addTip() {
     this.user.tips.push({
       amount: 0,

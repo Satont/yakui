@@ -31,7 +31,9 @@ export default class CustomVariaiblesManagerList extends Vue {
   variables: Variable[] = []
 
   async created() {
-    const { data } = await axios.get('/api/v1/variables')
+    const { data } = await axios.get('/api/v1/variables', { headers: {
+      'x-twitch-token': localStorage.getItem('accessToken')
+    }})
     this.variables = data
   }
 
@@ -40,7 +42,12 @@ export default class CustomVariaiblesManagerList extends Vue {
   }
 
   async del(id, index) {
-    await axios.delete('/api/v1/variables', { data: { id } })
+    await axios.delete('/api/v1/variables', {
+      data: { id },
+      headers: {
+        'x-twitch-token': localStorage.getItem('accessToken')
+      }
+    })
     this.variables.splice(index, 1)
   }
 }

@@ -62,7 +62,9 @@ export default class NavBar extends Vue {
   async fetchMetaData() {
     clearTimeout(this.updateTimeout)
     this.updateTimeout = setTimeout(() => this.fetchMetaData(), 10000);
-    const { data } = await axios.get('/api/v1/metaData')
+    const { data } = await axios.get('/api/v1/metaData', { headers: {
+      'x-twitch-token': localStorage.getItem('accessToken')
+    }})
 
     this.title = data.bot?.username?.toUpperCase() ?? 'Bot'
     document.title = this.title

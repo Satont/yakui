@@ -31,7 +31,9 @@ export default class KeywordsManagerList extends Vue {
   keywords: Keyword[] = []
 
   async created() {
-    const { data } = await axios.get('/api/v1/keywords')
+    const { data } = await axios.get('/api/v1/keywords', { headers: {
+      'x-twitch-token': localStorage.getItem('accessToken')
+    }})
     this.keywords = data
   }
 
@@ -40,7 +42,12 @@ export default class KeywordsManagerList extends Vue {
   }
 
   async del(id, index) {
-    await axios.delete('/api/v1/keywords', { data: { id } })
+    await axios.delete('/api/v1/keywords', {
+      data: { id },
+      headers: {
+        'x-twitch-token': localStorage.getItem('accessToken')
+      }
+    })
     this.keywords.splice(index, 1)
   }
 }
