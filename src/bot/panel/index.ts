@@ -25,8 +25,8 @@ app.get('/login', (req, res) => {
 app.get('/oauth', (req, res) => {
   res.sendFile(resolve(process.cwd(), 'public', 'oauth.html'))
 })
-app.get('/oauth/validate', Authorization.validate)
-app.get('/oauth/refresh', Authorization.refresh)
+app.get('/oauth/validate', (req, res) => Authorization.validate(req, res))
+app.get('/oauth/refresh',  (req, res) => Authorization.refresh(req, res))
 
 app.get('/public', (req, res) => {
   res.send('This is feature public page.')

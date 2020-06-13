@@ -42,21 +42,22 @@ export default new class Authorization implements System {
         throw new Error('Not matching userId')
       }
       const username = twitchValidation.data.login
-      const admins: string[] = [tmi.channel.name]
+      const admins: string[] = [tmi.channel?.name]
       const botAdmins: Settings = await Settings.findOne({ where: { space: 'users', name: 'botAdmins' } })
       if (botAdmins) admins.push(...botAdmins.value)
 
-      const haveCasterPermission = !admins.length ? true : admins.includes(username)
+      const userType = (!tmi.channel?.name || !admins.length ? true : admins.includes(username)) ? 'admin' : 'viewer'
+
       const accessToken = jwt.sign({
         userId,
         username,
-        privileges: haveCasterPermission ? 'admin': 'viewer',
+        privileges: userType,
       }, this.JWTKey, { expiresIn: `${accessTokenExpirationTime}s` })
       const refreshToken = jwt.sign({
         userId,
         username,
       }, this.JWTKey, { expiresIn: `${refreshTokenExpirationTime}s` })
-      res.status(200).send({ accessToken, refreshToken, userType: haveCasterPermission ? 'admin' : 'viewer'})
+      res.status(200).send({ accessToken, refreshToken, userType })
     } catch(e) {
       console.error(e)
       res.status(400).send('You have no access to view that.')
@@ -71,23 +72,23 @@ export default new class Authorization implements System {
 
       const data = jwt.verify(refreshTokenFromHeader, this.JWTKey) as { userId: number, username: string }
 
-      const admins: string[] = [tmi.channel.name]
+      const admins: string[] = [tmi.channel?.name]
       const botAdmins: Settings = await Settings.findOne({ where: { space: 'users', name: 'botAdmins' } })
       if (botAdmins) admins.push(...botAdmins.value)
 
-      const haveCasterPermission = !admins.length ? true : admins.includes(data.username)
+      const userType = (!tmi.channel?.name || !admins.length ? true : admins.includes(data.username)) ? 'admin' : 'viewer'
 
       const accessToken = jwt.sign({
           userId: data.userId,
           username: data.username,
-          privileges: haveCasterPermission ? 'admin': 'viewer',
+          privileges: userType,
         }, this.JWTKey, { expiresIn: `${accessTokenExpirationTime}s` })
       const refreshToken = jwt.sign({
         userId: data.userId,
         username: data.username,
       }, this.JWTKey, { expiresIn: `${refreshTokenExpirationTime}s` })
 
-      res.status(200).send({ accessToken, refreshToken, userType: haveCasterPermission ? 'admin' : 'viewer'})
+      res.status(200).send({ accessToken, refreshToken, userType })
     } catch (e) {
       error(e)
       res.status(400).send('You have no access to view that.')

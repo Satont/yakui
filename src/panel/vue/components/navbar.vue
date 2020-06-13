@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-navbar toggleable="lg" type="light" variant="dark" sticky class="flex-md-nowrap p-0 shadow">
-      <b-navbar-brand class="navbar-brand col-md-1 col-lg-1 mr-0 px-3" router-link to="/">{{ title }}</b-navbar-brand>
+      <b-navbar-brand class="navbar-brand col-md-1 col-lg-1 mr-0 px-3" router-link to="/">{{ title | truncate }}</b-navbar-brand>
 
       <b-nav align='center'>
         <b-nav-item>Viewers: {{ streamMetaData.viewers }}</b-nav-item>
@@ -33,7 +33,13 @@ import { Vue, Component } from 'vue-property-decorator'
 import humanizeDuration from 'humanize-duration'
 import axios from 'axios'
 
-@Component
+@Component({
+  filters: {
+    truncate(text: string) {
+      return text.length > 11 ? text.substring(0, 8) + '...' : text
+    }
+  }
+})
 export default class NavBar extends Vue {
   title: string = 'Bot'
   uptime: string = 'offline'
