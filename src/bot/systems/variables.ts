@@ -94,7 +94,7 @@ export default new class Variables implements System {
 
     result = await this.parseCustomVariables(result)
 
-    if (includesOneOf(result, ['user.messages', 'user.tips', 'user.bits', 'user.watched']) && userInfo) {
+    if (includesOneOf(result, ['user.messages', 'user.tips', 'user.bits', 'user.watched', 'user.points']) && userInfo) {
       const user = await users.getUserStats({ id: userInfo?.userId })
 
       result = result
@@ -102,6 +102,7 @@ export default new class Variables implements System {
         .replace(/\$user\.watched/gimu, `${((user.watched / (1 * 60 * 1000)) / 60).toFixed(1)}h`)
         .replace(/\$user\.tips/gimu, String(user.totalTips))
         .replace(/\$user\.bits/gimu, String(user.totalBits))
+        .replace(/\$user\.points/gimu, String(user.points))
     }
 
     if (result.includes('(api|')) {

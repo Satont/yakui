@@ -13,11 +13,33 @@ export default new class Users implements System {
   settings: {
     enabled: boolean,
     ignoredUsers: string[],
-    admins: string[]
+    admins: string[],
+    points: {
+      enabled: boolean,
+      messages: {
+        interval: number,
+        amount: number,
+      },
+      watch: {
+        interval: number,
+        amount: number,
+      }
+    }
   } = {
     enabled: true,
     ignoredUsers: [],
-    admins: []
+    admins: [],
+    points: {
+      enabled: false,
+      messages: {
+        interval: 1,
+        amount: 1,
+      },
+      watch: {
+        interval: 1,
+        amount: 1,
+      }
+    }
   }
 
   private countWatchedTimeout: NodeJS.Timeout = null
@@ -35,14 +57,16 @@ export default new class Users implements System {
   ]
 
   async init() {
-    const [enabled, ignoredUsers]: [Settings, Settings] = await Promise.all([
+    const [enabled, ignoredUsers, points]: [Settings, Settings, Settings] = await Promise.all([
       Settings.findOne({ where: { space: 'users', name: 'enabled' } }),
       Settings.findOne({ where: { space: 'users', name: 'ignoredUsers' } }),
+      Settings.findOne({ where: { space: 'users', name: 'points' } }),
     ])
 
     this.settings.ignoredUsers = ignoredUsers?.value?.filter(Boolean) ?? []
     this.settings.enabled = enabled?.value ?? true
 
+    if (points) this.settings.points = points.value
     if (!this.settings.enabled) return;
 
     await this.getChatters()
@@ -61,7 +85,14 @@ export default new class Users implements System {
     })
 
     if (!created) {
-      user.update({ username, messages: literal('messages + 1') })
+      const updatePoints = (Number(user.lastMessagePoints) + this.settings.points.messages.interval <= user.messages) && this.settings.points.enabled && twitch.streamMetaData?.startedAt
+
+      user.update({
+        username,
+        messages: literal('messages + 1'),
+        points: literal(updatePoints ? `points + ${this.settings.points.messages.amount}` : 'points'),
+        lastMessagePoints: updatePoints ? user.messages : user.lastMessagePoints,
+      })
     }
   }
 
