@@ -34,7 +34,9 @@ export default class GreetingsManagerList extends Vue {
   greetings = []
 
   async created() {
-    const greetings = await axios.get('/api/v1/greetings')
+    const greetings = await axios.get('/api/v1/greetings', { headers: {
+      'x-twitch-token': localStorage.getItem('accessToken')
+    }})
 
     this.greetings = greetings.data
   }
@@ -60,7 +62,7 @@ export default class GreetingsManagerList extends Vue {
 .cards > div > div.card {
   height: calc(100% - 15px);
   margin-bottom: 15px;
-  padding-right: 0px !important; 
+  padding-right: 0px !important;
   padding-left: 0px !important;
 }
 .card-span {

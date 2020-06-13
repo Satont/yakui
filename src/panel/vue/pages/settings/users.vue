@@ -38,11 +38,15 @@ export default class General extends Vue {
       { space: this.settings.space, name: 'enabled', value: this.settings.enabled },
       { space: this.settings.space, name: 'ignoredUsers', value: this.settings.ignoredUsers.split('\n').filter(Boolean).map(u => u.toLowerCase()) },
       { space: this.settings.space, name: 'botAdmins', value: this.settings.botAdmins.split('\n').filter(Boolean).map(u => u.toLowerCase()) }
-    ])
+    ], { headers: {
+      'x-twitch-token': localStorage.getItem('accessToken')
+    }})
   }
 
   async created() {
-    const { data } = await axios.get('/api/v1/settings?space=' + this.settings.space)
+    const { data } = await axios.get('/api/v1/settings?space=' + this.settings.space, { headers: {
+      'x-twitch-token': localStorage.getItem('accessToken')
+    }})
 
     this.settings.enabled = data.find(item => item.name === 'enabled')?.value ?? true
     this.settings.ignoredUsers = data.find(item => item.name === 'ignoredUsers')?.value?.join('\n') ?? ''

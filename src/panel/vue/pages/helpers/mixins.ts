@@ -12,11 +12,15 @@ export class Settings extends Vue {
       .filter(v => v[0] !== 'space')
       .map((item) => ({ space, name: item[0], value: item[1] }))
 
-    await axios.post('/api/v1/settings', data)
+    await axios.post('/api/v1/settings', data, { headers: {
+      'x-twitch-token': localStorage.getItem('accessToken')
+    }})
   }
 
   async created() {
-    const { data } = await axios.get('/api/v1/settings?space=' + this.settings.space)
+    const { data } = await axios.get('/api/v1/settings?space=' + this.settings.space, { headers: {
+      'x-twitch-token': localStorage.getItem('accessToken')
+    }})
 
     for (const item of data) {
       this.settings[item.name] = item.value

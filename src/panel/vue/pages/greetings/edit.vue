@@ -43,7 +43,9 @@ export default class GreetingsManagerEdit extends Vue {
       return alert('Please enter userId or username')
     }
 
-    await axios.post('/api/v1/greetings', this.greeting)
+    await axios.post('/api/v1/greetings', this.greeting, { headers: {
+      'x-twitch-token': localStorage.getItem('accessToken')
+    }})
     await this.$router.push({ name: 'GreetingsManagerList' })
   }
 

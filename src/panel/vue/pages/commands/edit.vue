@@ -77,7 +77,9 @@ export default class CommandsManagerEdit extends Vue {
     event.preventDefault()
     this.filterAliases()
 
-    await axios.post('/api/v1/commands', this.command)
+    await axios.post('/api/v1/commands', this.command, { headers: {
+      'x-twitch-token': localStorage.getItem('accessToken')
+    }})
     await this.$router.push({ name: 'CommandsManagerList' })
   }
 
@@ -91,14 +93,21 @@ export default class CommandsManagerEdit extends Vue {
     if (id) {
       this.command = this.$route.params as any
 
-      const { data } = await axios.get('/api/v1/commands/' + id)
+      const { data } = await axios.get('/api/v1/commands/' + id, { headers: {
+        'x-twitch-token': localStorage.getItem('accessToken')
+      }})
 
       this.command = data
     }
   }
 
   async del() {
-    await axios.delete('/api/v1/commands', { data: { id: this.command.id } })
+    await axios.delete('/api/v1/commands', {
+      data: { id: this.command.id },
+      headers: {
+        'x-twitch-token': localStorage.getItem('accessToken')
+      }
+    })
   }
 
   createAliase() {

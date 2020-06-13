@@ -36,7 +36,9 @@ export default class CustomVariablesManagerEdit extends Vue {
   async onSubmit(event) {
     event.preventDefault()
 
-    await axios.post('/api/v1/variables', this.variable)
+    await axios.post('/api/v1/variables', this.variable, { headers: {
+      'x-twitch-token': localStorage.getItem('accessToken')
+    }})
     await this.$router.push({ name: 'CustomVariablesManagerList' })
   }
 
@@ -47,14 +49,21 @@ export default class CustomVariablesManagerEdit extends Vue {
     if (id) {
       this.variable = this.$route.params as any
 
-      const { data } = await axios.get('/api/v1/variables/' + id)
+      const { data } = await axios.get('/api/v1/variables/' + id, { headers: {
+      'x-twitch-token': localStorage.getItem('accessToken')
+    }})
 
       this.variable = data
     }
   }
 
   async del() {
-    await axios.delete('/api/v1/variables', { data: { id: (this.variable as any).id } })
+    await axios.delete('/api/v1/variables', {
+      data: { id: (this.variable as any).id },
+      headers: {
+        'x-twitch-token': localStorage.getItem('accessToken')
+      }
+    })
   }
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="title">
-      <h1>Users list</h1> 
+      <h1>Users list</h1>
       <b-pagination v-model="currentPage" size="sm" :total-rows="totalRows" :per-page="perPage" align="right" v-on:input="getUsers" last-number first-number></b-pagination>
     </div>
 
@@ -29,7 +29,7 @@
       <template v-slot:cell(bits)="data">
         {{ data.value }}
       </template>
-  
+
       <template v-slot:cell(actions)="data">
       <b-button-group size="sm">
         <b-button @click="editUser(data.item)" variant="info"><i class="fas fa-pen"></i></b-button>
@@ -82,15 +82,20 @@ export default class UsersManagerList extends Vue {
 
   async getUsers(o?) {
     this.sortyBy = o?.sortBy ?? this.sortyBy
-    this.sortDesc = o?.sortDesc ?? this.sortDesc 
+    this.sortDesc = o?.sortDesc ?? this.sortDesc
     this.currentPage = o?.currentPage ?? this.currentPage
-  
-    const { data } = await axios.get('/api/v1/users', { params: {
-      sortBy: this.sortyBy, 
-      sortDesc: this.sortDesc, 
-      page: this.currentPage, 
-      perPage: this.perPage
-    }})
+
+    const { data } = await axios.get('/api/v1/users', {
+      params: {
+        sortBy: this.sortyBy,
+        sortDesc: this.sortDesc,
+        page: this.currentPage,
+        perPage: this.perPage
+      },
+      headers: {
+        'x-twitch-token': localStorage.getItem('accessToken')
+      }
+    })
 
     this.users = data.users
     this.totalRows = data.total

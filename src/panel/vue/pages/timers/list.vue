@@ -32,7 +32,9 @@ export default class TimersManagerList extends Vue {
   timers: Timer[] = []
 
   async created() {
-    const { data } = await axios.get('/api/v1/timers')
+    const { data } = await axios.get('/api/v1/timers', { headers: {
+      'x-twitch-token': localStorage.getItem('accessToken')
+    }})
     this.timers = data
   }
 
@@ -41,7 +43,12 @@ export default class TimersManagerList extends Vue {
   }
 
   async del(id, index) {
-    await axios.delete('/api/v1/timers', { data: { id } })
+    await axios.delete('/api/v1/timers', {
+      data: { id },
+      headers: {
+        'x-twitch-token': localStorage.getItem('accessToken')
+      }
+    })
     this.timers.splice(index, 1)
   }
 }

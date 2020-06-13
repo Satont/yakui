@@ -38,7 +38,9 @@ export default class CommandsManagerList extends Vue {
   commands: Command[] = []
 
   async created() {
-    const { data } = await axios.get('/api/v1/commands')
+    const { data } = await axios.get('/api/v1/commands', { headers: {
+      'x-twitch-token': localStorage.getItem('accessToken')
+    }})
     this.commands = data
   }
 
@@ -63,7 +65,7 @@ export default class CommandsManagerList extends Vue {
 .cards > div > div.card {
   height: calc(100% - 15px);
   margin-bottom: 15px;
-  padding-right: 0px !important; 
+  padding-right: 0px !important;
   padding-left: 0px !important;
 }
 .card-span {

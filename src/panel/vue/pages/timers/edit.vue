@@ -49,7 +49,9 @@ export default class TimersManagerEdit extends Vue {
       return alert('Responses cannot be empty')
     }
 
-    await axios.post('/api/v1/timers', this.timer)
+    await axios.post('/api/v1/timers', this.timer, { headers: {
+      'x-twitch-token': localStorage.getItem('accessToken')
+    }})
     await this.$router.push({ name: 'TimersManagerList' })
   }
 
@@ -63,14 +65,21 @@ export default class TimersManagerEdit extends Vue {
     if (id) {
       this.timer = this.$route.params as any
 
-      const { data } = await axios.get('/api/v1/timers/' + id)
+      const { data } = await axios.get('/api/v1/timers/' + id, { headers: {
+      'x-twitch-token': localStorage.getItem('accessToken')
+      }})
 
       this.timer = data
     }
   }
 
   async del() {
-    await axios.delete('/api/v1/timers', { data: { id: (this.timer as any).id } })
+    await axios.delete('/api/v1/timers', {
+      data: { id: (this.timer as any).id },
+      headers: {
+        'x-twitch-token': localStorage.getItem('accessToken')
+      }
+    })
   }
 
   addResponse() {

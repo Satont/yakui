@@ -7,7 +7,8 @@ import http from 'http'
 import v1 from './routes/api/v1'
 import { info } from '@bot/libs/logger'
 import twitch from './routes/twitch'
-import { validate, refresh } from './helpers/oauth'
+import Authorization from '@bot/systems/authorization'
+import isAdmin from './middlewares/isAdmin'
 
 const PORT = process.env.PORT || 3000
 
@@ -24,14 +25,14 @@ app.get('/login', (req, res) => {
 app.get('/oauth', (req, res) => {
   res.sendFile(resolve(process.cwd(), 'public', 'oauth.html'))
 })
-app.get('/oauth/validate', validate)
-app.get('/oauth/refresh', refresh)
+app.get('/oauth/validate', (req, res) => Authorization.validate(req, res))
+app.get('/oauth/refresh',  (req, res) => Authorization.refresh(req, res))
 
 app.get('/public', (req, res) => {
   res.send('This is feature public page.')
 })
 
-app.use('/api/v1', v1)
+app.use('/api/v1', isAdmin, v1)
 
 app.use(history({
   index: '/',
