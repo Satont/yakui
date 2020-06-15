@@ -40,7 +40,9 @@ export default class KeywordsManagerEdit extends Vue {
   async onSubmit(event) {
     event.preventDefault()
 
-    await axios.post('/api/v1/keywords', this.keyword)
+    await axios.post('/api/v1/keywords', this.keyword, { headers: {
+      'x-twitch-token': localStorage.getItem('accessToken')
+    }})
     await this.$router.push({ name: 'KeywordsManagerList' })
   }
 
@@ -51,14 +53,21 @@ export default class KeywordsManagerEdit extends Vue {
     if (id) {
       this.keyword = this.$route.params as any
 
-      const { data } = await axios.get('/api/v1/keywords/' + id)
+      const { data } = await axios.get('/api/v1/keywords/' + id, { headers: {
+        'x-twitch-token': localStorage.getItem('accessToken')
+      }})
 
       this.keyword = data
     }
   }
 
   async del() {
-    await axios.delete('/api/v1/keywords', { data: { id: (this.keyword as any).id } })
+    await axios.delete('/api/v1/keywords', {
+      data: { id: (this.keyword as any).id },
+      headers: {
+        'x-twitch-token': localStorage.getItem('accessToken')
+      }
+    })
   }
 }
 </script>
