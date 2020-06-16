@@ -31,7 +31,7 @@
     "@types/tmi.js": "^1.4.0",
     "@vue/component-compiler-utils": "^3.1.2",
     "clean-webpack-plugin": "^3.0.0",
-    "css-loader": "^3.5.3",
+    "css-loader": "^3.6.0",
     "html-webpack-plugin": "^4.3.0",
     "nodemon": "^2.0.4",
     "ts-loader": "^7.0.5",
