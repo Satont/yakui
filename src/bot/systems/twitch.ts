@@ -161,30 +161,30 @@ export default new class Twitch implements System {
   }
 
   async onSubscribe(data: INewSubscriber) {
-    const defaults = { username: data.username, tier: data.tier, timestamp: Date.now() }
-    this.channelMetaData.latestSubscriber = defaults
+    const value = { username: data.username, tier: data.tier, timestamp: Date.now() }
+    this.channelMetaData.latestSubscriber = value
 
     const [instance, created]: [Settings, boolean] = await Settings.findOrCreate({
       where: { space: 'twitch', name: 'latestSubscriber' },
-      defaults,
+      defaults: { value },
     })
 
     if (!created) {
-      await instance.update(defaults)
+      await instance.update({ value })
     }
   }
 
   async onReSubscribe(data: INewResubscriber) {
-    const defaults = { username: data.username, tier: data.tier, timestamp: Date.now(), months: data.months, overallMonths: data.overallMonths }
-    this.channelMetaData.latestReSubscriber = defaults
+    const value = { username: data.username, tier: data.tier, timestamp: Date.now(), months: data.months, overallMonths: data.overallMonths }
+    this.channelMetaData.latestReSubscriber = value
 
     const [instance, created]: [Settings, boolean] = await Settings.findOrCreate({
       where: { space: 'twitch', name: 'latestReSubscriber' },
-      defaults,
+      defaults: { value },
     })
 
     if (!created) {
-      await instance.update(defaults)
+      await instance.update({ value })
     }
   }
 }
