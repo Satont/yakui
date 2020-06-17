@@ -61,11 +61,11 @@ export default new class Variables implements System {
     }
 
     if (/\$commands/gimu.test(result)) {
-      result = result.replace(/\$commands/gimu, this.getCommandList(result).join(', '))
+      result = result.replace(/\$commands/gimu, this.getCommandList().join(', '))
     }
 
     if (/\$prices/gimu.test(result)) {
-      result = result.replace(/\$prices/gimu, this.getPricesList(result).join(', '))
+      result = result.replace(/\$prices/gimu, this.getPricesList().join(', '))
     }
 
     if (/\$top\.bits/gimu.test(result)) {
@@ -271,16 +271,16 @@ export default new class Variables implements System {
     else return locales.translate('song.notPlaying')
   }
 
-  getCommandList(result: string) {
+  getCommandList() {
     const commands = _.flatten(loadedSystems
       .map(system => system.commands?.filter(c => c.visible ?? true).map(c => c.name)))
 
     return commands.filter(Boolean)
   }
 
-  getPricesList(result: string) {
+  getPricesList() {
     const commands = _.flatten(loadedSystems
-      .map(system => system.commands?.filter(c => c.visible ?? true).map(c => `${c.name}-${c.price}`)))
+      .map(system => system.commands?.filter(c => c.visible ?? true).filter(c => c.price !== 0).map(c => `${c.name}-${c.price}`)))
 
     return commands.filter(Boolean)
   }
