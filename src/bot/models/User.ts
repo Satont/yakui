@@ -27,6 +27,10 @@ export default class User extends Model<User> {
   @Column(DataType.BIGINT)
   public lastMessagePoints: number
 
+  @Default(1)
+  @Column(DataType.BIGINT)
+  public lastWatchedPoints: number
+
   @Default(0)
   @Column(DataType.BIGINT)
   public points: number

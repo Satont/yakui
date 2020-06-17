@@ -76,6 +76,7 @@ export default new class Users implements System {
   async parseMessage(opts: ParserOptions) {
     if (!this.settings.enabled || opts.message.startsWith('!')) return
     if (this.settings.ignoredUsers.includes(opts.raw.userInfo.userName)) return;
+    const [pointsPerMessage, pointsInterval] = [this.settings.points.messages.amount, this.settings.points.messages.interval * 60 * 1000]
 
     const [id, username] = [opts.raw.userInfo.userId, opts.raw.userInfo.userName]
 
@@ -85,15 +86,18 @@ export default new class Users implements System {
     })
 
     if (!created) {
-      const updatePoints = (Number(user.lastMessagePoints) + this.settings.points.messages.interval <= user.messages) && this.settings.points.enabled && twitch.streamMetaData?.startedAt
-
-      user.update({
-        username,
-        messages: literal('messages + 1'),
-        points: literal(updatePoints ? `points + ${this.settings.points.messages.amount}` : 'points'),
-        lastMessagePoints: updatePoints ? user.messages : user.lastMessagePoints,
-      })
+      user.messages = user.messages + 1
+      user.username = user.username
     }
+
+    const updatePoints = (Number(user.lastMessagePoints) + pointsInterval <= user.messages) && this.settings.points.enabled
+
+    if (updatePoints && twitch.streamMetaData?.startedAt && pointsPerMessage !== 0 && pointsInterval !== 0) {
+      user.points = user.points + pointsPerMessage
+      user.lastMessagePoints = new Date().getTime()
+    }
+
+    user.save()
   }
 
   async getUserStats({ id, username }: { id?: string, username?: string }): Promise<User> {
@@ -121,6 +125,7 @@ export default new class Users implements System {
   private async countWatched() {
     clearTimeout(this.countWatchedTimeout)
     this.countWatchedTimeout = setTimeout(() => this.countWatched(), 1 * 60 * 1000)
+    const [pointsPerWatch, pointsInterval] = [this.settings.points.watch.amount, this.settings.points.watch.interval * 60 * 1000]
 
     if (!twitch.streamMetaData?.startedAt) return;
 
@@ -132,7 +137,16 @@ export default new class Users implements System {
         defaults: { id: chatter.id, username: chatter.username }
       })
 
-      if (!created) user.increment({ watched: 1 * 60 * 1000 })
+      if (!created) user.watched = user.watched + 1 * 60 * 1000
+
+      const updatePoints = (new Date().getTime() - new Date(user.lastWatchedPoints).getTime() >= pointsInterval) && this.settings.points.enabled
+
+      if (pointsPerWatch !== 0 && pointsInterval !== 0 && updatePoints) {
+        user.lastWatchedPoints = new Date().getTime()
+        user.points = user.points + pointsPerWatch
+      }
+
+      user.save()
     }
 
   }
