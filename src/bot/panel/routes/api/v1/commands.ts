@@ -65,7 +65,12 @@ router.post('/', checkSchema({
     isString: true,
     in: ['body'],
     optional: true
-  }
+  },
+  price: {
+    isNumeric: true,
+    in: ['body'],
+    optional: true
+  },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
@@ -97,6 +102,7 @@ router.post('/', checkSchema({
         visible: body.visible,
         permission: body.permission,
         response: body.response,
+        price: body.price,
       })
     }
 

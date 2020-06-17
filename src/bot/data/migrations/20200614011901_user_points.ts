@@ -3,7 +3,7 @@ import * as Knex from "knex";
 
 export async function up(knex: Knex): Promise<any> {
   return await knex.schema.table('users', table => {
-    table.bigInteger('points').defaultTo(0)
+    table.integer('points').defaultTo(0)
     table.bigInteger('lastMessagePoints').defaultTo(1),
     table.bigInteger('lastWatchedPoints').defaultTo(1)
   })

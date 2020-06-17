@@ -5,5 +5,8 @@
   },
   "song": {
     "notPlaying": "currently not playing"
+  },
+  "price": {
+    "notEnought": "$0 not enought points for using this command."
   }
 }

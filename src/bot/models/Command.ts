@@ -1,6 +1,6 @@
 import { Table, Column, Model, DataType, PrimaryKey, AutoIncrement, Default, AllowNull } from 'sequelize-typescript'
 import { CommandPermission } from 'typings'
- 
+
 @Table({
   tableName: 'commands',
   timestamps: false,
@@ -36,6 +36,10 @@ export default class Command extends Model<Command> {
   @Default(true)
   @Column(DataType.BOOLEAN)
   public visible: boolean
+
+  @Default(true)
+  @Column(DataType.INTEGER)
+  public price: number
 
   @Default('viewers')
   @AllowNull(false)

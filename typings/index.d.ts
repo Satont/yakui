@@ -15,6 +15,7 @@ export interface Command {
   permission?: CommandPermission,
   fnc?: function,
   enabled?: boolean,
+  price?: number,
 }
 
 export interface CommandOptions {
