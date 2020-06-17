@@ -91,7 +91,7 @@ export const onSubscribe = (data: INewSubscriber) => {
 }
 
 export const onReSubscribe = (data: INewResubscriber) => {
-  resub(`${data.username}, tier: ${data.tier}, months: ${data.months}, overlayMonths: ${data.overallMonths}`)
+  resub(`${data.username}, tier: ${data.tier}, months: ${data.months}, overallMonths: ${data.overallMonths}`)
 
   for (const system of loadedSystems) {
     if (typeof system.onReSubscribe === 'function') system.onReSubscribe(data)

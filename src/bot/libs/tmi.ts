@@ -198,7 +198,7 @@ export default new class Tmi {
       })
       client.onResub((channel, username, subInfo, msg) => {
         const tier = isNaN(Number(subInfo.plan)) ? 'Twitch prime' : String(Number(subInfo.plan) / 1000)
-        onReSubscribe({ username, tier, message: subInfo.message, months: subInfo.months, overallMonths: subInfo.streak, isPrime: subInfo.isPrime })
+        onReSubscribe({ username, tier, message: subInfo.message, months: subInfo.streak, overallMonths: subInfo.months, isPrime: subInfo.isPrime })
       })
     }
   }
