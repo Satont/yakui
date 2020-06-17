@@ -13,6 +13,7 @@ export default new class CustomCommands implements System {
       response: command.response,
       description: command.description,
       aliases: command.aliases,
+      price: command.price,
       fnc: this.fnc
     }))
   }

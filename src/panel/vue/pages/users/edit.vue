@@ -39,6 +39,10 @@
          </div>
        </b-form-group>
 
+      <b-form-group label="Points" label-for="points">
+        <b-form-input id="points" size="sm" v-model.number="user.points" type="number" required></b-form-input>
+      </b-form-group>
+
 
       <b-button class="btn-block" type="submit" variant="primary">Save</b-button>
       <b-button class="btn-block" @click="delUser" variant="danger" v-if="user.id">Delete</b-button>
@@ -58,7 +62,8 @@ export default class UsersManagerEdit extends Vue {
     username: '',
     messages: 0,
     tips: [],
-    bits: []
+    bits: [],
+    points: 0,
   }
   delete = {
     bits: [],

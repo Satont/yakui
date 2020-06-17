@@ -64,6 +64,7 @@ export default class UsersManagerList extends Vue {
     { key: 'watched', sortable: true, label: 'Watched (hours)', formatter: value => this.watchedHours(value) },
     { key: 'totalTips', sortable: false, label: 'tips' },
     { key: 'totalBits', sortable: false, label: 'bits' },
+    { key: 'points', sortable: true },
     { key: 'actions', sortable: false, label: 'Actions' }
   ]
 

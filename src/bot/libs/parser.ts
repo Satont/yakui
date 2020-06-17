@@ -7,6 +7,8 @@ import Variables from "@bot/systems/variables"
 import { loadedSystems } from './loader'
 import users from "@bot/systems/users"
 import variables from "@bot/systems/variables"
+import User from '@bot/models/User'
+import locales from "./locales"
 
 export default new class Parser {
   systems: { [x: string]: System } = {}
@@ -53,6 +55,18 @@ export default new class Parser {
       if (!command) continue
 
       if (!users.hasPermission(raw.userInfo.badges, command.permission)) break;
+
+      if (command.price) {
+        const [user]: [User] = await User.findOrCreate({
+          where: { id: raw.userInfo.userId },
+          defaults: { id: raw.userInfo.userId, username: raw.userInfo.userName }
+        })
+
+        if (user.points < command.price) {
+          tmi.say({ message: locales.translate('price.notEnought', raw.userInfo.userName) })
+          break
+        } else user.decrement({ points: command.price })
+      }
 
       const argument = message.replace(new RegExp(`^${findedBy}`), '').trim()
 

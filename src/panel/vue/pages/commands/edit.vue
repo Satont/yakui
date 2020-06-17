@@ -17,6 +17,10 @@
         <b-form-input id="cooldown" v-model="command.cooldown" type="number" placeholder="Enter command cooldown"></b-form-input>
       </b-form-group>
 
+      <b-form-group label="Command price" label-for="price">
+        <b-form-input id="price" v-model.number="command.price" type="number" placeholder="Enter command price"></b-form-input>
+      </b-form-group>
+
       <b-form-group label="Command permission" label-for="permission">
         <b-form-select v-model="command.permission" :options="avaliablePermissions" size="sm"></b-form-select>
       </b-form-group>
@@ -61,6 +65,7 @@ export default class CommandsManagerEdit extends Vue {
     permission: 'viewers',
     description: null,
     aliases: [],
+    price: 0,
     enabled: true,
   }
 

@@ -61,7 +61,11 @@ export default new class Variables implements System {
     }
 
     if (/\$commands/gimu.test(result)) {
-      result = result.replace(/\$commands/gimu, this.getCommandList(result).join(', '))
+      result = result.replace(/\$commands/gimu, this.getCommandList().join(', '))
+    }
+
+    if (/\$prices/gimu.test(result)) {
+      result = result.replace(/\$prices/gimu, this.getPricesList().join(', '))
     }
 
     if (/\$top\.bits/gimu.test(result)) {
@@ -94,7 +98,7 @@ export default new class Variables implements System {
 
     result = await this.parseCustomVariables(result)
 
-    if (includesOneOf(result, ['user.messages', 'user.tips', 'user.bits', 'user.watched']) && userInfo) {
+    if (includesOneOf(result, ['user.messages', 'user.tips', 'user.bits', 'user.watched', 'user.points']) && userInfo) {
       const user = await users.getUserStats({ id: userInfo?.userId })
 
       result = result
@@ -102,6 +106,7 @@ export default new class Variables implements System {
         .replace(/\$user\.watched/gimu, `${((user.watched / (1 * 60 * 1000)) / 60).toFixed(1)}h`)
         .replace(/\$user\.tips/gimu, String(user.totalTips))
         .replace(/\$user\.bits/gimu, String(user.totalBits))
+        .replace(/\$user\.points/gimu, String(user.points))
     }
 
     if (result.includes('(api|')) {
@@ -266,9 +271,16 @@ export default new class Variables implements System {
     else return locales.translate('song.notPlaying')
   }
 
-  getCommandList(result: string) {
+  getCommandList() {
     const commands = _.flatten(loadedSystems
       .map(system => system.commands?.filter(c => c.visible ?? true).map(c => c.name)))
+
+    return commands.filter(Boolean)
+  }
+
+  getPricesList() {
+    const commands = _.flatten(loadedSystems
+      .map(system => system.commands?.filter(c => c.visible ?? true).filter(c => c.price !== 0).map(c => `${c.name}-${c.price}`)))
 
     return commands.filter(Boolean)
   }

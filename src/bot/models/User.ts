@@ -1,7 +1,7 @@
 import { Table, Column, Model, DataType, Default, AllowNull, PrimaryKey, HasMany } from 'sequelize-typescript'
 import UserBits from './UserBits'
 import UserTips from './UserTips'
- 
+
 @Table({
   tableName: 'users',
   timestamps: false,
@@ -22,6 +22,18 @@ export default class User extends Model<User> {
   @Default(0)
   @Column(DataType.BIGINT)
   public watched: number
+
+  @Default(1)
+  @Column(DataType.BIGINT)
+  public lastMessagePoints: number
+
+  @Default(1)
+  @Column(DataType.BIGINT)
+  public lastWatchedPoints: number
+
+  @Default(0)
+  @Column(DataType.BIGINT)
+  public points: number
 
   @Column(DataType.VIRTUAL)
   get totalBits() {
