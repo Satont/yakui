@@ -64,6 +64,10 @@ export default new class Variables implements System {
       result = result.replace(/\$commands/gimu, this.getCommandList(result).join(', '))
     }
 
+    if (/\$prices/gimu.test(result)) {
+      result = result.replace(/\$prices/gimu, this.getPricesList(result).join(', '))
+    }
+
     if (/\$top\.bits/gimu.test(result)) {
       result = result.replace(/\$top\.bits/gimu, await this.getTop('bits', opts.argument))
     }
@@ -270,6 +274,13 @@ export default new class Variables implements System {
   getCommandList(result: string) {
     const commands = _.flatten(loadedSystems
       .map(system => system.commands?.filter(c => c.visible ?? true).map(c => c.name)))
+
+    return commands.filter(Boolean)
+  }
+
+  getPricesList(result: string) {
+    const commands = _.flatten(loadedSystems
+      .map(system => system.commands?.filter(c => c.visible ?? true).map(c => `${c.name}-${c.price}`)))
 
     return commands.filter(Boolean)
   }
