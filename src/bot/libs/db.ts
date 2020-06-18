@@ -1,3 +1,6 @@
+import pg from 'pg'
+pg.defaults.parseInt8 = true
+
 import { Sequelize } from 'sequelize-typescript'
 import { resolve } from 'path'
 import { info, error } from './logger'
