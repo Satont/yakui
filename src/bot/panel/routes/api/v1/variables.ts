@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
 import Variable from '@bot/models/Variable'
+import variables from '@bot/systems/variables'
 
 const router = Router({
   mergeParams: true
@@ -11,6 +12,14 @@ router.get('/', async (req, res, next) => {
     const variables: Variable[] = await Variable.findAll()
 
     res.json(variables)
+  } catch (e) {
+    next(e)
+  }
+})
+
+router.get('/all', async (req, res, next) => {
+  try {
+    res.json(variables.variables)
   } catch (e) {
     next(e)
   }

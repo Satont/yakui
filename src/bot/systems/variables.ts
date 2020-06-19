@@ -20,10 +20,46 @@ import evaluate from '@bot/commons/eval'
 import satontapi from '@bot/integrations/satontapi'
 
 export default new class Variables implements System {
-  variables: Variable[] = []
+  variables: any[] = [
+    { name: '$sender', response: 'Username of user who triggered message' },
+    { name: '$followage', response: 'Followage of user' },
+    { name: '$stream.uptime', response: 'Current stream uptime' },
+    { name: '$stream.viewers', response: 'Current stream viewers' },
+    { name: '$channel.views', response: 'Channel views' },
+    { name: '$channel.game', response: 'Channel game' },
+    { name: '$channel.title', response: 'Channel title' },
+    { name: '$random.N-N', response: 'Random beetwen 2 numbers' },
+    { name: '$subs.last.sub.username', response: 'Username of latest subscriber' },
+    { name: '$subs.last.sub.ago', response: 'Time passed from latest subscribe' },
+    { name: '$subs.last.sub.tier', response: 'Tier of latest subscribe' },
+    { name: '$subs.last.resub.username', response: 'Username of latest resubscriber' },
+    { name: '$subs.last.resub.ago', response: 'Time passed from latestre subscribe' },
+    { name: '$subs.last.resub.tier', response: 'Tier of latest resubscribe' },
+    { name: '$subs.last.resub.months', response: 'User subscribe months length' },
+    { name: '$subs.last.resub.months', response: 'Overall user subscribe months length' },
+    { name: '$song', response: 'Current playing song' },
+    { name: '$commands', response: 'Commands list' },
+    { name: '$prices', response: 'Commands prices list' },
+    { name: '$top.bits', response: 'Top 10 by bits' },
+    { name: '$top.tips', response: 'Top 10 by tips' },
+    { name: '$top.time', response: 'Top 10 by time' },
+    { name: '$top.messages', response: 'Top 10 by messages' },
+    { name: '(eval)', response: 'JavaScript evaluate' },
+    { name: '$faceit.lvl', response: 'Faceit lvl' },
+    { name: '$faceit.elo', response: 'Faceit elo' },
+    { name: '$user.messages', response: 'User messages' },
+    { name: '$user.tips', response: 'User tips' },
+    { name: '$user.bits', response: 'User bits' },
+    { name: '$user.watched', response: 'User watched time' },
+    { name: '$user.points', response: 'User points' },
+    { name: '(api|GET/POST|http://example.com)', response: 'Make api request. If response it plain text use (api._response). If response is json use (api.someVariableFromJson)' },
+  ]
 
   async init() {
-    this.variables = await Variable.findAll()
+    const variables: [] = (await Variable.findAll({ raw: true }))
+      .map((variable: Variable) => ({ name: `$_${variable.name}`, response: variable.response, custom: true }))
+
+    this.variables.push(...variables)
   }
 
   async parseMessage(opts: { message: string, raw?: TwitchPrivateMessage, argument?: string }) {
@@ -239,10 +275,9 @@ export default new class Variables implements System {
   }
 
   async parseCustomVariables(result: string) {
-    for (const variable of this.variables) {
-      const match = result.match(new RegExp(`\\$_${variable.name}`))
+    for (const variable of this.variables.filter(v => v.custom)) {
+      const match = result.match(new RegExp(`\\${variable.name}`))
       if (!match) continue
-
       result = result.replace(match[0], variable.response)
     }
 

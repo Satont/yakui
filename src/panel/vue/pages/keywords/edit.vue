@@ -5,7 +5,10 @@
         <b-form-input id="name" v-model="keyword.name" type="text" required placeholder="Enter keyword name"></b-form-input>
       </b-form-group>
 
-      <b-form-group label="Response" label-for="response">
+      <b-form-group>
+        <template slot="label" label-for="response">
+           Response <variables-list></variables-list>
+        </template>
         <b-form-input id="response" v-model="keyword.response" type="text" required placeholder="Enter keyword response"></b-form-input>
       </b-form-group>
 

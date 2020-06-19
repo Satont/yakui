@@ -17,8 +17,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
       if (!verify) return res.status(401).send()
     }
   } catch (error) {
-    console.error(error)
-    return res.status(401).send()
+    return res.status(401).send(error.message)
   }
 
   next()

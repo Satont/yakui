@@ -9,7 +9,10 @@
         <b-form-input id="userId" v-model.number="greeting.userId" type="number" placeholder="Enter userId"></b-form-input>
       </b-form-group>
 
-      <b-form-group label="Greeting message" label-for="message">
+      <b-form-group>
+        <template slot="label" label-for="message">
+           Greeting message <variables-list></variables-list>
+        </template>
         <b-form-input id="message" v-model.trim="greeting.message" type="text" placeholder="Enter message for user"></b-form-input>
       </b-form-group>
 
