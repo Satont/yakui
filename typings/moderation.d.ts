@@ -1,11 +1,5 @@
 export interface Warnings {
-  links: string[],
-  blacklist: string[],
-  symbols: string[],
-  longMessage: string[],
-  caps: string[],
-  color: string[],
-  emotes: string[],
+  [x: string]: string[],
 }
 
 export interface ITimeoutWarning {
@@ -13,63 +7,55 @@ export interface ITimeoutWarning {
   message: string
 }
 
+interface IDefaultSettings {
+  enabled: boolean,
+  subscribers: boolean,
+  vips: boolean,
+  timeout: ITimeoutWarning,
+  warning: ITimeoutWarning,
+}
+
+interface ILinks extends IDefaultSettings {
+  clips: boolean,
+}
+
+interface ISymbols extends IDefaultSettings {
+  trigger: {
+    length: number,
+    percent: number,
+  }
+}
+
+interface ILongMessage extends IDefaultSettings {
+  trigger: {
+    length: number,
+  }
+}
+
+interface ICaps extends IDefaultSettings {
+  trigger: {
+    length: number,
+    percent: number,
+  }
+}
+
+interface IEmotes extends IDefaultSettings {
+  trigger: {
+    length: number,
+  }
+}
+
+interface IBlackList extends IDefaultSettings {
+  values: string[]
+}
+
 export interface ISettings {
   enabled: boolean,
-  links: {
-    enabled: boolean,
-    subscribers: boolean,
-    vips: boolean,
-    timeout: ITimeoutWarning,
-    warning: ITimeoutWarning,
-    clips: boolean,
-  },
-  symbols: {
-    enabled: boolean,
-    subscribers: boolean,
-    vips: boolean,
-    timeout: ITimeoutWarning,
-    warning: ITimeoutWarning,
-    trigger: {
-      length: number,
-      percent: number,
-    }
-  },
-  longMessage: {
-    enabled: boolean,
-    subscribers: boolean,
-    vips: boolean,
-    timeout: ITimeoutWarning,
-    warning: ITimeoutWarning,
-    trigger: {
-      length: number,
-    }
-  },
-  caps: {
-    enabled: boolean,
-    subscribers: boolean,
-    vips: boolean,
-    timeout: ITimeoutWarning,
-    warning: ITimeoutWarning,
-    trigger: {
-      length: number,
-      percent: number,
-    }
-  },
-  color: {
-    enabled: boolean,
-    subscribers: boolean,
-    vips: boolean,
-    timeout: ITimeoutWarning,
-    warning: ITimeoutWarning,
-  },
-  emotes: {
-    enabled: boolean,
-    subscribers: boolean,
-    vips: boolean,
-    timeout: ITimeoutWarning,
-    warning: ITimeoutWarning,
-    trigger: {
-      length: number,
-    }
-  }
+  links: ILinks,
+  symbols: ISymbols,
+  longMessage: ILongMessage,
+  caps: ICaps,
+  color: IDefaultSettings,
+  emotes: IEmotes,
+  blacklist: IBlackList
 }

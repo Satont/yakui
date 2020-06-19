@@ -62,6 +62,7 @@ export default new class Moderation implements System {
     if (!this.settings || !this.settings.enabled) return false
     const userPermissions = tmi.getUserPermissions(opts.raw.userInfo.badges)
     if (userPermissions.broadcaster || userPermissions.moderators) return false
+    if (await this.blacklist(opts, userPermissions)) return true
     if (await this.links(opts, userPermissions)) return true
     if (await this.symbols(opts, userPermissions)) return true
     if (await this.longMessage(opts, userPermissions)) return true
@@ -73,9 +74,9 @@ export default new class Moderation implements System {
   async links(opts: ParserOptions, permissions: UserPermissions) {
     const settings = this.settings.links
 
-    if (!settings.enabled) return false
-    if (!settings.subscribers && permissions.subscribers) return false;
-    if (!settings.vips && permissions.vips) return false;
+    if (!settings?.enabled) return false
+    if (!settings?.subscribers && permissions.subscribers) return false;
+    if (!settings?.vips && permissions.vips) return false;
 
     if (opts.message.search(urlRegexp) < 0) return false;
     if (!settings.clips && (/.*(clips.twitch.tv\/)(\w+)/g.test(opts.message) || /.*(www.twitch.tv\/\w+\/clip\/)(\w+)/g.test(opts.message))) return false;
@@ -102,9 +103,9 @@ export default new class Moderation implements System {
   async symbols(opts: ParserOptions, permissions: UserPermissions) {
     const settings = this.settings.symbols
 
-    if (!settings.enabled) return false
-    if (!settings.subscribers && permissions.subscribers) return false;
-    if (!settings.vips && permissions.vips) return false;
+    if (!settings?.enabled) return false
+    if (!settings?.subscribers && permissions.subscribers) return false;
+    if (!settings?.vips && permissions.vips) return false;
 
     if (opts.message.length < settings.trigger.length) return false;
 
@@ -140,9 +141,9 @@ export default new class Moderation implements System {
   async longMessage(opts: ParserOptions, permissions: UserPermissions) {
     const settings = this.settings.longMessage
 
-    if (!settings.enabled) return false
-    if (!settings.subscribers && permissions.subscribers) return false;
-    if (!settings.vips && permissions.vips) return false;
+    if (!settings?.enabled) return false
+    if (!settings?.subscribers && permissions.subscribers) return false;
+    if (!settings?.vips && permissions.vips) return false;
 
     if (opts.message.length < settings.trigger.length) return false;
 
@@ -164,9 +165,9 @@ export default new class Moderation implements System {
   async caps(opts: ParserOptions, permissions: UserPermissions) {
     const settings = this.settings.longMessage
 
-    if (!settings.enabled) return false
-    if (!settings.subscribers && permissions.subscribers) return false;
-    if (!settings.vips && permissions.vips) return false;
+    if (!settings?.enabled) return false
+    if (!settings?.subscribers && permissions.subscribers) return false;
+    if (!settings?.vips && permissions.vips) return false;
 
     if (opts.message.length < settings.trigger.length) return false;
 
@@ -209,9 +210,9 @@ export default new class Moderation implements System {
   async emotes(opts: ParserOptions, permissions: UserPermissions) {
     const settings = this.settings.longMessage
 
-    if (!settings.enabled) return false
-    if (!settings.subscribers && permissions.subscribers) return false;
-    if (!settings.vips && permissions.vips) return false;
+    if (!settings?.enabled) return false
+    if (!settings?.subscribers && permissions.subscribers) return false;
+    if (!settings?.vips && permissions.vips) return false;
 
     if (opts.raw.emoteOffsets.size < settings.trigger.length) return false;
 
@@ -232,7 +233,37 @@ export default new class Moderation implements System {
     }
   }
 
+  async blacklist(opts: ParserOptions, permissions: UserPermissions) {
+    const settings = this.settings.blacklist
+
+    if (!settings?.enabled) return false
+    if (!settings?.subscribers && permissions.subscribers) return false;
+    if (!settings?.vips && permissions.vips) return false;
+
+    const username = opts.raw.userInfo.userName.toLowerCase()
+    const type = 'blacklist'
+    let result = false
+
+    for (let value of settings.values) {
+      if (value === '') continue
+      if (!opts.message.includes(value)) continue
+
+      if (this.doesWarned({ type, username })) {
+        tmi.timeout({ username, duration: settings.timeout.time, reason: settings.timeout.message })
+        this.removeFromWarned({ type, username})
+      } else {
+        tmi.timeout({ username, duration: settings.warning.time, reason: settings.warning.message })
+        this.warnings[type].push(username)
+      }
+
+      result = true
+      break;
+    }
+
+    return result
+  }
+
   listenDbUpdates() {
-    Settings.afterSave((value => value.space === 'moderation' ? this.init() : undefined))
+    Settings.afterSave(value => value.space === 'moderation' ? this.init() : undefined)
   }
 }
