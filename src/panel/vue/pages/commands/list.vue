@@ -49,7 +49,12 @@ export default class CommandsManagerList extends Vue {
   }
 
   async del(id, index) {
-    await axios.delete('/api/v1/commands', { data: { id } })
+    await axios.delete('/api/v1/commands', {
+      data: { id },
+      headers: {
+        'x-twitch-token': localStorage.getItem('accessToken')
+      }
+    })
     this.commands.splice(index, 1)
   }
 }

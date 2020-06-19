@@ -46,7 +46,12 @@ export default class GreetingsManagerList extends Vue {
   }
 
   async del(id, index) {
-    await axios.delete('/api/v1/greetings', { data: { id } })
+    await axios.delete('/api/v1/greetings', {
+      data: { id },
+      headers: {
+        'x-twitch-token': localStorage.getItem('accessToken')
+      }
+    })
     this.greetings.splice(index, 1)
   }
 }

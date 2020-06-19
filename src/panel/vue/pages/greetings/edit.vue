@@ -56,14 +56,21 @@ export default class GreetingsManagerEdit extends Vue {
     if (id) {
       this.greeting = this.$route.params as any
 
-      const { data } = await axios.get('/api/v1/greetings/' + id)
+      const { data } = await axios.get('/api/v1/greetings/' + id, { headers: {
+        'x-twitch-token': localStorage.getItem('accessToken')
+      }})
 
       this.greeting = data
     }
   }
 
   async del() {
-    await axios.delete('/api/v1/greetings', { data: { id: (this.greeting as any).id } })
+    await axios.delete('/api/v1/greetings', {
+      data: { id: (this.greeting as any).id },
+      headers: {
+        'x-twitch-token': localStorage.getItem('accessToken')
+      }
+    })
   }
 }
 </script>

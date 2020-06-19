@@ -166,7 +166,11 @@ export default Vue.extend({
     }
   }),
   async created() {
-    const { data }: { data: Event[] } = await axios.get('/api/v1/events')
+    const { data }: { data: Event[] } = await axios.get('/api/v1/events', {
+      headers: {
+        'x-twitch-token': localStorage.getItem('accessToken')
+      }
+    })
 
     for (const event of data) {
       this[event.name].operations = event.operations
@@ -180,7 +184,11 @@ export default Vue.extend({
       this[this.show].operations.splice(index, 1)
     },
     save: async function () {
-      await axios.post('/api/v1/events', { name: this.show, operations: this[this.show].operations })
+      await axios.post('/api/v1/events', { name: this.show, operations: this[this.show].operations }, {
+        headers: {
+          'x-twitch-token': localStorage.getItem('accessToken')
+        }
+      })
     }
   }
 })

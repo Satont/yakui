@@ -75,7 +75,11 @@ export default class UsersManagerEdit extends Vue {
   async onSubmit(event) {
     event.preventDefault()
 
-    await axios.post('/api/v1/users', { user: this.user, delete: this.delete })
+    await axios.post('/api/v1/users', { user: this.user, delete: this.delete }, {
+      headers: {
+        'x-twitch-token': localStorage.getItem('accessToken')
+      }
+    })
   }
 
   async created() {

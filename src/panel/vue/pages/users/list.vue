@@ -77,7 +77,12 @@ export default class UsersManagerList extends Vue {
   }
 
   async del(id, index) {
-    await axios.delete('/api/v1/users', { data: { id } })
+    await axios.delete('/api/v1/users', {
+      data: { id },
+      headers: {
+        'x-twitch-token': localStorage.getItem('accessToken')
+      }
+    })
     this.users.splice(index, 1)
   }
 

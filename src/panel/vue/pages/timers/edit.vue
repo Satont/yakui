@@ -66,7 +66,7 @@ export default class TimersManagerEdit extends Vue {
       this.timer = this.$route.params as any
 
       const { data } = await axios.get('/api/v1/timers/' + id, { headers: {
-      'x-twitch-token': localStorage.getItem('accessToken')
+        'x-twitch-token': localStorage.getItem('accessToken')
       }})
 
       this.timer = data
