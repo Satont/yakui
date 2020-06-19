@@ -29,6 +29,7 @@ export default new class Variables implements System {
     { name: '$channel.game', response: 'Channel game' },
     { name: '$channel.title', response: 'Channel title' },
     { name: '$random.N-N', response: 'Random beetwen 2 numbers' },
+    { name: '$subs', response: 'Count of channel subscribers' },
     { name: '$subs.last.sub.username', response: 'Username of latest subscriber' },
     { name: '$subs.last.sub.ago', response: 'Time passed from latest subscribe' },
     { name: '$subs.last.sub.tier', response: 'Tier of latest subscribe' },
