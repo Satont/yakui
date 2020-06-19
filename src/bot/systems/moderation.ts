@@ -203,11 +203,32 @@ export default new class Moderation implements System {
     }
   }
 
-  async color(opts: ParserOptions, permissions: UserPermissions) {
-    return false
+  async emotes(opts: ParserOptions, permissions: UserPermissions) {
+    const settings = this.settings.emotes
+
+    if (!settings?.enabled) return false
+    if (!settings?.subscribers && permissions.subscribers) return false;
+    if (!settings?.vips && permissions.vips) return false;
+
+    const username = opts.raw.userInfo.userName.toLowerCase()
+    const type = 'emotes'
+    const emotesLength = opts.raw.parseEmotes().filter(o => o.type === 'emote').length
+
+    if (emotesLength < settings.trigger.length) return false
+
+    if (this.doesWarned({ type, username })) {
+      tmi.timeout({ username, duration: settings.timeout.time, reason: settings.timeout.message })
+
+      this.removeFromWarned({ type, username})
+      return true
+    } else {
+      tmi.timeout({ username, duration: settings.warning.time, reason: settings.warning.message })
+      this.warnings[type].push(username)
+      return true
+    }
   }
 
-  async emotes(opts: ParserOptions, permissions: UserPermissions) {
+  async color(opts: ParserOptions, permissions: UserPermissions) {
     const settings = this.settings.longMessage
 
     if (!settings?.enabled) return false
