@@ -177,8 +177,8 @@ export default new class Moderation implements System {
 
     let capsLength = 0
 
-    for (const emote of opts.raw.parseEmotes()) {
-      message = message.slice(emote.position, emote.length)
+    for (const emote of opts.raw.parseEmotes().filter(o => o.type === 'emote')) {
+      message = message.replace(emote['name'], '')
     }
 
     for (let i = 0; i < message.length; i++) {
