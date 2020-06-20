@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export default async (shouldBeLogged = true) => {
+export default async (shouldBeLogged = true, admin = true) => {
   try {
     const code = localStorage.getItem('code') || ''
     if (code.trim().length === 0) {
@@ -45,7 +45,7 @@ export default async (shouldBeLogged = true) => {
     localStorage.setItem('userType', request.data.userType);
 
 
-    if (localStorage.getItem('userType') !== 'admin') {
+    if (localStorage.getItem('userType') !== 'admin' && admin) {
       throw 'You have no access to view that.'
     }
 

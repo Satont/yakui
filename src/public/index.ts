@@ -13,7 +13,7 @@ Vue.component('nav-bar', () => import('./vue/components/navbar.vue'))
 Vue.component('side-bar', () => import('./vue/components/sidebar.vue'))
 
 const start = async () => {
-  const user = await isLogged(false)
+  const user = await isLogged(false, false)
 
   const router = new VueRouter({
     routes: [

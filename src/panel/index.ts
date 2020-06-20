@@ -17,7 +17,7 @@ Vue.component('nav-bar', () => import('./vue/components/navbar.vue'))
 Vue.component('variables-list', () => import('./vue/components/variablesList.vue'))
 
 const start = async () => {
-  const user = await isLogged()
+  const user = await isLogged(true, true)
 
   const router = new VueRouter({
     mode: 'history',
