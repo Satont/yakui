@@ -4,6 +4,7 @@ import User from '@bot/models/User'
 import UserBits from '@bot/models/UserBits'
 import UserTips from '@bot/models/UserTips'
 import currency from '@bot/libs/currency'
+import isAdmin from '@bot/panel/middlewares/isAdmin'
 
 const router = Router({
   mergeParams: true
@@ -17,7 +18,7 @@ router.get('/', async (req, res, next) => {
       order: [ [body.sortBy, JSON.parse(body.sortDesc) ? 'DESC': 'ASC'] ],
       offset: (Number(body.page) - 1) * Number(body.perPage),
       limit: Number(body.perPage),
-      attributes: { include: ['totalTips', 'totalBits' ]},
+      attributes: { include: ['totalTips', 'totalBits', 'watchedFormatted' ]},
       include: [UserBits, UserTips],
     })
 
@@ -31,7 +32,8 @@ router.get('/:id', async (req, res, next) => {
   try {
     const user: User[] = await User.findOne({
       where: { id: req.params.id },
-      include: [UserBits, UserTips]
+      include: [UserBits, UserTips],
+      attributes: { include: ['totalTips', 'totalBits', 'watchedFormatted' ]},
     })
 
     res.json(user)
@@ -40,7 +42,7 @@ router.get('/:id', async (req, res, next) => {
   }
 })
 
-router.delete('/', checkSchema({
+router.delete('/', isAdmin, checkSchema({
   id: {
     isNumeric: true,
     in: ['body'],
@@ -56,7 +58,7 @@ router.delete('/', checkSchema({
   }
 })
 
-router.post('/', checkSchema({
+router.post('/', isAdmin, checkSchema({
   user: {
     in: ['body'],
   }
@@ -64,7 +66,7 @@ router.post('/', checkSchema({
   try {
     validationResult(req).throw()
 
-    const user: User = await User.findOne({ 
+    const user: User = await User.findOne({
       where: { id: req.body.user?.id },
       include: [UserBits, UserTips]
     })
@@ -95,7 +97,7 @@ router.post('/', checkSchema({
         inMainCurrencyAmount: currency.exchange({ amount: tip.amount, from: tip.currency }),
         rates: currency.rates
       }
-    
+
       if (tip.id) {
         const [instance, created]: [UserTips, boolean] = await UserTips.findOrCreate({
           where: { id: tip.id },

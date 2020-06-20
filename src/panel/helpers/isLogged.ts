@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export default async (shouldBeLogged = true) => {
+export default async (shouldBeLogged = true, admin = true) => {
   try {
     const code = localStorage.getItem('code') || ''
     if (code.trim().length === 0) {
@@ -45,11 +45,23 @@ export default async (shouldBeLogged = true) => {
     localStorage.setItem('userType', request.data.userType);
 
 
-    if (localStorage.getItem('userType') !== 'admin') {
+    if (localStorage.getItem('userType') !== 'admin' && admin) {
       throw 'You have no access to view that.'
     }
 
-    return user.data.data[0]
+    const dbUser = await axios.get('/api/v1/users/' + user.data.data[0].id)
+
+    const resultUser = {
+      ...user.data.data[0],
+      points: dbUser.data.points,
+      messages: dbUser.data.messages,
+      tips: dbUser.data.totalTips,
+      bits: dbUser.data.totalBits,
+      watched: dbUser.data.watchedFormatted,
+      userType: localStorage.getItem('userType'),
+    }
+
+    return resultUser
   } catch (e) {
     console.error(e)
     if (e === 'You have no access to view that.') {

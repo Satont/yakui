@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
 import Variable from '@bot/models/Variable'
 import variables from '@bot/systems/variables'
+import isAdmin from '@bot/panel/middlewares/isAdmin'
 
 const router = Router({
   mergeParams: true
@@ -25,7 +26,7 @@ router.get('/all', async (req, res, next) => {
   }
 })
 
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', isAdmin, async (req, res, next) => {
   try {
     const variable: Variable[] = await Variable.findOne({ where: { id: req.params.id }})
 
@@ -35,7 +36,7 @@ router.get('/:id', async (req, res, next) => {
   }
 })
 
-router.post('/', checkSchema({
+router.post('/', isAdmin, checkSchema({
   id: {
     isNumeric: true,
     in: ['body'],
@@ -79,7 +80,7 @@ router.post('/', checkSchema({
   }
 })
 
-router.delete('/', checkSchema({
+router.delete('/', isAdmin, checkSchema({
   id: {
     isNumeric: true,
     in: ['body'],
