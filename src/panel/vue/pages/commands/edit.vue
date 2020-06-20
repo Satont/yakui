@@ -25,7 +25,10 @@
         <b-form-select v-model="command.permission" :options="avaliablePermissions" size="sm"></b-form-select>
       </b-form-group>
 
-      <b-form-group label="Command response" label-for="response">
+      <b-form-group>
+        <template slot="label" label-for="response">
+         Command response <variables-list></variables-list>
+        </template>
         <b-form-input id="response" v-model="command.response" type="text" required placeholder="Enter command response"></b-form-input>
       </b-form-group>
 

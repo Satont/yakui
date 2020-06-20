@@ -1,7 +1,6 @@
 import axios from 'axios'
 
 export default async (shouldBeLogged = true) => {
-
   try {
     const code = localStorage.getItem('code') || ''
     if (code.trim().length === 0) {
@@ -24,6 +23,7 @@ export default async (shouldBeLogged = true) => {
       'Authorization': 'Bearer ' + code,
       'Client-Id': clientId,
     }})
+
     if (!user.data.data.length) {
       localStorage.removeItem('userId')
       throw Error('User must be logged');
@@ -31,19 +31,19 @@ export default async (shouldBeLogged = true) => {
 
     localStorage.setItem('userId', user.data.data[0].id)
 
-    const accessToken = localStorage.getItem('accessToken') || '';
-    const refreshToken = localStorage.getItem('refreshToken') || '';
-    const isNewAuthorization = accessToken.trim().length === 0 || refreshToken.trim().length === 0;
-    if (isNewAuthorization) {
-      const request = await axios.get('/oauth/validate', { headers: {
-        'x-twitch-token': code,
-        'x-twitch-userid': user.data.data[0].id,
-      }})
+    //const accessToken = localStorage.getItem('accessToken') || '';
+    //const refreshToken = localStorage.getItem('refreshToken') || '';
+    //const isNewAuthorization = accessToken.trim().length === 0 || refreshToken.trim().length === 0;
 
-      localStorage.setItem('accessToken', request.data.accessToken);
-      localStorage.setItem('refreshToken', request.data.refreshToken);
-      localStorage.setItem('userType', request.data.userType);
-    }
+    const request = await axios.get('/oauth/validate', { headers: {
+      'x-twitch-token': code,
+      'x-twitch-userid': user.data.data[0].id,
+     }})
+
+    localStorage.setItem('accessToken', request.data.accessToken);
+    localStorage.setItem('refreshToken', request.data.refreshToken);
+    localStorage.setItem('userType', request.data.userType);
+
 
     if (localStorage.getItem('userType') !== 'admin') {
       throw 'You have no access to view that.'

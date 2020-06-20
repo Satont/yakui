@@ -204,17 +204,17 @@ export default new class Tmi {
   }
 
   async say({ type = 'bot', message }: { type?: 'bot' | 'broadcaster', message: string }) {
-    this.chatClients[type]?.say(this.channel.name, message)
+    if (process.env.NODE_ENV === 'production') this.chatClients[type]?.say(this.channel.name, message)
     chatOut(message)
   }
 
   async timeout({ username, duration, reason }: { username: string, duration: number, reason?: string }) {
-    await this.chatClients.bot?.timeout(this.channel.name, username, duration, reason)
+    if (process.env.NODE_ENV === 'production') await this.chatClients.bot?.timeout(this.channel.name, username, duration, reason)
     timeout(`${username} | ${duration}s | ${reason ?? ''}`)
   }
 
   async whispers({ type = 'bot', message, target }: { type?: 'bot' | 'broadcaster', message: string, target: string }) {
-    this.chatClients[type]?.whisper(target, message)
+    if (process.env.NODE_ENV === 'production') this.chatClients[type]?.whisper(target, message)
     whisperOut(`${target}: ${message}`)
   }
 

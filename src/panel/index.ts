@@ -14,6 +14,7 @@ Vue.use(BootstrapVue)
 Vue.component('loading', () => import('./vue/components/loadingAnimation.vue'))
 Vue.component('side-bar', () => import('./vue/components/sidebar.vue'))
 Vue.component('nav-bar', () => import('./vue/components/navbar.vue'))
+Vue.component('variables-list', () => import('./vue/components/variablesList.vue'))
 
 const start = async () => {
   const user = await isLogged()

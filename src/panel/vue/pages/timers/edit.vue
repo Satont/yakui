@@ -9,7 +9,10 @@
         <b-form-input id="interval" v-model.number="timer.interval" type="number" required placeholder="Enter timer interval"></b-form-input>
       </b-form-group>
 
-       <b-form-group label="Timer responses">
+       <b-form-group>
+         <template slot="label">
+           Timer responses <variables-list></variables-list>
+         </template>
          <b-input-group size="sm" v-for="(response, index) in timer.responses" :key="index" class="mb-1">
             <b-form-input v-model="timer.responses[index]" type="text" placeholder="Timer response"></b-form-input>
             <b-input-group-append><b-button size="sm" variant="danger" @click.prevent="delResponse(index)">Delete</b-button></b-input-group-append>
