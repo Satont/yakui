@@ -3,7 +3,7 @@
     <b-form @submit.prevent="save">
       <b-button class="btn-block" variant="success" v-if="settings.enabled" @click="settings.enabled = !settings.enabled">Enabled</b-button>
       <b-button class="btn-block" variant="warning" v-if="!settings.enabled" @click="settings.enabled = !settings.enabled">Disabled</b-button>
-  
+
       <b-button class="btn-block" type="submit" variant="primary">Save</b-button>
 
       <div class="row cards mt-3">
@@ -216,6 +216,44 @@
           </div>
         </div>
 
+        <div class="col-md-6">
+          <div class="card bg-dark">
+            <div class="card-header">blacklist</div>
+            <div class="card-body">
+              <div class="btn-group btn-group-sm d-flex mb-3">
+                <b-btn size="sm" class="w-100" v-bind:class="{ 'btn-success': settings.blacklist.enabled, 'btn-danger': !settings.blacklist.enabled }" @click="settings.blacklist.enabled = !settings.blacklist.enabled">
+                  <span v-show="settings.blacklist.enabled">Enabled</span>
+                  <span v-show="!settings.blacklist.enabled">Disabled</span>
+                </b-btn>
+                <b-btn class="w-100" v-bind:class="{ 'btn-success': settings.blacklist.subscribers, 'btn-danger': !settings.blacklist.subscribers }" @click="settings.blacklist.subscribers = !settings.blacklist.subscribers">
+                  <span>Moderate subscribers</span>
+                </b-btn>
+                <b-btn class="w-100" v-bind:class="{ 'btn-success': settings.blacklist.vips, 'btn-danger': !settings.blacklist.vips }" @click="settings.blacklist.vips = !settings.blacklist.vips">
+                  <span>Moderate vips</span>
+                </b-btn>
+              </div>
+
+              <b-input-group size="sm" class="mt-1" prepend="Timeout time" append="message">
+                <b-form-input type="number" v-model.number="settings.blacklist.timeout.time"></b-form-input>
+                <b-form-input type="text" v-model.trim="settings.blacklist.timeout.message"></b-form-input>
+              </b-input-group>
+
+              <b-input-group size="sm" class="mt-1" prepend="Warning time" append="message">
+                <b-form-input type="number" v-model.number="settings.blacklist.warning.time"></b-form-input>
+                <b-form-input type="text" v-model.trim="settings.blacklist.warning.message"></b-form-input>
+              </b-input-group>
+
+              <div style="overflow: auto; max-height: 30vh;">
+                <b-input-group size="sm" v-for="(aliase, index) in settings.blacklist.values" :key="index" style="padding-right: 5px;" class="mt-1">
+                  <b-form-input v-model="settings.blacklist.values[index]" type="text" placeholder="Blacklisted sentense"></b-form-input>
+                  <b-input-group-append><b-button size="sm" variant="danger" @click.prevent="delValue(index)">Delete</b-button></b-input-group-append>
+                </b-input-group>
+              </div>
+              <b-button class="mt-1" block size="sm" type="success" variant="success" @click.prevent="createValue">+</b-button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </b-form>
   </div>
@@ -326,6 +364,28 @@ export default class ModerationSettings extends Vue {
         length: 10
       }
     },
+    blacklist: {
+      enabled: false,
+      vips: false,
+      subscribers: false,
+      timeout: {
+        time: 600,
+        message: 'some word from your message in bliacklist'
+      },
+      warning: {
+        time: 10,
+        message: 'some word from your message in bliacklis [warn]'
+      },
+      values: []
+    },
+  }
+
+  createValue() {
+    this.settings.blacklist.values.push(null);
+  }
+
+  delValue(index) {
+    this.settings.blacklist.values.splice(index, 1);
   }
 }
 </script>
