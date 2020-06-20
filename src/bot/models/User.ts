@@ -43,6 +43,11 @@ export default class User extends Model<User> {
   }
 
   @Column(DataType.VIRTUAL)
+  get watchedFormatted() {
+    return `${((this.watched / (1 * 60 * 1000)) / 60).toFixed(1)}h`
+  }
+
+  @Column(DataType.VIRTUAL)
   get totalTips() {
     if (this.tips) {
       return this.tips.reduce((previous, current) => previous + Number(current.inMainCurrencyAmount), 0)

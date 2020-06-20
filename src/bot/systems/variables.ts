@@ -140,7 +140,7 @@ export default new class Variables implements System {
 
       result = result
         .replace(/\$user\.messages/gimu, String(user.messages))
-        .replace(/\$user\.watched/gimu, `${((user.watched / (1 * 60 * 1000)) / 60).toFixed(1)}h`)
+        .replace(/\$user\.watched/gimu, user.watchedFormatted)
         .replace(/\$user\.tips/gimu, String(user.totalTips))
         .replace(/\$user\.bits/gimu, String(user.totalBits))
         .replace(/\$user\.points/gimu, String(user.points))

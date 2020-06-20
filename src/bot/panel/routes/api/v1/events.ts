@@ -1,9 +1,10 @@
 import { Router } from 'express'
 import Event from '@bot/models/Event'
+import isAdmin from '@bot/panel/middlewares/isAdmin'
 
 const router = Router()
 
-router.get('/', async (req, res, next) => {
+router.get('/', isAdmin, async (req, res, next) => {
   try {
     const events = await Event.findAll()
 
@@ -13,7 +14,7 @@ router.get('/', async (req, res, next) => {
   }
 })
 
-router.post('/', async (req, res, next) => {
+router.post('/', isAdmin, async (req, res, next) => {
   try {
     const data: { name: string, operations: any[] } = req.body
 

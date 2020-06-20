@@ -11,6 +11,7 @@ export default {
   entry: {
     panel: './src/panel/index.ts',
     login: './src/login/index.ts',
+    public: './src/public/index.ts',
   },
   output: {
     path: resolve(__dirname, 'public', 'dest'),
@@ -31,13 +32,16 @@ export default {
     new CleanWebpackPlugin(),
     new VueLoaderPlugin(),
     new HtmlPlugin({
-      filename: '../index.html', template: 'src/panel/index.html', chunks: ['panel']
+      filename: '../panel.html', template: 'src/panel/index.html', chunks: ['panel']
     }),
     new HtmlPlugin({
       filename: '../login.html', template: 'src/login/index.html', chunks: ['login']
     }),
     new HtmlPlugin({
-      filename: '../oauth.html', template: 'src/oauth/index.html', chunks: []
+      filename: '../oauth.html', template: 'src/oauth/index.html', chunks: ['oauth']
+    }),
+    new HtmlPlugin({
+      filename: '../public.html', template: 'src/public/index.html', chunks: ['public']
     }),
   ],
   resolve: {

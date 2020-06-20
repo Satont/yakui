@@ -49,7 +49,18 @@ export default async (shouldBeLogged = true) => {
       throw 'You have no access to view that.'
     }
 
-    return user.data.data[0]
+    const dbUser = await axios.get('/api/v1/users/' + user.data.data[0].id)
+
+    const resultUser = {
+      ...user.data.data[0],
+      points: dbUser.data.points,
+      messages: dbUser.data.messages,
+      tips: dbUser.data.totalTips,
+      bits: dbUser.data.totalBits,
+      watched: dbUser.data.watchedFormatted
+    }
+
+    return resultUser
   } catch (e) {
     console.error(e)
     if (e === 'You have no access to view that.') {

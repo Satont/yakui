@@ -1,12 +1,13 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
 import Settings from '@bot/models/Settings'
+import isAdmin from '@bot/panel/middlewares/isAdmin'
 
 const router = Router({
   mergeParams: true,
 })
 
-router.get('/', checkSchema({
+router.get('/', isAdmin, checkSchema({
   space: {
     isString: true,
     in: ['query']
@@ -16,7 +17,7 @@ router.get('/', checkSchema({
     validationResult(req).throw()
     const space = req.query.space as string
 
-    const settings = await Settings.findAll({ 
+    const settings = await Settings.findAll({
       where: { space }
     })
 
@@ -26,7 +27,7 @@ router.get('/', checkSchema({
   }
 })
 
-router.post('/', async (req, res, next) => {
+router.post('/', isAdmin, async (req, res, next) => {
   const body: { space: string, name: string, value: any }[] = req.body
   try {
     for (const data of body) {
