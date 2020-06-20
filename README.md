@@ -32,17 +32,22 @@
 
 
 ## Installation
+### Prerequirements
 
-Default:
+ - Postgres
+ - Node >= 12
+
+Installation process:
 ```shell
 git clone https://github.com/Satont/twobit
 cd twobit
 npm install
+npm run build
 cp .env.example .env
 
 ```
 
-Dockerize:
+Dockerized:
 ```yml
 version: "3.2"
 
@@ -55,7 +60,7 @@ services:
     env_file:
       - .env
     ports:
-      - 3000:3000 
+      - 3000:3000
 ```
 
 ## Help
