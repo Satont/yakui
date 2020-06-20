@@ -53,11 +53,11 @@ export default async (shouldBeLogged = true, admin = true) => {
 
     const resultUser = {
       ...user.data.data[0],
-      points: dbUser.data.points,
-      messages: dbUser.data.messages,
-      tips: dbUser.data.totalTips,
-      bits: dbUser.data.totalBits,
-      watched: dbUser.data.watchedFormatted,
+      points: dbUser.data?.points,
+      messages: dbUser.data?.messages,
+      tips: dbUser.data?.totalTips,
+      bits: dbUser.data?.totalBits,
+      watched: dbUser.data?.watchedFormatted,
       userType: localStorage.getItem('userType'),
     }
 
