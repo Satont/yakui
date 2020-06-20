@@ -57,7 +57,8 @@ export default async (shouldBeLogged = true) => {
       messages: dbUser.data.messages,
       tips: dbUser.data.totalTips,
       bits: dbUser.data.totalBits,
-      watched: dbUser.data.watchedFormatted
+      watched: dbUser.data.watchedFormatted,
+      userType: localStorage.getItem('userType'),
     }
 
     return resultUser

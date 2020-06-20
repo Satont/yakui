@@ -23,7 +23,10 @@
             <div><b>{{ $root.loggedUser.watched }}</b> <span class="text-muted">watched</span></div>
             <div><b>{{ tipsFormatted }}</b> <span class="text-muted">donated</span></div>
             <div><b>{{ $root.loggedUser.bits }}</b> <span class="text-muted">bits donated</span></div>
-            <b-btn block size="sm" @click="logout" variant="danger">Sign Out</b-btn>
+            <b-button-group size="sm" style="width: 100%;">
+              <b-btn variant="success" v-if="$root.loggedUser.userType === 'admin'" href="/">Panel</b-btn>
+              <b-btn @click="logout" variant="danger">Sign Out</b-btn>
+            </b-button-group>
           </b-dropdown-text>
         </b-dropdown>
         <b-btn v-else size="sm" href="/login">Login</b-btn>

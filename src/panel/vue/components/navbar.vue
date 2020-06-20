@@ -13,15 +13,24 @@
 
 
       <div class="ml-auto ml-2 mr-2">
-        <b-dropdown right no-caret variant="dark" class="text-white" size="sm">
+        <b-dropdown v-if="$root.loggedUser" right no-caret variant="dark" class="text-white" size="sm">
           <template v-slot:button-content>
             <b-img :src="$root.loggedUser.profile_image_url" style="width: 30px;border-radius: 30px;"></b-img>
             {{ $root.loggedUser.display_name }}
           </template>
-          <b-dropdown-text>
-            <b-btn block size="sm" @click="logout" variant="danger">Sign Out</b-btn>
+          <b-dropdown-text class="dd-content">
+            <div><b>{{ $root.loggedUser.points }}</b> <span class="text-muted">points</span></div>
+            <div><b>{{ $root.loggedUser.messages }}</b> <span class="text-muted">messages</span></div>
+            <div><b>{{ $root.loggedUser.watched }}</b> <span class="text-muted">watched</span></div>
+            <div><b>{{ tipsFormatted }}</b> <span class="text-muted">donated</span></div>
+            <div><b>{{ $root.loggedUser.bits }}</b> <span class="text-muted">bits donated</span></div>
+            <b-button-group size="sm" style="width: 100%;">
+              <b-btn variant="success" href="/public">Public</b-btn>
+              <b-btn @click="logout" variant="danger">Sign Out</b-btn>
+            </b-button-group>
           </b-dropdown-text>
         </b-dropdown>
+        <b-btn v-else size="sm" href="/login">Login</b-btn>
       </div>
 
   </b-navbar>
@@ -60,9 +69,22 @@ export default class NavBar extends Vue {
     title: 'No data',
   }
   updateTimeout = null
+  mainCurrency = 'USD'
 
   created() {
     this.fetchMetaData()
+  }
+
+  get tipsFormatted() {
+    if (!(this.$root as any).loggedUser.tips) return 0
+
+    const result = new Intl.NumberFormat(this.getLocale(), {
+      currencyDisplay: 'symbol',
+      style: 'currency',
+      currency: this.mainCurrency
+      }).format(Number((this.$root as any).loggedUser.tips))
+
+    return result.replace(/\s/, '')
   }
 
   async fetchMetaData() {
@@ -77,6 +99,7 @@ export default class NavBar extends Vue {
 
     this.streamMetaData = data.streamMetaData
     this.channelMetaData = data.channelMetaData
+    this.mainCurrency = data.mainCurrency
 
     this.updateUptime()
 
@@ -95,6 +118,10 @@ export default class NavBar extends Vue {
     localStorage.setItem('refreshToken', '')
     localStorage.setItem('userType', '')
     window.location.replace(window.location.origin + '/public')
+  }
+
+  getLocale() {
+    return (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.language
   }
 }
 </script>
@@ -144,5 +171,13 @@ export default class NavBar extends Vue {
   padding: .75rem 1rem;
   border-width: 0;
   border-radius: 0;
+}
+
+.dd-content {
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  font-size: 15px;
 }
 </style>
