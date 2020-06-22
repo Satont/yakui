@@ -54,7 +54,7 @@
     "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "express-validator": "^6.5.0",
+    "express-validator": "^6.6.0",
     "humanize-duration": "^3.23.1",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.21.1",
