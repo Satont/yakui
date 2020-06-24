@@ -71,7 +71,7 @@
     "spotify-web-api-node": "^4.0.0",
     "ts-node": "^8.10.2",
     "twitch": "^4.0.10",
-    "twitch-chat-client": "^4.1.0-pre.11",
+    "twitch-chat-client": "^4.1.0-pre.13",
     "vue": "^2.6.11",
     "vue-clipboard2": "^0.3.1",
     "vue-property-decorator": "^8.5.1",
