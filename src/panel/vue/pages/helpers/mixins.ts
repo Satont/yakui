@@ -27,3 +27,13 @@ export class Settings extends Vue {
     }
   }
 }
+
+@Component
+export class EnvChecker extends Vue {
+  [x: string]: any
+
+  isPublic() {
+    return window.location.pathname.includes('public')
+  }
+}
+

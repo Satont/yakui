@@ -19,6 +19,7 @@ const start = async () => {
     routes: [
       { path: '/', name: 'Home', component: () => import('./vue/index.vue'), alias: '/home' },
       { path: '/commands', name: 'Commands', component: () => import('./vue/pages/commands/index.vue') },
+      { path: '/users', name: 'users', component: () => import('../panel/vue/pages/users/list.vue') },
     ],
   })
 

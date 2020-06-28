@@ -2,7 +2,8 @@
   <div>
     <div class="title">
       <h1>Users list</h1>
-      <b-pagination v-model="currentPage" size="sm" :total-rows="totalRows" :per-page="perPage" align="right" v-on:input="getUsers" last-number first-number></b-pagination>
+      <b-pagination class="ml-auto" v-model="currentPage" size="sm" :total-rows="totalRows" :per-page="perPage" align="right" v-on:input="getUsers" last-number first-number></b-pagination>
+      <b-form-input v-on:keyup="getUsers" class="ml-2" v-model="byUsername" type="text" size="sm" style="width:200px;" placeholder="Type to Search"></b-form-input>
     </div>
 
     <b-table id="table" striped hover primary-key dark :items="users" :fields="fields" @sort-changed="getUsers" no-local-sorting>
@@ -30,7 +31,7 @@
         {{ data.value }}
       </template>
 
-      <template v-slot:cell(actions)="data">
+      <template v-slot:cell(actions)="data" v-if="$root.loggedUser.userType === 'admin' && !isPublic()">
       <b-button-group size="sm">
         <b-button @click="editUser(data.item)" variant="info"><i class="fas fa-pen"></i></b-button>
         <b-button @click="del(data.item.index, data.item.id)" variant="danger"><i class="fas fa-trash"></i></b-button>
@@ -42,21 +43,25 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Mixins } from 'vue-property-decorator'
 import { Route } from 'vue-router'
+import { EnvChecker } from '../helpers/mixins'
 
 import axios from 'axios'
 import User from '@bot/models/User'
 
-@Component
-export default class UsersManagerList extends Vue {
+@Component({
+  mixins: [EnvChecker]
+})
+export default class UsersManagerList extends Mixins(EnvChecker) {
   users: User[] = []
   sortDesc = false
-  sortyBy= 'username'
+  sortyBy = 'username'
   page = 1
   perPage = 30
   currentPage = 1
   totalRows = 0
+  byUsername = ''
   fields = [
     { key: 'index', label: '#', tdClass: 'indexes' },
     { key: 'username', sortable: true },
@@ -65,11 +70,14 @@ export default class UsersManagerList extends Vue {
     { key: 'totalTips', sortable: false, label: 'tips' },
     { key: 'totalBits', sortable: false, label: 'bits' },
     { key: 'points', sortable: true },
-    { key: 'actions', sortable: false, label: 'Actions' }
   ]
 
   created() {
     this.getUsers()
+
+    if (!this.isPublic()) {
+      this.fields.push({ key: 'actions', sortable: false, label: 'Actions' })
+    }
   }
 
   async editUser(params) {
@@ -96,7 +104,8 @@ export default class UsersManagerList extends Vue {
         sortBy: this.sortyBy,
         sortDesc: this.sortDesc,
         page: this.currentPage,
-        perPage: this.perPage
+        perPage: this.perPage,
+        byUsername: this.byUsername,
       },
       headers: {
         'x-twitch-token': localStorage.getItem('accessToken')
