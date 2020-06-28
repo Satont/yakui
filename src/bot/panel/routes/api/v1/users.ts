@@ -1,12 +1,13 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
+import { Op } from 'sequelize'
+
 import User from '@bot/models/User'
 import UserBits from '@bot/models/UserBits'
 import UserTips from '@bot/models/UserTips'
 import currency from '@bot/libs/currency'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
 
-import { Op } from 'sequelize'
 
 const router = Router({
   mergeParams: true
