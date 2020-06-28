@@ -3,6 +3,7 @@
   <b-nav vertical class="col-md-1 col-lg-1 d-md-block bg-dark sidebar collapse" active-class="router-link-active">
     <b-nav-item router-link to="/" exact><i class="fas fa-home"></i> Home</b-nav-item>
     <b-nav-item router-link to="/commands"><i class="fas fa-bars"></i> Commands</b-nav-item>
+    <b-nav-item router-link to="/users"><i class="fas fa-users"></i> Users</b-nav-item>
   </b-nav>
 </div>
 

@@ -6,6 +6,8 @@ import UserTips from '@bot/models/UserTips'
 import currency from '@bot/libs/currency'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
 
+import { Op } from 'sequelize'
+
 const router = Router({
   mergeParams: true
 })
@@ -13,8 +15,13 @@ const router = Router({
 router.get('/', async (req, res, next) => {
   try {
     const body = req.query as any
+    let where = undefined
+    if (body.byUsername) {
+      where = { username: { [Op.like]: `%${body.byUsername}%` } }
+    }
 
     const { count, rows }: { count: number, rows: User[] } = await User.findAndCountAll({
+      where,
       order: [ [body.sortBy, JSON.parse(body.sortDesc) ? 'DESC': 'ASC'] ],
       offset: (Number(body.page) - 1) * Number(body.perPage),
       limit: Number(body.perPage),
