@@ -11,13 +11,13 @@ import { sequelize } from '@bot/libs/db'
 import { Op } from 'sequelize'
 import currency from '@bot/libs/currency'
 import Axios from 'axios'
-import { System } from 'typings'
+import { System, Command } from 'typings'
 import Variable from '@bot/models/Variable'
 import spotify from '@bot/integrations/spotify'
 import locales from '@bot/libs/locales'
-import { loadedSystems } from '@bot/libs/loader'
 import evaluate from '@bot/commons/eval'
 import satontapi from '@bot/integrations/satontapi'
+import Commands from './commands'
 
 export default new class Variables implements System {
   variables: any[] = [
@@ -54,6 +54,7 @@ export default new class Variables implements System {
     { name: '$user.watched', response: 'User watched time' },
     { name: '$user.points', response: 'User points' },
     { name: '(api|GET/POST|http://example.com)', response: 'Make api request. If response it plain text use (api._response). If response is json use (api.someVariableFromJson)' },
+    { name: '$command.stats.used', response: 'How much times command was used' },
   ]
 
   async init() {
@@ -63,7 +64,7 @@ export default new class Variables implements System {
     this.variables.push(...variables)
   }
 
-  async parseMessage(opts: { message: string, raw?: TwitchPrivateMessage, argument?: string }) {
+  async parseMessage(opts: { message: string, raw?: TwitchPrivateMessage, argument?: string, command?: Command }) {
     let result = opts.message
     const userInfo = opts.raw?.userInfo
     result = result
@@ -98,11 +99,11 @@ export default new class Variables implements System {
     }
 
     if (/\$commands/gimu.test(result)) {
-      result = result.replace(/\$commands/gimu, this.getCommandList().join(', '))
+      result = result.replace(/\$commands/gimu, Commands.getCommandList().join(', '))
     }
 
     if (/\$prices/gimu.test(result)) {
-      result = result.replace(/\$prices/gimu, this.getPricesList().join(', '))
+      result = result.replace(/\$prices/gimu, Commands.getPricesList().join(', '))
     }
 
     if (/\$top\.bits/gimu.test(result)) {
@@ -124,6 +125,10 @@ export default new class Variables implements System {
     if (/(\(eval)(.*)(\))/gimu.test(result)) {
       const toEval = result.match(/(\(eval)(.*)(\))/)[2].trim()
       result = result.replace(/(\(eval)(.*)(\))/gimu, await evaluate({ raw: opts.raw, param: opts.argument, message: toEval }))
+    }
+
+    if (/\$command\.stats\.used/gimu.test(result)) {
+      result = result.replace(/\$command\.stats\.used/gimu, String(await Commands.getCommandUsageStats(opts.command?.name)))
     }
 
     if (/\$faceit\.[a-z]{3}/gimu.test(result)) {
@@ -305,20 +310,6 @@ export default new class Variables implements System {
     if (spotifySong) return spotifySong
     else if (satontSong) return satontSong
     else return locales.translate('song.notPlaying')
-  }
-
-  getCommandList() {
-    const commands = _.flatten(loadedSystems
-      .map(system => system.commands?.filter(c => c.visible ?? true).map(c => c.name)))
-
-    return commands.filter(Boolean)
-  }
-
-  getPricesList() {
-    const commands = _.flatten(loadedSystems
-      .map(system => system.commands?.filter(c => c.visible ?? true).filter(c => c.price !== 0).map(c => `${c.name}-${c.price}`)))
-
-    return commands.filter(Boolean)
   }
 
   listenDbUpdates() {

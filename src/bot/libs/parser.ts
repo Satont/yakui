@@ -9,6 +9,7 @@ import users from "@bot/systems/users"
 import variables from "@bot/systems/variables"
 import User from '@bot/models/User'
 import locales from "./locales"
+import CommandUsage from "@bot/models/CommandUsage"
 
 export default new class Parser {
   systems: { [x: string]: System } = {}
@@ -54,6 +55,8 @@ export default new class Parser {
 
       if (!command) continue
 
+      CommandUsage.create({ name: command.name })
+
       if (!users.hasPermission(raw.userInfo.badges, command.permission)) break;
 
       if (command.price) {
@@ -81,7 +84,7 @@ export default new class Parser {
       }
       //
 
-      commandResult = await Variables.parseMessage({ message: commandResult, raw, argument })
+      commandResult = await Variables.parseMessage({ message: commandResult, raw, argument, command })
 
       if (!commandResult.length) break;
       const userPerms = tmi.getUserPermissions(raw.userInfo.badges)
