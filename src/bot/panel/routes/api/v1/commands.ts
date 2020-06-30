@@ -3,6 +3,7 @@ import { checkSchema, validationResult } from 'express-validator'
 import Command from '@bot/models/Command'
 import { Command as CommandType } from 'typings'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
+import CommandUsage from '@bot/models/CommandUsage'
 
 const router = Router({
   mergeParams: true
@@ -91,10 +92,15 @@ router.post('/', isAdmin, checkSchema({
 
     let command: Command
 
-    if (body.id) command = await Command.findOne({ where: { id: body.id } })
-    else command = await Command.create(body)
-
     if (body.id) {
+      command = await Command.findOne({ where: { id: body.id } })
+
+      if (command.name !== body.name) {
+        CommandUsage.findAll({ where: { name: command.name } }).then((usages: CommandUsage[]) => {
+          for (const usage of usages) usage.update({ name: body.name })
+        })
+      }
+
       await command.update({
         name: body.name,
         aliases: body.aliases,
@@ -106,6 +112,7 @@ router.post('/', isAdmin, checkSchema({
         price: body.price,
       })
     }
+    else command = await Command.create(body)
 
     res.json(command)
   } catch (e) {
