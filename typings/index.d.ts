@@ -16,6 +16,7 @@ export interface Command {
   fnc?: function,
   enabled?: boolean,
   price?: number,
+  type?: 'custom' | 'default'
 }
 
 export interface CommandOptions {

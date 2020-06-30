@@ -11,7 +11,6 @@
         <b-nav-item>Uptime: {{ uptime }}</b-nav-item>
       </b-nav>
 
-
       <div class="ml-auto ml-2 mr-2">
         <b-dropdown v-if="$root.loggedUser" right no-caret variant="dark" class="text-white" size="sm">
           <template v-slot:button-content>
@@ -19,11 +18,11 @@
             {{ $root.loggedUser.display_name }}
           </template>
           <b-dropdown-text class="dd-content">
-            <div><b>{{ $root.loggedUser.points }}</b> <span class="text-muted">points</span></div>
-            <div><b>{{ $root.loggedUser.messages }}</b> <span class="text-muted">messages</span></div>
-            <div><b>{{ $root.loggedUser.watched }}</b> <span class="text-muted">watched</span></div>
+           <div><b>{{ $root.loggedUser.points || 0 }}</b> <span class="text-muted">points</span></div>
+            <div><b>{{ $root.loggedUser.messages || 0 }}</b> <span class="text-muted">messages</span></div>
+            <div><b>{{ $root.loggedUser.watched || 0 }}</b> <span class="text-muted">watched</span></div>
             <div><b>{{ tipsFormatted }}</b> <span class="text-muted">donated</span></div>
-            <div><b>{{ $root.loggedUser.bits }}</b> <span class="text-muted">bits donated</span></div>
+            <div><b>{{ $root.loggedUser.bits || 0 }}</b> <span class="text-muted">bits donated</span></div>
             <b-button-group size="sm" style="width: 100%;">
               <b-btn variant="success" href="/public">Public</b-btn>
               <b-btn @click="logout" variant="danger">Sign Out</b-btn>

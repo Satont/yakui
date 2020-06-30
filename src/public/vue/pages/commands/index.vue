@@ -6,6 +6,10 @@
         <span v-html="data.value"></span>
       </template>
 
+      <template v-slot:cell(used)="data">
+        {{ data.value }} times
+      </template>
+
       <template v-slot:cell(actions)="row">
         <b-button size="sm" @click="row.toggleDetails">
           {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
@@ -14,8 +18,8 @@
 
       <template v-slot:row-details="row">
         <b-card bg-variant="dark" text-variant="white">
-          <b-row><b-col sm="3"><b>Aliases:</b> {{ row.item.aliases.join(', ') }}</b-col></b-row>
-          <b-row><b-col sm="3"><b>Description:</b> {{ row.item.description }}</b-col></b-row>
+          <b-row v-if="row.item.aliases.length"><b-col sm="3"><b>Aliases:</b> {{ row.item.aliases.join(', ') }}</b-col></b-row>
+          <b-row v-if="row.item.description"><b-col sm="3"><b>Description:</b> {{ row.item.description }}</b-col></b-row>
           <b-row><b-col sm="3"><b>Cooldown:</b> {{ row.item.cooldown }}</b-col></b-row>
           <b-row><b-col sm="3"><b>Price:</b> {{ row.item.price }}</b-col></b-row>
         </b-card>
@@ -37,6 +41,7 @@ export default class CommandsManagerList extends Vue {
     { key: 'name', label: 'Name' },
     { key: 'response', label: 'Response' },
     'permission',
+    { key: 'used', label: 'Used' },
     { key: 'actions' },
   ]
 

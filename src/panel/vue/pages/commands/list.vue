@@ -38,10 +38,10 @@ export default class CommandsManagerList extends Vue {
   commands: Command[] = []
 
   async created() {
-    const { data } = await axios.get('/api/v1/commands', { headers: {
+    const { data }: { data: Command[] } = await axios.get('/api/v1/commands', { headers: {
       'x-twitch-token': localStorage.getItem('accessToken')
     }})
-    this.commands = data
+    this.commands = data.filter(command => command.type === 'custom')
   }
 
   async edit(params) {

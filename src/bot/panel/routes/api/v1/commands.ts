@@ -4,6 +4,7 @@ import Command from '@bot/models/Command'
 import { Command as CommandType } from 'typings'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
 import CommandUsage from '@bot/models/CommandUsage'
+import Commands from '@bot/systems/commands'
 
 const router = Router({
   mergeParams: true
@@ -11,7 +12,7 @@ const router = Router({
 
 router.get('/', async (req, res, next) => {
   try {
-    const commands: Command[] = await Command.findAll()
+    const commands = await Commands.getCommands()
 
     res.json(commands)
   } catch (e) {

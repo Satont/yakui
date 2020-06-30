@@ -14,7 +14,10 @@ export default new class CustomCommands implements System {
       description: command.description,
       aliases: command.aliases,
       price: command.price,
-      fnc: this.fnc
+      visible: command.visible,
+      enabled: command.enabled,
+      fnc: this.fnc,
+      type: 'custom'
     }))
   }
 
