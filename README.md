@@ -39,8 +39,8 @@
 
 Installation process:
 ```shell
-git clone https://github.com/Satont/twobit
-cd twobit
+git clone https://github.com/Satont/yakui
+cd yakui
 npm install
 npm run build
 cp .env.example .env
@@ -53,7 +53,7 @@ version: "3.2"
 
 services:
   twobit:
-    image: satont/twobit
+    image: satont/yakui
     restart: always
     volumes:
       - ./logs:/app/logs/
