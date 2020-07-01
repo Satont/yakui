@@ -20,6 +20,6 @@ jobs:
           USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
           PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
           DOCKERFILE: "Dockerfile"
-          IMAGE_NAME: "satont/twobit"
+          IMAGE_NAME: "satont/yakui"
           TAG_NAME: ${{ github.sha }}
           LATEST: "true"

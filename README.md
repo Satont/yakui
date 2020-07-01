@@ -1,6 +1,6 @@
 # Yakui twitch bot
 
-![](https://img.shields.io/github/workflow/status/satont/twobit/Publish%20Docker/master?label=docker&style=for-the-badge) ![](https://img.shields.io/github/workflow/status/Satont/twobit/Build%20Web%20and%20Bot/master?style=for-the-badge) ![](https://img.shields.io/david/satont/twobit?style=for-the-badge) ![](https://discord.gg/dPm6eYb)
+![](https://img.shields.io/github/workflow/status/satont/yakui/Publish%20Docker/master?label=docker&style=for-the-badge) ![](https://img.shields.io/github/workflow/status/Satont/yakui/Build%20Web%20and%20Bot/master?style=for-the-badge) ![](https://img.shields.io/david/satont/yakui?style=for-the-badge) ![](https://discord.gg/dPm6eYb)
 
 ## Features
 
@@ -52,7 +52,7 @@ Dockerized:
 version: "3.2"
 
 services:
-  twobit:
+  yakui:
     image: satont/yakui
     restart: always
     volumes:
