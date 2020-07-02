@@ -51,9 +51,9 @@ export default new class Users implements System {
     { fnc: this.parseMessage }
   ]
   commands: Command[] = [
-    { name: 'sayb', permission: 'broadcaster', fnc: this.sayb, visible: false },
-    { name: 'ignore add', permission: 'moderators', fnc: this.ignoreAdd, visible: false },
-    { name: 'ignore remove', permission: 'moderators', fnc: this.ignoreRemove, visible: false }
+    { name: 'sayb', permission: 'broadcaster', fnc: this.sayb, visible: false, description: 'Say something as broadcaster.' },
+    { name: 'ignore add', permission: 'moderators', fnc: this.ignoreAdd, visible: false, description: 'Add some username to bot ignore list' },
+    { name: 'ignore remove', permission: 'moderators', fnc: this.ignoreRemove, visible: false, description: 'Remove some username from bot ignore list' }
   ]
 
   async init() {

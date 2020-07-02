@@ -1,29 +1,32 @@
 <template>
   <div>
     <h1>Command list</h1>
-    <p class="pb-2">
-      <b-button class="btn-block" variant="primary" size="sm" @click="edit">New command</b-button>
-    </p>
-    <div class="row cards">
-      <div class="col-md-6" :key="index" v-for="(command, index) in commands">
-        <b-card text-variant="dark" header-class="p-2" body-class="p-2" footer-class="p-2 footer">
-          <template v-slot:header>
-            !{{ command.name }} {{ (command.aliases && command.aliases.length) ? '(' + command.aliases.join(', ') + ')' : '' }}
-          </template>
-          <b-card-text>{{ command.response }} </b-card-text>
-          <template v-slot:footer>
-          <p class="m-0">
-            <b-button class="btn" disabled variant="dark" size="sm">Cooldown <b-badge variant="light">{{ command.cooldown || 'off' }}</b-badge></b-button>
-            <b-button class="btn" disabled variant="dark" size="sm">Permission <b-badge variant="light">{{ command.permission }}</b-badge></b-button>
-          </p>
-          <p class="m-0">
-            <b-button class="btn" variant="primary" size="sm" @click="edit(command)">Edit</b-button>
-            <b-button class="btn" variant="danger" size="sm" @click="del(command.id, index)">Delete</b-button>
-          </p>
-          </template>
+    <b-table striped hover borderless dark :items="commands" :fields="fields">
+      <template v-slot:cell(response)="data">
+        <span v-html="data.value"></span>
+      </template>
+
+      <template v-slot:cell(used)="data">
+        {{ data.value }} times
+      </template>
+
+      <template v-slot:cell(actions)="row">
+         <b-button-group size="sm">
+          <b-button @click="row.toggleDetails">{{ row.detailsShowing ? 'Hide' : 'Show' }} Details</b-button>
+          <b-button variant="primary" v-if="$root.loggedUser.userType === 'admin' && row.item.type === 'custom' && !isPublic()" @click="edit(row.item)">Edit</b-button>
+          <b-button variant="danger" v-if="$root.loggedUser.userType === 'admin' && row.item.type === 'custom' && !isPublic()" @click="del(row.item)">Delete</b-button>
+        </b-button-group>
+      </template>
+
+      <template v-slot:row-details="row">
+        <b-card bg-variant="dark" text-variant="white">
+          <b-row v-if="row.item.aliases && row.item.aliases.length"><b-col sm="3"><b>Aliases:</b> {{ row.item.aliases.join(', ') }}</b-col></b-row>
+          <b-row v-if="row.item.description"><b-col sm="3"><b>Description:</b> {{ row.item.description }}</b-col></b-row>
+          <b-row><b-col sm="3"><b>Cooldown:</b> {{ row.item.cooldown || 0 }}</b-col></b-row>
+          <b-row><b-col sm="3"><b>Price:</b> {{ row.item.price || 0 }}</b-col></b-row>
         </b-card>
-      </div>
-    </div>
+      </template>
+    </b-table>
   </div>
 </template>
 
@@ -31,26 +34,50 @@
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import { Command } from 'typings'
+import { EnvChecker } from '../helpers/mixins'
 import axios from 'axios'
 
 @Component
-export default class CommandsManagerList extends Vue {
+export default class CommandsManagerList extends EnvChecker {
   commands: Command[] = []
+  fields = [
+    { key: 'name', label: 'Name' },
+    { key: 'response', label: 'Response' },
+    'permission',
+    { key: 'used', label: 'Used' },
+    { key: 'actions' },
+  ]
 
   async created() {
-    const { data }: { data: Command[] } = await axios.get('/api/v1/commands', { headers: {
-      'x-twitch-token': localStorage.getItem('accessToken')
-    }})
-    this.commands = data.filter(command => command.type === 'custom')
+    const commands = await axios.get('/api/v1/commands')
+    this.commands = commands.data
+    const variables = await axios.get('/api/v1/variables/all')
+    this.commands = this.commands
+      .filter(c => this.isPublic() ? c.enabled && c.visible : true)
+      .map(c => {
+        let response = c.response || c.description || ''
+
+        for (const variable of variables.data) {
+          response = response
+            .replace(variable.name, `<span class="variable">${variable.response}</span>`)
+        }
+
+        if (response.includes('(eval')) {
+          response = '<span class="variable">(eval)</span>'
+        }
+
+        return { ...c, response }
+      })
   }
 
   async edit(params) {
     await this.$router.push({ name: 'CommandsManagerEdit', params })
   }
 
-  async del(id, index) {
+  async del(command: Command) {
+    const index = this.commands.indexOf(command)
     await axios.delete('/api/v1/commands', {
-      data: { id },
+      data: { id: command.id },
       headers: {
         'x-twitch-token': localStorage.getItem('accessToken')
       }
@@ -60,24 +87,10 @@ export default class CommandsManagerList extends Vue {
 }
 </script>
 
-<style scoped>
-.btn {
-  opacity: 1 !important;
-}
-.footer {
-  display: flex; justify-content: space-between;
-}
-.cards > div > div.card {
-  height: calc(100% - 15px);
-  margin-bottom: 15px;
-  padding-right: 0px !important;
-  padding-left: 0px !important;
-}
-.card-span {
-  display: block !important;
-  white-space: normal !important;
-}
-.card-body > div.btn-group {
-  margin-bottom: 5px;
+<style>
+.variable {
+  background: #16a085;
+  padding: 3px;
+  border-radius: 2px;
 }
 </style>
