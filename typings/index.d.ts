@@ -73,3 +73,10 @@ export type DonationData = {
   inMainCurrencyAmount: number,
   timestamp?: number,
 }
+
+export type MarkerInList = {
+  url: string,
+  preview: string,
+  description: string,
+  date: any,
+}

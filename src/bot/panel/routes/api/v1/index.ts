@@ -8,6 +8,7 @@ import metaData from './metaData'
 import keywords from './keywords'
 import variables from './variables'
 import greetings from './greetings'
+import markers from './markers'
 
 const router = Router()
 
@@ -24,5 +25,6 @@ router.use('/events', events)
 router.use('/keywords', keywords)
 router.use('/variables', variables)
 router.use('/greetings', greetings)
+router.use('/markers', markers)
 
 export default router
