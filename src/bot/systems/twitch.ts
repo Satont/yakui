@@ -15,7 +15,7 @@ export default new class Twitch implements System {
   }
   commands: Command[] = [
     { name: 'title', fnc: this.setTitle, permission: 'moderators', visible: false, },
-    { name: 'game', fnc: this.setGame, permission: 'moderators', visible: false }
+    { name: 'category', fnc: this.setGame, aliases: ['game'], permission: 'moderators', visible: false }
   ]
 
   streamMetaData: {
