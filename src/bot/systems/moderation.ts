@@ -11,7 +11,13 @@ export default new class Moderation implements System {
     { fnc: this.parse }
   ]
   commands: Command[] = [
-    { name: 'permit', fnc: this.permit, permission: 'moderators', visible: false }
+    {
+      name: 'permit',
+      fnc: this.permit,
+      permission: 'moderators',
+      visible: false,
+      description: 'Give target user 1 permit.'
+    }
   ]
 
   permits: string[] = []
