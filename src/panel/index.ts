@@ -62,6 +62,8 @@ const start = async () => {
 
       { path: '/greetings', name: 'GreetingsManagerList', component: () => import('./vue/pages/greetings/list.vue') },
       { path: '/greetings/edit/:id?', name: 'GreetingsManagerEdit', component: () => import('./vue/pages/greetings/edit.vue') },
+
+      { path: '/markers', name: 'MarkersList', component: () => import('./vue/pages/markers/list.vue') },
     ],
   })
 

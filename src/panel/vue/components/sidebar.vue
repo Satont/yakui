@@ -11,6 +11,7 @@
     <b-nav-item router-link to="/keywords"><i class="far fa-keyboard"></i> Keywords</b-nav-item>
     <b-nav-item outer-link to="/variables"><i class="fas fa-superscript"></i> Variables</b-nav-item>
     <b-nav-item outer-link to="/greetings"><i class="far fa-hand-spock"></i> Greetings</b-nav-item>
+    <b-nav-item outer-link to="/markers"> Markers</b-nav-item>
   </b-nav>
 </div>
 
