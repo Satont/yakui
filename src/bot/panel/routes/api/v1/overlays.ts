@@ -52,7 +52,9 @@ router.post('/', isAdmin, checkSchema({
   css: {
     isString: true,
     in: ['body'],
-    optional: true,
+    optional: {
+      options: { nullable: true }
+    },
   },
   js: {
     isArray: true,
@@ -61,11 +63,29 @@ router.post('/', isAdmin, checkSchema({
   }
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
+    console.log(req.body)
     validationResult(req).throw()
 
     const overlay = await Overlay.create(req.body)
 
     res.json(overlay)
+  } catch (e) {
+    next(e)
+  }
+})
+
+router.delete('/', isAdmin, checkSchema({
+  id: {
+    isNumeric: true,
+    in: ['body']
+  }
+}), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    validationResult(req).throw()
+
+    await Overlay.destroy({ where: { id: req.body.id }})
+
+    res.send('Ok')
   } catch (e) {
     next(e)
   }
