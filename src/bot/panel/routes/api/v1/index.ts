@@ -9,6 +9,7 @@ import keywords from './keywords'
 import variables from './variables'
 import greetings from './greetings'
 import markers from './markers'
+import overlays from './overlays'
 
 const router = Router()
 
@@ -26,5 +27,6 @@ router.use('/keywords', keywords)
 router.use('/variables', variables)
 router.use('/greetings', greetings)
 router.use('/markers', markers)
+router.use('/overlays', overlays)
 
 export default router

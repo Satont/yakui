@@ -64,6 +64,9 @@ const start = async () => {
       { path: '/greetings/edit/:id?', name: 'GreetingsManagerEdit', component: () => import('./vue/pages/greetings/edit.vue') },
 
       { path: '/markers', name: 'MarkersList', component: () => import('./vue/pages/markers/list.vue') },
+
+      { path: '/overlays', name: 'OverlaysManagerList', component: () => import('./vue/pages/overlays/list.vue') },
+      { path: '/overlays/edit/:id?', name: 'OverlaysManagerEdit', component: () => import('./vue/pages/overlays/edit.vue') },
     ],
   })
 

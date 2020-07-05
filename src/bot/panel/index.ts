@@ -27,6 +27,13 @@ app.get('/oauth', (req, res) => {
 app.get('/oauth/validate', (req, res) => Authorization.validate(req, res))
 app.get('/oauth/refresh',  (req, res) => Authorization.refresh(req, res))
 
+app.get('/overlay/:overlay', (req, res) => {
+  res.sendFile(resolve(process.cwd(), 'public', 'overlays.html'))
+})
+
+app.get('/overlay/:overlay/:id', (req, res) => {
+  res.sendFile(resolve(process.cwd(), 'public', 'overlays.html'))
+})
 
 app.get('/public', (req, res) => {
   res.sendFile(resolve(process.cwd(), 'public', 'public.html'))

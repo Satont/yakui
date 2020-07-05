@@ -11,7 +11,9 @@ export default {
   entry: {
     panel: './src/panel/index.ts',
     login: './src/login/index.ts',
+    oauth: './src/login/index.ts',
     public: './src/public/index.ts',
+    overlays: './src/overlays/index.ts',
   },
   output: {
     path: resolve(__dirname, 'public', 'dest'),
@@ -42,6 +44,9 @@ export default {
     }),
     new HtmlPlugin({
       filename: '../public.html', template: 'src/public/index.html', chunks: ['public']
+    }),
+    new HtmlPlugin({
+      filename: '../overlays.html', template: 'src/overlays/index.html', chunks: ['overlays']
     }),
   ],
   resolve: {
