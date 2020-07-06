@@ -79,7 +79,7 @@
     "vue-property-decorator": "^8.5.1",
     "vue-router": "^3.3.4",
     "winston": "^3.3.3",
-    "ws": "^7.3.0"
+    "ws": "^7.3.1"
   },
   "_moduleAliases": {
     "@bot": "dest/"
