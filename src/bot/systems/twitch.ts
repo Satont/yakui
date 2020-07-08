@@ -126,8 +126,7 @@ export default new class Twitch implements System {
 
     if (!tmi.clients.broadcaster || !tmi.channel?.id) return;
     const data = await (await tmi.clients.broadcaster.helix.subscriptions.getSubscriptionsPaginated(tmi.channel?.id)).getAll()
-    this.channelMetaData.subs = data.length - 1
-    info(`TWITCH: Subscribers count found: ${data.length - 1}`)
+    this.channelMetaData.subs = data.length - 1 || 0
   }
 
   async getFollowAge(userId: string) {
