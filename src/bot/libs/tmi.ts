@@ -146,6 +146,7 @@ export default new class Tmi {
 
     client.onDisconnect((manually, reason) => {
       info(`TMI: ${type} disconnected from server `, !manually ? reason.message : 'manually')
+      this.connect(type)
     })
 
     client.onConnect(() => {
