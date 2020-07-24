@@ -223,7 +223,7 @@ export default new class Tmi {
 
   getUserPermissions(badges: Map<string, string>, raw?: TwitchPrivateMessage): UserPermissions {
     return {
-      broadcaster: badges.has('broadcaster') || users.settings?.admins?.includes(raw.userInfo.userName),
+      broadcaster: badges.has('broadcaster') || users.settings?.admins?.includes(raw?.userInfo.userName),
       moderators: badges.has('moderator'),
       vips: badges.has('vip'),
       subscribers: badges.has('subscriber') || badges.has(('founder')),

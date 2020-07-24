@@ -8,6 +8,7 @@ import UserTips from '@bot/models/UserTips'
 import UserBits from '@bot/models/UserBits'
 import twitch from './twitch'
 import Settings from '@bot/models/Settings'
+import TwitchPrivateMessage from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
 
 export default new class Users implements System {
   settings: {
@@ -170,8 +171,8 @@ export default new class Users implements System {
     tmi.chatClients?.broadcaster?.say(tmi.channel?.name, opts.argument)
   }
 
-  hasPermission(badges: Map<string, string>, searchForPermission: CommandPermission) {
-    const userPerms = Object.entries(tmi.getUserPermissions(badges))
+  hasPermission(badges: Map<string, string>, searchForPermission: CommandPermission, raw?: TwitchPrivateMessage) {
+    const userPerms = Object.entries(tmi.getUserPermissions(badges, raw))
     const commandPermissionIndex = userPerms.indexOf(userPerms.find(v => v[0] === searchForPermission))
 
     return userPerms.some((p, index) => p[1] && index <= commandPermissionIndex)

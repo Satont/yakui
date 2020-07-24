@@ -57,7 +57,7 @@ export default new class Parser {
 
       CommandUsage.create({ name: command.name })
 
-      if (!users.hasPermission(raw.userInfo.badges, command.permission)) break;
+      if (!users.hasPermission(raw.userInfo.badges, command.permission, raw)) break;
 
       if (command.price) {
         const [user]: [User] = await User.findOrCreate({
@@ -87,7 +87,7 @@ export default new class Parser {
       commandResult = await Variables.parseMessage({ message: commandResult, raw, argument, command })
 
       if (!commandResult.length) break;
-      const userPerms = tmi.getUserPermissions(raw.userInfo.badges)
+      const userPerms = tmi.getUserPermissions(raw.userInfo.badges, raw)
       this.cooldowns.includes(command.name) && (!userPerms.broadcaster && !userPerms.moderators)
           ? tmi.whispers({ target: raw.userInfo.userName, message: commandResult })
           : tmi.say({ message: commandResult })

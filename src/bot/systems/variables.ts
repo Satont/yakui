@@ -291,7 +291,7 @@ export default new class Variables implements System {
   }
 
   async changeCustomVariable({ raw, text, response }: { raw: TwitchPrivateMessage, response: string, text: string }) {
-    const isAdmin = users.hasPermission(raw.userInfo.badges, 'moderators') || users.hasPermission(raw.userInfo.badges, 'broadcaster')
+    const isAdmin = users.hasPermission(raw.userInfo.badges, 'moderators', raw)
 
     if (isAdmin && text.length) {
       const match = response.match(/\$_(\S*)/g)
