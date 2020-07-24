@@ -8,6 +8,8 @@ import { UserPermissions } from 'typings'
 import events from '@bot/systems/events'
 import { info, error, chatOut, chatIn, timeout, whisperOut } from './logger'
 import { onHosting, onHosted, onRaided, onSubscribe, onReSubscribe } from './eventsCaller'
+import users from '@bot/systems/users'
+import TwitchPrivateMessage from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
 
 export default new class Tmi {
   private intervals = {
@@ -219,12 +221,12 @@ export default new class Tmi {
     whisperOut(`${target}: ${message}`)
   }
 
-  getUserPermissions(badges: Map<string, string>): UserPermissions {
+  getUserPermissions(badges: Map<string, string>, raw?: TwitchPrivateMessage): UserPermissions {
     return {
-      broadcaster: badges.has('broadcaster'),
+      broadcaster: badges.has('broadcaster') || users.settings?.admins?.includes(raw.userInfo.userName),
       moderators: badges.has('moderator'),
       vips: badges.has('vip'),
-      subscribers: (badges.has('subscriber') || badges.has(('founder'))),
+      subscribers: badges.has('subscriber') || badges.has(('founder')),
       viewers: true,
     }
   }
