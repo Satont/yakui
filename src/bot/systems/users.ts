@@ -58,14 +58,16 @@ export default new class Users implements System {
   ]
 
   async init() {
-    const [enabled, ignoredUsers, points]: [Settings, Settings, Settings] = await Promise.all([
+    const [enabled, ignoredUsers, points, admins]: [Settings, Settings, Settings, Settings] = await Promise.all([
       Settings.findOne({ where: { space: 'users', name: 'enabled' } }),
       Settings.findOne({ where: { space: 'users', name: 'ignoredUsers' } }),
       Settings.findOne({ where: { space: 'users', name: 'points' } }),
+      Settings.findOne({ where: { space: 'users', name: 'botAdmins' } }),
     ])
 
     this.settings.ignoredUsers = ignoredUsers?.value?.filter(Boolean) ?? []
     this.settings.enabled = enabled?.value ?? true
+    this.settings.admins = admins?.value ?? []
 
     if (points) this.settings.points = points.value
     if (!this.settings.enabled) return;

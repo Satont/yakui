@@ -226,7 +226,7 @@ export default new class Tmi {
       broadcaster: badges.has('broadcaster') || users.settings?.admins?.includes(raw?.userInfo.userName),
       moderators: badges.has('moderator'),
       vips: badges.has('vip'),
-      subscribers: badges.has('subscriber') || badges.has(('founder')),
+      subscribers: badges.has('subscriber') || badges.has('founder'),
       viewers: true,
     }
   }
