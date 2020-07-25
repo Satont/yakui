@@ -62,7 +62,7 @@ router.post('/', isAdmin, checkSchema({
     if (body.id) {
       await greeting.update({
         username: body.username,
-        userId: Number(body.userId),
+        userId: body.userId ? Number(body.userId) : null,
         message: body.message,
         enabled: body.enabled
       })
