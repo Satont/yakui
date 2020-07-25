@@ -1,6 +1,10 @@
 <template>
   <div>
     <h1>Command list</h1>
+    <p class="pb-2" v-if="!isPublic()">
+      <b-button class="btn-block" variant="primary" size="sm" @click="edit">New command</b-button>
+    </p>
+
     <b-table striped hover borderless dark :items="commands" :fields="fields">
       <template v-slot:cell(response)="data">
         <span v-html="data.value"></span>
