@@ -3,7 +3,8 @@ import * as Knex from "knex";
 
 export async function up(knex: Knex): Promise<any> {
   return await knex.schema.table('greetings', table => {
-    table.dropUnique(['userId', 'username']).dropIndex(['userId', 'username'])
+    table.dropUnique(['userId']).dropIndex(['userId']),
+    table.dropUnique(['username']).dropIndex(['username'])
   })
 }
 
