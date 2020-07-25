@@ -11,9 +11,6 @@
       <label for="textarea" class="mt-2">Bot admins</label>
       <b-form-textarea  id="textarea" v-model="settings.botAdmins" placeholder="1 line = 1 user" rows="3" max-rows="8"></b-form-textarea>
 
-      <label for="textarea" class="mt-2">Bot admins</label>
-      <b-form-textarea  id="textarea" v-model="settings.botAdmins" placeholder="1 line = 1 user" rows="3" max-rows="8"></b-form-textarea>
-
       <h4 class="text-ceter mt-2">Points</h4>
       <b-button class="btn-block" variant="success" v-if="settings.points.enabled" @click="settings.points.enabled = !settings.points.enabled">Enabled</b-button>
       <b-button class="btn-block" variant="warning" v-if="!settings.points.enabled" @click="settings.points.enabled = !settings.points.enabled">Disabled</b-button>
