@@ -1,6 +1,7 @@
-import { Table, Column, Model, DataType, Default, AllowNull, PrimaryKey, HasMany } from 'sequelize-typescript'
+import { Table, Column, Model, DataType, Default, AllowNull, PrimaryKey, HasMany, HasOne } from 'sequelize-typescript'
 import UserBits from './UserBits'
 import UserTips from './UserTips'
+import UserDailyMessages from './UserDailyMessages'
 
 @Table({
   tableName: 'users',
@@ -59,4 +60,17 @@ export default class User extends Model<User> {
 
   @HasMany(() => UserTips)
   public tips: UserTips[]
+
+  @HasMany(() => UserDailyMessages)
+  public daily_messages: UserDailyMessages[]
+
+  @Column(DataType.VIRTUAL)
+  get todayMessages() {
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+
+    if (this.daily_messages) {
+      return this.daily_messages.find(o => o.date === startOfDay.getTime())?.count ?? 0
+    } else return 0
+  }
 }

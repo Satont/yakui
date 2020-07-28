@@ -1,4 +1,3 @@
-import { literal } from 'sequelize'
 import { chunk as makeChunk } from 'lodash'
 
 import { System, ParserOptions, Command, CommandOptions, CommandPermission } from '../../../typings'
@@ -6,6 +5,7 @@ import User from '@bot/models/User'
 import tmi from '@bot/libs/tmi'
 import UserTips from '@bot/models/UserTips'
 import UserBits from '@bot/models/UserBits'
+import UserDailyMessages from '@bot/models/UserDailyMessages'
 import twitch from './twitch'
 import Settings from '@bot/models/Settings'
 import TwitchPrivateMessage from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
@@ -85,12 +85,12 @@ export default new class Users implements System {
 
     const [user, created]: [User, boolean] = await User.findOrCreate({
       where: { id },
-      defaults: { id, username, messages: 1 }
+      defaults: { id, username, messages: 1 },
     })
 
     if (!created) {
       user.messages = user.messages + 1
-      user.username = user.username
+      user.username = opts.raw.userInfo.userName
     }
 
     const updatePoints = (Number(user.lastMessagePoints) + pointsInterval <= user.messages) && this.settings.points.enabled
@@ -101,6 +101,16 @@ export default new class Users implements System {
     }
 
     user.save()
+
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+
+    const [daily, isNewDailyRow]: [UserDailyMessages, boolean] = await UserDailyMessages.findOrCreate({
+      where: { userId: user.id, date: startOfDay.getTime() },
+      defaults: { count: 1 }
+    })
+
+    if (!isNewDailyRow) daily.increment({ count: 1 })
   }
 
   async getUserStats({ id, username }: { id?: string, username?: string }): Promise<User> {
@@ -113,8 +123,8 @@ export default new class Users implements System {
 
     let user = await User.findOne({
       where: { id },
-      include: [UserTips, UserBits],
-      attributes: { include: ['totalTips', 'totalTips' ]},
+      include: [UserTips, UserBits, UserDailyMessages],
+      attributes: { include: ['totalTips', 'totalTips', 'todayMessages' ]},
     })
 
     if (!user) user = await User.create({
