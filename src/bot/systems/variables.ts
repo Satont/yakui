@@ -49,6 +49,7 @@ export default new class Variables implements System {
     { name: '$faceit.lvl', response: 'Faceit lvl' },
     { name: '$faceit.elo', response: 'Faceit elo' },
     { name: '$user.messages', response: 'User messages' },
+    { name: '$user.daily.messages', response: 'User today messages' },
     { name: '$user.tips', response: 'User tips' },
     { name: '$user.bits', response: 'User bits' },
     { name: '$user.watched', response: 'User watched time' },
@@ -140,7 +141,7 @@ export default new class Variables implements System {
 
     result = await this.parseCustomVariables(result)
 
-    if (includesOneOf(result, ['user.messages', 'user.tips', 'user.bits', 'user.watched', 'user.points']) && userInfo) {
+    if (includesOneOf(result, ['user.messages', 'user.tips', 'user.bits', 'user.watched', 'user.points', 'user.daily.messages']) && userInfo) {
       const user = await users.getUserStats({ id: userInfo?.userId })
 
       result = result
@@ -149,6 +150,7 @@ export default new class Variables implements System {
         .replace(/\$user\.tips/gimu, String(user.totalTips))
         .replace(/\$user\.bits/gimu, String(user.totalBits))
         .replace(/\$user\.points/gimu, String(user.points))
+        .replace(/\$user\.daily\.messages/gimu, String(user.todayMessages))
     }
 
     if (result.includes('(api|')) {
