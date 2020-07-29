@@ -1,21 +1,26 @@
 <template>
 <div class="dashboard">
-  <b-btn variant="success" block class="mb-1">Add new widget</b-btn>
-  <vue-draggable-resizable
-    v-for="element in widgets"
-    :key="element.id"
-    :x="element.left"
-    :y="element.top"
-    :w="element.width"
-    :h="element.height"
-    :resizable="true"
-    :grid="[3,3]"
-    @dragstop="(left, top) => onDrag(element.id, left, top)"
-    @resizestop="(left, top, width, height) => onResize(element.id, left, top, width, height)"
-    :parent="true"
-  >
-  <component :is="element.name" :id="element.id" />
-</vue-draggable-resizable>
+  <b-btn variant="success" block class="mb-1" v-b-modal.widgets>Add new widget</b-btn>
+    <vue-draggable-resizable
+      v-for="element in widgets"
+      :key="element.id"
+      :x="element.left"
+      :y="element.top"
+      :w="element.width"
+      :h="element.height"
+      :resizable="true"
+      :grid="[3,3]"
+      @dragstop="(left, top) => onDrag(element.id, left, top)"
+      @resizestop="(left, top, width, height) => onResize(element.id, left, top, width, height)"
+      :parent="true"
+    >
+    <component :is="element.name" :id="element.id" />
+  </vue-draggable-resizable>
+  <b-modal id="widgets" header-text-variant="dark" body-text-variant="dark" title="Choose widget" scrollable size="sm">
+    <b-list-group>
+      <b-list-group-item href="#" @click="addWidget(widget)" v-for="widget in availableWidgets" :key="widget">{{ widget | capitalize }}</b-list-group-item>
+    </b-list-group>
+  </b-modal>
 </div>
 </template>
 
@@ -31,8 +36,14 @@ import Widget from '../../bot/models/Widget'
     VueDraggableResizable,
     chat: () => import('./widgets/chat.vue')
   },
+  filters: {
+    capitalize: (v) => {
+      return v.toUpperCase()
+    }
+  }
 })
 export default class Interface extends Vue {
+  available = ['chat']
   title = 'Some Widget'
   widgets: Widget[] = []
 
@@ -69,6 +80,14 @@ export default class Interface extends Vue {
     widget.left = left
     widget.top = top
     this.saveWidget(id)
+  }
+
+  get availableWidgets() {
+    return this.available.filter(o => !this.widgets.some(w => w.name === o))
+  }
+
+  addWidget(name) {
+    
   }
 }
 </script>
