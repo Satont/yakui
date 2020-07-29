@@ -86,10 +86,10 @@ const start = async () => {
           views: 0,
           game: 'No data',
           title: 'No data',
-        }
+        },
+        uptime: 'offline',
       },
       updateTimeout: null,
-      uptime: 'offline',
       title: 'Bot Panel'
     },
     router,
@@ -113,22 +113,25 @@ const start = async () => {
         const { data } = await axios.get('/api/v1/metaData', { headers: {
           'x-twitch-token': localStorage.getItem('accessToken')
         }})
-    
+
         this.title = data.bot?.username?.toUpperCase() ?? this.title
         document.title = this.metadata.bot.username
-    
+
         this.metadata.stream = data.streamMetaData
         this.metadata.channel = data.channelMetaData
         this.metadata.mainCurrency = data.mainCurrency
-    
+
         this.updateUptime()
       },
       updateUptime() {
-        if (!this.metadata.stream.startedAt) this.uptime = 'offline';
+        if (!this.metadata.stream.startedAt) this.metadata.uptime = 'offline';
         else {
-          this.uptime = humanizeDuration(Date.now() - new Date(this.streamMetaData.startedAt).getTime(), { units: ['mo', 'd', 'h', 'm', 's'], round: true })
+          this.metadata.uptime = humanizeDuration(Date.now() - new Date(this.streamMetaData.startedAt).getTime(), { units: ['mo', 'd', 'h', 'm', 's'], round: true })
         }
       }
+    },
+    beforeDestroy() {
+      clearTimeout(this.updateTimeout)
     }
   }).$mount('#app')
 
