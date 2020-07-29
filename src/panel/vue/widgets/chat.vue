@@ -5,7 +5,7 @@
         id="chat_embed"
         width="100%"
         style="height: calc(100% - 40px)"
-        src="https://www.twitch.tv/embed/sad_satont/chat?parent=localhost">
+        :src="src">
     </iframe>
   </Interface>
 </template>
@@ -19,5 +19,6 @@ import Interface from './_interface.vue'
 })
 export default class Chat extends Vue {
   title = 'Chat'
+  src = `https://www.twitch.tv/embed/${(this.$root as any).title.toLowerCase()}/chat?parent=${window.location.origin}`
 }
 </script>

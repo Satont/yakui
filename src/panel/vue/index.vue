@@ -9,6 +9,7 @@
     :w="element.width"
     :h="element.height"
     :resizable="true"
+    :grid="[1,1]"
     @dragstop="(left, top) => onDrag(element.id, left, top)"
     @resizestop="(left, top, width, height) => onResize(element.id, left, top, width, height)"
   >

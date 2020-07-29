@@ -103,8 +103,8 @@ const start = async () => {
       </div>
     </div>
     `,
-    created() {
-      this.fetchMetadata()
+    async mounted() {
+      await this.fetchMetadata()
     },
     methods: {
       async fetchMetadata() {
