@@ -1,7 +1,7 @@
 <template>
 <div class="dashboard">
   <vue-draggable-resizable
-    v-for="element in [{ name: 'chat', id: 0, left: -22, top: -7, width: 560, height: 560 }]"
+    v-for="element in widgets"
     :key="element.id"
     :x="element.left"
     :y="element.top"
@@ -20,8 +20,10 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
+import axios from 'axios'
 import VueDraggableResizable from 'vue-draggable-resizable'
 import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
+import Widget from '../../bot/models/Widget'
 
 @Component({
   components: {
@@ -31,13 +33,41 @@ import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
 })
 export default class Interface extends Vue {
   title = 'Some Widget'
+  widgets: Widget[] = []
+
+  async saveWidget(id) {
+    const { name, top, left, width, height } = this.widgets.find(o => o.id === id)
+    await axios.post('/api/v1/widgets', { id, name, top, left, width, height }, {
+      headers: {
+        'x-twitch-token': localStorage.getItem('accessToken')
+      },
+    })
+  }
+
+  async created() {
+    const { data } = await axios.get('/api/v1/widgets', {
+      headers: {
+        'x-twitch-token': localStorage.getItem('accessToken')
+      }
+    })
+
+    this.widgets = data
+  }
 
   onResize(id, left, top, width, height) {
-   console.log(id, left, top, width, height)
+    const widget = this.widgets.find(o => o.id === id)
+    widget.left = left
+    widget.top = top
+    widget.width = width
+    widget.height = height
+    this.saveWidget(id)
   }
 
   onDrag(id, left, top) {
-    console.log(id, left, top)
+    const widget = this.widgets.find(o => o.id === id)
+    widget.left = left
+    widget.top = top
+    this.saveWidget(id)
   }
 }
 </script>

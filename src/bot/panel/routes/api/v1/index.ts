@@ -10,6 +10,7 @@ import variables from './variables'
 import greetings from './greetings'
 import markers from './markers'
 import overlays from './overlays'
+import widgets from './widgets'
 
 const router = Router()
 
@@ -28,5 +29,6 @@ router.use('/variables', variables)
 router.use('/greetings', greetings)
 router.use('/markers', markers)
 router.use('/overlays', overlays)
+router.use('/widgets', widgets)
 
 export default router
