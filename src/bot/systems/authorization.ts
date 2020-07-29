@@ -35,7 +35,7 @@ export default new class Authorization implements System {
       const twitchValidation = await axios.get(`https://id.twitch.tv/oauth2/validate`, {
         headers: {
           'Authorization': 'OAuth ' + accessTokenHeader,
-        },
+        }
       })
 
       if (userId !== twitchValidation.data.user_id) {

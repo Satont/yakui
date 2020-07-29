@@ -1,14 +1,14 @@
 <template>
   <div>
     <b-navbar toggleable="lg" type="light" variant="dark" sticky class="flex-md-nowrap p-0 shadow">
-      <b-navbar-brand class="navbar-brand col-md-1 col-lg-1 mr-0 px-3" router-link to="/">{{ title | truncate }}</b-navbar-brand>
+      <b-navbar-brand class="navbar-brand col-md-1 col-lg-1 mr-0 px-3" router-link to="/">{{ $root.title | truncate }}</b-navbar-brand>
 
       <b-nav align='center'>
         <b-nav-item>Viewers: {{ streamMetaData.viewers }}</b-nav-item>
         <b-nav-item>Views: {{ channelMetaData.views }}</b-nav-item>
         <b-nav-item>Title: {{ channelMetaData.title }}</b-nav-item>
         <b-nav-item>Game: {{ channelMetaData.game }}</b-nav-item>
-        <b-nav-item>Uptime: {{ uptime }}</b-nav-item>
+        <b-nav-item>Uptime: {{ $root.uptime }}</b-nav-item>
       </b-nav>
 
       <div class="ml-auto ml-2 mr-2">
@@ -38,8 +38,6 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import humanizeDuration from 'humanize-duration'
-import axios from 'axios'
 
 @Component({
   filters: {
@@ -49,66 +47,16 @@ import axios from 'axios'
   }
 })
 export default class NavBar extends Vue {
-  title: string = 'Bot'
-  uptime: string = 'offline'
-  streamMetaData: {
-    viewers: number,
-    startedAt: Date | null
-  } = {
-    viewers: 0,
-    startedAt: null
-  }
-  channelMetaData: {
-    game: string,
-    title: string,
-    views: number
-  } = {
-    views: 0,
-    game: 'No data',
-    title: 'No data',
-  }
-  updateTimeout = null
-  mainCurrency = 'USD'
-
-  created() {
-    this.fetchMetaData()
-  }
-
   get tipsFormatted() {
     if (!(this.$root as any).loggedUser.tips) return 0
 
     const result = new Intl.NumberFormat(this.getLocale(), {
       currencyDisplay: 'symbol',
       style: 'currency',
-      currency: this.mainCurrency
+      currency: (this.$root as any).metadata.mainCurrency
       }).format(Number((this.$root as any).loggedUser.tips))
 
     return result.replace(/\s/, '')
-  }
-
-  async fetchMetaData() {
-    clearTimeout(this.updateTimeout)
-    this.updateTimeout = setTimeout(() => this.fetchMetaData(), 10000);
-    const { data } = await axios.get('/api/v1/metaData', { headers: {
-      'x-twitch-token': localStorage.getItem('accessToken')
-    }})
-
-    this.title = data.bot?.username?.toUpperCase() ?? 'Bot'
-    document.title = this.title
-
-    this.streamMetaData = data.streamMetaData
-    this.channelMetaData = data.channelMetaData
-    this.mainCurrency = data.mainCurrency
-
-    this.updateUptime()
-
-  }
-
-  updateUptime() {
-    if (!this.streamMetaData.startedAt) this.uptime = 'offline';
-    else {
-      this.uptime = humanizeDuration(Date.now() - new Date(this.streamMetaData.startedAt).getTime(), { units: ['mo', 'd', 'h', 'm', 's'], round: true })
-    }
   }
 
   logout() {

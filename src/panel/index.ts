@@ -1,12 +1,15 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import VueClipboard from 'vue-clipboard2'
+import axios from 'axios'
+import humanizeDuration from 'humanize-duration'
 import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import './css/main.css'
 
 import isLogged from './helpers/isLogged'
+import { functionsIn } from 'lodash'
 
 Vue.use(VueRouter)
 Vue.use(VueClipboard)
@@ -74,6 +77,20 @@ const start = async () => {
     data: {
       loading: false,
       loggedUser: user,
+      metadata: {
+        stream: {
+          viewers: 0,
+          startedAt: null
+        },
+        channel: {
+          views: 0,
+          game: 'No data',
+          title: 'No data',
+        }
+      },
+      updateTimeout: null,
+      uptime: 'offline',
+      title: 'Bot Panel'
     },
     router,
     template: `
@@ -85,7 +102,34 @@ const start = async () => {
         <router-view v-if="!$root.loading" class="col-md-11 ml-sm-auto col-lg-11 px-md-4 pt-md-3"></router-view>
       </div>
     </div>
-    `
+    `,
+    created() {
+      this.fetchMetaData()
+    },
+    methods: {
+      async fetchMetadata() {
+        clearTimeout(this.updateTimeout)
+        this.updateTimeout = setTimeout(() => this.fetchMetaData(), 10000);
+        const { data } = await axios.get('/api/v1/metaData', { headers: {
+          'x-twitch-token': localStorage.getItem('accessToken')
+        }})
+    
+        this.title = data.bot?.username?.toUpperCase() ?? this.title
+        document.title = this.metadata.bot.username
+    
+        this.metadata.stream = data.streamMetaData
+        this.metadata.channel = data.channelMetaData
+        this.metadata.mainCurrency = data.mainCurrency
+    
+        this.updateUptime()
+      },
+      updateUptime() {
+        if (!this.metadata.stream.startedAt) this.uptime = 'offline';
+        else {
+          this.uptime = humanizeDuration(Date.now() - new Date(this.streamMetaData.startedAt).getTime(), { units: ['mo', 'd', 'h', 'm', 's'], round: true })
+        }
+      }
+    }
   }).$mount('#app')
 
   router.beforeEach((to, from, next) => {
