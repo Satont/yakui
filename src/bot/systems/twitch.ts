@@ -165,6 +165,8 @@ export default new class Twitch implements System {
 
     const suggestedGame = await tmi.clients?.bot?.helix.games.getGameByName(opts.argument)
 
+    if (!suggestedGame) return
+
     await tmi.clients?.bot?.kraken.channels.updateChannel(tmi.channel?.id, {
       game: suggestedGame.name
     })
