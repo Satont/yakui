@@ -47,7 +47,7 @@
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
     "bootstrap": "^4.5.0",
-    "bootstrap-vue": "^2.15.0",
+    "bootstrap-vue": "^2.16.0",
     "centrifuge": "^2.6.4",
     "chalk": "^4.1.0",
     "connect-history-api-fallback": "^1.6.0",
