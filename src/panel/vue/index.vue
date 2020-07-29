@@ -13,7 +13,7 @@
     @resizestop="(left, top, width, height) => onResize(element.id, left, top, width, height)"
     :parent="true"
   >
-  <component :is="element.name" />
+  <component :is="element.name" :id="element.id" />
 </vue-draggable-resizable>
 </div>
 </template>

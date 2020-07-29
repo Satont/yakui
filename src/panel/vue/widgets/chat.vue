@@ -1,5 +1,5 @@
 <template>
-  <Interface :title="title">
+  <Interface :title="title" :id="id">
     <iframe frameborder="0"
         scrolling="no"
         id="chat_embed"
@@ -15,7 +15,10 @@ import { Vue, Component } from 'vue-property-decorator'
 import Interface from './_interface.vue'
 
 @Component({
-  extends: Interface
+  extends: Interface,
+  props: {
+    id: Number
+  }
 })
 export default class Chat extends Vue {
   title = 'Chat'
