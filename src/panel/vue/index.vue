@@ -1,6 +1,6 @@
 <template>
 <div class="dashboard">
-  <b-btn variant="success" block>Add new widget</b-btn>
+  <b-btn variant="success" block class="mb-1">Add new widget</b-btn>
   <vue-draggable-resizable
     v-for="element in widgets"
     :key="element.id"
@@ -74,6 +74,6 @@ export default class Interface extends Vue {
 </script>
 <style scoped>
 .dashboard {
-  min-height: 500px;
+  min-height: 100vh;
 }
 </style>
