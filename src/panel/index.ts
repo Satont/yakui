@@ -104,21 +104,20 @@ const start = async () => {
     </div>
     `,
     created() {
-      this.fetchMetaData()
+      this.fetchMetadata()
     },
     methods: {
       async fetchMetadata() {
         clearTimeout(this.updateTimeout)
-        this.updateTimeout = setTimeout(() => this.fetchMetaData(), 10000);
+        this.updateTimeout = setTimeout(() => this.fetchMetadata(), 10000);
         const { data } = await axios.get('/api/v1/metaData', { headers: {
           'x-twitch-token': localStorage.getItem('accessToken')
         }})
 
         this.title = data.bot?.username?.toUpperCase() ?? this.title
-        document.title = this.metadata.bot.username
-
-        this.metadata.stream = data.streamMetaData
-        this.metadata.channel = data.channelMetaData
+        document.title = this.title
+        this.metadata.stream = data.stream
+        this.metadata.channel = data.channel
         this.metadata.mainCurrency = data.mainCurrency
 
         this.updateUptime()
@@ -126,7 +125,7 @@ const start = async () => {
       updateUptime() {
         if (!this.metadata.stream.startedAt) this.metadata.uptime = 'offline';
         else {
-          this.metadata.uptime = humanizeDuration(Date.now() - new Date(this.streamMetaData.startedAt).getTime(), { units: ['mo', 'd', 'h', 'm', 's'], round: true })
+          this.metadata.uptime = humanizeDuration(Date.now() - new Date(this.metadata.stream.startedAt).getTime(), { units: ['mo', 'd', 'h', 'm', 's'], round: true })
         }
       }
     },

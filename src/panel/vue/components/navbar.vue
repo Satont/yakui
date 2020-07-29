@@ -4,11 +4,11 @@
       <b-navbar-brand class="navbar-brand col-md-1 col-lg-1 mr-0 px-3" router-link to="/">{{ $root.title | truncate }}</b-navbar-brand>
 
       <b-nav align='center'>
-        <b-nav-item>Viewers: {{ streamMetaData.viewers }}</b-nav-item>
-        <b-nav-item>Views: {{ channelMetaData.views }}</b-nav-item>
-        <b-nav-item>Title: {{ channelMetaData.title }}</b-nav-item>
-        <b-nav-item>Game: {{ channelMetaData.game }}</b-nav-item>
-        <b-nav-item>Uptime: {{ $root.uptime }}</b-nav-item>
+        <b-nav-item>Viewers: {{ $root.metadata.stream.viewers }}</b-nav-item>
+        <b-nav-item>Views: {{ $root.metadata.channel.views }}</b-nav-item>
+        <b-nav-item>Title: {{ $root.metadata.channel.title }}</b-nav-item>
+        <b-nav-item>Game: {{ $root.metadata.channel.game }}</b-nav-item>
+        <b-nav-item>Uptime: {{ $root.metadata.uptime }}</b-nav-item>
       </b-nav>
 
       <div class="ml-auto ml-2 mr-2">
