@@ -1,5 +1,6 @@
 <template>
 <div class="dashboard">
+  <b-btn variant="success" block>Add new widget</b-btn>
   <vue-draggable-resizable
     v-for="element in widgets"
     :key="element.id"

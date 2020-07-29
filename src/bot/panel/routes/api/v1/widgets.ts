@@ -40,7 +40,6 @@ router.post('/', isAdmin,  checkSchema({
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
-    console.log(req.body)
     if (!req.body.id) {
       await Widget.create(req.body)
     } else {
