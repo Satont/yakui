@@ -1,7 +1,6 @@
 <template>
-<div>
+<div class="dashboard">
   <vue-draggable-resizable
-    class-name-active="my-active-class"
     v-for="element in [{ name: 'chat', id: 0, left: -22, top: -7, width: 560, height: 560 }]"
     :key="element.id"
     :x="element.left"
@@ -9,9 +8,10 @@
     :w="element.width"
     :h="element.height"
     :resizable="true"
-    :grid="[1,1]"
+    :grid="[3,3]"
     @dragstop="(left, top) => onDrag(element.id, left, top)"
     @resizestop="(left, top, width, height) => onResize(element.id, left, top, width, height)"
+    :parent="true"
   >
   <component :is="element.name" />
 </vue-draggable-resizable>
@@ -41,3 +41,8 @@ export default class Interface extends Vue {
   }
 }
 </script>
+<style scoped>
+.dashboard {
+  min-height: 500px;
+}
+</style>

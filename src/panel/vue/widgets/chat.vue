@@ -19,6 +19,10 @@ import Interface from './_interface.vue'
 })
 export default class Chat extends Vue {
   title = 'Chat'
-  src = `https://www.twitch.tv/embed/${(this.$root as any).title.toLowerCase()}/chat?parent=${window.location.origin}`
+
+  get src() {
+    return `https://www.twitch.tv/embed/${(this.$root as any).title.toLowerCase()}/chat?parent=${window.location.hostname}`
+      + '&darkpopout'
+  }
 }
 </script>
