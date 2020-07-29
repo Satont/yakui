@@ -16,18 +16,18 @@ export default class Widget extends Model<Widget> {
   public name: string
 
   @AllowNull(false)
-  @Column(DataType.STRING)
-  public left: string
+  @Column(DataType.INTEGER)
+  public left: number
 
   @AllowNull(false)
-  @Column(DataType.STRING)
-  public top: string
+  @Column(DataType.INTEGER)
+  public top: number
 
   @AllowNull(false)
-  @Column(DataType.STRING)
-  public width: string
+  @Column(DataType.INTEGER)
+  public width: number
 
   @AllowNull(false)
-  @Column(DataType.STRING)
-  public height: string
+  @Column(DataType.INTEGER)
+  public height: number
 }
