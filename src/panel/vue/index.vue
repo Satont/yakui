@@ -35,7 +35,6 @@
 import { Vue, Component } from 'vue-property-decorator'
 import axios from 'axios'
 import VueGridLayout  from 'vue-grid-layout'
-import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
 import Widget from '../../bot/models/Widget'
 
 @Component({
@@ -46,9 +45,7 @@ import Widget from '../../bot/models/Widget'
     chat: () => import('./widgets/chat.vue')
   },
   filters: {
-    capitalize: (v) => {
-      return v.toUpperCase()
-    }
+    capitalize: (v) => v.toUpperCase()
   }
 })
 export default class Interface extends Vue {
@@ -77,7 +74,7 @@ export default class Interface extends Vue {
 
     const widgets: Widget[] = request.data
     this.widgets = widgets.reduce((array, widget, index) => {
-      array.push({ ...widget.toJSON(), i: index, })
+      array.push({ ...widget, i: index, })
       return array
     }, [])
     console.log(this.widgets)
@@ -91,7 +88,7 @@ export default class Interface extends Vue {
     let y = 0
     for (const w of this.widgets) y = Math.max(y, w.y + w.h)
 
-    const { data } = await axios.post('/api/v1/widgets', { x: 0, y, h: 3, w: 4, name }, {
+    const { data } = await axios.post('/api/v1/widgets', { x: 0, y, h: 9, w: 4, name }, {
       headers: {
         'x-twitch-token': localStorage.getItem('accessToken')
       },
