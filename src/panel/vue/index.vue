@@ -43,14 +43,15 @@ import Widget from '../../bot/models/Widget'
     VueGridLayout,
     GridLayout: VueGridLayout.GridLayout,
     GridItem: VueGridLayout.GridItem,
-    chat: () => import('./widgets/chat.vue')
+    chat: () => import('./widgets/chat.vue'),
+    stream: () => import('./widgets/stream.vue')
   },
   filters: {
     capitalize: (v) => v.toUpperCase()
   }
 })
 export default class Interface extends Vue {
-  available = ['chat']
+  available = ['chat', 'stream']
   title = 'Some Widget'
   widgets: { name: string, x: number, y: number, h: number, w: number, i: number, id: number }[] = []
 
