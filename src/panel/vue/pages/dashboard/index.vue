@@ -36,15 +36,15 @@
 import { Vue, Component } from 'vue-property-decorator'
 import axios from 'axios'
 import VueGridLayout  from 'vue-grid-layout'
-import Widget from '../../bot/models/Widget'
+import Widget from '../../../../bot/models/Widget'
 
 @Component({
   components: {
     VueGridLayout,
     GridLayout: VueGridLayout.GridLayout,
     GridItem: VueGridLayout.GridItem,
-    chat: () => import('./widgets/chat.vue'),
-    stream: () => import('./widgets/stream.vue')
+    chat: () => import('../../widgets/chat.vue'),
+    stream: () => import('../../widgets/stream.vue')
   },
   filters: {
     capitalize: (v) => v.toUpperCase()

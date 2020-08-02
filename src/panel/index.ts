@@ -25,7 +25,7 @@ const start = async () => {
   const router = new VueRouter({
     mode: 'history',
     routes: [
-      { path: '/', name: 'Home', component: () => import('./vue/index.vue'), alias: '/home' },
+      { path: '/', name: 'Home', component: () => import('./vue/pages/dashboard/index.vue'), alias: '/home' },
       {
         path: '/settings',
         component: () => import('./vue/pages/settings/index.vue'),
