@@ -21,40 +21,41 @@ router.post('/', isAdmin,  checkSchema({
     in: ['body'],
     optional: true,
   },
-  top: {
+  y: {
     isNumeric: true,
     in: ['body'],
   },
-  left: {
+  x: {
     isNumeric: true,
     in: ['body'],
   },
-  width: {
+  w: {
     isNumeric: true,
     in: ['body'],
   },
-  height: {
+  h: {
     isNumeric: true,
     in: ['body'],
   }
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
+    let widget: Widget
     if (!req.body.id) {
-      await Widget.create(req.body)
+      widget = await Widget.create(req.body)
     } else {
-      const widget: Widget = await Widget.findOne({ where: { id: req.body.id }})
+      widget = await Widget.findOne({ where: { id: req.body.id }})
 
-      widget.height = req.body.height
-      widget.width = req.body.width
-      widget.top = req.body.top
-      widget.left = req.body.left
+      widget.h = req.body.h
+      widget.w = req.body.w
+      widget.y = req.body.y
+      widget.x = req.body.x
       widget.name = req.body.name
 
       await widget.save()
     }
 
-    res.json('Ok')
+    res.json(widget)
   } catch (e) {
     next(e)
   }

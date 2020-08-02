@@ -5,10 +5,10 @@ export async function up(knex: Knex): Promise<void> {
   return await knex.schema.createTable('widgets', table => {
     table.increments('id').primary(),
     table.string('name').unique().notNullable(),
-    table.integer('left').notNullable(),
-    table.integer('top').notNullable(),
-    table.integer('width').notNullable(),
-    table.integer('height').notNullable()
+    table.integer('x').notNullable(),
+    table.integer('y').notNullable(),
+    table.integer('w').notNullable(),
+    table.integer('h').notNullable()
   })
 }
 
