@@ -77,7 +77,6 @@ export default class Interface extends Vue {
       array.push({ ...widget, i: index, })
       return array
     }, [])
-    console.log(this.widgets)
   }
 
   get availableWidgets() {
@@ -108,9 +107,6 @@ export default class Interface extends Vue {
 }
 </script>
 <style scoped>
-.dashboardd {
-  min-height: 100vh;
-}
 .title {
   font-weight: bold;
 }
