@@ -47,7 +47,7 @@ import { Vue, Component, Mixins } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import { EnvChecker } from '../helpers/mixins'
 
-import axios from 'axios'
+import axios from '../../components/axios'
 import User from '@bot/models/User'
 
 @Component({
@@ -85,11 +85,8 @@ export default class UsersManagerList extends Mixins(EnvChecker) {
   }
 
   async del(id, index) {
-    await axios.delete('/api/v1/users', {
+    await axios.delete('/users', {
       data: { id },
-      headers: {
-        'x-twitch-token': localStorage.getItem('accessToken')
-      }
     })
     this.users.splice(index, 1)
   }
@@ -99,16 +96,13 @@ export default class UsersManagerList extends Mixins(EnvChecker) {
     this.sortDesc = o?.sortDesc ?? this.sortDesc
     this.currentPage = o?.currentPage ?? this.currentPage
 
-    const { data } = await axios.get('/api/v1/users', {
+    const { data } = await axios.get('/users', {
       params: {
         sortBy: this.sortyBy,
         sortDesc: this.sortDesc,
         page: this.currentPage,
         perPage: this.perPage,
         byUsername: this.byUsername,
-      },
-      headers: {
-        'x-twitch-token': localStorage.getItem('accessToken')
       }
     })
 

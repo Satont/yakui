@@ -34,9 +34,9 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import axios from 'axios'
 import VueGridLayout  from 'vue-grid-layout'
 import Widget from '../../../../bot/models/Widget'
+import axios from '../../components/axios'
 
 @Component({
   components: {
@@ -58,21 +58,13 @@ export default class Interface extends Vue {
   async saveWidget(index) {
     const widget = this.widgets[index]
 
-    const { data } = await axios.post('/api/v1/widgets', widget, {
-      headers: {
-        'x-twitch-token': localStorage.getItem('accessToken')
-      },
-    })
+    const { data } = await axios.post('/widgets', widget)
 
     return data
   }
 
   async created() {
-    const request = await axios.get('/api/v1/widgets', {
-      headers: {
-        'x-twitch-token': localStorage.getItem('accessToken')
-      }
-    })
+    const request = await axios.get('/widgets')
 
     const widgets: Widget[] = request.data
     this.widgets = widgets.reduce((array, widget, index) => {
@@ -89,20 +81,13 @@ export default class Interface extends Vue {
     let y = 0
     for (const w of this.widgets) y = Math.max(y, w.y + w.h)
 
-    const { data } = await axios.post('/api/v1/widgets', { x: 0, y, h: 9, w: 4, name }, {
-      headers: {
-        'x-twitch-token': localStorage.getItem('accessToken')
-      },
-    })
+    const { data } = await axios.post('/widgets', { x: 0, y, h: 9, w: 4, name })
 
     this.widgets.push(data)
   }
 
   async delWidget(id) {
-    await axios.delete('/api/v1/widgets', {
-      headers: {
-        'x-twitch-token': localStorage.getItem('accessToken')
-      },
+    await axios.delete('/widgets', {
       data: { id }
     })
 

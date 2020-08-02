@@ -25,7 +25,7 @@
 import { Vue, Component } from 'vue-property-decorator'
 
 import Overlay from '@bot/models/Overlay'
-import axios from 'axios'
+import axios from '../../components/axios'
 
 @Component({
   filters: {
@@ -38,11 +38,7 @@ export default class OverlaysList extends Vue {
   overlays: Overlay[] = []
 
   async created() {
-    const overlays = await axios.get('/api/v1/overlays', {
-      headers: {
-        'x-twitch-token': localStorage.getItem('accessToken')
-      }
-    })
+    const overlays = await axios.get('/overlays')
 
     this.overlays = overlays.data
   }
@@ -52,11 +48,8 @@ export default class OverlaysList extends Vue {
   }
 
   async del(id, index) {
-    await axios.delete('/api/v1/overlays', {
+    await axios.delete('/overlays', {
       data: { id },
-      headers: {
-        'x-twitch-token': localStorage.getItem('accessToken')
-      }
     })
 
     this.overlays.splice(index, 1)

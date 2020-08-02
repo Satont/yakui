@@ -56,7 +56,7 @@
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import { Command } from 'typings'
-import axios from 'axios'
+import axios from '../../components/axios'
 
 @Component({})
 export default class CommandsManagerEdit extends Vue {
@@ -85,9 +85,7 @@ export default class CommandsManagerEdit extends Vue {
     event.preventDefault()
     this.filterAliases()
 
-    await axios.post('/api/v1/commands', this.command, { headers: {
-      'x-twitch-token': localStorage.getItem('accessToken')
-    }})
+    await axios.post('/commands', this.command)
     await this.$router.push({ name: 'CommandsManagerList' })
   }
 
@@ -101,20 +99,15 @@ export default class CommandsManagerEdit extends Vue {
     if (id) {
       this.command = this.$route.params as any
 
-      const { data } = await axios.get('/api/v1/commands/' + id, { headers: {
-        'x-twitch-token': localStorage.getItem('accessToken')
-      }})
+      const { data } = await axios.get('/commands/' + id)
 
       this.command = data
     }
   }
 
   async del() {
-    await axios.delete('/api/v1/commands', {
+    await axios.delete('/commands', {
       data: { id: this.command.id },
-      headers: {
-        'x-twitch-token': localStorage.getItem('accessToken')
-      }
     })
   }
 

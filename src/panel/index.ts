@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import VueClipboard from 'vue-clipboard2'
-import axios from 'axios'
+import axios from './vue/components/axios'
 import humanizeDuration from 'humanize-duration'
 import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
@@ -9,7 +9,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import './css/main.css'
 
 import isLogged from './helpers/isLogged'
-import { functionsIn } from 'lodash'
+
 
 Vue.use(VueRouter)
 Vue.use(VueClipboard)
@@ -110,9 +110,7 @@ const start = async () => {
       async fetchMetadata() {
         clearTimeout(this.updateTimeout)
         this.updateTimeout = setTimeout(() => this.fetchMetadata(), 10000);
-        const { data } = await axios.get('/api/v1/metaData', { headers: {
-          'x-twitch-token': localStorage.getItem('accessToken')
-        }})
+        const { data } = await axios.get('/metaData')
 
         this.title = data.bot?.username?.toUpperCase() ?? this.title
         document.title = this.title

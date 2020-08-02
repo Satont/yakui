@@ -25,16 +25,14 @@
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import Timer from '@bot/models/Timer'
-import axios from 'axios'
+import axios from '../../components/axios'
 
 @Component
 export default class TimersManagerList extends Vue {
   timers: Timer[] = []
 
   async created() {
-    const { data } = await axios.get('/api/v1/timers', { headers: {
-      'x-twitch-token': localStorage.getItem('accessToken')
-    }})
+    const { data } = await axios.get('/timers')
     this.timers = data
   }
 
@@ -43,11 +41,8 @@ export default class TimersManagerList extends Vue {
   }
 
   async del(id, index) {
-    await axios.delete('/api/v1/timers', {
+    await axios.delete('/timers', {
       data: { id },
-      headers: {
-        'x-twitch-token': localStorage.getItem('accessToken')
-      }
     })
     this.timers.splice(index, 1)
   }

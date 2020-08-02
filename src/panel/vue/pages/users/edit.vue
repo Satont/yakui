@@ -53,7 +53,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
-import axios from 'axios'
+import axios from '../../components/axios'
 
 @Component({})
 export default class UsersManagerEdit extends Vue {
@@ -75,29 +75,20 @@ export default class UsersManagerEdit extends Vue {
   async onSubmit(event) {
     event.preventDefault()
 
-    await axios.post('/api/v1/users', { user: this.user, delete: this.delete }, {
-      headers: {
-        'x-twitch-token': localStorage.getItem('accessToken')
-      }
-    })
+    await axios.post('/users', { user: this.user, delete: this.delete })
   }
 
   async created() {
     const id = this.$route.params.id as any
 
     this.user = this.$route.params as any
-    const { data } = await axios.get('/api/v1/users/' + id, { headers: {
-      'x-twitch-token': localStorage.getItem('accessToken')
-    }})
+    const { data } = await axios.get('/users/' + id)
     this.user = data
   }
 
   async delUser() {
-    await axios.delete('/api/v1/user', {
+    await axios.delete('/users', {
       data: { id: (this.user as any).id },
-      headers: {
-        'x-twitch-token': localStorage.getItem('accessToken')
-      }
     })
   }
 
