@@ -44,14 +44,15 @@ import axios from '../../components/axios'
     GridLayout: VueGridLayout.GridLayout,
     GridItem: VueGridLayout.GridItem,
     chat: () => import('../../widgets/chat.vue'),
-    stream: () => import('../../widgets/stream.vue')
+    stream: () => import('../../widgets/stream.vue'),
+    eventlist: () => import('../../widgets/eventlist.vue')
   },
   filters: {
     capitalize: (v) => v.toUpperCase()
   }
 })
 export default class Interface extends Vue {
-  available = ['chat', 'stream']
+  available = ['chat', 'stream', 'eventlist']
   title = 'Some Widget'
   widgets: { name: string, x: number, y: number, h: number, w: number, i: number, id: number }[] = []
 

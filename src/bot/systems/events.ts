@@ -5,13 +5,17 @@ import tmi from '@bot/libs/tmi'
 import { System, DonationData, HostType } from 'typings'
 import Event from '@bot/models/Event'
 import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove, INewResubscriber, INewSubscriber } from 'typings/events'
+import EventList from '@bot/models/EventList'
 
 export default new class Events implements System {
   alreadyListen = false
   events: Event[] = []
+  latestTimestamp: number = 0
 
   async init() {
     this.loadEvents()
+    const event: EventList = await EventList.findOne({ order: [['timestamp', 'desc']] })
+    this.latestTimestamp = event?.timestamp ?? Date.now()
   }
 
   async loadEvents() {
@@ -65,32 +69,47 @@ export default new class Events implements System {
     }
   }
 
-  onDonation(data: DonationData ) {
+  async addToEventList({ name, data }: { name: string, data: object }) {
+    this.latestTimestamp = Date.now()
+    await EventList.create({ name, data })
+  }
+
+  onDonation(data: DonationData) {
     this.fire( { name: 'tip', opts: data })
+    this.addToEventList({
+      name: 'tip',
+      data: { username: data.username, currency: data.currency, amount: data.inMainCurrencyAmount, message: data.message }
+    })
   }
 
   onHosted({ viewers, username }: HostType) {
     this.fire({ name: 'hosted', opts: { username, viewers } })
+    this.addToEventList({ name: 'hosted', data: { username, viewers } })
   }
 
   onHosting({ viewers, username }: HostType) {
     this.fire({ name: 'host', opts: { username, viewers } })
+    this.addToEventList({ name: 'host', data: { username, viewers } })
   }
 
   onRaided({ viewers, username }: HostType) {
     this.fire({ name: 'raided', opts: { username, viewers } })
+    this.addToEventList({ name: 'raided', data: { username, viewers } })
   }
 
   onUserFollow({ from_name }: IWebHookUserFollow) {
     this.fire({ name: 'follow', opts: { username: from_name } })
+    this.addToEventList({ name: 'follow', data: { username: from_name } })
   }
 
   onAddModerator({ event_data: { user_name: username } }: IWebHookModeratorAdd) {
     this.fire({ name: 'newmod', opts: { username }})
+    this.addToEventList({ name: 'newmod', data: { username } })
   }
 
   onRemoveModerator({ event_data: { user_name: username } }: IWebHookModeratorRemove) {
     this.fire({ name: 'removemod', opts: { username }})
+    this.addToEventList({ name: 'removemod', data: { username } })
   }
 
   onSubscribe(data: INewSubscriber) {
@@ -103,6 +122,10 @@ export default new class Events implements System {
         message: data.message,
         username: data.username
       }
+    })
+    this.addToEventList({
+      name: 'sub',
+      data: { username: data.username, tier: data.tier, message: data.message }
     })
   }
 
@@ -118,6 +141,11 @@ export default new class Events implements System {
         message: data.message,
         username: data.username
       }
+    })
+
+    this.addToEventList({
+      name: 'resub',
+      data: { username: data.username, tier: data.tier, message: data.message, months: data.months, overallMonths: data.overallMonths }
     })
   }
 }

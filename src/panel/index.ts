@@ -90,6 +90,7 @@ const start = async () => {
         uptime: 'offline',
       },
       updateTimeout: null,
+      lang: 'RU',
       title: 'Bot Panel'
     },
     router,
@@ -117,6 +118,7 @@ const start = async () => {
         this.metadata.stream = data.stream
         this.metadata.channel = data.channel
         this.metadata.mainCurrency = data.mainCurrency
+        this.metadata.lang = data.lang
 
         this.updateUptime()
       },
