@@ -4,6 +4,7 @@ import timers from './timers'
 import users from './users'
 import settings from './settings'
 import events from './events'
+import eventlist from './eventlist'
 import metaData from './metaData'
 import keywords from './keywords'
 import variables from './variables'
@@ -24,6 +25,7 @@ router.use('/timers', timers)
 router.use('/users', users)
 router.use('/settings', settings)
 router.use('/events', events)
+router.use('/eventlist', eventlist)
 router.use('/keywords', keywords)
 router.use('/variables', variables)
 router.use('/greetings', greetings)
