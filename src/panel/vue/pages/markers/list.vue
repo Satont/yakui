@@ -21,7 +21,6 @@
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import Timer from '@bot/models/Timer'
-import axios from '../../components/axios'
 import { MarkerInList } from '../../../../../typings'
 
 @Component
@@ -35,7 +34,7 @@ export default class TimersManagerList extends Vue {
   ]
 
   async created() {
-    const { data } = await axios.get('/markers')
+    const { data } = await this.$axios.get('/markers')
     this.markers = data
   }
 }

@@ -28,7 +28,6 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
-import axios from '../../components/axios'
 
 @Component({})
 export default class GreetingsManagerEdit extends Vue {
@@ -46,7 +45,7 @@ export default class GreetingsManagerEdit extends Vue {
       return alert('Please enter userId or username')
     }
 
-    await axios.post('/greetings', this.greeting)
+    await this.$axios.post('/greetings', this.greeting)
     await this.$router.push({ name: 'GreetingsManagerList' })
   }
 
@@ -57,14 +56,14 @@ export default class GreetingsManagerEdit extends Vue {
     if (id) {
       this.greeting = this.$route.params as any
 
-      const { data } = await axios.get('/greetings/' + id)
+      const { data } = await this.$axios.get('/greetings/' + id)
 
       this.greeting = data
     }
   }
 
   async del() {
-    await axios.delete('/greetings', {
+    await this.$axios.delete('/greetings', {
       data: { id: (this.greeting as any).id },
     })
   }

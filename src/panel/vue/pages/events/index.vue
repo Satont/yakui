@@ -57,7 +57,6 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import axios from '../../components/axios'
 import Event from '@bot/models/Event'
 
 export default Vue.extend({
@@ -166,7 +165,7 @@ export default Vue.extend({
     }
   }),
   async created() {
-    const { data }: { data: Event[] } = await axios.get('/events')
+    const { data }: { data: Event[] } = await this.$axios.get('/events')
 
     for (const event of data) {
       this[event.name].operations = event.operations
@@ -180,7 +179,7 @@ export default Vue.extend({
       this[this.show].operations.splice(index, 1)
     },
     save: async function () {
-      await axios.post('/events', { name: this.show, operations: this[this.show].operations })
+      await this.$axios.post('/events', { name: this.show, operations: this[this.show].operations })
     }
   }
 })

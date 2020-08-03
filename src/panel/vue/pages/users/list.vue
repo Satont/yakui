@@ -47,7 +47,6 @@ import { Vue, Component, Mixins } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import { EnvChecker } from '../helpers/mixins'
 
-import axios from '../../components/axios'
 import User from '@bot/models/User'
 
 @Component({
@@ -85,7 +84,7 @@ export default class UsersManagerList extends Mixins(EnvChecker) {
   }
 
   async del(id, index) {
-    await axios.delete('/users', {
+    await this.$axios.delete('/users', {
       data: { id },
     })
     this.users.splice(index, 1)
@@ -96,7 +95,7 @@ export default class UsersManagerList extends Mixins(EnvChecker) {
     this.sortDesc = o?.sortDesc ?? this.sortDesc
     this.currentPage = o?.currentPage ?? this.currentPage
 
-    const { data } = await axios.get('/users', {
+    const { data } = await this.$axios.get('/users', {
       params: {
         sortBy: this.sortyBy,
         sortDesc: this.sortDesc,

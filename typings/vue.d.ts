@@ -1,4 +1,10 @@
-declare module '*.vue' {
-  import Vue from 'vue'
-  export default Vue
+import { AxiosStatic } from "axios";
+
+declare module 'vue/types/vue' {
+  interface Vue {
+    $axios: AxiosStatic;
+  }
+  interface VueConstructor  {
+    $axios: AxiosStatic;
+  }
 }

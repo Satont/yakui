@@ -36,7 +36,6 @@
 import { Vue, Component } from 'vue-property-decorator'
 import VueGridLayout  from 'vue-grid-layout'
 import Widget from '../../../../bot/models/Widget'
-import axios from '../../components/axios'
 
 @Component({
   components: {
@@ -64,7 +63,7 @@ export default class Interface extends Vue {
   async saveWidget(index) {
     const widget = this.widgets[index]
 
-    const { data } = await axios.post('/widgets', widget)
+    const { data } = await this.$axios.post('/widgets', widget)
 
     return data
   }
@@ -74,7 +73,7 @@ export default class Interface extends Vue {
   }
 
   async getWidgets() {
-    const request = await axios.get('/widgets')
+    const request = await this.$axios.get('/widgets')
 
     const widgets: Widget[] = request.data
     this.widgets = widgets.reduce((array, widget, index) => {
@@ -91,13 +90,13 @@ export default class Interface extends Vue {
     let y = 0
     for (const w of this.widgets) y = Math.max(y, w.y + w.h)
     const object = { x: 0, y, h: 9, w: 4, name }
-    const { data } = await axios.post('/widgets', object)
+    const { data } = await this.$axios.post('/widgets', object)
 
     this.getWidgets()
   }
 
   async delWidget(id) {
-    await axios.delete('/widgets', {
+    await this.$axios.delete('/widgets', {
       data: { id }
     })
 

@@ -24,14 +24,13 @@
 import { Vue, Component } from 'vue-property-decorator'
 import Variable from '@bot/models/Variable'
 import { Route } from 'vue-router'
-import axios from '../../components/axios'
 
 @Component
 export default class CustomVariaiblesManagerList extends Vue {
   variables: Variable[] = []
 
   async created() {
-    const { data } = await axios.get('/variables')
+    const { data } = await this.$axios.get('/variables')
     this.variables = data
   }
 
@@ -40,7 +39,7 @@ export default class CustomVariaiblesManagerList extends Vue {
   }
 
   async del(id, index) {
-    await axios.delete('/variables', {
+    await this.$axios.delete('/variables', {
       data: { id },
     })
     this.variables.splice(index, 1)

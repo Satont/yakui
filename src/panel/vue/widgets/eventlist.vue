@@ -36,7 +36,6 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import axios from '../components/axios'
 import EventList from '../../../bot/models/EventList'
 import humanizeDuration from 'humanize-duration'
 
@@ -56,14 +55,14 @@ export default class Chat extends Vue {
   }
 
   async getEvents() {
-    const { data } = await axios.get('/eventlist')
+    const { data } = await this.$axios.get('/eventlist')
     this.events = data
   }
 
   async heartbeat() {
     setTimeout(() => this.heartbeat(), 2000);
 
-    const { data } = await axios.post('/eventlist/heartbeat', { timestamp: this.events[0]?.timestamp })
+    const { data } = await this.$axios.post('/eventlist/heartbeat', { timestamp: this.events[0]?.timestamp })
 
     if (!data) {
       this.getEvents()

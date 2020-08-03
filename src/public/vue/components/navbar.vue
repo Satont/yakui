@@ -39,7 +39,6 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import humanizeDuration from 'humanize-duration'
-import axios from '../../../panel/vue/components/axios'
 
 @Component({
   filters: {
@@ -89,7 +88,7 @@ export default class NavBar extends Vue {
   async fetchMetaData() {
     clearTimeout(this.updateTimeout)
     this.updateTimeout = setTimeout(() => this.fetchMetaData(), 10000);
-    const { data } = await axios.get('/metaData')
+    const { data } = await this.$axios.get('/metaData')
 
     this.title = data.bot?.username?.toUpperCase() ?? 'Bot'
     document.title = this.title

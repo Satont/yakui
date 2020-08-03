@@ -25,14 +25,13 @@
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import Timer from '@bot/models/Timer'
-import axios from '../../components/axios'
 
 @Component
 export default class TimersManagerList extends Vue {
   timers: Timer[] = []
 
   async created() {
-    const { data } = await axios.get('/timers')
+    const { data } = await this.$axios.get('/timers')
     this.timers = data
   }
 
@@ -41,7 +40,7 @@ export default class TimersManagerList extends Vue {
   }
 
   async del(id, index) {
-    await axios.delete('/timers', {
+    await this.$axios.delete('/timers', {
       data: { id },
     })
     this.timers.splice(index, 1)

@@ -26,7 +26,6 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
-import axios from '../../components/axios'
 
 @Component
 export default class GreetingsManagerList extends Vue {
@@ -34,7 +33,7 @@ export default class GreetingsManagerList extends Vue {
   greetings = []
 
   async created() {
-    const greetings = await axios.get('/greetings')
+    const greetings = await this.$axios.get('/greetings')
 
     this.greetings = greetings.data
   }
@@ -44,7 +43,7 @@ export default class GreetingsManagerList extends Vue {
   }
 
   async del(id, index) {
-    await axios.delete('/greetings', {
+    await this.$axios.delete('/greetings', {
       data: { id },
     })
     this.greetings.splice(index, 1)

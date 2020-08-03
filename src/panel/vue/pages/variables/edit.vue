@@ -23,7 +23,6 @@
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import Variable from '@bot/models/Variable'
-import axios from '../../components/axios'
 
 @Component({})
 export default class CustomVariablesManagerEdit extends Vue {
@@ -36,7 +35,7 @@ export default class CustomVariablesManagerEdit extends Vue {
   async onSubmit(event) {
     event.preventDefault()
 
-    await axios.post('/variables', this.variable)
+    await this.$axios.post('/variables', this.variable)
     await this.$router.push({ name: 'CustomVariablesManagerList' })
   }
 
@@ -47,14 +46,14 @@ export default class CustomVariablesManagerEdit extends Vue {
     if (id) {
       this.variable = this.$route.params as any
 
-      const { data } = await axios.get('/variables/' + id)
+      const { data } = await this.$axios.get('/variables/' + id)
 
       this.variable = data
     }
   }
 
   async del() {
-    await axios.delete('/variables', {
+    await this.$axios.delete('/variables', {
       data: { id: (this.variable as any).id },
     })
   }

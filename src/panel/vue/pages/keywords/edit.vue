@@ -29,7 +29,6 @@
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import Keyword from '@bot/models/Keyword'
-import axios from '../../components/axios'
 
 @Component({})
 export default class KeywordsManagerEdit extends Vue {
@@ -43,7 +42,7 @@ export default class KeywordsManagerEdit extends Vue {
   async onSubmit(event) {
     event.preventDefault()
 
-    await axios.post('/keywords', this.keyword)
+    await this.$axios.post('/keywords', this.keyword)
     await this.$router.push({ name: 'KeywordsManagerList' })
   }
 
@@ -54,14 +53,14 @@ export default class KeywordsManagerEdit extends Vue {
     if (id) {
       this.keyword = this.$route.params as any
 
-      const { data } = await axios.get('/keywords/' + id)
+      const { data } = await this.$axios.get('/keywords/' + id)
 
       this.keyword = data
     }
   }
 
   async del() {
-    await axios.delete('/keywords', {
+    await this.$axios.delete('/keywords', {
       data: { id: (this.keyword as any).id },
     })
   }

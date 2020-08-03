@@ -20,7 +20,6 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import axios from '../components/axios'
 
 @Component({
   props: {
@@ -37,7 +36,7 @@ export default class Chat extends Vue {
   }
 
   async sendMessage() {
-    await axios.post('/chatMessage/bot', { message: this.message })
+    await this.$axios.post('/chatMessage/bot', { message: this.message })
     this.message = null
   }
 }

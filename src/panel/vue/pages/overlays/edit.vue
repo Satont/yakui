@@ -45,7 +45,6 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import Overlay from '@bot/models/Overlay'
-import axios from '../../components/axios'
 
 @Component
 export default class Edit extends Vue {
@@ -57,7 +56,7 @@ export default class Edit extends Vue {
   }
 
    async onSubmit(event) {
-    await axios.post('/overlays', this.overlay)
+    await this.$axios.post('/overlays', this.overlay)
     await this.$router.push({ name: 'OverlaysManagerList' })
   }
 
@@ -68,14 +67,14 @@ export default class Edit extends Vue {
     if (id) {
       this.overlay = this.$route.params as any
 
-      const { data } = await axios.get('/overlays/' + id)
+      const { data } = await this.$axios.get('/overlays/' + id)
 
       this.overlay = data
     }
   }
 
   async del() {
-    await axios.delete('/overlays', {
+    await this.$axios.delete('/overlays', {
       data: { id: (this.overlay as any).id },
     })
     await this.$router.push({ name: 'OverlaysManagerList' })

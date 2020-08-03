@@ -5,9 +5,11 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import '../panel/css/main.css'
 import isLogged from '../panel/helpers/isLogged'
+import Axios from '../panel/vue/plugins/axios'
 
 Vue.use(VueRouter)
 Vue.use(BootstrapVue)
+Vue.use(Axios)
 Vue.component('loading', () => import('./vue/components/loadingAnimation.vue'))
 Vue.component('nav-bar', () => import('./vue/components/navbar.vue'))
 Vue.component('side-bar', () => import('./vue/components/sidebar.vue'))
