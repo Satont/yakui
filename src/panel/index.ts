@@ -86,6 +86,7 @@ const start = async () => {
           views: 0,
           game: 'No data',
           title: 'No data',
+          name: null,
         },
         uptime: 'offline',
       },

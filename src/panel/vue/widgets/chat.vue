@@ -20,7 +20,7 @@ export default class Chat extends Vue {
   title = 'Chat'
 
   get src() {
-    return `https://www.twitch.tv/embed/${(this.$root as any).title.toLowerCase()}/chat?parent=${window.location.hostname}`
+    return `https://www.twitch.tv/embed/${(this.$root as any).metadata.channel.name.toLowerCase()}/chat?parent=${window.location.hostname}`
       + '&darkpopout'
   }
 }
