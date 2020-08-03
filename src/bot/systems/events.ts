@@ -10,9 +10,12 @@ import EventList from '@bot/models/EventList'
 export default new class Events implements System {
   alreadyListen = false
   events: Event[] = []
+  latestTimestamp: number = 0
 
   async init() {
     this.loadEvents()
+    const event: EventList = await EventList.findOne({ order: [['timestamp', 'desc']] })
+    this.latestTimestamp = event?.timestamp ?? Date.now()
   }
 
   async loadEvents() {
@@ -67,6 +70,7 @@ export default new class Events implements System {
   }
 
   async addToEventList({ name, data }: { name: string, data: object }) {
+    this.latestTimestamp = Date.now()
     await EventList.create({ name, data })
   }
 

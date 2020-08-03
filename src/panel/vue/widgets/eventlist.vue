@@ -50,8 +50,23 @@ export default class Chat extends Vue {
   amount = 100
 
   async created() {
+    this.getEvents()
+    this.heartbeat()
+  }
+
+  async getEvents() {
     const { data } = await axios.get('/eventlist')
     this.events = data
+  }
+
+  async heartbeat() {
+    setTimeout(() => this.heartbeat(), 2000);
+
+    const { data } = await axios.post('/eventlist/heartbeat', { timestamp: this.events[0]?.timestamp })
+
+    if (!data) {
+      this.getEvents()
+    }
   }
 
   humanize(val) {

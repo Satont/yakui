@@ -1,4 +1,4 @@
-import { Table, Column, Model, DataType, PrimaryKey, AllowNull, AutoIncrement, Unique, Default } from 'sequelize-typescript'
+import { Table, Column, Model, DataType, PrimaryKey, AllowNull, AutoIncrement, Unique, Default, BeforeCreate } from 'sequelize-typescript'
 
 @Table({
   tableName: 'eventlist',
@@ -22,4 +22,9 @@ export default class EventList extends Model<EventList> {
   @Default(Date.now())
   @Column(DataType.BIGINT)
   public timestamp: number
+
+  @BeforeCreate
+  static setTimestamp(instance: EventList) {
+    instance.timestamp = Date.now()
+  }
 }
