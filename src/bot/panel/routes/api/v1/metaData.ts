@@ -8,8 +8,8 @@ const router = Router()
 router.get('/', (req, res) => {
   res.json({
     bot: { username: tmi.chatClients?.bot?.currentNick },
-    channelMetaData: twitch.channelMetaData,
-    streamMetaData: twitch.streamMetaData,
+    channel: twitch.channelMetaData,
+    stream: twitch.streamMetaData,
     mainCurrency: currency.botCurrency
   })
 })

@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import Event from '@bot/models/Event'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
+import events from '@bot/systems/events'
 
 const router = Router()
 
@@ -26,7 +27,7 @@ router.post('/', isAdmin, async (req, res, next) => {
     if (!created) {
       await event.update({ operations: data.operations })
     }
-
+    await events.init()
     res.send(event)
   } catch (e) {
     next(e)

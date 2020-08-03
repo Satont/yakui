@@ -13,7 +13,7 @@
         <template slot="label" label-for="message">
            Greeting message <variables-list></variables-list>
         </template>
-        <b-form-input id="message" v-model.trim="greeting.message" type="text" placeholder="Enter message for user"></b-form-input>
+        <b-form-input id="message" v-model.trim="greeting.message" required type="text" placeholder="Enter message for user"></b-form-input>
       </b-form-group>
 
       <b-button class="btn-block" variant="success" v-if="greeting.enabled" v-on:click="greeting.enabled = !greeting.enabled">Enabled</b-button>
@@ -28,7 +28,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
-import axios from 'axios'
+import axios from '../../components/axios'
 
 @Component({})
 export default class GreetingsManagerEdit extends Vue {
@@ -46,9 +46,7 @@ export default class GreetingsManagerEdit extends Vue {
       return alert('Please enter userId or username')
     }
 
-    await axios.post('/api/v1/greetings', this.greeting, { headers: {
-      'x-twitch-token': localStorage.getItem('accessToken')
-    }})
+    await axios.post('/greetings', this.greeting)
     await this.$router.push({ name: 'GreetingsManagerList' })
   }
 
@@ -59,20 +57,15 @@ export default class GreetingsManagerEdit extends Vue {
     if (id) {
       this.greeting = this.$route.params as any
 
-      const { data } = await axios.get('/api/v1/greetings/' + id, { headers: {
-        'x-twitch-token': localStorage.getItem('accessToken')
-      }})
+      const { data } = await axios.get('/greetings/' + id)
 
       this.greeting = data
     }
   }
 
   async del() {
-    await axios.delete('/api/v1/greetings', {
+    await axios.delete('/greetings', {
       data: { id: (this.greeting as any).id },
-      headers: {
-        'x-twitch-token': localStorage.getItem('accessToken')
-      }
     })
   }
 }

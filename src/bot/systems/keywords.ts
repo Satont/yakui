@@ -14,7 +14,7 @@ export default new class Keywords implements System {
   async init() {
     const keywords: Keyword[] = await Keyword.findAll()
 
-    this.keywords = keywords.map(keyword => ({ 
+    this.keywords = keywords.map(keyword => ({
       name: keyword.name.toLowerCase(),
       response: keyword.response,
       cooldown: keyword.cooldown,
@@ -24,11 +24,11 @@ export default new class Keywords implements System {
 
   async parser(opts: ParserOptions) {
     opts.message = opts.message.toLowerCase()
-  
+
     for (const item of this.keywords) {
       if (!item.enabled || this.cooldowns.includes(item.name)) continue
       let founded = false
-  
+
       if (isRegExp(item.name) && opts.message.match(item.name)) {
         const message = await variables.parseMessage({ message: item.response, raw: opts.raw })
         tmi.say({ message})
@@ -45,10 +45,5 @@ export default new class Keywords implements System {
         setTimeout(() => this.cooldowns.splice(this.cooldowns.indexOf(item.name), 1), item.cooldown * 1000);
       }
     }
-  }
-
-  listenDbUpdates() {
-    Keyword.afterUpdate(() => this.init())
-    Keyword.afterDestroy(() => this.init())
   }
 }

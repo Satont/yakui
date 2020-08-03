@@ -19,7 +19,6 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import axios from 'axios'
 import OAuth from './oauth.vue'
 import Moderation from './moderation.vue'
 import General from './general.vue'

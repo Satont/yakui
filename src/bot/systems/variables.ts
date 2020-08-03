@@ -313,9 +313,4 @@ export default new class Variables implements System {
     else if (satontSong) return satontSong
     else return locales.translate('song.notPlaying')
   }
-
-  listenDbUpdates() {
-    Variable.afterSave(() => this.init())
-    Variable.afterDestroy(() => this.init())
-  }
 }

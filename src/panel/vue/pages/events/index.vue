@@ -57,7 +57,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import axios from 'axios'
+import axios from '../../components/axios'
 import Event from '@bot/models/Event'
 
 export default Vue.extend({
@@ -166,11 +166,7 @@ export default Vue.extend({
     }
   }),
   async created() {
-    const { data }: { data: Event[] } = await axios.get('/api/v1/events', {
-      headers: {
-        'x-twitch-token': localStorage.getItem('accessToken')
-      }
-    })
+    const { data }: { data: Event[] } = await axios.get('/events')
 
     for (const event of data) {
       this[event.name].operations = event.operations
@@ -184,11 +180,7 @@ export default Vue.extend({
       this[this.show].operations.splice(index, 1)
     },
     save: async function () {
-      await axios.post('/api/v1/events', { name: this.show, operations: this[this.show].operations }, {
-        headers: {
-          'x-twitch-token': localStorage.getItem('accessToken')
-        }
-      })
+      await axios.post('/events', { name: this.show, operations: this[this.show].operations })
     }
   }
 })

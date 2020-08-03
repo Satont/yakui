@@ -3,6 +3,7 @@ import { checkSchema, validationResult } from 'express-validator'
 import Overlays from '@bot/systems/overlays'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
 import Overlay from '@bot/models/Overlay'
+import overlays from '@bot/systems/overlays'
 
 const router = Router({ mergeParams: true })
 
@@ -63,11 +64,21 @@ router.post('/', isAdmin, checkSchema({
   }
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
-    console.log(req.body)
     validationResult(req).throw()
 
-    const overlay = await Overlay.create(req.body)
+    let overlay: Overlay
+    if (req.body.id) overlay = await Overlay.findOne({ where: { id: req.body.id }})
+    else overlay = await Overlay.create(req.body)
 
+    if (req.body.id) {
+      overlay.update({
+        name: req.body.name,
+        data: req.body.data,
+        css: req.body.css,
+        js: req.body.js
+      })
+    }
+    await overlays.init()
     res.json(overlay)
   } catch (e) {
     next(e)
@@ -84,7 +95,7 @@ router.delete('/', isAdmin, checkSchema({
     validationResult(req).throw()
 
     await Overlay.destroy({ where: { id: req.body.id }})
-
+    await overlays.init()
     res.send('Ok')
   } catch (e) {
     next(e)

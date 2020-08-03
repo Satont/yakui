@@ -2,7 +2,7 @@
   <div>
     <b-form v-on:submit.prevent="onSubmit">
       <b-form-group label="Name" label-for="name">
-        <b-form-input id="name" v-model="keyword.name" type="text" required placeholder="Enter keyword name"></b-form-input>
+        <b-form-input id="name" v-model.trim="keyword.name" type="text" required placeholder="Enter keyword name"></b-form-input>
       </b-form-group>
 
       <b-form-group>
@@ -29,7 +29,7 @@
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import Keyword from '@bot/models/Keyword'
-import axios from 'axios'
+import axios from '../../components/axios'
 
 @Component({})
 export default class KeywordsManagerEdit extends Vue {
@@ -43,9 +43,7 @@ export default class KeywordsManagerEdit extends Vue {
   async onSubmit(event) {
     event.preventDefault()
 
-    await axios.post('/api/v1/keywords', this.keyword, { headers: {
-      'x-twitch-token': localStorage.getItem('accessToken')
-    }})
+    await axios.post('/keywords', this.keyword)
     await this.$router.push({ name: 'KeywordsManagerList' })
   }
 
@@ -56,20 +54,15 @@ export default class KeywordsManagerEdit extends Vue {
     if (id) {
       this.keyword = this.$route.params as any
 
-      const { data } = await axios.get('/api/v1/keywords/' + id, { headers: {
-        'x-twitch-token': localStorage.getItem('accessToken')
-      }})
+      const { data } = await axios.get('/keywords/' + id)
 
       this.keyword = data
     }
   }
 
   async del() {
-    await axios.delete('/api/v1/keywords', {
+    await axios.delete('/keywords', {
       data: { id: (this.keyword as any).id },
-      headers: {
-        'x-twitch-token': localStorage.getItem('accessToken')
-      }
     })
   }
 }

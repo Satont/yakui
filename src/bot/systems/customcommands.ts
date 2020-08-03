@@ -25,10 +25,4 @@ export default new class CustomCommands implements System {
   async fnc(opts: CommandOptions) {
     return opts.command.response
   }
-
-  listenDbUpdates() {
-    Command.afterDestroy(() => this.init())
-    Command.afterSave(() => this.init())
-  }
-
 }

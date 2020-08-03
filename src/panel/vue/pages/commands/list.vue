@@ -39,7 +39,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import { Command } from 'typings'
 import { EnvChecker } from '../helpers/mixins'
-import axios from 'axios'
+import axios from '../../components/axios'
 
 @Component
 export default class CommandsManagerList extends EnvChecker {
@@ -53,9 +53,9 @@ export default class CommandsManagerList extends EnvChecker {
   ]
 
   async created() {
-    const commands = await axios.get('/api/v1/commands')
+    const commands = await axios.get('/commands')
     this.commands = commands.data
-    const variables = await axios.get('/api/v1/variables/all')
+    const variables = await axios.get('/variables/all')
     this.commands = this.commands
       .filter(c => this.isPublic() ? c.enabled && c.visible : true)
       .map(c => {
@@ -80,11 +80,8 @@ export default class CommandsManagerList extends EnvChecker {
 
   async del(command: Command) {
     const index = this.commands.indexOf(command)
-    await axios.delete('/api/v1/commands', {
-      data: { id: command.id },
-      headers: {
-        'x-twitch-token': localStorage.getItem('accessToken')
-      }
+    await axios.delete('/commands', {
+      data: { id: command.id }
     })
     this.commands.splice(index, 1)
   }

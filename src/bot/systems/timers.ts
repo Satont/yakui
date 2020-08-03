@@ -34,11 +34,4 @@ export default new class Timers implements System {
       }
     }
   }
-
-  listenDbUpdates() {
-    Timer.afterSave((instance, options) => {
-      if (options.fields.includes('responses')) this.init()
-    })
-    Timer.afterDestroy(() => this.init())
-  }
 }

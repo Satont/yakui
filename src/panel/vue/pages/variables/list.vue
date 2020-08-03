@@ -24,16 +24,14 @@
 import { Vue, Component } from 'vue-property-decorator'
 import Variable from '@bot/models/Variable'
 import { Route } from 'vue-router'
-import axios from 'axios'
+import axios from '../../components/axios'
 
 @Component
 export default class CustomVariaiblesManagerList extends Vue {
   variables: Variable[] = []
 
   async created() {
-    const { data } = await axios.get('/api/v1/variables', { headers: {
-      'x-twitch-token': localStorage.getItem('accessToken')
-    }})
+    const { data } = await axios.get('/variables')
     this.variables = data
   }
 
@@ -42,11 +40,8 @@ export default class CustomVariaiblesManagerList extends Vue {
   }
 
   async del(id, index) {
-    await axios.delete('/api/v1/variables', {
+    await axios.delete('/variables', {
       data: { id },
-      headers: {
-        'x-twitch-token': localStorage.getItem('accessToken')
-      }
     })
     this.variables.splice(index, 1)
   }

@@ -29,11 +29,6 @@ export default new class Greetings implements System {
     tmi.say({ message })
   }
 
-  listenDbUpdates() {
-    Greeting.afterSave(() => this.init())
-    Greeting.afterDestroy(() => this.init())
-  }
-
   onStreamEnd() {
     this.sended = []
   }

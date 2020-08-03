@@ -5,6 +5,7 @@ import { Command as CommandType } from 'typings'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
 import CommandUsage from '@bot/models/CommandUsage'
 import Commands from '@bot/systems/commands'
+import customcommands from '@bot/systems/customcommands'
 
 const router = Router({
   mergeParams: true
@@ -22,7 +23,7 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:id', isAdmin, async (req, res, next) => {
   try {
-    const command: Command[] = await Command.findOne({ where: { id: req.params.id }})
+    const command: Command = await Command.findOne({ where: { id: req.params.id }})
 
     res.json(command)
   } catch (e) {
@@ -114,7 +115,7 @@ router.post('/', isAdmin, checkSchema({
       })
     }
     else command = await Command.create(body)
-
+    await customcommands.init()
     res.json(command)
   } catch (e) {
     next(e)
@@ -130,6 +131,7 @@ router.delete('/', isAdmin, checkSchema({
   try {
     validationResult(req).throw()
     await Command.destroy({ where: { id: req.body.id }})
+    await customcommands.init()
 
     res.send('Ok')
   } catch (e) {

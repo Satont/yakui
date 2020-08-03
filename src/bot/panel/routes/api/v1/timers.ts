@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
 import Timer from '@bot/models/Timer'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
+import timers from '@bot/systems/timers'
 
 const router = Router({
   mergeParams: true
@@ -70,7 +71,7 @@ router.post('/', isAdmin, checkSchema({
         responses: body.responses,
       })
     }
-
+    await timers.init()
     res.json(timer)
   } catch (e) {
     next(e)
@@ -86,7 +87,7 @@ router.delete('/', isAdmin, checkSchema({
   try {
     validationResult(req).throw()
     await Timer.destroy({ where: { id: req.body.id }})
-
+    await timers.init()
     res.send('Ok')
   } catch (e) {
     next(e)

@@ -120,9 +120,4 @@ export default new class Events implements System {
       }
     })
   }
-
-  listenDbUpdates() {
-    Event.afterDestroy(() => this.init())
-    Event.afterSave(() => this.init())
-  }
 }
