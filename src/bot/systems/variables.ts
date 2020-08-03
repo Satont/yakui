@@ -18,6 +18,7 @@ import locales from '@bot/libs/locales'
 import evaluate from '@bot/commons/eval'
 import satontapi from '@bot/integrations/satontapi'
 import Commands from './commands'
+import UserDailyMessages from '@bot/models/UserDailyMessages'
 
 export default new class Variables implements System {
   variables: any[] = [
@@ -45,6 +46,7 @@ export default new class Variables implements System {
     { name: '$top.tips', response: 'Top 10 by tips' },
     { name: '$top.time', response: 'Top 10 by time' },
     { name: '$top.messages', response: 'Top 10 by messages' },
+    { name: '$top.messages.today', response: 'Top 10 by messages today' },
     { name: '(eval)', response: 'JavaScript evaluate' },
     { name: '$faceit.lvl', response: 'Faceit lvl' },
     { name: '$faceit.elo', response: 'Faceit elo' },
@@ -119,6 +121,10 @@ export default new class Variables implements System {
       result = result.replace(/\$top\.time/gimu, await this.getTop('watched', opts.argument))
     }
 
+    if (/\$top\.messages\.today/gimu.test(result)) {
+      result = result.replace(/\$top\.messages\.today/gimu, await this.getTop('messages.today', opts.argument))
+    }
+
     if (/\$top\.messages/gimu.test(result)) {
       result = result.replace(/\$top\.messages/gimu, await this.getTop('messages', opts.argument))
     }
@@ -160,14 +166,14 @@ export default new class Variables implements System {
     return result
   }
 
-  async getTop(type: 'watched' | 'tips' | 'bits' | 'messages', page: string = '1') {
+  async getTop(type: 'watched' | 'tips' | 'bits' | 'messages' | 'messages.today', page: string = '1') {
     let result: Array<{ username: string, value: number }> = []
     if (isNaN(Number(page))) page = '1'
     if (Number(page) <= 0) page = '1'
 
     const offset = (Number(page) - 1) * 10
 
-    const ignored = [...users.settings.ignoredUsers, tmi.channel.name.toLowerCase()]
+    const ignored = [...users.settings.ignoredUsers, tmi.channel.name.toLowerCase(), tmi.chatClients.bot.currentNick ]
     const limit = 10
 
     if (type === 'watched') {
@@ -236,8 +242,21 @@ export default new class Variables implements System {
 
       result = query[0]
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ')
+    } else if (type === 'messages.today') {
+      const now = new Date();
+      const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+
+      result = await UserDailyMessages.findAll({
+        limit,
+        where: { date: startOfDay.getTime() },
+        order: [['count', 'DESC']],
+        include: [{ model: UserModel, as: 'user', where: { username: { [Op.notIn]: ignored } } }],
+        offset
+      })
+
+      return (result as any).map((item: UserDailyMessages, index: number) => `${index + 1 + offset}. ${item.user.username} - ${item.count}`).join(', ')
     } else {
-      return 'unknown type'
+      return 'unknown type of top'
     }
   }
 

@@ -130,7 +130,7 @@ export default new class Users implements System {
     if (!user) user = await User.create({
       id,
       username
-    }, { include: [UserTips, UserBits] })
+    }, { include: [UserTips, UserBits, UserDailyMessages] })
 
     return user
   }
