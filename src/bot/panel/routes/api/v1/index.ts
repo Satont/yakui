@@ -12,6 +12,7 @@ import greetings from './greetings'
 import markers from './markers'
 import overlays from './overlays'
 import widgets from './widgets'
+import chatMessage from './chatMessage'
 
 const router = Router()
 
@@ -32,5 +33,6 @@ router.use('/greetings', greetings)
 router.use('/markers', markers)
 router.use('/overlays', overlays)
 router.use('/widgets', widgets)
+router.use('/chatMessage', chatMessage)
 
 export default router

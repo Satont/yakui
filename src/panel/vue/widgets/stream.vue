@@ -3,7 +3,7 @@
     scrolling="no"
     id="chat_embed"
     width="100%"
-    style="height: calc(100% - 40px)"
+    style="height: 100%"
     :src="src">
   </iframe>
 </template>
