@@ -14,7 +14,7 @@
         <grid-item v-for="item in widgets" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" :key="item.i" @resized="saveWidget" @moved="saveWidget">
           <b-card style="color:#000" class="h-100" body-class="p-0 h-100" header-class="p-1">
             <template v-slot:header>
-              <span class="title">{{ item.name | capitalize }}</span> <b-btn variant="danger" size="sm" class="float-right" @click="delWidget(item.id)">Delete</b-btn>
+              <span class="title">{{ item.name | capitalize }}</span> <b-btn variant="danger" size="sm" class="float-right" @click="delWidget(item.id)">Delete</b-btn> <i class="fas fa-info-circle" v-b-tooltip.hover :title="descriptions[item.name]"></i>
             </template>
             <b-card-body class="p-0 h-100">
               <component :is="item.name" :id="item.id" />
@@ -55,6 +55,11 @@ export default class Interface extends Vue {
   available = ['chat', 'stream', 'eventlist']
   title = 'Some Widget'
   widgets: { name: string, x: number, y: number, h: number, w: number, i: number, id: number }[] = []
+  descriptions = {
+    chat: 'Just embeded twitch chat.',
+    stream: 'Just embeded twitch stream monitor.',
+    eventlist: 'Showing latest events: follows, tips, subscribers, re-subscribers, raidings, hostings. This list updates itself.',
+  }
 
   async saveWidget(index) {
     const widget = this.widgets[index]
