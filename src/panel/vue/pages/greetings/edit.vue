@@ -13,7 +13,7 @@
         <template slot="label" label-for="message">
            Greeting message <variables-list></variables-list>
         </template>
-        <b-form-input id="message" v-model.trim="greeting.message" type="text" placeholder="Enter message for user"></b-form-input>
+        <b-form-input id="message" v-model.trim="greeting.message" required type="text" placeholder="Enter message for user"></b-form-input>
       </b-form-group>
 
       <b-button class="btn-block" variant="success" v-if="greeting.enabled" v-on:click="greeting.enabled = !greeting.enabled">Enabled</b-button>

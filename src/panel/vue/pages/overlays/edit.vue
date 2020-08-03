@@ -11,7 +11,7 @@
 
     <b-form v-on:submit.prevent="onSubmit">
       <b-form-group label="Name" label-for="name">
-        <b-form-input id="name" v-model="overlay.name" type="text" required placeholder="Enter overlay name"></b-form-input>
+        <b-form-input id="name" v-model.trim="overlay.name" type="text" required placeholder="Enter overlay name"></b-form-input>
       </b-form-group>
 
       <b-form-group>
@@ -78,6 +78,7 @@ export default class Edit extends Vue {
     await axios.delete('/overlays', {
       data: { id: (this.overlay as any).id },
     })
+    await this.$router.push({ name: 'OverlaysManagerList' })
   }
 
   createJs() {

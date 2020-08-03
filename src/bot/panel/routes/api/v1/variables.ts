@@ -29,7 +29,7 @@ router.get('/all', async (req, res, next) => {
 router.get('/:id', isAdmin, async (req, res, next) => {
   try {
     const variable: Variable[] = await Variable.findOne({ where: { id: req.params.id }})
-
+    await variables.init()
     res.json(variable)
   } catch (e) {
     next(e)
@@ -73,7 +73,7 @@ router.post('/', isAdmin, checkSchema({
         response: body.response
       })
     }
-
+    await variables.init()
     res.json(variable)
   } catch (e) {
     next(e)
@@ -89,7 +89,7 @@ router.delete('/', isAdmin, checkSchema({
   try {
     validationResult(req).throw()
     await Variable.destroy({ where: { id: req.body.id }})
-
+    await variables.init()
     res.send('Ok')
   } catch (e) {
     next(e)

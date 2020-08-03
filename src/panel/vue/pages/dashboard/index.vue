@@ -26,7 +26,7 @@
   <b-modal id="widgets" header-text-variant="dark" body-text-variant="dark" title="Choose widget" scrollable size="sm">
     <b-list-group>
       <div class="alert alert-info" v-show="!availableWidgets.length">There is no available widgets.</div>
-      <b-list-group-item href="#" @click="addWidget(widget); $refs['widgets'].hide()" v-for="widget in availableWidgets" :key="widget">{{ widget | capitalize }}</b-list-group-item>
+      <b-list-group-item href="#" @click="addWidget(widget)" v-for="widget in availableWidgets" :key="widget">{{ widget | capitalize }}</b-list-group-item>
     </b-list-group>
   </b-modal>
 </div>
@@ -63,7 +63,11 @@ export default class Interface extends Vue {
     return data
   }
 
-  async created() {
+  created() {
+    this.getWidgets()
+  }
+
+  async getWidgets() {
     const request = await axios.get('/widgets')
 
     const widgets: Widget[] = request.data
@@ -80,10 +84,10 @@ export default class Interface extends Vue {
   async addWidget(name) {
     let y = 0
     for (const w of this.widgets) y = Math.max(y, w.y + w.h)
+    const object = { x: 0, y, h: 9, w: 4, name }
+    const { data } = await axios.post('/widgets', object)
 
-    const { data } = await axios.post('/widgets', { x: 0, y, h: 9, w: 4, name })
-
-    this.widgets.push(data)
+    this.getWidgets()
   }
 
   async delWidget(id) {
@@ -91,8 +95,7 @@ export default class Interface extends Vue {
       data: { id }
     })
 
-    const widget = this.widgets.find(o => o.id === id)
-    this.widgets.splice(widget.i, 1)
+    this.getWidgets()
   }
 }
 </script>

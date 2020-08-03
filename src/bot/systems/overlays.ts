@@ -22,9 +22,4 @@ export default new class Overlays implements System {
 
     return await variables.parseMessage({ message: overlay.data })
   }
-
-  async listenDbUpdates() {
-    Overlay.afterDestroy(() => this.init())
-    Overlay.afterSave(() => this.init())
-  }
 }

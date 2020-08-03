@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
 import Greeting from '@bot/models/Greeting'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
+import greetings from '@bot/systems/greetings'
 
 const router = Router({
   mergeParams: true
@@ -67,7 +68,7 @@ router.post('/', isAdmin, checkSchema({
         enabled: body.enabled
       })
     }
-
+    await greetings.init()
     res.json(greeting)
   } catch (e) {
     next(e)
@@ -83,7 +84,7 @@ router.delete('/', isAdmin, checkSchema({
   try {
     validationResult(req).throw()
     await Greeting.destroy({ where: { id: req.body.id }})
-
+    await greetings.init()
     res.send('Ok')
   } catch (e) {
     next(e)

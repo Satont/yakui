@@ -2,7 +2,7 @@
   <div>
     <b-form v-on:submit.prevent="onSubmit">
       <b-form-group label="Command name" label-for="name">
-        <b-form-input id="name" v-model="command.name" type="text" required placeholder="Enter command name"></b-form-input>
+        <b-form-input id="name" v-model.trim="command.name" v-on:keyup="nameReplacer" type="text" required placeholder="Enter command name"></b-form-input>
       </b-form-group>
 
        <b-form-group label="Command aliases">
@@ -53,12 +53,12 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Watch } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import { Command } from 'typings'
 import axios from '../../components/axios'
 
-@Component({})
+@Component
 export default class CommandsManagerEdit extends Vue {
   command: Command = {
     name: null,
@@ -109,6 +109,7 @@ export default class CommandsManagerEdit extends Vue {
     await axios.delete('/commands', {
       data: { id: this.command.id },
     })
+    await this.$router.push({ name: 'CommandsManagerList' })
   }
 
   createAliase() {
@@ -117,6 +118,10 @@ export default class CommandsManagerEdit extends Vue {
 
   delAliase(index) {
     this.command.aliases.splice(index, 1);
+  }
+
+  nameReplacer() {
+    if (this.command.name.startsWith('!')) this.command.name = this.command.name.replace('!', '')
   }
 }
 </script>

@@ -2,7 +2,7 @@
   <div>
     <b-form v-on:submit.prevent="onSubmit">
       <b-form-group label="Name" label-for="name">
-        <b-form-input id="name" v-model="keyword.name" type="text" required placeholder="Enter keyword name"></b-form-input>
+        <b-form-input id="name" v-model.trim="keyword.name" type="text" required placeholder="Enter keyword name"></b-form-input>
       </b-form-group>
 
       <b-form-group>
