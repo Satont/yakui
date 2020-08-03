@@ -65,4 +65,5 @@ services:
 
 ## Help
 
-- [Discord server](https://discord.gg/dPm6eYb)
+- [Telegram](https://t.me/satont)
+- [VK](https://vk.com/satont)
