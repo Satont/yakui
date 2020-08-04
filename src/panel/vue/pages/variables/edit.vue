@@ -2,7 +2,7 @@
   <div>
     <b-form v-on:submit.prevent="onSubmit">
       <b-form-group label="Name" label-for="name">
-        <b-form-input id="name" v-model="variable.name" type="text" required placeholder="Enter variable name"></b-form-input>
+        <b-form-input id="name" v-model="variable.name" v-on:keyup="nameReplacer" type="text" required placeholder="Enter variable name"></b-form-input>
       </b-form-group>
 
       <b-form-group label="Response" label-for="response">
@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Watch } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import Variable from '@bot/models/Variable'
 
@@ -58,6 +58,10 @@ export default class CustomVariablesManagerEdit extends Vue {
       data: { id: (this.variable as any).id },
     })
     this.$toast.success('Success')
+  }
+
+  nameReplacer() {
+    this.variable.name = this.variable.name.replace(/\s/gm, '')
   }
 }
 </script>
