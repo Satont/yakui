@@ -180,6 +180,7 @@ export default Vue.extend({
     },
     save: async function () {
       await this.$axios.post('/events', { name: this.show, operations: this[this.show].operations })
+      this.$toast.success('Success')
     }
   }
 })

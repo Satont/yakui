@@ -75,6 +75,7 @@ export default class UsersManagerEdit extends Vue {
     event.preventDefault()
 
     await this.$axios.post('/users', { user: this.user, delete: this.delete })
+    this.$toast.success('Success')
   }
 
   async created() {
@@ -89,6 +90,7 @@ export default class UsersManagerEdit extends Vue {
     await this.$axios.delete('/users', {
       data: { id: (this.user as any).id },
     })
+    this.$toast.success('Success')
   }
 
   del(where, index) {

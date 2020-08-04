@@ -37,6 +37,7 @@ export default class CustomVariablesManagerEdit extends Vue {
 
     await this.$axios.post('/variables', this.variable)
     await this.$router.push({ name: 'CustomVariablesManagerList' })
+    this.$toast.success('Success')
   }
 
 
@@ -56,6 +57,7 @@ export default class CustomVariablesManagerEdit extends Vue {
     await this.$axios.delete('/variables', {
       data: { id: (this.variable as any).id },
     })
+    this.$toast.success('Success')
   }
 }
 </script>

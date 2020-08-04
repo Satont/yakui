@@ -44,6 +44,7 @@ export default class KeywordsManagerEdit extends Vue {
 
     await this.$axios.post('/keywords', this.keyword)
     await this.$router.push({ name: 'KeywordsManagerList' })
+    this.$toast.success('Success')
   }
 
 
@@ -63,6 +64,7 @@ export default class KeywordsManagerEdit extends Vue {
     await this.$axios.delete('/keywords', {
       data: { id: (this.keyword as any).id },
     })
+    this.$toast.success('Success')
   }
 }
 </script>

@@ -93,6 +93,7 @@ export default class Interface extends Vue {
     const { data } = await this.$axios.post('/widgets', object)
 
     this.getWidgets()
+    this.$toast.success('Success')
   }
 
   async delWidget(id) {
@@ -101,6 +102,7 @@ export default class Interface extends Vue {
     })
 
     this.getWidgets()
+    this.$toast.success('Success')
   }
 }
 </script>

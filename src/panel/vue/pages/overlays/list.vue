@@ -52,6 +52,7 @@ export default class OverlaysList extends Vue {
     })
 
     this.overlays.splice(index, 1)
+    this.$toast.success('Success')
   }
 
   copy(id) {

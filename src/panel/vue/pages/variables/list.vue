@@ -43,6 +43,7 @@ export default class CustomVariaiblesManagerList extends Vue {
       data: { id },
     })
     this.variables.splice(index, 1)
+    this.$toast.success('Success')
   }
 }
 </script>

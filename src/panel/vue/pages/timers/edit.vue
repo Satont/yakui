@@ -53,6 +53,7 @@ export default class TimersManagerEdit extends Vue {
 
     await this.$axios.post('/timers', this.timer)
     await this.$router.push({ name: 'TimersManagerList' })
+    this.$toast.success('Success')
   }
 
   filterResponses() {
@@ -75,6 +76,7 @@ export default class TimersManagerEdit extends Vue {
     await this.$axios.delete('/timers', {
       data: { id: (this.timer as any).id },
     })
+    this.$toast.success('Success')
   }
 
   addResponse() {

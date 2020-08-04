@@ -43,6 +43,7 @@ export default class KeywordsManagerList extends Vue {
       data: { id },
     })
     this.keywords.splice(index, 1)
+    this.$toast.success('Success')
   }
 }
 </script>

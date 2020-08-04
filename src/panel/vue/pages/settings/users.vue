@@ -60,6 +60,7 @@ export default class General extends Vue {
       { space: this.settings.space, name: 'ignoredUsers', value: this.settings.ignoredUsers.split('\n').filter(Boolean).map(u => u.toLowerCase()) },
       { space: this.settings.space, name: 'botAdmins', value: this.settings.botAdmins.split('\n').filter(Boolean).map(u => u.toLowerCase()) }
     ])
+    this.$toast.success('Success')
   }
 
   async created() {

@@ -58,6 +58,7 @@ export default class Edit extends Vue {
    async onSubmit(event) {
     await this.$axios.post('/overlays', this.overlay)
     await this.$router.push({ name: 'OverlaysManagerList' })
+    this.$toast.success('Success')
   }
 
 
@@ -78,6 +79,7 @@ export default class Edit extends Vue {
       data: { id: (this.overlay as any).id },
     })
     await this.$router.push({ name: 'OverlaysManagerList' })
+    this.$toast.success('Success')
   }
 
   createJs() {

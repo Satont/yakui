@@ -84,8 +84,11 @@ export default class CommandsManagerEdit extends Vue {
     event.preventDefault()
     this.filterAliases()
 
-    await this.$axios.post('/commands', this.command)
+    await this.$axios.post('/commands', this.command, {
+
+    })
     await this.$router.push({ name: 'CommandsManagerList' })
+    this.$toast.success('Success')
   }
 
   filterAliases() {
@@ -109,6 +112,7 @@ export default class CommandsManagerEdit extends Vue {
       data: { id: this.command.id },
     })
     await this.$router.push({ name: 'CommandsManagerList' })
+    this.$toast.success('Success')
   }
 
   createAliase() {

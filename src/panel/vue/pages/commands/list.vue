@@ -83,6 +83,7 @@ export default class CommandsManagerList extends EnvChecker {
       data: { id: command.id }
     })
     this.commands.splice(index, 1)
+    this.$toast.success('Success')
   }
 }
 </script>

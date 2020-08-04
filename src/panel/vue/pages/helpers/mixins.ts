@@ -13,6 +13,7 @@ export class Settings extends Vue {
       .map((item) => ({ space, name: item[0], value: item[1] }))
 
     await this.$axios.post('/settings', data)
+    this.$toast.success('Success')
   }
 
   async created() {

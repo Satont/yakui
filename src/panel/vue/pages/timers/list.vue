@@ -44,6 +44,7 @@ export default class TimersManagerList extends Vue {
       data: { id },
     })
     this.timers.splice(index, 1)
+    this.$toast.success('Success')
   }
 }
 </script>

@@ -47,6 +47,7 @@ export default class GreetingsManagerEdit extends Vue {
 
     await this.$axios.post('/greetings', this.greeting)
     await this.$router.push({ name: 'GreetingsManagerList' })
+    this.$toast.success('Success')
   }
 
 
@@ -66,6 +67,7 @@ export default class GreetingsManagerEdit extends Vue {
     await this.$axios.delete('/greetings', {
       data: { id: (this.greeting as any).id },
     })
+    this.$toast.success('Success')
   }
 }
 </script>
