@@ -47,6 +47,7 @@ export default class GreetingsManagerList extends Vue {
       data: { id },
     })
     this.greetings.splice(index, 1)
+    this.$toast.success('Success')
   }
 }
 </script>
