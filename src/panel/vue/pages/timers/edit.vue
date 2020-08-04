@@ -33,7 +33,6 @@
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import Timer from '@bot/models/Timer'
-import axios from '../../components/axios'
 
 @Component({})
 export default class TimersManagerEdit extends Vue {
@@ -52,8 +51,9 @@ export default class TimersManagerEdit extends Vue {
       return alert('Responses cannot be empty')
     }
 
-    await axios.post('/timers', this.timer)
+    await this.$axios.post('/timers', this.timer)
     await this.$router.push({ name: 'TimersManagerList' })
+    this.$toast.success('Success')
   }
 
   filterResponses() {
@@ -66,16 +66,17 @@ export default class TimersManagerEdit extends Vue {
     if (id) {
       this.timer = this.$route.params as any
 
-      const { data } = await axios.get('/timers/' + id)
+      const { data } = await this.$axios.get('/timers/' + id)
 
       this.timer = data
     }
   }
 
   async del() {
-    await axios.delete('/timers', {
+    await this.$axios.delete('/timers', {
       data: { id: (this.timer as any).id },
     })
+    this.$toast.success('Success')
   }
 
   addResponse() {

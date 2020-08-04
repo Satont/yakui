@@ -27,7 +27,6 @@
 
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator'
-import axios from '../../components/axios'
 
 @Component
 export default class General extends Vue {
@@ -55,16 +54,17 @@ export default class General extends Vue {
       .filter(v => v[0] !== 'space')
       .map((item) => ({ space, name: item[0], value: item[1] }))
 
-    await axios.post('/settings', [
+    await this.$axios.post('/settings', [
       { space: this.settings.space, name: 'enabled', value: this.settings.enabled },
       { space: this.settings.space, name: 'points', value: this.settings.points },
       { space: this.settings.space, name: 'ignoredUsers', value: this.settings.ignoredUsers.split('\n').filter(Boolean).map(u => u.toLowerCase()) },
       { space: this.settings.space, name: 'botAdmins', value: this.settings.botAdmins.split('\n').filter(Boolean).map(u => u.toLowerCase()) }
     ])
+    this.$toast.success('Success')
   }
 
   async created() {
-    const { data } = await axios.get('/settings?space=' + this.settings.space)
+    const { data } = await this.$axios.get('/settings?space=' + this.settings.space)
 
     this.settings.enabled = data.find(item => item.name === 'enabled')?.value ?? true
     this.settings.ignoredUsers = data.find(item => item.name === 'ignoredUsers')?.value?.join('\n') ?? ''

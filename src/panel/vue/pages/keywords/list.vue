@@ -24,14 +24,13 @@
 import { Vue, Component } from 'vue-property-decorator'
 import Keyword from '@bot/models/Keyword'
 import { Route } from 'vue-router'
-import axios from '../../components/axios'
 
 @Component
 export default class KeywordsManagerList extends Vue {
   keywords: Keyword[] = []
 
   async created() {
-    const { data } = await axios.get('/keywords')
+    const { data } = await this.$axios.get('/keywords')
     this.keywords = data
   }
 
@@ -40,10 +39,11 @@ export default class KeywordsManagerList extends Vue {
   }
 
   async del(id, index) {
-    await axios.delete('/keywords', {
+    await this.$axios.delete('/keywords', {
       data: { id },
     })
     this.keywords.splice(index, 1)
+    this.$toast.success('Success')
   }
 }
 </script>

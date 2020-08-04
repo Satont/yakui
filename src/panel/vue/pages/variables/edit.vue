@@ -2,7 +2,7 @@
   <div>
     <b-form v-on:submit.prevent="onSubmit">
       <b-form-group label="Name" label-for="name">
-        <b-form-input id="name" v-model="variable.name" type="text" required placeholder="Enter variable name"></b-form-input>
+        <b-form-input id="name" v-model="variable.name" v-on:keyup="nameReplacer" type="text" required placeholder="Enter variable name"></b-form-input>
       </b-form-group>
 
       <b-form-group label="Response" label-for="response">
@@ -20,10 +20,9 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Watch } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import Variable from '@bot/models/Variable'
-import axios from '../../components/axios'
 
 @Component({})
 export default class CustomVariablesManagerEdit extends Vue {
@@ -36,8 +35,9 @@ export default class CustomVariablesManagerEdit extends Vue {
   async onSubmit(event) {
     event.preventDefault()
 
-    await axios.post('/variables', this.variable)
+    await this.$axios.post('/variables', this.variable)
     await this.$router.push({ name: 'CustomVariablesManagerList' })
+    this.$toast.success('Success')
   }
 
 
@@ -47,16 +47,21 @@ export default class CustomVariablesManagerEdit extends Vue {
     if (id) {
       this.variable = this.$route.params as any
 
-      const { data } = await axios.get('/variables/' + id)
+      const { data } = await this.$axios.get('/variables/' + id)
 
       this.variable = data
     }
   }
 
   async del() {
-    await axios.delete('/variables', {
+    await this.$axios.delete('/variables', {
       data: { id: (this.variable as any).id },
     })
+    this.$toast.success('Success')
+  }
+
+  nameReplacer() {
+    this.variable.name = this.variable.name.replace(/\s/gm, '')
   }
 }
 </script>

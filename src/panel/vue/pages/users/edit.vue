@@ -53,7 +53,6 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
-import axios from '../../components/axios'
 
 @Component({})
 export default class UsersManagerEdit extends Vue {
@@ -75,21 +74,23 @@ export default class UsersManagerEdit extends Vue {
   async onSubmit(event) {
     event.preventDefault()
 
-    await axios.post('/users', { user: this.user, delete: this.delete })
+    await this.$axios.post('/users', { user: this.user, delete: this.delete })
+    this.$toast.success('Success')
   }
 
   async created() {
     const id = this.$route.params.id as any
 
     this.user = this.$route.params as any
-    const { data } = await axios.get('/users/' + id)
+    const { data } = await this.$axios.get('/users/' + id)
     this.user = data
   }
 
   async delUser() {
-    await axios.delete('/users', {
+    await this.$axios.delete('/users', {
       data: { id: (this.user as any).id },
     })
+    this.$toast.success('Success')
   }
 
   del(where, index) {

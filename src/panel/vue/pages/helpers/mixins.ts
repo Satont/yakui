@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import axios from '../../components/axios'
+import '../../plugins/axios'
 
 @Component
 export class Settings extends Vue {
@@ -12,11 +12,12 @@ export class Settings extends Vue {
       .filter(v => v[0] !== 'space')
       .map((item) => ({ space, name: item[0], value: item[1] }))
 
-    await axios.post('/settings', data)
+    await this.$axios.post('/settings', data)
+    this.$toast.success('Success')
   }
 
   async created() {
-    const { data } = await axios.get('/settings?space=' + this.settings.space)
+    const { data } = await this.$axios.get('/settings?space=' + this.settings.space)
 
     for (const item of data) {
       this.settings[item.name] = item.value

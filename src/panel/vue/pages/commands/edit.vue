@@ -56,7 +56,6 @@
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import { Command } from 'typings'
-import axios from '../../components/axios'
 
 @Component
 export default class CommandsManagerEdit extends Vue {
@@ -85,8 +84,11 @@ export default class CommandsManagerEdit extends Vue {
     event.preventDefault()
     this.filterAliases()
 
-    await axios.post('/commands', this.command)
+    await this.$axios.post('/commands', this.command, {
+
+    })
     await this.$router.push({ name: 'CommandsManagerList' })
+    this.$toast.success('Success')
   }
 
   filterAliases() {
@@ -99,17 +101,18 @@ export default class CommandsManagerEdit extends Vue {
     if (id) {
       this.command = this.$route.params as any
 
-      const { data } = await axios.get('/commands/' + id)
+      const { data } = await this.$axios.get('/commands/' + id)
 
       this.command = data
     }
   }
 
   async del() {
-    await axios.delete('/commands', {
+    await this.$axios.delete('/commands', {
       data: { id: this.command.id },
     })
     await this.$router.push({ name: 'CommandsManagerList' })
+    this.$toast.success('Success')
   }
 
   createAliase() {

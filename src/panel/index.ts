@@ -1,9 +1,11 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import VueClipboard from 'vue-clipboard2'
-import axios from './vue/components/axios'
+import Axios from './vue/plugins/axios'
 import humanizeDuration from 'humanize-duration'
 import BootstrapVue from 'bootstrap-vue'
+import Toast from 'vue-toastification'
+import 'vue-toastification/dist/index.css'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import './css/main.css'
@@ -14,6 +16,8 @@ import isLogged from './helpers/isLogged'
 Vue.use(VueRouter)
 Vue.use(VueClipboard)
 Vue.use(BootstrapVue)
+Vue.use(Toast)
+Vue.use(Axios)
 Vue.component('loading', () => import('./vue/components/loadingAnimation.vue'))
 Vue.component('side-bar', () => import('./vue/components/sidebar.vue'))
 Vue.component('nav-bar', () => import('./vue/components/navbar.vue'))
@@ -112,7 +116,8 @@ const start = async () => {
       async fetchMetadata() {
         clearTimeout(this.updateTimeout)
         this.updateTimeout = setTimeout(() => this.fetchMetadata(), 10000);
-        const { data } = await axios.get('/metaData')
+
+        const { data } = await this.$axios.get('/metaData')
 
         this.title = data.bot?.username?.toUpperCase() ?? this.title
         document.title = this.title

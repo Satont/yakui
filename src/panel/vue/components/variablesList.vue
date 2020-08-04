@@ -16,7 +16,6 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import axios from './axios'
 
 @Component
 export default class NavBar extends Vue {
@@ -27,7 +26,7 @@ export default class NavBar extends Vue {
   ]
 
   async created() {
-    const { data } = await axios.get('/variables/all')
+    const { data } = await this.$axios.get('/variables/all')
     this.variables = data
   }
 }

@@ -29,7 +29,7 @@ router.post('/broadcaster', isAdmin, checkSchema({
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
-    console.log(req.body)
+
     await tmi.say({ type: 'broadcaster', message: req.body.message })
 
     res.send('Ok')
