@@ -12,10 +12,9 @@ export default function AxiosPlugin<AxiosPluginOptions>(Vue: typeof _Vue, option
     },
   })
 
-
   instance.interceptors.response.use(config => config, (error: AxiosError) => {
     if (error.response.data)  {
-      let message: string = error.response.data.message ?? 'Something went wrong.'
+      let message: string = error.response.data.message ?? 'Unexpected error happend.'
 
       switch (error.response.data.code) {
         case 'validation_error':
