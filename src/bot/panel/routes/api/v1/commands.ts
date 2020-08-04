@@ -79,17 +79,13 @@ router.post('/', isAdmin, checkSchema({
   try {
     validationResult(req).throw()
 
-    const names: string[] = []
     const body: CommandType = req.body
-    const commands = (await Command.findAll({ raw: true })).filter((c: CommandType) => c.id !== body.id)
+    const commands: CommandType[] = (await Commands.getCommands()).filter((c: CommandType) => c.id !== body.id)
+    const names: string[] = commands.map(c => c.name)
 
-    for (const command of commands) {
-      names.push(command.name)
-      names.push(...command.aliases)
-    }
 
     if (names.filter(Boolean).includes(body.name) || names.filter(Boolean).some(name => body.aliases?.includes(name))) {
-      return res.status(400).send('This aliase or name already exists.')
+      return res.status(400).send({ message: 'This aliase or name already exists.' })
     }
 
     let command: Command
