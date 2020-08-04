@@ -18,7 +18,7 @@ export default function AxiosPlugin<AxiosPluginOptions>(Vue: typeof _Vue, option
 
       switch (error.response.data.code) {
         case 'validation_error':
-          message = (error.response.data.data as ValidationError[]).map(e => `Invalid value ${e.param}:${e.value}, ${e.msg}`).join('\n')
+          message = (error.response.data.data as ValidationError[]).map(e => `${e.msg} ${e.param}=${e.value}`).join('\n')
         break;
       }
 
