@@ -65,4 +65,4 @@ services:
 
 ## Help
 
-- [Discord server](https://discord.gg/dPm6eYb)
+- [Discord server](https://discord.gg/5TFJmnr)
