@@ -46,7 +46,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
-    "bootstrap": "^4.5.1",
+    "bootstrap": "^4.5.2",
     "bootstrap-vue": "^2.16.0",
     "centrifuge": "^2.6.4",
     "chalk": "^4.1.0",
