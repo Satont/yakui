@@ -102,6 +102,8 @@ export default new class Users implements System {
 
     user.save()
 
+    if (!twitch.streamMetaData?.startedAt) return;
+
     const now = new Date();
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
