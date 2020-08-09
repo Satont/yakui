@@ -88,9 +88,10 @@ export default new class Users implements System {
       defaults: { id, username, messages: 1 },
     })
 
-    if (!created) {
+    user.username = opts.raw.userInfo.userName
+
+    if (!created && twitch.streamMetaData?.startedAt) {
       user.messages = user.messages + 1
-      user.username = opts.raw.userInfo.userName
     }
 
     const updatePoints = (Number(user.lastMessagePoints) + pointsInterval <= user.messages) && this.settings.points.enabled
