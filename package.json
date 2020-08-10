@@ -58,7 +58,7 @@
     "express-validator": "^6.6.1",
     "humanize-duration": "^3.23.1",
     "jsonwebtoken": "^8.5.1",
-    "knex": "^0.21.2",
+    "knex": "^0.21.3",
     "lodash": "^4.17.19",
     "module-alias": "^2.2.2",
     "moment": "^2.27.0",
