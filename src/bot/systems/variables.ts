@@ -42,6 +42,7 @@ export default new class Variables implements System {
     { name: '$song', response: 'Current playing song' },
     { name: '$commands', response: 'Commands list' },
     { name: '$prices', response: 'Commands prices list' },
+    { name: '$top.points', response: 'Top 10 by points' },
     { name: '$top.bits', response: 'Top 10 by bits' },
     { name: '$top.tips', response: 'Top 10 by tips' },
     { name: '$top.time', response: 'Top 10 by time' },
@@ -109,6 +110,10 @@ export default new class Variables implements System {
       result = result.replace(/\$prices/gimu, Commands.getPricesList().join(', '))
     }
 
+    if (/\$top\.points/gimu.test(result)) {
+      result = result.replace(/\$top\.points/gimu, await this.getTop('points', opts.argument))
+    }
+
     if (/\$top\.bits/gimu.test(result)) {
       result = result.replace(/\$top\.bits/gimu, await this.getTop('bits', opts.argument))
     }
@@ -166,7 +171,7 @@ export default new class Variables implements System {
     return result
   }
 
-  async getTop(type: 'watched' | 'tips' | 'bits' | 'messages' | 'messages.today', page: string = '1') {
+  async getTop(type: 'watched' | 'tips' | 'bits' | 'messages' | 'messages.today' | 'points', page: string = '1') {
     let result: Array<{ username: string, value: number }> = []
     if (isNaN(Number(page))) page = '1'
     if (Number(page) <= 0) page = '1'
@@ -181,8 +186,7 @@ export default new class Variables implements System {
         limit,
         where: { username: { [Op.notIn]: ignored } },
         order: [[type, 'DESC']],
-        attributes: ['username',
-        [type, 'value']],
+        attributes: ['username', [type, 'value']],
         offset,
         raw: true
       })
@@ -255,6 +259,17 @@ export default new class Variables implements System {
       })
 
       return (result as any).map((item: UserDailyMessages, index: number) => `${index + 1 + offset}. ${item.user.username} - ${item.count}`).join(', ')
+    } if (type === 'points') {
+      result = await UserModel.findAll({
+        limit,
+        where: { username: { [Op.notIn]: ignored } },
+        order: [[type, 'DESC']],
+        attributes: ['username', [type, 'value']],
+        offset,
+        raw: true
+      })
+
+      return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ')
     } else {
       return 'unknown type of top'
     }
