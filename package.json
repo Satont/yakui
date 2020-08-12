@@ -78,7 +78,7 @@
     "vue-clipboard2": "^0.3.1",
     "vue-grid-layout": "^2.3.8",
     "vue-property-decorator": "^8.5.1",
-    "vue-router": "^3.4.0",
+    "vue-router": "^3.4.3",
     "vue-toastification": "^1.7.6",
     "winston": "^3.3.3",
     "ws": "^7.3.1"
