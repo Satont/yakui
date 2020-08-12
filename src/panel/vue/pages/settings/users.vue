@@ -21,6 +21,12 @@
       <b-input-group size="sm" class="mt-1" prepend="Amount of points for message interval">
         <b-form-input type="text" v-model="settings.points.messages.amount"></b-form-input>
       </b-input-group>
+      <b-input-group size="sm" class="mt-1" prepend="Points watch interval for check">
+        <b-form-input type="text" v-model="settings.points.watch.interval"></b-form-input>
+      </b-input-group>
+      <b-input-group size="sm" class="mt-1" prepend="Amount of points for watch interval">
+        <b-form-input type="text" v-model="settings.points.watch.amount"></b-form-input>
+      </b-input-group>
     </b-form>
   </div>
 </template>

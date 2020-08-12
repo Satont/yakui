@@ -148,12 +148,10 @@ export default new class Users implements System {
     for (const chatter of this.chatters) {
       if (this.settings.ignoredUsers.includes(chatter.username.toLowerCase())) continue
 
-      const [user, created]: [User, boolean] = await User.findOrCreate({
+      const [user]: [User, boolean] = await User.findOrCreate({
         where: { id: chatter.id },
-        defaults: { id: chatter.id, username: chatter.username }
+        defaults: { id: chatter.id, username: chatter.username, watched: 1 * 60 * 1000 }
       })
-
-      if (!created) user.watched = user.watched + 1 * 60 * 1000
 
       const updatePoints = (new Date().getTime() - new Date(user.lastWatchedPoints).getTime() >= pointsInterval) && this.settings.points.enabled
 
