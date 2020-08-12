@@ -35,4 +35,9 @@ export default new class Greetings implements System {
   onStreamStart() {
     this.sended = []
   }
+
+  listenDbUpdates() {
+    Greeting.afterSave(() => this.init())
+    Greeting.afterDestroy(() => this.init())
+  }
 }
