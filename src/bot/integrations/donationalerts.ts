@@ -9,6 +9,7 @@ import currency, { currency as currencyType } from '@bot/libs/currency'
 import User from '@bot/models/User'
 import UserTips from '@bot/models/UserTips';
 import { info } from '@bot/libs/logger';
+import { TableHints } from 'sequelize/types';
 
 type DonationAlertsEvent = {
   id: string;
@@ -39,12 +40,21 @@ export default new class Donationalerts implements Integration {
     this.connect(token.value)
   }
 
+  async disconnect() {
+    if (!this.socket) return
+    this.socket.disconnect()
+    this.socket = null
+  }
+
   async connect(token: string) {
     if (!token.trim().length) throw 'DONATIONALERTS: token is empty'
 
     info('DONATIONALERTS: Starting init')
 
-    if (this.socket) this.socket.disconnect()
+    if (this.socket) {
+      this.disconnect()
+      return this.init()
+    }
 
     this.socket = new Centrifuge('wss://centrifugo.donationalerts.com/connection/websocket', {
       websocket: WebSocket,
@@ -82,8 +92,9 @@ export default new class Donationalerts implements Integration {
   async listeners(opts: { token: string, id: number }) {
     this.socket.on('disconnect', (reason: unknown) => {
       info('DONATIONALERTS: disconnected from socket: ', reason)
+      this.init()
     })
-    
+
     this.socket.on('connect', () => {
       info('DONATIONALERTS: successfuly connected to socket')
     })
@@ -95,17 +106,16 @@ export default new class Donationalerts implements Integration {
     })
     channel.on('leaved', (reason) => {
       info('DONATIONALERTS: disconnected from donations channel: ', reason)
-    })
-    channel.on('leaved', (error) => {
-      info('DONATIONALERTS: some error occured: ', error)
+      this.init()
     })
     channel.on('unsubscribe', (reason) => {
       info('DONATIONALERTS: unsibscribed from donations channel: ', reason)
+      this.init()
     })
     channel.on('publish', async ({ data }: { data: DonationAlertsEvent }) => {
       const user: User = await User.findOne({ where: { username: data.username.toLowerCase() }})
 
-      const donationData = { 
+      const donationData = {
         userId: user?.id,
         amount: data.amount,
         currency: data.currency,
@@ -114,7 +124,7 @@ export default new class Donationalerts implements Integration {
         message: data.message,
         timestamp: Date.now()
       }
-    
+
       if (data.billing_system !== 'fake' && user) {
         await UserTips.create(donationData)
       }
