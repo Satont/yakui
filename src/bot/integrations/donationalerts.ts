@@ -24,6 +24,7 @@ type DonationAlertsEvent = {
 
 export default new class Donationalerts implements Integration {
   socket: Centrifuge = null
+  channel: Centrifuge.Subscription = null
 
   async init() {
     const [token, enabled]: [Settings, Settings] = await Promise.all([
@@ -35,6 +36,8 @@ export default new class Donationalerts implements Integration {
       })
     ])
 
+    this.disconnect()
+
     if (!token || !enabled || !enabled?.value) return
 
     this.connect(token.value)
@@ -42,6 +45,7 @@ export default new class Donationalerts implements Integration {
 
   async disconnect() {
     if (!this.socket) return
+    this.channel.unsubscribe()
     this.socket.disconnect()
     this.socket = null
   }
@@ -50,11 +54,6 @@ export default new class Donationalerts implements Integration {
     if (!token.trim().length) throw 'DONATIONALERTS: token is empty'
 
     info('DONATIONALERTS: Starting init')
-
-    if (this.socket) {
-      this.disconnect()
-      return this.init()
-    }
 
     this.socket = new Centrifuge('wss://centrifugo.donationalerts.com/connection/websocket', {
       websocket: WebSocket,
@@ -99,20 +98,20 @@ export default new class Donationalerts implements Integration {
       info('DONATIONALERTS: successfuly connected to socket')
     })
 
-    const channel = this.socket.subscribe(`$alerts:donation_${opts.id}`)
+    this.channel = this.socket.subscribe(`$alerts:donation_${opts.id}`)
 
-    channel.on('join', () => {
+    this.channel.on('join', () => {
       info('DONATIONALERTS: successfuly joined in donations channel')
     })
-    channel.on('leaved', (reason) => {
+    this.channel.on('leaved', (reason) => {
       info('DONATIONALERTS: disconnected from donations channel: ', reason)
       this.init()
     })
-    channel.on('unsubscribe', (reason) => {
+    this.channel.on('unsubscribe', (reason) => {
       info('DONATIONALERTS: unsibscribed from donations channel: ', reason)
       this.init()
     })
-    channel.on('publish', async ({ data }: { data: DonationAlertsEvent }) => {
+    this.channel.on('publish', async ({ data }: { data: DonationAlertsEvent }) => {
       const user: User = await User.findOne({ where: { username: data.username.toLowerCase() }})
 
       const donationData = {
