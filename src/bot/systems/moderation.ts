@@ -169,7 +169,7 @@ export default new class Moderation implements System {
   }
 
   async caps(opts: ParserOptions, permissions: UserPermissions) {
-    const settings = this.settings.longMessage
+    const settings = this.settings.caps
 
     if (!settings?.enabled) return false
     if (!settings?.subscribers && permissions.subscribers) return false;
@@ -235,16 +235,14 @@ export default new class Moderation implements System {
   }
 
   async color(opts: ParserOptions, permissions: UserPermissions) {
-    const settings = this.settings.longMessage
+    const settings = this.settings.color
 
     if (!settings?.enabled) return false
     if (!settings?.subscribers && permissions.subscribers) return false;
     if (!settings?.vips && permissions.vips) return false;
 
-    if (opts.raw.emoteOffsets.size < settings.trigger.length) return false;
-
     const username = opts.raw.userInfo.userName.toLowerCase()
-    const type = 'emotes'
+    const type = 'color'
 
     if ((opts.raw as any).isAction) return false
 
