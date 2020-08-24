@@ -193,7 +193,7 @@ export default new class Moderation implements System {
       }
     }
 
-    const check = Math.ceil(capsLength / (message.length / 100)) > settings.trigger.length
+    const check = Math.ceil(capsLength / (message.length / 100)) >= settings.trigger.percent
 
     if (!check) return false
 

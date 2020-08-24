@@ -9,7 +9,6 @@ import currency, { currency as currencyType } from '@bot/libs/currency'
 import User from '@bot/models/User'
 import UserTips from '@bot/models/UserTips';
 import { info } from '@bot/libs/logger';
-import { TableHints } from 'sequelize/types';
 
 type DonationAlertsEvent = {
   id: string;
