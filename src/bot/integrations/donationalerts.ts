@@ -42,9 +42,6 @@ export default new class Donationalerts implements Integration {
     if (!token || !enabled || !enabled?.value) return
 
     this.connect(token.value)
-    setTimeout(() => {
-      this.socket.disconnect()
-    }, 10 * 1000);
   }
 
   async disconnect() {
