@@ -148,7 +148,7 @@ export default new class Users implements System {
     for (const chatter of this.chatters) {
       if (this.settings.ignoredUsers.includes(chatter.username.toLowerCase())) continue
 
-      const [user]: [User, boolean] = await User.findOrCreate({
+      const [user, isNewUser]: [User, boolean] = await User.findOrCreate({
         where: { id: chatter.id },
         defaults: { id: chatter.id, username: chatter.username, watched: 1 * 60 * 1000 }
       })
@@ -159,6 +159,8 @@ export default new class Users implements System {
         user.lastWatchedPoints = new Date().getTime()
         user.points = user.points + pointsPerWatch
       }
+
+      if (!isNewUser) user.watched = user.watched + 1 * 60 * 1000
 
       user.save()
     }
