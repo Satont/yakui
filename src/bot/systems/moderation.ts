@@ -65,6 +65,22 @@ export default new class Moderation implements System {
   }
 
   async parse(opts: ParserOptions) {
+    let message = opts.message
+
+    let capsLength = 0
+
+    for (const emote of opts.raw.parseEmotes().filter(o => o.type === 'emote')) {
+      message = message.replace(emote['name'], '').trim()
+    }
+
+    for (let i = 0; i < message.length; i++) {
+      if (message.charAt(i) == message.charAt(i).toUpperCase()) {
+        capsLength += 1
+      }
+    }
+
+    const check = Math.ceil(capsLength / (message.length / 100)) >= 50
+    console.log(message, check, capsLength, Math.ceil(capsLength / (message.length / 100)))
     if (!this.settings || !this.settings.enabled) return false
     const userPermissions = tmi.getUserPermissions(opts.raw.userInfo.badges, opts.raw)
     if (userPermissions.broadcaster || userPermissions.moderators) return false
@@ -175,7 +191,6 @@ export default new class Moderation implements System {
     if (!settings?.subscribers && permissions.subscribers) return false;
     if (!settings?.vips && permissions.vips) return false;
 
-    if (opts.message.length < settings.trigger.length) return false;
 
     const username = opts.raw.userInfo.userName.toLowerCase()
     const type = 'caps'
@@ -184,8 +199,10 @@ export default new class Moderation implements System {
     let capsLength = 0
 
     for (const emote of opts.raw.parseEmotes().filter(o => o.type === 'emote')) {
-      message = message.replace(emote['name'], '')
+      message = message.replace(emote['name'], '').trim()
     }
+
+    if (message.length < settings.trigger.length) return false;
 
     for (let i = 0; i < message.length; i++) {
       if (message.charAt(i) == message.charAt(i).toUpperCase()) {
