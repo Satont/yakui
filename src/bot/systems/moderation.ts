@@ -73,7 +73,7 @@ export default new class Moderation implements System {
     if (await this.symbols(opts, userPermissions)) return true
     if (await this.longMessage(opts, userPermissions)) return true
     if (await this.caps(opts, userPermissions)) return true
-    if (await this.color(opts, userPermissions)) return true
+    //if (await this.color(opts, userPermissions)) return true
     if (await this.emotes(opts, userPermissions)) return true
   }
 
