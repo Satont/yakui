@@ -33,6 +33,9 @@ export default new class WebHooks {
       callbackUrl: this.callBackUrl,
       validityInSeconds: this.validityInSeconds
     }
+
+    if (!this.callBackUrl.startsWith('https')) return false;
+
     try {
       switch (type) {
         case 'follows':
@@ -49,6 +52,7 @@ export default new class WebHooks {
     } catch (e) {
       error(e)
     }
+
     return true
   }
 
@@ -59,6 +63,9 @@ export default new class WebHooks {
       callbackUrl: this.callBackUrl,
       validityInSeconds: this.validityInSeconds
     }
+
+    if (!this.callBackUrl.startsWith('https')) return false;
+
     try {
       switch (type) {
         case 'follows':
