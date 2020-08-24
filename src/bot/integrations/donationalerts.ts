@@ -25,8 +25,11 @@ type DonationAlertsEvent = {
 export default new class Donationalerts implements Integration {
   socket: Centrifuge = null
   channel: Centrifuge.Subscription = null
+  connecting = false
 
   async init() {
+    if (this.connecting) return;
+    this.connecting = true
     const [token, enabled]: [Settings, Settings] = await Promise.all([
       Settings.findOne({
         where: { space: 'donationalerts', name: 'access_token' }
@@ -36,11 +39,12 @@ export default new class Donationalerts implements Integration {
       })
     ])
 
-    this.disconnect()
-
     if (!token || !enabled || !enabled?.value) return
 
     this.connect(token.value)
+    setTimeout(() => {
+      this.socket.disconnect()
+    }, 10 * 1000);
   }
 
   async disconnect() {
@@ -52,7 +56,7 @@ export default new class Donationalerts implements Integration {
 
   async connect(token: string) {
     if (!token.trim().length) throw 'DONATIONALERTS: token is empty'
-
+    this.disconnect()
     info('DONATIONALERTS: Starting init')
 
     this.socket = new Centrifuge('wss://centrifugo.donationalerts.com/connection/websocket', {
@@ -69,8 +73,8 @@ export default new class Donationalerts implements Integration {
 
     this.socket.setToken(opts.token)
     this.socket.connect()
-
     this.listeners(opts)
+    this.connecting = false
   }
 
   private async getOpts(token: string) {
