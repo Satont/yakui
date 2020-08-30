@@ -21,7 +21,7 @@ import Commands from './commands'
 import UserDailyMessages from '@bot/models/UserDailyMessages'
 
 export default new class Variables implements System {
-  variables: any[] = [
+  variables: Array<{ name: string, response: string, custom?: boolean }> = [
     { name: '$sender', response: 'Username of user who triggered message' },
     { name: '$followage', response: 'Followage of user' },
     { name: '$stream.uptime', response: 'Current stream uptime' },
@@ -46,8 +46,8 @@ export default new class Variables implements System {
     { name: '$top.bits', response: 'Top 10 by bits' },
     { name: '$top.tips', response: 'Top 10 by tips' },
     { name: '$top.time', response: 'Top 10 by time' },
-    { name: '$top.messages', response: 'Top 10 by messages' },
     { name: '$top.messages.today', response: 'Top 10 by messages today' },
+    { name: '$top.messages', response: 'Top 10 by messages' },
     { name: '(eval)', response: 'JavaScript evaluate' },
     { name: '$faceit.lvl', response: 'Faceit lvl' },
     { name: '$faceit.elo', response: 'Faceit elo' },
@@ -332,7 +332,7 @@ export default new class Variables implements System {
     if (isAdmin && text.length) {
       const match = response.match(/\$_(\S*)/g)
       if (match) {
-        const variable = this.variables.find(v => v.name === match[0].replace('$_', ''))
+        const variable = await Variable.findOne({ where: { name: this.variables.find(v => v.name === match[0].replace('$_', '')).name }})
         await variable.update({ response: text })
         tmi.say({ message: `@${raw.userInfo.userName} ✅` })
         return true;
