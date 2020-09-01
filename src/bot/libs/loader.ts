@@ -14,7 +14,7 @@ const loader = async () => {
     if (typeof loadedFile.init !== 'undefined') await loadedFile.init()
     if (typeof loadedFile.listenDbUpdates !== 'undefined') await loadedFile.listenDbUpdates()
     if (typeof loadedFile.sockets !== 'undefined' && loadedFile.socket) {
-      loadedFile.socket.on('connection', () => loadedFile.sockets())
+      loadedFile.socket.on('connection', client => loadedFile.sockets(client))
     }
 
     info(`System ${loadedFile.constructor.name.toUpperCase()} loaded`)
@@ -28,9 +28,7 @@ const loader = async () => {
 
     if (typeof loadedFile.init !== 'undefined') await loadedFile.init()
     if (typeof loadedFile.listenDbUpdates !== 'undefined') await loadedFile.listenDbUpdates()
-    if (typeof loadedFile.sockets !== 'undefined' && loadedFile.socket) {
-      loadedFile.socket.on('connection', () => loadedFile.sockets())
-    }
+
 
     info(`Integration ${loadedFile.constructor.name.toUpperCase()} loaded`)
     loadedSystems.push(loadedFile)
@@ -43,9 +41,7 @@ const loader = async () => {
 
     if (typeof loadedFile.init !== 'undefined') await loadedFile.init()
     if (typeof loadedFile.listenDbUpdates !== 'undefined') await loadedFile.listenDbUpdates()
-    if (typeof loadedFile.sockets !== 'undefined' && loadedFile.socket) {
-      loadedFile.socket.on('connection', () => loadedFile.sockets())
-    }
+
 
     info(`Custom System ${loadedFile.constructor.name.toUpperCase()} loaded`)
     loadedSystems.push(loadedFile)

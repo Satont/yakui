@@ -42,7 +42,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
-import { getNameSpace } from '@panel/vue/plugins/socket'
+import socket, { getNameSpace } from '@panel/vue/plugins/socket'
 import Upload from './upload.vue'
 
 @Component({
@@ -56,7 +56,7 @@ export default class Files extends Vue {
 
   mounted() {
     const self = this
-    this.socket.emit('getAll', (error, data) => self.files = data)
+    this.socket.emit('getAll', function(error, data) {self.files = data})
   }
 
   del(id: number) {

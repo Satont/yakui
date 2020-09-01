@@ -21,16 +21,16 @@ export default new class Files implements System {
     return await File.destroy({ where: { id } })
   }
 
-  sockets() {
+  sockets(client: SocketIO.Socket) {
     const self = this
-    this.socket.on('getOne', async (id: number, cb: Function) => {
+    client.on('getOne', async (id: number, cb: Function) => {
       try {
         cb(null, await self.getOne(id))
       } catch (e) {
         cb(e, null)
       }
     })
-    this.socket.on('getAll', async (cb: Function) => {
+    client.on('getAll', async function (cb: Function) {
       console.log('getAll called')
       try {
         cb(null, await self.getAll())

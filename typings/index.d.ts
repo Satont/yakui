@@ -46,7 +46,7 @@ export interface System {
   onHosted?: (data: HostType) => void | Promise<void>,
   onRaided?: (data: HostType) => void | Promise<void>,
   listenDbUpdates?: () => void | Promise<void>,
-  sockets?: () => void | Promise<void>,
+  sockets?: (socket: SocketIO.Socket) => void | Promise<void>,
   onAddModerator?: (data: IWebHookModeratorAdd) => void | Promise<void>,
   onRemoveModerator?: (data: IWebHookModeratorRemove) => void | Promise<void>,
   onUserFollow?: (data: IWebHookUserFollow) => void | Promise<void>,
