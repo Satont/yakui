@@ -94,4 +94,8 @@ export default new class Authorization implements System {
       res.status(400).send('You have no access to view that.')
     }
   }
+
+  verify(token: string) {
+    return jwt.verify(token, this.JWTKey)
+  }
 }

@@ -11,7 +11,7 @@ import Authorization from '@bot/systems/authorization'
 
 const PORT = process.env.PORT || 3000
 
-const app = express()
+export const app = express()
 
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json())
@@ -61,7 +61,7 @@ app.use((err, req: Request, res: Response, next) => {
   else next()
 })
 
-const server = http.createServer(app).listen(PORT, () => {
+export const server = http.createServer(app).listen(PORT, () => {
   info(`PANEL: Server initiliazed on ${PORT}`)
 })
 

@@ -35,42 +35,37 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Watch } from 'vue-property-decorator'
 import EventList from '../../../bot/models/EventList'
 import humanizeDuration from 'humanize-duration'
+import { Socket } from 'vue-socket.io-extended'
+import { getNameSpace } from '../plugins/socket'
+import { sortBy } from 'lodash'
 
 @Component({
   props: {
     id: Number
   }
 })
-export default class Chat extends Vue {
+export default class Events extends Vue {
   title = 'EventList'
   events: EventList[] = []
-  amount = 100
+  sortedEvents = []
+  socket = getNameSpace('widgets/eventlist')
 
   async created() {
-    this.getEvents()
-    this.heartbeat()
-  }
-
-  async getEvents() {
     const { data } = await this.$axios.get('/eventlist')
     this.events = data
   }
 
-  async heartbeat() {
-    setTimeout(() => this.heartbeat(), 2000);
-
-    const { data } = await this.$axios.post('/eventlist/heartbeat', { timestamp: this.events[0]?.timestamp })
-
-    if (!data) {
-      this.getEvents()
-    }
-  }
-
   humanize(val) {
     return humanizeDuration(Date.now() - val, { units: ['mo', 'd', 'h', 'm', 's'], round: true, language: (this.$root as any).metadata.lang })
+  }
+
+  mounted() {
+    this.socket.off('event').on('event', (event) => {
+      this.events.unshift(event)
+    })
   }
 }
 </script>

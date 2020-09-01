@@ -6,16 +6,14 @@ import { System, DonationData, HostType } from 'typings'
 import Event from '@bot/models/Event'
 import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove, INewResubscriber, INewSubscriber } from 'typings/events'
 import EventList from '@bot/models/EventList'
+import { getNameSpace } from '@bot/libs/socket'
 
 export default new class Events implements System {
-  alreadyListen = false
   events: Event[] = []
-  latestTimestamp: number = 0
+  widgetSocket = getNameSpace('widgets/eventlist')
 
   async init() {
     this.loadEvents()
-    const event: EventList = await EventList.findOne({ order: [['timestamp', 'desc']] })
-    this.latestTimestamp = event?.timestamp ?? Date.now()
   }
 
   async loadEvents() {
@@ -70,8 +68,8 @@ export default new class Events implements System {
   }
 
   async addToEventList({ name, data }: { name: string, data: object }) {
-    this.latestTimestamp = Date.now()
-    await EventList.create({ name, data })
+    const event: EventList = await EventList.create({ name, data })
+    this.widgetSocket.emit('event', event)
   }
 
   onDonation(data: DonationData) {

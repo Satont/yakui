@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import VueClipboard from 'vue-clipboard2'
 import Axios from './vue/plugins/axios'
+import VueSocketIO from 'vue-socket.io-extended'
+import Socket from './vue/plugins/socket'
 import humanizeDuration from 'humanize-duration'
 import BootstrapVue from 'bootstrap-vue'
 import Toast from 'vue-toastification'
@@ -12,12 +14,12 @@ import './css/main.css'
 
 import isLogged from './helpers/isLogged'
 
-
 Vue.use(VueRouter)
 Vue.use(VueClipboard)
 Vue.use(BootstrapVue)
 Vue.use(Toast)
 Vue.use(Axios)
+Vue.use(VueSocketIO, Socket)
 Vue.component('loading', () => import('./vue/components/loadingAnimation.vue'))
 Vue.component('side-bar', () => import('./vue/components/sidebar.vue'))
 Vue.component('nav-bar', () => import('./vue/components/navbar.vue'))
@@ -148,6 +150,7 @@ const start = async () => {
   router.afterEach((to, from) => {
     app.loading = false
   })
+
 }
 
 start()

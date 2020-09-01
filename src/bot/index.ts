@@ -13,6 +13,7 @@ const start = async () => {
   await import('@bot/libs/locales')
   await import('@bot/libs/tmi')
   await import('@bot/panel')
+  await import('@bot/libs/socket')
 }
 
 start()
