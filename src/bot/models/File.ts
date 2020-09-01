@@ -19,6 +19,6 @@ export default class File extends Model<File> {
   public type: string
 
   @AllowNull(false)
-  @Column(DataType.STRING)
+  @Column(DataType.TEXT)
   public data: string
 }

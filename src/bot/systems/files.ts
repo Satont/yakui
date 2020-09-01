@@ -5,8 +5,8 @@ import { System } from 'typings'
 export default new class Files implements System {
   socket = getNameSpace('systems/files')
 
-  async insert(file: IInsert) {
-    return await File.create(file)
+  async insert(files: IInsert[]) {
+    return await File.bulkCreate(files)
   }
 
   async getOne(id: number) {
@@ -30,7 +30,7 @@ export default new class Files implements System {
         cb(e, null)
       }
     })
-    client.on('getAll', async function (cb: Function) {
+    client.on('getAll', async (cb: Function) => {
       console.log('getAll called')
       try {
         cb(null, await self.getAll())
@@ -38,15 +38,14 @@ export default new class Files implements System {
         cb(e, null)
       }
     })
-    this.socket.on('delete', async (id: number,cb: Function) => {
+    client.on('delete', async (id: number,cb: Function) => {
       try {
         cb(null, await self.delete(id))
       } catch (e) {
         cb(e, null)
       }
     })
-    this.socket.on('insert', async (query: IInsert, cb: Function) => {
-      console.log(query)
+    client.on('insert', async (query: IInsert[], cb: Function) => {
       try {
         cb(null, await self.insert(query))
       } catch (e) {
