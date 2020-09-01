@@ -1,53 +1,36 @@
 <template>
-  <div>
-    <form method="post" enctype="multipart/form-data" @submit.prevent="submit">
+<div>
+  <form method="post" enctype="multipart/form-data" @submit.prevent="submit">
       <input type="file" id="filesForUpload" ref="filesForUpload" multiple v-on:change="handleFileUploads" />
       <input type="submit" value="Send" v-bind:disabled="!this.loading" />
-    </form>
-    <br>
-    <b-card-group columns>
-      <div v-for="file of files" v-bind:key="file.id">
-        <b-card
-          img-top
-          tag="article"
-          style="max-width: 20rem;"
-          class="mb-2"
-          v-if="file.type.startsWith('image')"
-          :header="file.name"
-          no-body
-          header-text-variant="dark"
-        >
-          <b-card-img v-bind:src="file.data" alt="Image" bottom />
-          <template v-slot:footer>
-            <b-button href="#" block size="sm" variant="danger" @click="del(file.id)">Delete</b-button>
-          </template>
-        </b-card>
+  </form>
+  <br>
+  <div class="card-deck mb-3" v-for="(chunk, index) of chunks" :key="'chunk-' + index">
+      <div class="card" v-for="file of chunk" :key="file.id">
+        <div class="card-body border-top p-0 text-right" style="flex: 0 1 auto;">
+          <a v-bind:href="'/gallery/'+ file.id" class="btn btn-outline-dark p-3 border-0 w-100" target="_blank"> {{ file.name || file.id }}</a>
+        </div>
+        <div class="card-body border-top p-0 text-right" style="flex: 1 1 auto;">
+          <img class="w-100" :src="file.data" v-if="file.type.startsWith('image')">
+          <audio controls v-if="file.type.startsWith('audio')">
+            <source v-bind:src="file.data" :type="file.type"/>
+          </audio>
+        </div>
 
-        <b-card
-          style="max-width: 20rem;"
-          class="mb-2"
-          v-if="file.type.startsWith('audio')"
-          :header="file.name"
-          header-text-variant="dark"
-        >
-          <b-card-body>
-            <audio controls v-if="file.type.startsWith('audio')">
-              <source v-bind:src="file.data" :type="file.type"/>
-            </audio>
-          </b-card-body>
-          <template v-slot:footer>
-            <b-button href="#" block size="sm" variant="danger" @click="del(file.id)">Delete</b-button>
-          </template>
-        </b-card>
+        <div class="card-footer p-0">
+          <b-btn @click="del(file.id)" variant="danger" class="btn-reverse w-100">Delete</b-btn>
+        </div>
       </div>
-    </b-card-group>
+  <div class="card" v-for="index in (4 - chunk.length)" style="visibility: hidden" :key="'empty-' + index"></div>
   </div>
+</div>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import socket, { getNameSpace } from '@panel/vue/plugins/socket'
+import _ from 'lodash'
 
 @Component
 export default class Files extends Vue {
@@ -94,6 +77,10 @@ export default class Files extends Vue {
 
       readers[i].readAsDataURL(e.target.files[i])
     }
+  }
+
+  get chunks() {
+    return _.chunk(this.files, 4)
   }
 }
 </script>
