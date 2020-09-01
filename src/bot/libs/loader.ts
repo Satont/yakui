@@ -8,11 +8,14 @@ export const loadedSystems: System[] = []
 const loader = async () => {
   for await (const file of getFiles(resolve(__dirname, '..', 'systems'))) {
     if (!file.endsWith('.js') && !file.endsWith('.ts')) continue;
-    
+
     const loadedFile: System = (await import(resolve(__dirname, '..', 'systems', file))).default
 
     if (typeof loadedFile.init !== 'undefined') await loadedFile.init()
     if (typeof loadedFile.listenDbUpdates !== 'undefined') await loadedFile.listenDbUpdates()
+    if (typeof loadedFile.sockets !== 'undefined' && loadedFile.socket) {
+      loadedFile.socket.on('connection', () => loadedFile.sockets())
+    }
 
     info(`System ${loadedFile.constructor.name.toUpperCase()} loaded`)
     loadedSystems.push(loadedFile)
@@ -20,11 +23,14 @@ const loader = async () => {
 
   for await (const file of getFiles(resolve(__dirname, '..', 'integrations'))) {
     if (!file.endsWith('.js') && !file.endsWith('.ts')) continue;
-    
+
     const loadedFile: System = (await import(resolve(__dirname, '..', 'integrations', file))).default
 
     if (typeof loadedFile.init !== 'undefined') await loadedFile.init()
     if (typeof loadedFile.listenDbUpdates !== 'undefined') await loadedFile.listenDbUpdates()
+    if (typeof loadedFile.sockets !== 'undefined' && loadedFile.socket) {
+      loadedFile.socket.on('connection', () => loadedFile.sockets())
+    }
 
     info(`Integration ${loadedFile.constructor.name.toUpperCase()} loaded`)
     loadedSystems.push(loadedFile)
@@ -37,7 +43,10 @@ const loader = async () => {
 
     if (typeof loadedFile.init !== 'undefined') await loadedFile.init()
     if (typeof loadedFile.listenDbUpdates !== 'undefined') await loadedFile.listenDbUpdates()
-    
+    if (typeof loadedFile.sockets !== 'undefined' && loadedFile.socket) {
+      loadedFile.socket.on('connection', () => loadedFile.sockets())
+    }
+
     info(`Custom System ${loadedFile.constructor.name.toUpperCase()} loaded`)
     loadedSystems.push(loadedFile)
   }

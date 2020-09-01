@@ -22,7 +22,7 @@ type DonationAlertsEvent = {
 }
 
 export default new class Donationalerts implements Integration {
-  socket: Centrifuge = null
+  centrifugeSocket: Centrifuge = null
   channel: Centrifuge.Subscription = null
   connecting = false
 
@@ -44,10 +44,10 @@ export default new class Donationalerts implements Integration {
   }
 
   async disconnect() {
-    if (!this.socket) return
+    if (!this.centrifugeSocket) return
     this.channel.unsubscribe()
-    this.socket.disconnect()
-    this.socket = null
+    this.centrifugeSocket.disconnect()
+    this.centrifugeSocket = null
   }
 
   async connect(token: string) {
@@ -55,7 +55,7 @@ export default new class Donationalerts implements Integration {
     this.disconnect()
     info('DONATIONALERTS: Starting init')
 
-    this.socket = new Centrifuge('wss://centrifugo.donationalerts.com/connection/websocket', {
+    this.centrifugeSocket = new Centrifuge('wss://centrifugo.donationalerts.com/connection/websocket', {
       websocket: WebSocket,
       onPrivateSubscribe: async ({ data }, cb) => {
         const request = await axios.post('https://www.donationalerts.com/api/v1/centrifuge/subscribe', data, {
@@ -67,8 +67,8 @@ export default new class Donationalerts implements Integration {
 
     const opts = await this.getOpts(token)
 
-    this.socket.setToken(opts.token)
-    this.socket.connect()
+    this.centrifugeSocket.setToken(opts.token)
+    this.centrifugeSocket.connect()
     this.listeners(opts)
     this.connecting = false
   }
@@ -89,16 +89,16 @@ export default new class Donationalerts implements Integration {
   }
 
   async listeners(opts: { token: string, id: number }) {
-    this.socket.on('disconnect', (reason: unknown) => {
+    this.centrifugeSocket.on('disconnect', (reason: unknown) => {
       info('DONATIONALERTS: disconnected from socket: ', reason)
       this.init()
     })
 
-    this.socket.on('connect', () => {
+    this.centrifugeSocket.on('connect', () => {
       info('DONATIONALERTS: successfuly connected to socket')
     })
 
-    this.channel = this.socket.subscribe(`$alerts:donation_${opts.id}`)
+    this.channel = this.centrifugeSocket.subscribe(`$alerts:donation_${opts.id}`)
 
     this.channel.on('join', () => {
       info('DONATIONALERTS: successfuly joined in donations channel')

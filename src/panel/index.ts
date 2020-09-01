@@ -76,6 +76,7 @@ const start = async () => {
 
       { path: '/overlays', name: 'OverlaysManagerList', component: () => import('./vue/pages/overlays/list.vue') },
       { path: '/overlays/edit/:id?', name: 'OverlaysManagerEdit', component: () => import('./vue/pages/overlays/edit.vue') },
+      { path: '/files', name: 'Files', component: () => import('./vue/pages/files/index.vue') },
     ],
   })
 

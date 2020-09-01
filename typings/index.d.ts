@@ -37,6 +37,7 @@ export interface System {
     fnc: function
   }>;
   commands?: Command[],
+  socket?: SocketIO.Namespace,
   init?: () => void | Promise<void>,
   onStreamEnd?: () => void | Promise<void>,
   onStreamStart?: () => void | Promise<void>,
@@ -45,6 +46,7 @@ export interface System {
   onHosted?: (data: HostType) => void | Promise<void>,
   onRaided?: (data: HostType) => void | Promise<void>,
   listenDbUpdates?: () => void | Promise<void>,
+  sockets?: () => void | Promise<void>,
   onAddModerator?: (data: IWebHookModeratorAdd) => void | Promise<void>,
   onRemoveModerator?: (data: IWebHookModeratorRemove) => void | Promise<void>,
   onUserFollow?: (data: IWebHookUserFollow) => void | Promise<void>,
