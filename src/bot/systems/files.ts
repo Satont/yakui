@@ -39,6 +39,7 @@ export default new class Files implements System {
       }
     })
     client.on('delete', async (id: number,cb: Function) => {
+      console.log(id)
       try {
         cb(null, await self.delete(id))
       } catch (e) {

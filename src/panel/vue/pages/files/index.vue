@@ -65,7 +65,7 @@ export default class Files extends Vue {
   }
 
   del(id: number) {
-    this.socket.emit('delete', id, (error, data) => {})
+    this.socket.emit('delete', id, (error, data) => this.refresh())
   }
 
   async submit() {
@@ -99,8 +99,8 @@ export default class Files extends Vue {
 </script>
 
 <style scoped>
-.card-img-top {
-  height: 250px;
+.card-img-bottom {
+  height: 175px;
   border: 0px !important;
 }
 .card-body {
