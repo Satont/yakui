@@ -12,9 +12,14 @@ const socket = io(location, options)
 
 export default socket
 
-export const getNameSpace = (name: string) => {
+export const getNameSpace = (name: string, opts: IOptions = {}) => {
   return io(`${location}/${name}`, {
     ...options,
+    ...opts,
     forceNew: true,
   })
+}
+
+interface IOptions {
+  public?: boolean;
 }
