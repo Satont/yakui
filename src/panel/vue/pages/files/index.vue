@@ -29,7 +29,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
-import socket, { getNameSpace } from '@panel/vue/plugins/socket'
+import { getNameSpace } from '@panel/vue/plugins/socket'
 import _ from 'lodash'
 
 @Component
