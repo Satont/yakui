@@ -8,7 +8,9 @@
   <div class="card-deck mb-3" v-for="(chunk, index) of chunks" :key="'chunk-' + index">
     <div class="card" v-for="file of chunk" :key="file.id">
       <div class="card-body border-top p-0 text-right" style="flex: 0 1 auto;">
-        <a v-bind:href="'/api/v1/files/'+ file.id" class="btn btn-outline-dark p-3 border-0 w-100" target="_blank">{{ file.name || file.id }}</a>
+        <a v-bind:href="'/api/v1/files/'+ file.id" class="btn btn-outline-dark p-3 border-0 w-100" target="_blank">
+          <i class="fas fa-external-link-alt"></i> {{ file.name || file.id }}
+        </a>
       </div>
       <div class="card-body border-top p-0 text-right" style="flex: 1 1 auto;">
         <img class="w-100" :src="file.data" v-if="file.type.startsWith('image')">
