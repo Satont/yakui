@@ -13,6 +13,7 @@
     <b-nav-item outer-link to="/greetings"><i class="far fa-hand-spock"></i> Greetings</b-nav-item>
     <b-nav-item outer-link to="/markers"><i class="fas fa-thumbtack"></i> Markers</b-nav-item>
     <b-nav-item outer-link to="/overlays"><i class="fas fa-file-alt"></i> Overlays</b-nav-item>
+    <b-nav-item outer-link to="/files"><i class="far fa-file"></i> Files</b-nav-item>
   </b-nav>
 </div>
 
