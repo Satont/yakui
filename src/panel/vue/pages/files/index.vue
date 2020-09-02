@@ -12,7 +12,7 @@
       </div>
       <div class="card-body border-top p-0 text-right" style="flex: 1 1 auto;">
         <img class="w-100" :src="file.data" v-if="file.type.startsWith('image')">
-        <audio controls v-if="file.type.startsWith('audio')">
+        <audio class="w-100" controls v-if="file.type.startsWith('audio')">
           <source v-bind:src="file.data" :type="file.type"/>
         </audio>
       </div>
