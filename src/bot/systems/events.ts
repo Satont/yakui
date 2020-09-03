@@ -7,6 +7,7 @@ import Event from '@bot/models/Event'
 import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove, INewResubscriber, INewSubscriber } from 'typings/events'
 import EventList from '@bot/models/EventList'
 import { getNameSpace } from '@bot/libs/socket'
+import { PubSubRedemptionMessage } from 'twitch-pubsub-client/lib'
 
 export default new class Events implements System {
   events: Event[] = []
@@ -145,5 +146,9 @@ export default new class Events implements System {
       name: 'resub',
       data: { username: data.username, tier: data.tier, message: data.message, months: data.months, overallMonths: data.overallMonths }
     })
+  }
+
+  onRedemption(data: PubSubRedemptionMessage) {
+
   }
 }

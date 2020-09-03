@@ -1,5 +1,6 @@
 import TwitchPrivateMessage from "twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage"
 import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove, INewSubscriber, INewResubscriber } from "./events"
+import { PubSubRedemptionMessage } from "twitch-pubsub-client/lib"
 
 export type CommandPermission = 'viewers' | 'followers' | 'vips' | 'subscribers' | 'moderators' | 'broadcaster'
 export type HostType = { viewers: number, username: string }
@@ -53,6 +54,7 @@ export interface System {
   onStreamChange?: (data: IWebHookStreamChanged) => void | Promise<void>,
   onSubscribe?: (data: INewSubscribe) => void | Promise<void>,
   onReSubscribe?: (data: INewResubscriber) => void | Promise<void>
+  onRedemption?: (data: PubSubRedemptionMessage) => void | Promise<void>
 }
 
 export interface Integration extends System {

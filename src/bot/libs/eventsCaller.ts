@@ -1,7 +1,8 @@
 import { loadedSystems } from './loader'
 import { DonationData, HostType } from 'typings'
-import { info, donate, hosted, hosting, raided, moded, unmoded, follow, sub, resub } from './logger'
+import { info, donate, hosted, hosting, raided, moded, unmoded, follow, sub, resub, redemption } from './logger'
 import { IWebHookModeratorAdd, IWebHookModeratorRemove, IWebHookUserFollow, IWebHookStreamChanged, INewSubscriber, INewResubscriber } from 'typings/events'
+import { PubSubRedemptionMessage } from 'twitch-pubsub-client/lib'
 
 export const onStreamStart = () => {
   info(`TWITCH: Stream started`)
@@ -95,5 +96,13 @@ export const onReSubscribe = (data: INewResubscriber) => {
 
   for (const system of loadedSystems) {
     if (typeof system.onReSubscribe === 'function') system.onReSubscribe(data)
+  }
+}
+
+export const onRedemption = (data: PubSubRedemptionMessage) => {
+  redemption(`${data.userName}, name: ${data.rewardName}, points: ${data.rewardCost}`)
+
+  for (const system of loadedSystems) {
+    if (typeof system.onRedemption === 'function') system.onRedemption(data)
   }
 }
