@@ -1,7 +1,6 @@
 import PubSubClient from 'twitch-pubsub-client'
-import { info, error } from './logger'
+import { info } from './logger'
 import tmi from './tmi'
-import events from '@bot/systems/events'
 import { onRedemption } from './eventsCaller'
 
 export default new class PubSub {
@@ -19,6 +18,7 @@ export default new class PubSub {
 
   async listeners() {
     await this.client.onRedemption(tmi.channel.id, onRedemption)
+    info('PUBSUB: SUCCESSFULY SUBSCRIBED TO REDEMPTION EVENTS')
   }
 
 }
