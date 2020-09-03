@@ -149,6 +149,18 @@ export default new class Events implements System {
   }
 
   onRedemption(data: PubSubRedemptionMessage) {
+    this.fire({
+      name: 'redemption',
+      opts: {
+        username: data.userName,
+        amount: data.rewardCost,
+        message: data.message,
+      }
+    })
 
+    this.addToEventList({
+      name: 'redemption',
+      data: { username: data.userName, amount: data.rewardCost, message: data.message }
+    })
   }
 }
