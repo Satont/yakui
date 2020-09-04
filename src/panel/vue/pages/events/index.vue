@@ -162,6 +162,14 @@ export default Vue.extend({
       ],
       description: 'Triggering when someone start to raid you',
       operations: []
+    },
+    redemption: {
+      variables: [
+        { name: '$username', description: 'Username who buyed redemption.' },
+        { name: '$amount', description: 'Cost of redemption.' },
+        { name: '$message', description: 'Message of user sended.' },
+      ],
+      description: 'Redemption recieved',
     }
   }),
   async created() {
