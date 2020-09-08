@@ -7,6 +7,7 @@ const socket = io(server)
 socket.use((request, next) => {
   const token = request.handshake.query.token as string
   const isPublic = request.handshake.query.public as boolean
+  console.log(request.handshake)
   try {
     if (isPublic) return next()
     else if (!token || !authorization.verify(token)) return next(new Error('Unauthorized.'))

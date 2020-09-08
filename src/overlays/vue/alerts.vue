@@ -14,13 +14,18 @@ import { getNameSpace } from '@panel/vue/plugins/socket'
 
 @Component
 export default class Alerts extends Vue {
-  socket = getNameSpace('systems/alerts', { public: true })
+  socket = getNameSpace('overlays/alerts', { public: true })
   playing = false
   alerts = []
 
-  listeners() {
-    this.socket.on('alert', async (data) => this.alerts.push(data))
-    this.setupInterval()
+  mounted() {
+    console.log('alerts overlay loaded')
+    this.socket.on('alert', async (data) => {
+      console.log(data)
+      this.alerts.push(data)
+    })
+    this.socket.emit('test')
+    //this.setupInterval()
   }
 
   setupInterval() {

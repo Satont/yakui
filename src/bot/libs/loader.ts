@@ -9,7 +9,8 @@ const loader = async () => {
   const folders = {
     systems: 'System',
     integrations: 'Integration',
-    customSystems: 'Custom System'
+    customSystems: 'Custom System',
+    overlays: 'Overlay'
   }
 
   for (const folder of Object.keys(folders)) {
