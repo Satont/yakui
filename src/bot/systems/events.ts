@@ -8,6 +8,8 @@ import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove, INew
 import EventList from '@bot/models/EventList'
 import { getNameSpace } from '@bot/libs/socket'
 import { PubSubRedemptionMessage } from 'twitch-pubsub-client/lib'
+import alerts from '@bot/overlays/alerts'
+import File from '@bot/models/File'
 
 export default new class Events implements System {
   events: Event[] = []
@@ -32,6 +34,10 @@ export default new class Events implements System {
         if (!await this.filter(operation.filter, opts)) continue
       }
       if (operation.key === 'sendMessage') await this.sendMessage(operation.message, opts)
+      if (operation.key === 'playAudio') {
+        const file = await File.findOne({ where: { id: operation.audioId } })
+        alerts.emitAlert({ audio: { file: file, volume: operation.audioVolume }  })
+      }
     }
   }
 
@@ -54,6 +60,7 @@ export default new class Events implements System {
 
   private replaceVariables(opts: any) {
     return {
+      $name: get(opts, 'name', ''),
       $username: get(opts, 'username', ''),
       $amount: get(opts, 'amount', ''),
       $message: get(opts, 'message', ''),
@@ -152,6 +159,7 @@ export default new class Events implements System {
     this.fire({
       name: 'redemption',
       opts: {
+        name: data.rewardName,
         username: data.userName,
         amount: data.rewardCost,
         message: data.message,
@@ -160,7 +168,7 @@ export default new class Events implements System {
 
     this.addToEventList({
       name: 'redemption',
-      data: { username: data.userName, amount: data.rewardCost, message: data.message }
+      data: { name: data.rewardName, username: data.userName, amount: data.rewardCost, message: data.message }
     })
   }
 }

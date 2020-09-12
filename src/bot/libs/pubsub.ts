@@ -20,5 +20,4 @@ export default new class PubSub {
     await this.client.onRedemption(tmi.channel.id, onRedemption)
     info('PUBSUB: SUCCESSFULY SUBSCRIBED TO REDEMPTION EVENTS')
   }
-
 }
