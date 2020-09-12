@@ -33,22 +33,25 @@ export default class Alerts extends Vue {
     setInterval(() => {
       if (this.playing) return;
 
-      this.alerts.forEach(alert => {
+      this.alerts.forEach(async alert => {
         this.playing = true
         this.currentAlert = alert
-        this.$nextTick(async () => {
+        await this.$nextTick(async () => {
             if (alert.audio) {
             const audio = this.$refs.audio as HTMLMediaElement
             if (!audio) return;
             audio.volume = alert.audio.volume ? Number(alert.audio.volume) / 100 : 1
             audio.src = alert.audio.file.data
-            if (!audio.error) {
-              console.log(audio)
-              audio.onended = () => this.playing = false
-              audio.oncanplaythrough = () => audio.play().then(() => audio.muted = false)
+            if (audio.error) return
+            audio.onended = () => {
+              this.playing = false
+              this.currentAlert = null
+              const index = this.alerts.indexOf(alert)
+              this.alerts.splice(index, 1)
+              console.log('ended', this.alerts)
             }
+            audio.oncanplaythrough = () => audio.play().then(() => audio.muted = false)
           }
-          this.currentAlert = null
         })
       })
     }, 500)

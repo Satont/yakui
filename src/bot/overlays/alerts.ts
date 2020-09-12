@@ -11,7 +11,10 @@ export default new class Alerts implements System {
     console.log('connected')
     const audio = await File.findOne({ where: { id: 27 }})
     this.clients.push(client)
-    client.on('disconnect', () => this.clients.unshift(client)) // delete this socket from array for possible memory leak
+    client.on('disconnect', () => {
+      const index = this.clients.indexOf(client)
+      this.clients.splice(index, 1)
+    })
     this.emitAlert({
       audio: { file: audio, volume: 20 }
     })
