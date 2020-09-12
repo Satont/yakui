@@ -116,7 +116,7 @@ export default new class Tmi {
     this.intervals.updateAccessToken[type] = setTimeout(() => this.intervaledUpdateAccessToken(type, { access_token, refresh_token }), 10 * 60 * 1000)
     const { access_token, refresh_token } = await OAuth.refresh(data.refresh_token, type)
 
-    this.clients[type]._getAuthProvider().setAccessToken(new AccessToken({
+    this.clients[type].setAccessToken(new AccessToken({
       access_token: data.access_token,
       refresh_token: data.refresh_token
     }))
