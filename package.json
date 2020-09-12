@@ -84,7 +84,7 @@
     "vue-property-decorator": "^9.0.0",
     "vue-router": "^3.4.3",
     "vue-socket.io-extended": "^4.0.4",
-    "vue-toastification": "^1.7.6",
+    "vue-toastification": "^1.7.7",
     "winston": "^3.3.3",
     "ws": "^7.3.1"
   },
