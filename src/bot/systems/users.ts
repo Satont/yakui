@@ -8,7 +8,7 @@ import UserBits from '@bot/models/UserBits'
 import UserDailyMessages from '@bot/models/UserDailyMessages'
 import twitch from './twitch'
 import Settings from '@bot/models/Settings'
-import TwitchPrivateMessage from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
+import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
 
 export default new class Users implements System {
   settings: {

@@ -1,4 +1,4 @@
-import TwitchPrivateMessage from "twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage";
+import { TwitchPrivateMessage } from "twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage";
 import safeEval from 'safe-eval'
 import axios from 'axios';
 import _ from 'lodash'

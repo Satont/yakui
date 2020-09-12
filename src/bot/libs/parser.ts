@@ -1,4 +1,4 @@
-import TwitchPrivateMessage from "twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage"
+import { TwitchPrivateMessage } from "twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage"
 
 import { System, Command } from "typings"
 import tmi from "./tmi"

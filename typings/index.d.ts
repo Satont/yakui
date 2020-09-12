@@ -1,4 +1,4 @@
-import TwitchPrivateMessage from "twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage"
+import { TwitchPrivateMessage } from "twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage"
 import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove, INewSubscriber, INewResubscriber } from "./events"
 import { PubSubRedemptionMessage } from "twitch-pubsub-client/lib"
 

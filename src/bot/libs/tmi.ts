@@ -9,7 +9,7 @@ import events from '@bot/systems/events'
 import { info, error, chatOut, chatIn, timeout, whisperOut } from './logger'
 import { onHosting, onHosted, onRaided, onSubscribe, onReSubscribe } from './eventsCaller'
 import users from '@bot/systems/users'
-import TwitchPrivateMessage from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
+import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
 
 export default new class Tmi {
   private intervals = {
