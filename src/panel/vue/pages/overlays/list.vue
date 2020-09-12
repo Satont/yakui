@@ -1,10 +1,12 @@
 <template>
 <div>
     <h1>Overlays list</h1>
-    <p class="pb-2">
+    <b-button size="sm" variant="primary" @click="show = 'custom'">Custom</b-button>
+    <b-button size="sm" variant="primary" @click="show = 'default'">Default</b-button>
+    <p class="pb-2 mt-2" v-if="show === 'custom'">
       <b-button class="btn-block" variant="primary" size="sm" @click="edit">New overlay</b-button>
     </p>
-    <b-card-group deck>
+    <b-card-group deck v-if="show === 'custom'" class="mt-2">
       <b-card v-for="(overlay, index) in overlays" :key="overlay.id" :header="overlay.name" text-variant="dark" header-class="p-2" body-class="p-2" footer-class="p-2 footer">
         <b-card-body>
           {{ overlay.data | truncate }}
@@ -14,6 +16,20 @@
            <b-btn variant="success" size="sm" @click="copy(overlay.id)">Copy url</b-btn>
            <b-button class="btn" variant="primary" size="sm" @click="edit(overlay)">Edit</b-button>
            <b-button class="btn" variant="danger" size="sm" @click="del(overlay.id, index)">Delete</b-button>
+         </div>
+        </template>
+      </b-card>
+    </b-card-group>
+    
+
+    <b-card-group deck v-if="show === 'default'" class="mt-2">
+      <b-card header="Alerts" text-variant="dark" header-class="p-2" body-class="p-2" footer-class="p-2 footer">
+        <b-card-body>
+          Overlay for getting live alerts from bot
+        </b-card-body>
+        <template v-slot:footer>
+         <div class="m-0 text-right">
+           <b-btn variant="success" size="sm" @click="copyCustom('alerts')">Copy url</b-btn>
          </div>
         </template>
       </b-card>
@@ -35,6 +51,7 @@ import Overlay from '@bot/models/Overlay'
 })
 export default class OverlaysList extends Vue {
   overlays: Overlay[] = []
+  show = 'custom'
 
   async created() {
     const overlays = await this.$axios.get('/overlays')
@@ -57,6 +74,11 @@ export default class OverlaysList extends Vue {
 
   copy(id) {
     const url = window.location.origin + '/overlay/custom/' + id
+    this.$copyText(url)
+  }
+
+  copyCustom(name) {
+    const url = window.location.origin + '/overlay/' + name
     this.$copyText(url)
   }
 }
