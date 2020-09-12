@@ -13,6 +13,7 @@ export default new class PubSub {
 
   async init() {
     if (!tmi.clients.broadcaster) return
+    if (this.client) this.client = null
     this.client = new PubSubClient()
     await this.client.registerUserListener(tmi.clients.broadcaster)
     this.listeners()
