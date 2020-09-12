@@ -1,5 +1,6 @@
-import Twitch, { AccessToken } from 'twitch'
-import Chat from 'twitch-chat-client'
+import { ApiClient as Twitch, AccessToken } from 'twitch'
+import{ ChatClient as Chat } from 'twitch-chat-client'
+import { StaticAuthProvider } from 'twitch-auth'
 
 import Settings from '@bot/models/Settings'
 import OAuth from './oauth'
@@ -87,9 +88,9 @@ export default new class Tmi {
 
       const { clientId, scopes } = await OAuth.validate(accessToken?.value, type)
 
-      this.clients[type] = Twitch.withCredentials(clientId, accessToken?.value, scopes)
+      this.clients[type] = new Twitch({ authProvider: new StaticAuthProvider(clientId, accessToken?.value, scopes) })
 
-      this.chatClients[type] = Chat.forTwitchClient(this.clients[type])
+      this.chatClients[type] = new Chat(this.clients[type])
 
       this.listeners(type)
       if (type === 'bot') {
@@ -177,7 +178,7 @@ export default new class Tmi {
         events.fire({ name: 'message', opts: { username, message } })
         await Parser.parse(message, raw)
       })
-      client.onPrivmsg(async (channel, username, message, raw) => {
+      client.onMessage(async (channel, username, message, raw) => {
         chatIn(`${username} [${raw.userInfo.userId}]: ${message}`)
 
         if (raw.isCheer) {
