@@ -96,12 +96,15 @@ export default new class Tmi {
       if (type === 'bot') {
         await this.getChannel(channel.value)
         await import('./webhooks')
-        await import('./pubsub')
         await this.loadLibs()
       }
       await this.chatClients[type].connect()
 
       await this.intervaledUpdateAccessToken(type, { access_token: accessToken.value, refresh_token: refreshToken.value })
+      if (type === 'broadcaster') {
+        const pubsub = await import('./pubsub')
+        await pubsub.default.init()
+      }
     } catch (e) {
       error(e)
       OAuth.refresh(refreshToken.value, type)
