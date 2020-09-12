@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div v-if="!playing">
-
+    <div v-if="playing && currentAlert">
+      <audio ref="audio" muted v-if="currentAlert.audio" :src="currentAlert.audio.file.data"></audio>
     </div>
   </div>
 </template>
@@ -18,10 +18,12 @@ export default class Alerts extends Vue {
   socket = getNameSpace({ name: 'overlays/alerts', opts: { query: { isPublic: true } } })
   playing = false
   alerts: Array<IEmitAlert> = []
+  currentAlert: IEmitAlert = null
 
   mounted() {
     console.log('alerts overlay loaded')
     this.socket.on('alert', async (data: IEmitAlert) => {
+      console.log('new event', data)
       this.alerts.push(data)
     })
     this.setupInterval()
@@ -31,10 +33,25 @@ export default class Alerts extends Vue {
     setInterval(() => {
       if (this.playing) return;
 
-      for (const alert of this.alerts) {
-        
-      }
-    }, 100)
+      this.alerts.forEach(alert => {
+        this.playing = true
+        this.currentAlert = alert
+        this.$nextTick(async () => {
+            if (alert.audio) {
+            const audio = this.$refs.audio as HTMLMediaElement
+            if (!audio) return;
+            audio.volume = alert.audio.volume ? Number(alert.audio.volume) / 100 : 1
+            audio.src = alert.audio.file.data
+            if (!audio.error) {
+              console.log(audio)
+              audio.onended = () => this.playing = false
+              audio.oncanplaythrough = () => audio.play().then(() => audio.muted = false)
+            }
+          }
+          this.currentAlert = null
+        })
+      })
+    }, 500)
   }
 }
 </script>

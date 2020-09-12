@@ -1,5 +1,10 @@
+import File from '../src/bot/models/File'
+
 export interface IEmitAlert {
-  audio?: File,
+  audio?: {
+    file: File,
+    volume?: number
+  },
   image?: { 
     file: File,
     position: IEmitAlertPosition
