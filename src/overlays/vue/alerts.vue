@@ -14,7 +14,7 @@ import { getNameSpace } from '@panel/vue/plugins/socket'
 
 @Component
 export default class Alerts extends Vue {
-  socket = getNameSpace('overlays/alerts', { public: true })
+  socket = getNameSpace({ name: 'overlays/alerts', opts: { query: { isPublic: true } } })
   playing = false
   alerts = []
 
@@ -24,7 +24,6 @@ export default class Alerts extends Vue {
       console.log(data)
       this.alerts.push(data)
     })
-    this.socket.emit('test')
     //this.setupInterval()
   }
 

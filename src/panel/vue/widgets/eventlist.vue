@@ -51,7 +51,7 @@ export default class Events extends Vue {
   title = 'EventList'
   events: EventList[] = []
   sortedEvents = []
-  socket = getNameSpace('widgets/eventlist')
+  socket = getNameSpace({ name: 'widgets/eventlist' })
 
   async created() {
     const { data } = await this.$axios.get('/eventlist')

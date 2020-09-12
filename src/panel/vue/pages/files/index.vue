@@ -39,7 +39,7 @@ export default class Files extends Vue {
   files = []
   filesForUpload = []
   loading = false
-  socket = getNameSpace('systems/files')
+  socket = getNameSpace({ name: 'systems/files' })
 
   mounted() {
     this.refresh()
