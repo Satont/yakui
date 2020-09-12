@@ -12,7 +12,7 @@ export default new class PubSub {
 
   async init() {
     this.client = new PubSubClient()
-    await this.client.registerUserListener(tmi.clients.bot)
+    await this.client.registerUserListener(tmi.clients.bot, tmi.channel.id)
     this.listeners()
   }
 
