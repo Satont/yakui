@@ -30,9 +30,7 @@ export default new class Events implements System {
     if (!event) return
 
     for (const operation of event.operations) {
-      if (operation.filter) {
-        if (!await this.filter(operation.filter, opts)) continue
-      }
+      if (operation.filter && !await this.filter(operation.filter, opts)) continue
       if (operation.key === 'sendMessage') await this.sendMessage(operation.message, opts)
       if (operation.key === 'playAudio') {
         const file = await File.findOne({ where: { id: operation.audioId } })

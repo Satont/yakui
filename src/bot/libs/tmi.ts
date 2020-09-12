@@ -95,6 +95,7 @@ export default new class Tmi {
       if (type === 'bot') {
         await this.getChannel(channel.value)
         await import('./webhooks')
+        await import('./pubsub')
         await this.loadLibs()
       }
       await this.chatClients[type].connect()
@@ -242,7 +243,6 @@ export default new class Tmi {
   }
 
   private async loadLibs() {
-    await import('@bot/systems/twitch')
     await import('./loader')
     await import('./currency')
   }
