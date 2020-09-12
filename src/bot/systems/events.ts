@@ -7,6 +7,9 @@ import Event from '@bot/models/Event'
 import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove, INewResubscriber, INewSubscriber } from 'typings/events'
 import EventList from '@bot/models/EventList'
 import { getNameSpace } from '@bot/libs/socket'
+import { PubSubRedemptionMessage } from 'twitch-pubsub-client/lib'
+import alerts from '@bot/overlays/alerts'
+import File from '@bot/models/File'
 
 export default new class Events implements System {
   events: Event[] = []
@@ -27,10 +30,12 @@ export default new class Events implements System {
     if (!event) return
 
     for (const operation of event.operations) {
-      if (operation.filter) {
-        if (!await this.filter(operation.filter, opts)) continue
-      }
+      if (operation.filter && !await this.filter(operation.filter, opts)) continue
       if (operation.key === 'sendMessage') await this.sendMessage(operation.message, opts)
+      if (operation.key === 'playAudio') {
+        const file = await File.findOne({ where: { id: operation.audioId } })
+        alerts.emitAlert({ audio: { file: file, volume: operation.audioVolume }  })
+      }
     }
   }
 
@@ -53,6 +58,7 @@ export default new class Events implements System {
 
   private replaceVariables(opts: any) {
     return {
+      $name: get(opts, 'name', ''),
       $username: get(opts, 'username', ''),
       $amount: get(opts, 'amount', ''),
       $message: get(opts, 'message', ''),
@@ -144,6 +150,23 @@ export default new class Events implements System {
     this.addToEventList({
       name: 'resub',
       data: { username: data.username, tier: data.tier, message: data.message, months: data.months, overallMonths: data.overallMonths }
+    })
+  }
+
+  onRedemption(data: PubSubRedemptionMessage) {
+    this.fire({
+      name: 'redemption',
+      opts: {
+        name: data.rewardName,
+        username: data.userName,
+        amount: data.rewardCost,
+        message: data.message,
+      }
+    })
+
+    this.addToEventList({
+      name: 'redemption',
+      data: { name: data.rewardName, username: data.userName, amount: data.rewardCost, message: data.message }
     })
   }
 }

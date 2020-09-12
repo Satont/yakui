@@ -14,6 +14,7 @@
       <a @click="show = 'hosted'" class="btn btn-primary btn-sm">Hosted</a>
       <a @click="show = 'hosting'" class="btn btn-primary btn-sm">Hosting</a>
       <a @click="show = 'raided'" class="btn btn-primary btn-sm">Raided</a>
+      <a @click="show = 'redemption'" class="btn btn-primary btn-sm">Redemption</a>
     </div>
   <div class="jumbotron jumbotron-fluid">
       <h1 class="display-4">{{ show }} event</h1>
@@ -38,12 +39,23 @@
     <div class="card-body">
       <select class="custom-select" v-model="operation.key" style="margin-bottom:15px;">
         <option value="sendMessage">Send Chat Message</option>
+        <option value="playAudio">Play audio</option>
       </select>
       <center><label>Filter of operation (javascript)</label></center>
       <input type="text" class="form-control" v-model="operation.filter" placeholder="$username === 'moobot'">
       <br>
+
       <center><label v-if="operation.key === 'sendMessage'">Message for sending</label></center>
       <input type="text" class="form-control" v-if="operation.key === 'sendMessage'" v-model="operation.message" placeholder="Message for sending">
+
+      <center><label v-if="operation.key === 'playAudio'">Audio for playing</label></center>
+      <select v-if="operation.key === 'playAudio'" class="custom-select" v-model="operation.audioId" style="margin-bottom:15px;">
+        <option v-for="option in files" v-bind:key="option.id" v-bind:value="option.id">
+          {{ option.name }}
+        </option>
+      </select>
+      <center><label v-if="operation.key === 'playAudio'">Volume of audio</label></center>
+      <input type="text" class="form-control" v-if="operation.key === 'playAudio'" v-model.number="operation.audioVolume" value="100">
     </div>
     <div class="card-footer text-muted">
       <button type="button" class="btn btn-block btn-danger btn-sm" @click="deleteOperation(index)">Delete</button>
@@ -58,6 +70,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Event from '@bot/models/Event'
+import { getNameSpace } from '@panel/vue/plugins/socket'
 
 export default Vue.extend({
   data: () => ({
@@ -162,7 +175,19 @@ export default Vue.extend({
       ],
       description: 'Triggering when someone start to raid you',
       operations: []
-    }
+    },
+    redemption: {
+      variables: [
+        { name: '$name', description: 'Name of redemption' },
+        { name: '$username', description: 'Username who buyed redemption.' },
+        { name: '$amount', description: 'Cost of redemption.' },
+        { name: '$message', description: 'Message of user sended.' },
+      ],
+      description: 'Redemption recieved',
+      operations: []
+    },
+    files: [],
+    filesSocket: getNameSpace({ name: 'systems/files' })
   }),
   async created() {
     const { data }: { data: Event[] } = await this.$axios.get('/events')
@@ -170,6 +195,8 @@ export default Vue.extend({
     for (const event of data) {
       this[event.name].operations = event.operations
     }
+    
+    this.filesSocket.emit('getAll', (error, data) => this.files = data.filter(o => o.type.startsWith('audio')))
   },
   methods: {
     addOperation: function () {

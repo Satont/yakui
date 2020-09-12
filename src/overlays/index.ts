@@ -10,7 +10,8 @@ const router = new Router({
   base: '/overlay',
   routes: [
     { path: '/', component: () => import('./vue/customOverlay.vue') },
-    { path: '/custom/:id', name: 'CustomOverlay', component: () => import('./vue/customOverlay.vue') }
+    { path: '/custom/:id', name: 'CustomOverlay', component: () => import('./vue/customOverlay.vue') },
+    { path: '/alerts', name: 'Alerts', component: () => import('./vue/alerts.vue') }
   ]
 })
 
