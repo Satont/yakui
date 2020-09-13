@@ -7,10 +7,6 @@ import Settings from '@bot/models/Settings'
 export default new class PubSub {
   client: PubSubClient = null
 
-  constructor() {
-    this.init()
-  }
-
   async init() {
     if (!tmi.clients.broadcaster) return
     if (this.client) this.client = null
