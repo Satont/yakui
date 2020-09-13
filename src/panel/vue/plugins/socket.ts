@@ -14,10 +14,6 @@ const socket = io(location, options)
 export default socket
 
 export const getNameSpace = ({ name, opts = {} }: { name: string, opts?: IOptions }) => {
-  console.log({
-    ...merge(options, opts),
-    forceNew: true,
-  })
   return io(`${location}/${name}`, {
     ...merge(options, opts),
     forceNew: true,

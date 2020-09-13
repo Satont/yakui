@@ -21,9 +21,10 @@ export default class Alerts extends Vue {
   currentAlert: IEmitAlert = null
 
   mounted() {
-    console.log('alerts overlay loaded')
+    console.debug('alerts overlay loaded')
+    console.debug('socket:', this.socket)
     this.socket.on('alert', async (data: IEmitAlert) => {
-      console.log('new event', data)
+      console.debug('new event', data)
       this.alerts.push(data)
     })
     this.setupInterval()
@@ -31,11 +32,12 @@ export default class Alerts extends Vue {
 
   setupInterval() {
     setInterval(() => {
-      if (this.playing) return;
-
+      if (this.playing || !this.alerts.length) return;
+      console.debug('started', this.alerts)
       this.alerts.forEach(async alert => {
         this.playing = true
         this.currentAlert = alert
+        console.debug('currentAlert', this.currentAlert)
         await this.$nextTick(async () => {
             if (alert.audio) {
             const audio = this.$refs.audio as HTMLMediaElement
@@ -48,7 +50,7 @@ export default class Alerts extends Vue {
               this.currentAlert = null
               const index = this.alerts.indexOf(alert)
               this.alerts.splice(index, 1)
-              console.log('ended', this.alerts)
+              console.debug('ended', this.alerts)
             }
             audio.oncanplaythrough = () => audio.play().then(() => audio.muted = false)
           }
