@@ -21,7 +21,6 @@ const loader = async () => {
         if (typeof loadedFile.init !== 'undefined') await loadedFile.init()
         if (typeof loadedFile.listenDbUpdates !== 'undefined') await loadedFile.listenDbUpdates()
         if (typeof loadedFile.sockets !== 'undefined' && loadedFile.socket) {
-          console.log(`we are in typeof loadedFile.sockets !== 'undefined' && loadedFile.socket block! ` + loadedFile.constructor.name)
           loadedFile.socket.on('connection', client => loadedFile.sockets(client))
         }
   
