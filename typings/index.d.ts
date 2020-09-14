@@ -55,6 +55,7 @@ export interface System {
   onSubscribe?: (data: INewSubscribe) => void | Promise<void>,
   onReSubscribe?: (data: INewResubscriber) => void | Promise<void>
   onRedemption?: (data: PubSubRedemptionMessage) => void | Promise<void>
+  onMessageHighlight?: (data: TwitchPrivateMessage) => void | Promise<void>
 }
 
 export interface Integration extends System {

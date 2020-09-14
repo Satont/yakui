@@ -8,8 +8,6 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import Overlay from '@bot/models/Overlay'
-import axios from 'axios'
 import { getNameSpace } from '@panel/vue/plugins/socket'
 import { IEmitAlert } from 'typings/overlays'
 
@@ -40,19 +38,19 @@ export default class Alerts extends Vue {
         console.debug('currentAlert', this.currentAlert)
         await this.$nextTick(async () => {
             if (alert.audio) {
-            const audio = this.$refs.audio as HTMLMediaElement
-            if (!audio) return;
-            audio.volume = alert.audio.volume ? Number(alert.audio.volume) / 100 : 1
-            audio.src = alert.audio.file.data
-            if (audio.error) return
-            audio.onended = () => {
-              this.playing = false
-              this.currentAlert = null
-              const index = this.alerts.indexOf(alert)
-              this.alerts.splice(index, 1)
-              console.debug('ended', this.alerts)
-            }
-            audio.oncanplaythrough = () => audio.play().then(() => audio.muted = false)
+              const audio = this.$refs.audio as HTMLMediaElement
+              if (!audio) return;
+              audio.volume = alert.audio.volume ? Number(alert.audio.volume) / 100 : 1
+              audio.src = alert.audio.file.data
+              if (audio.error) return
+              audio.onended = () => {
+                this.playing = false
+                this.currentAlert = null
+                const index = this.alerts.indexOf(alert)
+                this.alerts.splice(index, 1)
+                console.debug('ended', this.alerts)
+              }
+              audio.oncanplaythrough = () => audio.play().then(() => audio.muted = false)
           }
         })
       })

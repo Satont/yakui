@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import VueClipboard from 'vue-clipboard2'
 import Axios from './vue/plugins/axios'
 import VueSocketIO from 'vue-socket.io-extended'
+import LoadScript from 'vue-plugin-load-script'
 import Socket from './vue/plugins/socket'
 import humanizeDuration from 'humanize-duration'
 import BootstrapVue from 'bootstrap-vue'
@@ -20,6 +21,7 @@ Vue.use(BootstrapVue)
 Vue.use(Toast)
 Vue.use(Axios)
 Vue.use(VueSocketIO, Socket)
+Vue.use(LoadScript)
 Vue.component('loading', () => import('./vue/components/loadingAnimation.vue'))
 Vue.component('side-bar', () => import('./vue/components/sidebar.vue'))
 Vue.component('nav-bar', () => import('./vue/components/navbar.vue'))
@@ -40,6 +42,7 @@ const start = async () => {
           { path: 'oauth', name: 'OAuth', component: () => import('./vue/pages/settings/oauth.vue') },
           { path: 'moderation', name: 'Moderation', component: () => import('./vue/pages/settings/moderation.vue') },
           { path: 'users', name: 'Users', component: () => import('./vue/pages/settings/users.vue') },
+          { path: 'tts', name: 'TTS', component: () => import('./vue/pages/settings/tts.vue') },
         ]
       },
       { path: '/events', name: 'EventsManager', component: () => import('./vue/pages/events/index.vue') },

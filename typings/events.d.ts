@@ -1,3 +1,5 @@
+import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage';
+
 interface IWebHookModeratorEvent {
   event_timestamp: string,
   event_type: string,
@@ -54,4 +56,8 @@ export interface INewSubscriber {
 export interface INewResubscriber extends INewSubscriber {
   months?: number,
   overallMonths?: number
+}
+
+export interface IMessageHighLighted {
+  msg: TwitchPrivateMessage
 }

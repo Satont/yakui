@@ -33,6 +33,16 @@
          </div>
         </template>
       </b-card>
+      <b-card header="TTS" text-variant="dark" header-class="p-2" body-class="p-2" footer-class="p-2 footer">
+        <b-card-body>
+          Overlay speaking some message
+        </b-card-body>
+        <template v-slot:footer>
+         <div class="m-0 text-right">
+           <b-btn variant="success" size="sm" @click="copyCustom('tts')">Copy url</b-btn>
+         </div>
+        </template>
+      </b-card>
     </b-card-group>
   </div>
 </template>

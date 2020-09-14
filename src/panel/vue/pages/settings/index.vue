@@ -7,6 +7,7 @@
           <b-nav-item to="/settings/oauth">OAuth</b-nav-item>
           <b-nav-item to="/settings/moderation">Moderation</b-nav-item>
           <b-nav-item to="/settings/users">Users</b-nav-item>
+          <b-nav-item to="/settings/tts">TTS</b-nav-item>
         </b-nav>
       </b-card-header>
 
@@ -23,13 +24,15 @@ import OAuth from './oauth.vue'
 import Moderation from './moderation.vue'
 import General from './general.vue'
 import Users from './users.vue'
+import TTS from './tts.vue'
 
 @Component({
   components: {
     OAuth,
     Moderation,
     General,
-    Users
+    Users,
+    TTS,
   }
 })
 export default class Index extends Vue {

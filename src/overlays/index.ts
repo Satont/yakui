@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import LoadScript from 'vue-plugin-load-script'
+Vue.use(LoadScript)
 
 Vue.component('loading', () => import('../panel/vue/components/loadingAnimation.vue'))
 Vue.use(Router)
@@ -11,7 +13,8 @@ const router = new Router({
   routes: [
     { path: '/', component: () => import('./vue/customOverlay.vue') },
     { path: '/custom/:id', name: 'CustomOverlay', component: () => import('./vue/customOverlay.vue') },
-    { path: '/alerts', name: 'Alerts', component: () => import('./vue/alerts.vue') }
+    { path: '/alerts', name: 'Alerts', component: () => import('./vue/alerts.vue') },
+    { path: '/tts', name: 'TTS', component: () => import('./vue/tts.vue') }
   ]
 })
 

@@ -1,8 +1,9 @@
 import { loadedSystems } from './loader'
 import { DonationData, HostType } from 'typings'
-import { info, donate, hosted, hosting, raided, moded, unmoded, follow, sub, resub, redemption } from './logger'
+import { info, donate, hosted, hosting, raided, moded, unmoded, follow, sub, resub, redemption, highlight } from './logger'
 import { IWebHookModeratorAdd, IWebHookModeratorRemove, IWebHookUserFollow, IWebHookStreamChanged, INewSubscriber, INewResubscriber } from 'typings/events'
 import { PubSubRedemptionMessage } from 'twitch-pubsub-client/lib'
+import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
 
 export const onStreamStart = () => {
   info(`TWITCH: Stream started`)
@@ -104,5 +105,13 @@ export const onRedemption = (data: PubSubRedemptionMessage) => {
 
   for (const system of loadedSystems) {
     if (typeof system.onRedemption === 'function') system.onRedemption(data)
+  }
+}
+
+export const onMessageHighlight = (data: TwitchPrivateMessage) => {
+  highlight(`${data.userInfo.userName}, message: ${data.message.value}`)
+
+  for (const system of loadedSystems) {
+    if (typeof system.onMessageHighlight === 'function') system.onMessageHighlight(data)
   }
 }

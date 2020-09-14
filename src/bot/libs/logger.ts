@@ -26,6 +26,7 @@ declare module 'winston' {
     follow: winston.LeveledLogMethod;
     unfollow: winston.LeveledLogMethod;
     redemption: winston.LeveledLogMethod;
+    highlight: winston.LeveledLogMethod
   }
 }
 const levels: winston.config.AbstractConfigSetLevels = {
@@ -48,6 +49,7 @@ const levels: winston.config.AbstractConfigSetLevels = {
   follow: 1,
   unfollow: 1,
   redemption: 1,
+  highlight: 1,
 }
 
 const logDir = './logs'
@@ -78,6 +80,7 @@ const log = winston.createLogger({
       if (info.level === 'follow') level = chalk.cyanBright('+follow')
       if (info.level === 'unfollow') level = chalk.cyanBright('-follow')
       if (info.level === 'redemption') level = chalk.cyanBright(`/redemption/`)
+      if (info.level === 'highlight') level = chalk.cyanBright(`/highlight/`)
 
       if (typeof info.message === 'object') info.message = inspect(info.message)
       const timestamp = moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')
@@ -130,3 +133,4 @@ export const unmoded = log.unmoded.bind(log)
 export const follow = log.follow.bind(log)
 export const unfollow = log.unfollow.bind(log)
 export const redemption = log.redemption.bind(log)
+export const highlight = log.highlight.bind(log)

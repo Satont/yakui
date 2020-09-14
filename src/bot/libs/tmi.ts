@@ -8,7 +8,7 @@ import Parser from './parser'
 import { UserPermissions } from 'typings'
 import events from '@bot/systems/events'
 import { info, error, chatOut, chatIn, timeout, whisperOut } from './logger'
-import { onHosting, onHosted, onRaided, onSubscribe, onReSubscribe } from './eventsCaller'
+import { onHosting, onHosted, onRaided, onSubscribe, onReSubscribe, onMessageHighlight } from './eventsCaller'
 import users from '@bot/systems/users'
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
 
@@ -174,6 +174,10 @@ export default new class Tmi {
     })
 
     if (type === 'bot') {
+      client.onAnyMessage(msg => {
+        if (msg.tags.get('msg-id') !== 'highlighted-message') return;
+        onMessageHighlight(msg as TwitchPrivateMessage)
+      })
       client.onAction(async (channel, username, message, raw) => {
         chatIn(`${username} [${raw.userInfo.userId}]: ${message}`)
 
