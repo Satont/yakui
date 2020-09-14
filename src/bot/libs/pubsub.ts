@@ -1,5 +1,5 @@
 import { PubSubClient } from 'twitch-pubsub-client'
-import { info } from './logger'
+import { error, info } from './logger'
 import tmi from './tmi'
 import { onRedemption } from './eventsCaller'
 import Settings from '@bot/models/Settings'
@@ -11,13 +11,21 @@ export default new class PubSub {
     if (!tmi.clients.broadcaster) return
     if (this.client) this.client = null
     this.client = new PubSubClient()
-    await this.client.registerUserListener(tmi.clients.broadcaster)
-    this.listeners()
+    try {
+      await this.client.registerUserListener(tmi.clients.broadcaster)
+      this.listeners()
+    } catch (e) {
+      error('PUBSUB: ' + e.message)
+    }
   }
 
   async listeners() {
-    await this.client.onRedemption(tmi.channel.id, onRedemption)
-    info('PUBSUB: SUCCESSFULY SUBSCRIBED TO REDEMPTION EVENTS')
+    try {
+      await this.client.onRedemption(tmi.channel.id, onRedemption)
+      info('PUBSUB: SUCCESSFULY SUBSCRIBED TO REDEMPTION EVENTS')
+    } catch (e) {
+      error('PUBSUB: ' + e.message)
+    }
   }
 
   listenDbUpdates() {

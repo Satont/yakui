@@ -8,7 +8,7 @@ import { onDonation } from '@bot/libs/eventsCaller'
 import currency, { currency as currencyType } from '@bot/libs/currency'
 import User from '@bot/models/User'
 import UserTips from '@bot/models/UserTips';
-import { info } from '@bot/libs/logger';
+import { error, info } from '@bot/libs/logger';
 
 type DonationAlertsEvent = {
   id: string;
@@ -67,6 +67,8 @@ export default new class Donationalerts implements Integration {
 
     const opts = await this.getOpts(token)
 
+    if (!opts) return;
+
     this.centrifugeSocket.setToken(opts.token)
     this.centrifugeSocket.connect()
     this.listeners(opts)
@@ -78,14 +80,18 @@ export default new class Donationalerts implements Integration {
       throw new Error('Access token is empty.');
     }
 
-    const request = await axios.get('https://www.donationalerts.com/api/v1/user/oauth', {
-      headers: { 'Authorization': `Bearer ${token}` },
-    });
+    try {
+      const request = await axios.get('https://www.donationalerts.com/api/v1/user/oauth', {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
 
-    return {
-      token: request.data.data.socket_connection_token,
-      id: request.data.data.id,
-    };
+      return {
+        token: request.data.data.socket_connection_token,
+        id: request.data.data.id,
+      }
+    } catch (e) {
+      error('DONATIONALERTS: https://www.donationalerts.com/api/v1/user/oauth request failed: ' + e.message)
+    }
   }
 
   async listeners(opts: { token: string, id: number }) {

@@ -1,7 +1,7 @@
 import { resolve } from 'path'
 import getFiles from '@bot/commons/getFiles'
 import { System } from 'typings';
-import { info } from './logger';
+import { error, info } from './logger';
 
 export const loadedSystems: System[] = []
 
@@ -12,22 +12,26 @@ const loader = async () => {
     customSystems: 'Custom System',
     overlays: 'Overlay'
   }
-
   for (const folder of Object.keys(folders)) {
-    for await (const file of getFiles(resolve(__dirname, '..', folder))) {
-      if (!file.endsWith('.js') && !file.endsWith('.ts')) continue;
-
-      const loadedFile: System = (await import(resolve(__dirname, '..', folder, file))).default
-
-      if (typeof loadedFile.init !== 'undefined') await loadedFile.init()
-      if (typeof loadedFile.listenDbUpdates !== 'undefined') await loadedFile.listenDbUpdates()
-      if (typeof loadedFile.sockets !== 'undefined' && loadedFile.socket) {
-        loadedFile.socket.on('connection', client => loadedFile.sockets(client))
+    try {
+      for await (const file of getFiles(resolve(__dirname, '..', folder))) {
+        if (!file.endsWith('.js') && !file.endsWith('.ts')) continue;
+  
+        const loadedFile: System = (await import(resolve(__dirname, '..', folder, file))).default
+        if (typeof loadedFile.init !== 'undefined') await loadedFile.init()
+        if (typeof loadedFile.listenDbUpdates !== 'undefined') await loadedFile.listenDbUpdates()
+        if (typeof loadedFile.sockets !== 'undefined' && loadedFile.socket) {
+          console.log(`we are in typeof loadedFile.sockets !== 'undefined' && loadedFile.socket block! ` + loadedFile.constructor.name)
+          loadedFile.socket.on('connection', client => loadedFile.sockets(client))
+        }
+  
+        info(`${folders[folder]} ${loadedFile.constructor.name.toUpperCase()} loaded`)
+        loadedSystems.push(loadedFile)
       }
-
-      info(`${folders[folder]} ${loadedFile.constructor.name.toUpperCase()} loaded`)
-      loadedSystems.push(loadedFile)
-    }
+    } catch (e) {
+      error('LOADER: ' + e)
+      continue
+    } 
   }
 }
 

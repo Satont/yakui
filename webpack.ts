@@ -54,6 +54,7 @@ export default {
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve(__dirname, 'src'),
+      '@src': resolve(__dirname, 'src'),
       '@bot': resolve(__dirname, 'src', 'bot'),
       '@panel': resolve(__dirname, 'src', 'panel'),
       '@login': resolve(__dirname, 'src', 'login')

@@ -5,7 +5,7 @@ import locales from '@bot/libs/locales'
 import { System, Command, CommandOptions } from "typings"
 import { INewSubscriber, INewResubscriber } from "typings/events"
 import Settings from "@bot/models/Settings"
-import { info } from "@bot/libs/logger"
+import { error } from "@bot/libs/logger"
 
 export default new class Twitch implements System {
   private intervals = {
@@ -123,10 +123,14 @@ export default new class Twitch implements System {
   private async getChannelSubscribers() {
     clearInterval(this.intervals.subscribers)
     this.intervals.subscribers = setTimeout(() => this.getChannelSubscribers(), 1 * 60 * 1000)
-
-    if (!tmi.clients.broadcaster || !tmi.channel?.id) return;
-    const data = await (await tmi.clients.broadcaster.helix.subscriptions.getSubscriptionsPaginated(tmi.channel?.id)).getAll()
-    this.channelMetaData.subs = data.length - 1 || 0
+    try {
+      if (!tmi.clients.broadcaster || !tmi.channel?.id) return;
+      const data = await (tmi.clients.broadcaster.helix.subscriptions.getSubscriptionsPaginated(tmi.channel?.id)).getAll()
+      this.channelMetaData.subs = data.length - 1 || 0
+    } catch (e) {
+      if (e.message.includes('This token does not have the requested scopes')) return;
+      error(e.message)
+    }
   }
 
   async getFollowAge(userId: string) {

@@ -6,10 +6,9 @@ import { info } from './logger'
 const socket = io(server)
 
 socket.use((request, next) => {
-  const token = request.handshake.query.token as string
-  const isPublic = request.handshake.query.isPublic === 'true'
-
   try {
+    const token = request.handshake.query.token as string
+    const isPublic = request.handshake.query.isPublic === 'true'
     if (isPublic) return next()
     else if (!token || !authorization.verify(token)) return next(new Error('Unauthorized.'))
     else next()

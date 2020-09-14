@@ -13,7 +13,8 @@ import File from '@bot/models/File'
 
 export default new class Events implements System {
   events: Event[] = []
-  widgetSocket = getNameSpace('widgets/eventlist')
+  socket = getNameSpace('widgets/eventlist')
+  clients: SocketIO.Socket[] = []
 
   async init() {
     this.loadEvents()
@@ -75,7 +76,15 @@ export default new class Events implements System {
 
   async addToEventList({ name, data }: { name: string, data: object }) {
     const event: EventList = await EventList.create({ name, data })
-    this.widgetSocket.emit('event', event)
+    this.clients.forEach(c => c.emit('event', event))
+  }
+
+  sockets(client: SocketIO.Socket) {
+    this.clients.push(client)
+    client.on('disconnect', () => {
+      const index = this.clients.indexOf(client)
+      this.clients.splice(index, 1)
+    })
   }
 
   onDonation(data: DonationData) {
