@@ -13,7 +13,7 @@ export default class TTS extends Vue {
   queue = []
   settings = null
 
-   async mounted() {
+  async mounted() {
     console.debug('tts overlay loaded')
     console.debug('socket:', this.socket)
 
@@ -25,14 +25,14 @@ export default class TTS extends Vue {
       this.settings = settings
       this.mountResponsiveVoice()
     })
-
     this.setupInterval()
   }
 
   async mountResponsiveVoice() {
     if (!this.settings || !this.settings.token || !this.settings.token.length) return
+    await this.$unloadScript(`https://code.responsivevoice.org/responsivevoice.js?key=${this.settings.token}`).catch(() => {})
     await this.$loadScript(`https://code.responsivevoice.org/responsivevoice.js?key=${this.settings.token}`).catch(() => {})
-
+    console.debug('settings', this.settings)
     window.responsiveVoice.init()
     console.debug('ResponsiveVoice init OK')
   }

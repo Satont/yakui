@@ -30,7 +30,7 @@ export default new class TTS implements System {
     if (!settings) return;
 
     this.settings = settings.value
-    console.log(this.settings)
+
     this.clients.forEach(c => c.emit('settings', { ...this.settings, token: this.token }))
   }
 
