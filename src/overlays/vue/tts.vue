@@ -18,10 +18,11 @@ export default class TTS extends Vue {
     console.debug('socket:', this.socket)
 
     this.socket.on('tts', (text) => {
-      console.debug('tts event recieved with text: ' + text)
+      console.debug('tts event recieved with text:' + text)
       this.queue.push(text)
     })
     this.socket.on('settings', (settings) => {
+      console.debug('settings event recieved:', settings)
       this.settings = settings
       this.mountResponsiveVoice()
     })
@@ -29,10 +30,10 @@ export default class TTS extends Vue {
   }
 
   async mountResponsiveVoice() {
+    console.debug('mountResponsiveVoice called, settings:', this.settings)
     if (!this.settings || !this.settings.token || !this.settings.token.length) return
     await this.$unloadScript(`https://code.responsivevoice.org/responsivevoice.js?key=${this.settings.token}`).catch(() => {})
     await this.$loadScript(`https://code.responsivevoice.org/responsivevoice.js?key=${this.settings.token}`).catch(() => {})
-    console.debug('settings', this.settings)
     window.responsiveVoice.init()
     console.debug('ResponsiveVoice init OK')
   }
@@ -52,7 +53,7 @@ export default class TTS extends Vue {
           this.playing = false
         }
       })
-    }, 1000)
+    }, 100)
   }
 }
 </script>
