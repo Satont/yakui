@@ -40,6 +40,7 @@
       <select class="custom-select" v-model="operation.key" style="margin-bottom:15px;">
         <option value="sendMessage">Send Chat Message</option>
         <option value="playAudio">Play audio</option>
+        <option value="TTS">Say any message in TTS overlay</option>
       </select>
       <center><label>Filter of operation (javascript)</label></center>
       <input type="text" class="form-control" v-model="operation.filter" placeholder="$username === 'moobot'">
@@ -57,7 +58,7 @@
       <center><label v-if="operation.key === 'playAudio'">Volume of audio</label></center>
       <input type="text" class="form-control" v-if="operation.key === 'playAudio'" v-model.number="operation.audioVolume" value="100">
 
-      <center><label v-if="operation.key === 'TTS'">Say any message in TTS overlay</label></center>
+      <center><label v-if="operation.key === 'TTS'">Message for talking</label></center>
       <input type="text" class="form-control" v-if="operation.key === 'TTS'" v-model="operation.message" placeholder="Message for talking">
     </div>
     <div class="card-footer text-muted">
