@@ -33,12 +33,15 @@ export default new class Events implements System {
 
     for (const operation of event.operations) {
       if (operation.filter && !await this.filter(operation.filter, opts)) continue
-      if (operation.key === 'sendMessage') await this.sendMessage(operation.message, opts)
+      if (operation.key === 'sendMessage') {
+        const message = await this.prepareMessage(operation.message, opts)
+        await tmi.say({ message })
+      }
       if (operation.key === 'playAudio') {
         const file = await File.findOne({ where: { id: operation.audioId } })
         alerts.emitAlert({ audio: { file: file, volume: operation.audioVolume }  })
       }
-      if (operation.key === 'TTS') tts.emitTTS(operation.message)
+      if (operation.key === 'TTS') tts.emitTTS(await this.prepareMessage(operation.message, opts))
     }
   }
 
@@ -50,13 +53,13 @@ export default new class Events implements System {
     return run
   }
 
-  async sendMessage(message: string, opts: any) {
+  async prepareMessage(message: string, opts: any) {
 
     for (const [key, value] of Object.entries(this.replaceVariables(opts))) {
       message = message.replace(key, value)
     }
 
-    await tmi.say({ message })
+    return message
   }
 
   private replaceVariables(opts: any) {
