@@ -10,6 +10,7 @@ import { getNameSpace } from '@bot/libs/socket'
 import { PubSubRedemptionMessage } from 'twitch-pubsub-client/lib'
 import alerts from '@bot/overlays/alerts'
 import File from '@bot/models/File'
+import tts from '@bot/overlays/tts'
 
 export default new class Events implements System {
   events: Event[] = []
@@ -37,6 +38,7 @@ export default new class Events implements System {
         const file = await File.findOne({ where: { id: operation.audioId } })
         alerts.emitAlert({ audio: { file: file, volume: operation.audioVolume }  })
       }
+      if (operation.key === 'TTS') tts.emitTTS(operation.message)
     }
   }
 

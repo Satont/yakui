@@ -56,6 +56,9 @@
       </select>
       <center><label v-if="operation.key === 'playAudio'">Volume of audio</label></center>
       <input type="text" class="form-control" v-if="operation.key === 'playAudio'" v-model.number="operation.audioVolume" value="100">
+
+      <center><label v-if="operation.key === 'TTS'">Say any message in TTS overlay</label></center>
+      <input type="text" class="form-control" v-if="operation.key === 'TTS'" v-model="operation.message" placeholder="Message for talking">
     </div>
     <div class="card-footer text-muted">
       <button type="button" class="btn btn-block btn-danger btn-sm" @click="deleteOperation(index)">Delete</button>
