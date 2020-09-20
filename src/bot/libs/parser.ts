@@ -10,6 +10,7 @@ import variables from "@bot/systems/variables"
 import User from '@bot/models/User'
 import locales from "./locales"
 import CommandUsage from "@bot/models/CommandUsage"
+import File from "@bot/models/File"
 
 export default new class Parser {
   systems: { [x: string]: System } = {}
@@ -57,6 +58,16 @@ export default new class Parser {
 
       CommandUsage.create({ name: command.name })
 
+      if (command.sound) {
+        const alerts = await import('@bot/overlays/alerts')
+        alerts.default.emitAlert({ 
+          audio: { 
+            file: await File.findOne({ where: { id: command.sound.soundId } }) ,
+            volume: command.sound.volume,
+          }
+        })
+      }
+
       if (!users.hasPermission(raw.userInfo.badges, command.permission, raw)) break;
 
       if (command.price) {
@@ -76,7 +87,6 @@ export default new class Parser {
       let commandResult: string = await command.fnc.call(system, { message, raw, command, argument })
 
       if (!commandResult) break
-
 
       // set custom variable
       if (await variables.changeCustomVariable({ raw, response: commandResult, text: argument })) {

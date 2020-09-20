@@ -6,6 +6,7 @@ import isAdmin from '@bot/panel/middlewares/isAdmin'
 import CommandUsage from '@bot/models/CommandUsage'
 import Commands from '@bot/systems/commands'
 import customcommands from '@bot/systems/customcommands'
+import CommandSound from '@bot/models/CommandSound'
 
 const router = Router({
   mergeParams: true
@@ -23,7 +24,10 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:id', isAdmin, async (req, res, next) => {
   try {
-    const command: Command = await Command.findOne({ where: { id: req.params.id }})
+    const command: Command = await Command.findOne({ 
+      where: { id: req.params.id },
+      include: [CommandSound]
+    })
 
     res.json(command)
   } catch (e) {
@@ -75,6 +79,10 @@ router.post('/', isAdmin, checkSchema({
     in: ['body'],
     optional: true
   },
+  sound: {
+    in: ['body'],
+    optional: true,
+  }
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
@@ -114,6 +122,17 @@ router.post('/', isAdmin, checkSchema({
       })
     }
     else command = await Command.create(body)
+
+    if (body.sound?.id && body.sound.id as any !== '0') {
+      const [commandSound]: [CommandSound] = await CommandSound.findOrCreate({ 
+        where: { commandId: command.id },
+        defaults: { commandId: command.id, soundId: body.sound.id as any }
+      })
+      commandSound.soundId = body.sound.id as any
+      commandSound.volume = body.sound.volume as any
+      await commandSound.save()
+    } else await CommandSound.destroy({ where: { commandId: command.id }}).catch(() => {})
+
     await customcommands.init()
     res.json(command)
   } catch (e) {

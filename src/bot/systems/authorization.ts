@@ -42,7 +42,7 @@ export default new class Authorization implements System {
         throw new Error('Not matching userId')
       }
       const username = twitchValidation.data.login
-      const admins: string[] = [tmi.channel?.name]
+      const admins: string[] = [tmi?.channel?.name]
       const botAdmins: Settings = await Settings.findOne({ where: { space: 'users', name: 'botAdmins' } })
       if (botAdmins) admins.push(...botAdmins.value)
 
@@ -72,7 +72,7 @@ export default new class Authorization implements System {
 
       const data = jwt.verify(refreshTokenFromHeader, this.JWTKey) as { userId: number, username: string }
 
-      const admins: string[] = [tmi.channel?.name]
+      const admins: string[] = [tmi?.channel?.name]
       const botAdmins: Settings = await Settings.findOne({ where: { space: 'users', name: 'botAdmins' } })
       if (botAdmins) admins.push(...botAdmins.value)
 

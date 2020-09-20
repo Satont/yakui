@@ -1,6 +1,7 @@
 import { TwitchPrivateMessage } from "twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage"
 import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove, INewSubscriber, INewResubscriber } from "./events"
 import { PubSubRedemptionMessage } from "twitch-pubsub-client/lib"
+import CommandSound from "@bot/models/CommandSound"
 
 export type CommandPermission = 'viewers' | 'followers' | 'vips' | 'subscribers' | 'moderators' | 'broadcaster'
 export type HostType = { viewers: number, username: string }
@@ -17,7 +18,8 @@ export interface Command {
   fnc?: function,
   enabled?: boolean,
   price?: number,
-  type?: 'custom' | 'default'
+  type?: 'custom' | 'default',
+  sound?: CommandSound
 }
 
 export interface CommandOptions {

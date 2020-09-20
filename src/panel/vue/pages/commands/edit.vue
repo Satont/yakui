@@ -43,6 +43,18 @@
         </b-btn>
       </b-form-group>
 
+      <b-form-group label="Command sound" label-for="sound">
+        <select v-model="command.sound.id" class="form-control">
+          <option value="0" selected>No sound</option>
+          <option v-for="sound of soundsList" v-bind:key="sound.id" v-bind:value="sound.id">{{ sound.name }}</option>
+        </select>
+      </b-form-group>
+      
+      <div v-if="command.sound.id && command.sound.id !== '0'">
+        <label for='pitch'>Sound volume: {{ command.sound.volume }}</label>
+        <b-form-input id='pitch' v-model='command.sound.volume' type='range' min='1' max='100' step="1"></b-form-input>
+      </div>
+
       <b-button class="btn-block" variant="success" v-if="command.enabled" @click.prevent="command.enabled = !command.enabled">Enabled</b-button>
       <b-button class="btn-block" variant="warning" v-if="!command.enabled" @click.prevent="command.enabled = !command.enabled">Disabled</b-button>
 
@@ -56,9 +68,12 @@
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import { Command } from 'typings'
+import { getNameSpace } from '@panel/vue/plugins/socket'
 
 @Component
 export default class CommandsManagerEdit extends Vue {
+  socket = getNameSpace({ name: 'systems/files' })
+  soundsList = []
   command: Command = {
     name: null,
     response: null,
@@ -69,6 +84,10 @@ export default class CommandsManagerEdit extends Vue {
     aliases: [],
     price: 0,
     enabled: true,
+    sound: {
+      id: '0',
+      volume: 50,
+    } as any,
   }
 
   avaliablePermissions = [
@@ -95,7 +114,8 @@ export default class CommandsManagerEdit extends Vue {
     this.command.aliases = this.command.aliases.filter(o => o !== '' && o)
   }
 
-  async created() {
+  async mounted() {
+    this.socket.emit('getAll', (error, data) => this.soundsList = data.filter(s => s.type.startsWith('audio')))
     const id = this.$route.params.id as any
 
     if (id) {

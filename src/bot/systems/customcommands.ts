@@ -1,11 +1,14 @@
 import { System, Command as CommandType, CommandOptions } from 'typings'
 import Command from '@bot/models/Command'
+import CommandSound from '@bot/models/CommandSound'
 
 export default new class CustomCommands implements System {
   commands: CommandType[] = []
 
   async init() {
-    const commands: Command[] = await Command.findAll()
+    const commands: Command[] = await Command.findAll({
+      include: [CommandSound]
+    })
     this.commands = commands.map(command => ({
       id: command.id,
       name: command.name,
@@ -18,6 +21,7 @@ export default new class CustomCommands implements System {
       visible: command.visible,
       enabled: command.enabled,
       fnc: this.fnc,
+      sound: command.sound,
       type: 'custom'
     }))
   }
