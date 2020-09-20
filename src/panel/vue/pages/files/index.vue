@@ -46,7 +46,9 @@ export default class Files extends Vue {
   }
 
   refresh() {
-    this.socket.emit('getAll', (error, data) => this.files = data)
+    this.socket.emit('getAll', (error, data) => {
+      this.$store.commit('setFilesList', data)
+    })
   }
 
   del(id: number) {
@@ -55,14 +57,15 @@ export default class Files extends Vue {
 
   async submit() {
     this.socket.emit('insert', this.filesForUpload, (error, response) => {
-      this.loading = false
+      this.loading = false;
+      (this.$refs.filesForUpload as any).files = null
       this.refresh()
     })
   }
 
   handleFileUploads(e) {
     this.loading = true
-    console.log(e.target)
+    this.filesForUpload = []
     const files = e.target.files || e.dataTransfer.files
     if (!files.length) return
     const readers = {}
@@ -82,7 +85,7 @@ export default class Files extends Vue {
   }
 
   get chunks() {
-    return _.chunk(this.files, 4)
+    return _.chunk(this.$store.state.filesList, 4)
   }
 }
 </script>

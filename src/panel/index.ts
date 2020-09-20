@@ -4,7 +4,7 @@ import VueClipboard from 'vue-clipboard2'
 import Axios from './vue/plugins/axios'
 import VueSocketIO from 'vue-socket.io-extended'
 import LoadScript from 'vue-plugin-load-script'
-import Socket from './vue/plugins/socket'
+import Socket, { getNameSpace } from './vue/plugins/socket'
 import humanizeDuration from 'humanize-duration'
 import BootstrapVue from 'bootstrap-vue'
 import Toast from 'vue-toastification'
@@ -12,6 +12,7 @@ import 'vue-toastification/dist/index.css'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import './css/main.css'
+import { store } from './vue/plugins/vuex'
 
 import isLogged from './helpers/isLogged'
 
@@ -29,6 +30,10 @@ Vue.component('variables-list', () => import('./vue/components/variablesList.vue
 
 const start = async () => {
   const user = await isLogged(true, true)
+  const filesSocket = getNameSpace({ name: 'systems/files' })
+  await new Promise((res, rej) => filesSocket.emit('getAll', (err, files) => {
+    res(store.commit('setFilesList', files))
+  }))
 
   const router = new VueRouter({
     mode: 'history',
@@ -143,7 +148,8 @@ const start = async () => {
     },
     beforeDestroy() {
       clearTimeout(this.updateTimeout)
-    }
+    },
+    store,
   }).$mount('#app')
 
   router.beforeEach((to, from, next) => {

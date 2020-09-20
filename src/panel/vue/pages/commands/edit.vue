@@ -72,8 +72,6 @@ import { getNameSpace } from '@panel/vue/plugins/socket'
 
 @Component
 export default class CommandsManagerEdit extends Vue {
-  socket = getNameSpace({ name: 'systems/files' })
-  soundsList = []
   command: Command = {
     name: null,
     response: null,
@@ -115,7 +113,6 @@ export default class CommandsManagerEdit extends Vue {
   }
 
   async mounted() {
-    this.socket.emit('getAll', (error, data) => this.soundsList = data.filter(s => s.type.startsWith('audio')))
     const id = this.$route.params.id as any
 
     if (id) {
@@ -124,7 +121,12 @@ export default class CommandsManagerEdit extends Vue {
       const { data } = await this.$axios.get('/commands/' + id)
 
       this.command = data
+      this.command.sound = data.sound || { id: '0', volume: 50 }
     }
+  }
+
+  get soundsList() {
+    return this.$store.state.filesList.filter(s => s.type.startsWith('audio'))
   }
 
   async del() {

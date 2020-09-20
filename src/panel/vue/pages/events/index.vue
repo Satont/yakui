@@ -51,7 +51,7 @@
 
       <center><label v-if="operation.key === 'playAudio'">Audio for playing</label></center>
       <select v-if="operation.key === 'playAudio'" class="custom-select" v-model="operation.audioId" style="margin-bottom:15px;">
-        <option v-for="option in files" v-bind:key="option.id" v-bind:value="option.id">
+        <option v-for="option in $store.state.filesList.filter(o => o.type.startsWith('audio'))" v-bind:key="option.id" v-bind:value="option.id">
           {{ option.name }}
         </option>
       </select>
@@ -74,7 +74,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import Event from '@bot/models/Event'
-import { getNameSpace } from '@panel/vue/plugins/socket'
 
 export default Vue.extend({
   data: () => ({
@@ -190,8 +189,6 @@ export default Vue.extend({
       description: 'Redemption recieved',
       operations: []
     },
-    files: [],
-    filesSocket: getNameSpace({ name: 'systems/files' })
   }),
   async created() {
     const { data }: { data: Event[] } = await this.$axios.get('/events')
@@ -199,8 +196,6 @@ export default Vue.extend({
     for (const event of data) {
       this[event.name].operations = event.operations
     }
-    
-    this.filesSocket.emit('getAll', (error, data) => this.files = data.filter(o => o.type.startsWith('audio')))
   },
   methods: {
     addOperation: function () {
