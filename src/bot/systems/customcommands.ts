@@ -21,7 +21,7 @@ export default new class CustomCommands implements System {
       visible: command.visible,
       enabled: command.enabled,
       fnc: this.fnc,
-      sound: command.sound || { id: '0', volume: 50 } as any,
+      sound: command.sound || { soundId: '0', volume: 50 } as any,
       type: 'custom'
     }))
   }

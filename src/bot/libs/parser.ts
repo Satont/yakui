@@ -58,7 +58,7 @@ export default new class Parser {
 
       CommandUsage.create({ name: command.name })
 
-      if (command.sound) {
+      if (command.sound && (command.sound.soundId as any) ! == '0') {
         const alerts = await import('@bot/overlays/alerts')
         alerts.default.emitAlert({ 
           audio: { 

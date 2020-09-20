@@ -44,13 +44,13 @@
       </b-form-group>
 
       <b-form-group label="Command sound" label-for="sound">
-        <select v-model="command.sound.id" class="form-control">
+        <select v-model="command.sound.soundId" class="form-control">
           <option value="0" selected>No sound</option>
           <option v-for="sound of soundsList" v-bind:key="sound.id" v-bind:value="sound.id">{{ sound.name }}</option>
         </select>
       </b-form-group>
       
-      <div v-if="command.sound.id && command.sound.id !== '0'">
+      <div v-if="command.sound.soundId && command.sound.soundId !== '0'">
         <label for='pitch'>Sound volume: {{ command.sound.volume }}</label>
         <b-form-input id='pitch' v-model='command.sound.volume' type='range' min='1' max='100' step="1"></b-form-input>
       </div>
@@ -83,7 +83,7 @@ export default class CommandsManagerEdit extends Vue {
     price: 0,
     enabled: true,
     sound: {
-      id: '0',
+      soundId: '0',
       volume: 50,
     } as any,
   }
@@ -121,7 +121,7 @@ export default class CommandsManagerEdit extends Vue {
       const { data } = await this.$axios.get('/commands/' + id)
 
       this.command = data
-      this.command.sound = data.sound || { id: '0', volume: 50 }
+      this.command.sound = data.sound || { soundId: '0', volume: 50 }
     }
   }
 

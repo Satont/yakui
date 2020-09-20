@@ -123,12 +123,12 @@ router.post('/', isAdmin, checkSchema({
     }
     else command = await Command.create(body)
 
-    if (body.sound?.id && body.sound.id as any !== '0') {
+    if (body.sound?.soundId && body.sound?.soundId as any !== '0') {
       const [commandSound]: [CommandSound] = await CommandSound.findOrCreate({ 
         where: { commandId: command.id },
-        defaults: { commandId: command.id, soundId: body.sound.id as any }
+        defaults: { commandId: command.id, soundId: body.sound.soundId as any }
       })
-      commandSound.soundId = body.sound.id as any
+      commandSound.soundId = body.sound.soundId as any
       commandSound.volume = body.sound.volume as any
       await commandSound.save()
     } else await CommandSound.destroy({ where: { commandId: command.id }}).catch(() => {})
