@@ -76,7 +76,7 @@
     "ts-node": "^9.0.0",
     "twitch": "^4.2.2",
     "twitch-auth": "^4.2.2",
-    "twitch-chat-client": "^4.2.2",
+    "twitch-chat-client": "^4.2.4",
     "twitch-pubsub-client": "^4.2.2",
     "vue": "^2.6.12",
     "vue-class-component": "^7.2.5",
