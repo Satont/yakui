@@ -17,8 +17,8 @@
       <template v-slot:cell(actions)="row">
          <b-button-group size="sm">
           <b-button @click="row.toggleDetails">{{ row.detailsShowing ? 'Hide' : 'Show' }} Details</b-button>
-          <b-button variant="primary" v-if="$root.loggedUser.userType === 'admin' && row.item.type === 'custom' && !isPublic()" @click="edit(row.item)">Edit</b-button>
-          <b-button variant="danger" v-if="$root.loggedUser.userType === 'admin' && row.item.type === 'custom' && !isPublic()" @click="del(row.item)">Delete</b-button>
+          <b-button variant="primary" v-if="$store.state.loggedUser.userType === 'admin' && row.item.type === 'custom' && !isPublic()" @click="edit(row.item)">Edit</b-button>
+          <b-button variant="danger" v-if="$store.state.loggedUser.userType === 'admin' && row.item.type === 'custom' && !isPublic()" @click="del(row.item)">Delete</b-button>
         </b-button-group>
       </template>
 

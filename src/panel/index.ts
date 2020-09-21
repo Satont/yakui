@@ -30,10 +30,10 @@ Vue.component('variables-list', () => import('./vue/components/variablesList.vue
 
 const start = async () => {
   const user = await isLogged(true, true)
+  store.commit('setLoggedUser', user)
+
   const filesSocket = getNameSpace({ name: 'systems/files' })
-  await new Promise((res, rej) => filesSocket.emit('getAll', (err, files) => {
-    res(store.commit('setFilesList', files))
-  }))
+  filesSocket.emit('getAll', (err, files) => store.commit('setFilesList', files))
 
   const router = new VueRouter({
     mode: 'history',
@@ -91,7 +91,6 @@ const start = async () => {
   const app = new Vue({
     data: {
       loading: false,
-      loggedUser: user,
       metadata: {
         stream: {
           viewers: 0,

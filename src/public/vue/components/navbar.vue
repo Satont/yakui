@@ -12,19 +12,19 @@
       </b-nav>
 
       <div class="ml-auto ml-2 mr-2">
-        <b-dropdown v-if="$root.loggedUser" right no-caret variant="dark" class="text-white" size="sm">
+        <b-dropdown v-if="$store.state.loggedUser" right no-caret variant="dark" class="text-white" size="sm">
           <template v-slot:button-content>
-            <b-img :src="$root.loggedUser.profile_image_url" style="width: 30px;border-radius: 30px;"></b-img>
-            {{ $root.loggedUser.display_name }}
+            <b-img :src="$store.state.loggedUser.profile_image_url" style="width: 30px;border-radius: 30px;"></b-img>
+            {{ $store.state.loggedUser.display_name }}
           </template>
           <b-dropdown-text class="dd-content">
-            <div><b>{{ $root.loggedUser.points || 0 }}</b> <span class="text-muted">points</span></div>
-            <div><b>{{ $root.loggedUser.messages || 0 }}</b> <span class="text-muted">messages</span></div>
-            <div><b>{{ $root.loggedUser.watched || 0 }}</b> <span class="text-muted">watched</span></div>
+            <div><b>{{ $store.state.loggedUser.points || 0 }}</b> <span class="text-muted">points</span></div>
+            <div><b>{{ $store.state.loggedUser.messages || 0 }}</b> <span class="text-muted">messages</span></div>
+            <div><b>{{ $store.state.loggedUser.watched || 0 }}</b> <span class="text-muted">watched</span></div>
             <div><b>{{ tipsFormatted }}</b> <span class="text-muted">donated</span></div>
-            <div><b>{{ $root.loggedUser.bits || 0 }}</b> <span class="text-muted">bits donated</span></div>
+            <div><b>{{ $store.state.loggedUser.bits || 0 }}</b> <span class="text-muted">bits donated</span></div>
             <b-button-group size="sm" style="width: 100%;">
-              <b-btn variant="success" v-if="$root.loggedUser.userType === 'admin'" href="/">Panel</b-btn>
+              <b-btn variant="success" v-if="$store.state.loggedUser.userType === 'admin'" href="/">Panel</b-btn>
               <b-btn @click="logout" variant="danger">Sign Out</b-btn>
             </b-button-group>
           </b-dropdown-text>

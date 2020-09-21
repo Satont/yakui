@@ -31,7 +31,7 @@
         {{ data.value }}
       </template>
 
-      <template v-slot:cell(actions)="data" v-if="$root.loggedUser.userType === 'admin' && !isPublic()">
+      <template v-slot:cell(actions)="data" v-if="$store.state.loggedUser.userType === 'admin' && !isPublic()">
       <b-button-group size="sm">
         <b-button @click="editUser(data.item)" variant="info"><i class="fas fa-pen"></i></b-button>
         <b-button @click="del(data.item.index, data.item.id)" variant="danger"><i class="fas fa-trash"></i></b-button>
