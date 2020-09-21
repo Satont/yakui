@@ -2,6 +2,11 @@ import VueLoaderPlugin from 'vue-loader/lib/plugin'
 import HtmlPlugin from 'html-webpack-plugin'
 import { CleanWebpackPlugin } from 'clean-webpack-plugin'
 import { resolve } from 'path'
+import MiniCssExtractPlugin from 'mini-css-extract-plugin'
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
+import TerserPlugin from 'terser-webpack-plugin'
+
+const isDev = () => process.env.NODE_ENV === 'development'
 
 export default {
   devServer: {
@@ -23,16 +28,48 @@ export default {
     pathinfo: false,
   },
   performance: { hints: false },
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin(),
+      new CssMinimizerPlugin(),
+    ]
+  },
   module: {
     rules: [
-      { test: /\.vue$/i, loader: 'vue-loader' },
-      { test: /\.css$/i, use: ['vue-style-loader', 'css-loader'] },
-      { test: /\.ts$/i, use: { loader: 'ts-loader', options: { experimentalFileCaching: true, appendTsSuffixTo: [/\.vue$/] } } }
+      { 
+        test: /\.vue$/i,
+        loader: 'vue-loader'
+      },
+      { 
+        test: /\.css$/i, 
+        use: [
+          isDev() ? 'vue-style-loader' : {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              hmr: isDev(),
+              esModule: true,
+            },
+          },
+          'css-loader',
+        ]
+      },
+      { 
+        test: /\.ts$/i,
+        use: { 
+          loader: 'ts-loader', 
+          options: { experimentalFileCaching: true, appendTsSuffixTo: [/\.vue$/] } 
+        }
+      }
     ]
   },
   plugins: [
     new CleanWebpackPlugin(),
     new VueLoaderPlugin(),
+    new MiniCssExtractPlugin({
+      filename: '[name].[contenthash].css',
+      chunkFilename: '[id].[contenthash].css',
+    }),
     new HtmlPlugin({
       filename: '../panel.html', template: 'src/panel/index.html', chunks: ['panel']
     }),
