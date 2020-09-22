@@ -33,7 +33,7 @@ const start = async () => {
   store.commit('setLoggedUser', user)
 
   const filesSocket = getNameSpace({ name: 'systems/files' })
-  filesSocket.emit('getAll', (err, files) => store.commit('setFilesList', files))
+  filesSocket.emit('getAll', (_err, files) => store.commit('setFilesList', files))
 
   const router = new VueRouter({
     mode: 'history',
@@ -48,7 +48,7 @@ const start = async () => {
           { path: 'moderation', name: 'Moderation', component: () => import('./vue/pages/settings/moderation.vue') },
           { path: 'users', name: 'Users', component: () => import('./vue/pages/settings/users.vue') },
           { path: 'tts', name: 'TTS', component: () => import('./vue/pages/settings/tts.vue') },
-        ]
+        ],
       },
       { path: '/events', name: 'EventsManager', component: () => import('./vue/pages/events/index.vue') },
       {
@@ -59,7 +59,7 @@ const start = async () => {
           { path: 'spotify', name: 'Spotify', component: () => import('./vue/pages/integrations/spotify.vue') },
           { path: 'qiwi', name: 'Qiwi', component: () => import('./vue/pages/integrations/qiwi.vue') },
           { path: 'satontapi', name: 'Satont api', component: () => import('./vue/pages/integrations/satontapi.vue') },
-        ]
+        ],
       },
 
       { path: '/commands', name: 'CommandsManagerList', component: () => import('./vue/pages/commands/list.vue') },
@@ -94,7 +94,7 @@ const start = async () => {
       metadata: {
         stream: {
           viewers: 0,
-          startedAt: null
+          startedAt: null,
         },
         channel: {
           views: 0,
@@ -106,7 +106,7 @@ const start = async () => {
       },
       updateTimeout: null,
       lang: 'RU',
-      title: 'Bot Panel'
+      title: 'Bot Panel',
     },
     router,
     template: `
@@ -125,7 +125,7 @@ const start = async () => {
     methods: {
       async fetchMetadata() {
         clearTimeout(this.updateTimeout)
-        this.updateTimeout = setTimeout(() => this.fetchMetadata(), 10000);
+        this.updateTimeout = setTimeout(() => this.fetchMetadata(), 10000)
 
         const { data } = await this.$axios.get('/metaData')
 
@@ -139,11 +139,11 @@ const start = async () => {
         this.updateUptime()
       },
       updateUptime() {
-        if (!this.metadata.stream.startedAt) this.metadata.uptime = 'offline';
+        if (!this.metadata.stream.startedAt) this.metadata.uptime = 'offline'
         else {
           this.metadata.uptime = humanizeDuration(Date.now() - new Date(this.metadata.stream.startedAt).getTime(), { units: ['mo', 'd', 'h', 'm', 's'], round: true })
         }
-      }
+      },
     },
     beforeDestroy() {
       clearTimeout(this.updateTimeout)
@@ -151,11 +151,13 @@ const start = async () => {
     store,
   }).$mount('#app')
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   router.beforeEach((to, from, next) => {
     app.loading = true
     next()
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   router.afterEach((to, from) => {
     app.loading = false
   })

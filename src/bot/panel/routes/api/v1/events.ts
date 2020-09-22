@@ -21,7 +21,7 @@ router.post('/', isAdmin, async (req, res, next) => {
 
     const [event, created]: [Event, boolean] = await Event.findOrCreate({
       where: { name: data.name },
-      defaults: { name: data.name, operations: data.operations }
+      defaults: { name: data.name, operations: data.operations },
     })
 
     if (!created) {

@@ -3,7 +3,7 @@ import isAdmin from '@bot/panel/middlewares/isAdmin'
 import EventList from '@bot/models/EventList'
 
 const router = Router({
-  mergeParams: true
+  mergeParams: true,
 })
 
 router.get('/', isAdmin, async (req, res, next) => {

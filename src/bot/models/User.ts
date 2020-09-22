@@ -1,4 +1,4 @@
-import { Table, Column, Model, DataType, Default, AllowNull, PrimaryKey, HasMany, HasOne } from 'sequelize-typescript'
+import { Table, Column, Model, DataType, Default, AllowNull, PrimaryKey, HasMany } from 'sequelize-typescript'
 import UserBits from './UserBits'
 import UserTips from './UserTips'
 import UserDailyMessages from './UserDailyMessages'
@@ -66,7 +66,7 @@ export default class User extends Model<User> {
 
   @Column(DataType.VIRTUAL)
   get todayMessages() {
-    const now = new Date();
+    const now = new Date()
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
     if (this.daily_messages) {

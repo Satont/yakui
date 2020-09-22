@@ -10,7 +10,7 @@ import isAdmin from '@bot/panel/middlewares/isAdmin'
 
 
 const router = Router({
-  mergeParams: true
+  mergeParams: true,
 })
 
 router.get('/', async (req, res, next) => {
@@ -54,7 +54,7 @@ router.delete('/', isAdmin, checkSchema({
   id: {
     isNumeric: true,
     in: ['body'],
-  }
+  },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
@@ -69,33 +69,33 @@ router.delete('/', isAdmin, checkSchema({
 router.post('/', isAdmin, checkSchema({
   user: {
     in: ['body'],
-  }
+  },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
 
     const user: User = await User.findOne({
       where: { id: req.body.user?.id },
-      include: [UserBits, UserTips]
+      include: [UserBits, UserTips],
     })
 
     if (!user) throw new Error('User not found')
 
-    for (let bit of req.body.user.bits) {
+    for (const bit of req.body.user.bits) {
       if (bit.id) {
         const [instance, created]: [UserBits, boolean] = await UserBits.findOrCreate({
           where: { id: bit.id },
-          defaults: bit
+          defaults: bit,
         })
         if (!created) await instance.update(bit)
       } else await UserBits.create(bit)
     }
 
-    for (let bit of req.body.delete.bits) {
+    for (const bit of req.body.delete.bits) {
       await UserBits.destroy({ where: { id: bit }})
     }
 
-    for (let tip of req.body.delete.tips) {
+    for (const tip of req.body.delete.tips) {
       await UserTips.destroy({ where: { id: tip }})
     }
 
@@ -103,13 +103,13 @@ router.post('/', isAdmin, checkSchema({
       tip = {
         ...tip,
         inMainCurrencyAmount: currency.exchange({ amount: tip.amount, from: tip.currency }),
-        rates: currency.rates
+        rates: currency.rates,
       }
 
       if (tip.id) {
         const [instance, created]: [UserTips, boolean] = await UserTips.findOrCreate({
           where: { id: tip.id },
-          defaults: tip
+          defaults: tip,
         })
         if (!created) await instance.update(tip)
       } else await UserTips.create(tip)

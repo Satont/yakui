@@ -44,24 +44,24 @@ router.post('/', isAdmin, checkSchema({
   },
   name: {
     isString: true,
-    in: ['body']
+    in: ['body'],
   },
   data: {
     isString: true,
-    in: ['body']
+    in: ['body'],
   },
   css: {
     isString: true,
     in: ['body'],
     optional: {
-      options: { nullable: true }
+      options: { nullable: true },
     },
   },
   js: {
     isArray: true,
     in: ['body'],
-    optional: true
-  }
+    optional: true,
+  },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
@@ -75,7 +75,7 @@ router.post('/', isAdmin, checkSchema({
         name: req.body.name,
         data: req.body.data,
         css: req.body.css,
-        js: req.body.js
+        js: req.body.js,
       })
     }
     await overlays.init()
@@ -88,8 +88,8 @@ router.post('/', isAdmin, checkSchema({
 router.delete('/', isAdmin, checkSchema({
   id: {
     isNumeric: true,
-    in: ['body']
-  }
+    in: ['body'],
+  },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()

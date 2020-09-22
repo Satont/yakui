@@ -8,7 +8,7 @@ const symbolsRegexp = /([^\s\u0500-\u052F\u0400-\u04FF\w]+)/g
 
 export default new class Moderation implements System {
   parsers = [
-    { fnc: this.parse }
+    { fnc: this.parse },
   ]
   commands: Command[] = [
     {
@@ -16,8 +16,8 @@ export default new class Moderation implements System {
       fnc: this.permit,
       permission: 'moderators',
       visible: false,
-      description: 'Give target user 1 permit.'
-    }
+      description: 'Give target user 1 permit.',
+    },
   ]
 
   permits: string[] = []
@@ -35,7 +35,7 @@ export default new class Moderation implements System {
 
   async init() {
     const settings: Settings[] = await Settings.findAll({ where: { space: 'moderation' } })
-    if (!settings.length) return;
+    if (!settings.length) return
     this.settings = {} as any
 
     for (const item of settings) {
@@ -81,11 +81,11 @@ export default new class Moderation implements System {
     const settings = this.settings.links
 
     if (!settings?.enabled) return false
-    if (!settings?.subscribers && permissions.subscribers) return false;
-    if (!settings?.vips && permissions.vips) return false;
+    if (!settings?.subscribers && permissions.subscribers) return false
+    if (!settings?.vips && permissions.vips) return false
 
-    if (opts.message.search(urlRegexp) < 0) return false;
-    if (!settings.clips && (/.*(clips.twitch.tv\/)(\w+)/g.test(opts.message) || /.*(www.twitch.tv\/\w+\/clip\/)(\w+)/g.test(opts.message))) return false;
+    if (opts.message.search(urlRegexp) < 0) return false
+    if (!settings.clips && (/.*(clips.twitch.tv\/)(\w+)/g.test(opts.message) || /.*(www.twitch.tv\/\w+\/clip\/)(\w+)/g.test(opts.message))) return false
 
     const username = opts.raw.userInfo.userName.toLowerCase()
     const type = 'links'
@@ -110,10 +110,10 @@ export default new class Moderation implements System {
     const settings = this.settings.symbols
 
     if (!settings?.enabled) return false
-    if (!settings?.subscribers && permissions.subscribers) return false;
-    if (!settings?.vips && permissions.vips) return false;
+    if (!settings?.subscribers && permissions.subscribers) return false
+    if (!settings?.vips && permissions.vips) return false
 
-    if (opts.message.length < settings.trigger.length) return false;
+    if (opts.message.length < settings.trigger.length) return false
 
     const username = opts.raw.userInfo.userName.toLowerCase()
     const type = 'symbols'
@@ -122,7 +122,7 @@ export default new class Moderation implements System {
     let symbols = 0
 
     for (const item in matched) {
-      if (matched.hasOwnProperty(item)) {
+      if (matched[item]) {
         const temp = matched[item]
         symbols = symbols + temp.length
       }
@@ -130,7 +130,7 @@ export default new class Moderation implements System {
 
     const check = Math.ceil(symbols / opts.message.length / 100) >= settings.trigger.percent
 
-    if (!check) return false;
+    if (!check) return false
 
     if (this.doesWarned({ type, username })) {
       tmi.timeout({ username, duration: settings.timeout.time, reason: settings.timeout.message })
@@ -148,10 +148,10 @@ export default new class Moderation implements System {
     const settings = this.settings.longMessage
 
     if (!settings?.enabled) return false
-    if (!settings?.subscribers && permissions.subscribers) return false;
-    if (!settings?.vips && permissions.vips) return false;
+    if (!settings?.subscribers && permissions.subscribers) return false
+    if (!settings?.vips && permissions.vips) return false
 
-    if (opts.message.length < settings.trigger.length) return false;
+    if (opts.message.length < settings.trigger.length) return false
 
     const username = opts.raw.userInfo.userName.toLowerCase()
     const type = 'longMessage'
@@ -172,8 +172,8 @@ export default new class Moderation implements System {
     const settings = this.settings.caps
 
     if (!settings?.enabled) return false
-    if (!settings?.subscribers && permissions.subscribers) return false;
-    if (!settings?.vips && permissions.vips) return false;
+    if (!settings?.subscribers && permissions.subscribers) return false
+    if (!settings?.vips && permissions.vips) return false
 
 
     const username = opts.raw.userInfo.userName.toLowerCase()
@@ -186,7 +186,7 @@ export default new class Moderation implements System {
       message = message.replace(emote['name'], '').trim()
     }
 
-    if (message.length < settings.trigger.length) return false;
+    if (message.length < settings.trigger.length) return false
 
     for (let i = 0; i < message.length; i++) {
       if (message.charAt(i) == message.charAt(i).toUpperCase()) {
@@ -214,8 +214,8 @@ export default new class Moderation implements System {
     const settings = this.settings.emotes
 
     if (!settings?.enabled) return false
-    if (!settings?.subscribers && permissions.subscribers) return false;
-    if (!settings?.vips && permissions.vips) return false;
+    if (!settings?.subscribers && permissions.subscribers) return false
+    if (!settings?.vips && permissions.vips) return false
 
     const username = opts.raw.userInfo.userName.toLowerCase()
     const type = 'emotes'
@@ -239,8 +239,8 @@ export default new class Moderation implements System {
     const settings = this.settings.color
 
     if (!settings?.enabled) return false
-    if (!settings?.subscribers && permissions.subscribers) return false;
-    if (!settings?.vips && permissions.vips) return false;
+    if (!settings?.subscribers && permissions.subscribers) return false
+    if (!settings?.vips && permissions.vips) return false
 
     const username = opts.raw.userInfo.userName.toLowerCase()
     const type = 'color'
@@ -263,14 +263,14 @@ export default new class Moderation implements System {
     const settings = this.settings.blacklist
 
     if (!settings?.enabled) return false
-    if (!settings?.subscribers && permissions.subscribers) return false;
-    if (!settings?.vips && permissions.vips) return false;
+    if (!settings?.subscribers && permissions.subscribers) return false
+    if (!settings?.vips && permissions.vips) return false
 
     const username = opts.raw.userInfo.userName.toLowerCase()
     const type = 'blacklist'
     let result = false
 
-    for (let value of settings.values) {
+    for (const value of settings.values) {
       if (value === '') continue
       if (!opts.message.includes(value)) continue
 
@@ -283,7 +283,7 @@ export default new class Moderation implements System {
       }
 
       result = true
-      break;
+      break
     }
 
     return result

@@ -1,6 +1,6 @@
-import { System } from "typings"
-import Overlay from "@bot/models/Overlay"
-import variables from "./variables"
+import { System } from 'typings'
+import Overlay from '@bot/models/Overlay'
+import variables from './variables'
 
 export default new class Overlays implements System {
   overlays: Overlay[] = []

@@ -13,8 +13,8 @@ const store = new Vuex.Store({
     },
     setLoggedUser(state, user) {
       Vue.set(state, 'loggedUser', user)
-    }
+    },
   },
-});
+})
 
 export { store }

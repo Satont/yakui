@@ -16,7 +16,7 @@ export default new class Qiwi implements Integration {
     clearTimeout(this.pollTimeout)
     const [enabled, token]: [Settings, Settings] = await Promise.all([
       Settings.findOne({ where: { space: 'qiwi', name: 'enabled' } }),
-      Settings.findOne({ where: { space: 'qiwi', name: 'token' } })
+      Settings.findOne({ where: { space: 'qiwi', name: 'token' } }),
     ])
 
     if (!enabled || !token || !token?.value.trim().length) return
@@ -47,7 +47,7 @@ export default new class Qiwi implements Integration {
             currency: inComingCurrency,
             inMainCurrencyAmount: currency.exchange({ from: inComingCurrency, amount }),
             message,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           }).catch(error)
         }
 

@@ -3,6 +3,7 @@ import 'reflect-metadata'
 import 'source-map-support/register'
 console.time('start')
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config()
 import { connected } from '@bot/libs/db'
 import { error } from '@bot/libs/logger'

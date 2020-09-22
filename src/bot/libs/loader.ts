@@ -1,7 +1,7 @@
 import { resolve } from 'path'
 import getFiles from '@bot/commons/getFiles'
-import { System } from 'typings';
-import { error, info } from './logger';
+import { System } from 'typings'
+import { error, info } from './logger'
 
 export const loadedSystems: System[] = []
 
@@ -10,12 +10,12 @@ const loader = async () => {
     systems: 'System',
     integrations: 'Integration',
     customSystems: 'Custom System',
-    overlays: 'Overlay'
+    overlays: 'Overlay',
   }
   for (const folder of Object.keys(folders)) {
     try {
       for await (const file of getFiles(resolve(__dirname, '..', folder))) {
-        if (!file.endsWith('.js') && !file.endsWith('.ts')) continue;
+        if (!file.endsWith('.js') && !file.endsWith('.ts')) continue
   
         const loadedFile: System = (await import(resolve(__dirname, '..', folder, file))).default
         if (typeof loadedFile.init !== 'undefined') await loadedFile.init()

@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 3000
 
 export const app = express()
 
-app.use(bodyparser.urlencoded({ extended: false }));
+app.use(bodyparser.urlencoded({ extended: false }))
 app.use(bodyparser.json())
 app.use('/twitch', twitch)
 app.use('/static', express.static(resolve(process.cwd(), 'public', 'dest')))
@@ -54,11 +54,9 @@ app.use((err, req: Request, res: Response, next) => {
   console.log(err)
   if (err['errors'] && !res.headersSent) {
     return res.status(400).send({ code: 'validation_error', message: 'Error on validation.', data: err['errors'] })
-  }
-  else if (!res.headersSent) {
+  } else if (!res.headersSent) {
     res.status(500).send(err)
-  }
-  else next()
+  } else next()
 })
 
 export const server = http.createServer(app).listen(PORT, () => {

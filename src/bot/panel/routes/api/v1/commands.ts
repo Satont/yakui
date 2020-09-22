@@ -9,7 +9,7 @@ import customcommands from '@bot/systems/customcommands'
 import CommandSound from '@bot/models/CommandSound'
 
 const router = Router({
-  mergeParams: true
+  mergeParams: true,
 })
 
 router.get('/', async (req, res, next) => {
@@ -26,7 +26,7 @@ router.get('/:id', isAdmin, async (req, res, next) => {
   try {
     const command: Command = await Command.findOne({ 
       where: { id: req.params.id },
-      include: [CommandSound]
+      include: [CommandSound],
     })
 
     res.json(command)
@@ -43,7 +43,7 @@ router.post('/', isAdmin, checkSchema({
   },
   name: {
     isString: true,
-    in: ['body']
+    in: ['body'],
   },
   visible: {
     isBoolean: true,
@@ -67,22 +67,22 @@ router.post('/', isAdmin, checkSchema({
   response: {
     isString: true,
     in: ['body'],
-    optional: true
+    optional: true,
   },
   permission: {
     isString: true,
     in: ['body'],
-    optional: true
+    optional: true,
   },
   price: {
     isNumeric: true,
     in: ['body'],
-    optional: true
+    optional: true,
   },
   sound: {
     in: ['body'],
     optional: true,
-  }
+  },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
@@ -92,7 +92,7 @@ router.post('/', isAdmin, checkSchema({
     const names: string[] = commands.reduce((array, command) => ([
       ...array,
       command.name,
-      ...command.aliases ?? []
+      ...command.aliases ?? [],
     ]), [])
 
     if (names.filter(Boolean).includes(body.name) || names.filter(Boolean).some(name => body.aliases?.includes(name))) {
@@ -120,18 +120,17 @@ router.post('/', isAdmin, checkSchema({
         response: body.response,
         price: body.price,
       })
-    }
-    else command = await Command.create(body)
+    } else command = await Command.create(body)
 
     if (body.sound?.soundId && body.sound?.soundId as any !== '0') {
       const [commandSound]: [CommandSound] = await CommandSound.findOrCreate({ 
         where: { commandId: command.id },
-        defaults: { commandId: command.id, soundId: body.sound.soundId as any }
+        defaults: { commandId: command.id, soundId: body.sound.soundId as any },
       })
       commandSound.soundId = body.sound.soundId as any
       commandSound.volume = body.sound.volume as any
       await commandSound.save()
-    } else await CommandSound.destroy({ where: { commandId: command.id }}).catch(() => {})
+    } else await CommandSound.destroy({ where: { commandId: command.id }}).catch(() => null)
 
     await customcommands.init()
     res.json(command)
@@ -144,7 +143,7 @@ router.delete('/', isAdmin, checkSchema({
   id: {
     isNumeric: true,
     in: ['body'],
-  }
+  },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()

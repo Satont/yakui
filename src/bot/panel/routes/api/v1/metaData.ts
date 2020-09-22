@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
     channel: { ...twitch.channelMetaData, name: tmi.channel?.name },
     stream: twitch.streamMetaData,
     mainCurrency: currency.botCurrency,
-    lang: locales.translate('lang.code')
+    lang: locales.translate('lang.code'),
   })
 })
 

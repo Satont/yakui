@@ -14,8 +14,8 @@ const router = new Router({
     { path: '/', component: () => import('./vue/customOverlay.vue') },
     { path: '/custom/:id', name: 'CustomOverlay', component: () => import('./vue/customOverlay.vue') },
     { path: '/alerts', name: 'Alerts', component: () => import('./vue/alerts.vue') },
-    { path: '/tts', name: 'TTS', component: () => import('./vue/tts.vue') }
-  ]
+    { path: '/tts', name: 'TTS', component: () => import('./vue/tts.vue') },
+  ],
 })
 
 const app = new Vue({
@@ -31,12 +31,14 @@ const app = new Vue({
   `,
 }).$mount('#app')
 
-router.beforeEach((to, from, next) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+router.beforeEach((_to, _from, next) => {
   app.loading = true
   next()
 })
 
-router.afterEach((to, from) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+router.afterEach((_to, _from) => {
   app.loading = false
 })
 

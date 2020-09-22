@@ -1,4 +1,4 @@
-import { Table, Column, Model, DataType, PrimaryKey, AllowNull, AutoIncrement, Unique, Default } from 'sequelize-typescript'
+import { Table, Column, Model, DataType, PrimaryKey, AllowNull, AutoIncrement, Unique } from 'sequelize-typescript'
 
 @Table({
   tableName: 'widgets',

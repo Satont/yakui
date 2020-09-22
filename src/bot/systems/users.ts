@@ -39,8 +39,8 @@ export default new class Users implements System {
       watch: {
         interval: 1,
         amount: 1,
-      }
-    }
+      },
+    },
   }
 
   private countWatchedTimeout: NodeJS.Timeout = null
@@ -49,12 +49,12 @@ export default new class Users implements System {
   private chatters: Array<{ username: string, id: string }> = []
 
   parsers = [
-    { fnc: this.parseMessage }
+    { fnc: this.parseMessage },
   ]
   commands: Command[] = [
     { name: 'sayb', permission: 'broadcaster', fnc: this.sayb, visible: false, description: 'Say something as broadcaster.' },
     { name: 'ignore add', permission: 'moderators', fnc: this.ignoreAdd, visible: false, description: 'Add some username to bot ignore list' },
-    { name: 'ignore remove', permission: 'moderators', fnc: this.ignoreRemove, visible: false, description: 'Remove some username from bot ignore list' }
+    { name: 'ignore remove', permission: 'moderators', fnc: this.ignoreRemove, visible: false, description: 'Remove some username from bot ignore list' },
   ]
 
   async init() {
@@ -70,7 +70,7 @@ export default new class Users implements System {
     this.settings.admins = admins?.value ?? []
 
     if (points) this.settings.points = points.value
-    if (!this.settings.enabled) return;
+    if (!this.settings.enabled) return
 
     await this.getChatters()
     await this.countWatched()
@@ -78,7 +78,7 @@ export default new class Users implements System {
 
   async parseMessage(opts: ParserOptions) {
     if (!this.settings.enabled || opts.message.startsWith('!')) return
-    if (this.settings.ignoredUsers.includes(opts.raw.userInfo.userName)) return;
+    if (this.settings.ignoredUsers.includes(opts.raw.userInfo.userName)) return
     const [pointsPerMessage, pointsInterval] = [this.settings.points.messages.amount, this.settings.points.messages.interval * 60 * 1000]
 
     const [id, username] = [opts.raw.userInfo.userId, opts.raw.userInfo.userName]
@@ -103,14 +103,14 @@ export default new class Users implements System {
 
     user.save()
 
-    if (!twitch.streamMetaData?.startedAt) return;
+    if (!twitch.streamMetaData?.startedAt) return
 
-    const now = new Date();
+    const now = new Date()
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
     const [daily, isNewDailyRow]: [UserDailyMessages, boolean] = await UserDailyMessages.findOrCreate({
       where: { userId: user.id, date: startOfDay.getTime() },
-      defaults: { count: 1 }
+      defaults: { count: 1 },
     })
 
     if (!isNewDailyRow) daily.increment({ count: 1 })
@@ -132,7 +132,7 @@ export default new class Users implements System {
 
     if (!user) user = await User.create({
       id,
-      username
+      username,
     }, { include: [UserTips, UserBits, UserDailyMessages] })
 
     return user
@@ -143,14 +143,14 @@ export default new class Users implements System {
     this.countWatchedTimeout = setTimeout(() => this.countWatched(), 1 * 60 * 1000)
     const [pointsPerWatch, pointsInterval] = [this.settings.points.watch.amount, this.settings.points.watch.interval * 60 * 1000]
 
-    if (!twitch.streamMetaData?.startedAt) return;
+    if (!twitch.streamMetaData?.startedAt) return
 
     for (const chatter of this.chatters) {
       if (this.settings.ignoredUsers.includes(chatter.username.toLowerCase())) continue
 
       const [user, isNewUser]: [User, boolean] = await User.findOrCreate({
         where: { id: chatter.id },
-        defaults: { id: chatter.id, username: chatter.username, watched: 1 * 60 * 1000 }
+        defaults: { id: chatter.id, username: chatter.username, watched: 1 * 60 * 1000 },
       })
 
       const updatePoints = (new Date().getTime() - new Date(user.lastWatchedPoints).getTime() >= pointsInterval) && this.settings.points.enabled
@@ -172,7 +172,7 @@ export default new class Users implements System {
     this.getChattersTimeout = setTimeout(() => this.getChatters(), 5 * 60 * 1000)
 
     this.chatters = []
-    if (!twitch.streamMetaData?.startedAt) return;
+    if (!twitch.streamMetaData?.startedAt) return
 
     for (const chunk of makeChunk((await tmi.clients?.bot?.unsupported.getChatters(tmi.channel?.name)).allChatters, 100)) {
 
@@ -194,7 +194,7 @@ export default new class Users implements System {
   }
 
   async ignoreAdd(opts: CommandOptions) {
-    if (!opts.argument.length) return;
+    if (!opts.argument.length) return
     const [ignoredUsers]: [Settings] = await Settings.findOrCreate({ where: { space: 'users', name: 'ignoredUsers' }, defaults: { value: [] } })
 
     await ignoredUsers.update({ value: [...ignoredUsers.value, opts.argument.toLowerCase() ].filter(Boolean) })
@@ -203,7 +203,7 @@ export default new class Users implements System {
   }
 
   async ignoreRemove(opts: CommandOptions) {
-    if (!opts.argument.length) return;
+    if (!opts.argument.length) return
     const ignoredUsers: Settings = await Settings.findOne({ where: { space: 'users', name: 'ignoredUsers' } })
 
     if (!ignoredUsers || !ignoredUsers?.value.length) return
@@ -213,7 +213,7 @@ export default new class Users implements System {
     users.splice(ignoredUsers.value.indexOf(opts.argument.toLowerCase()), 1)
 
     await ignoredUsers.update({
-      value: users
+      value: users,
     })
 
     return '$sender ✅'

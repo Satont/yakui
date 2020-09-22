@@ -79,7 +79,7 @@ export default new class Events implements System {
     }
   }
 
-  async addToEventList({ name, data }: { name: string, data: object }) {
+  async addToEventList({ name, data }: { name: string, data: Record<string, unknown> }) {
     const event: EventList = await EventList.create({ name, data })
     this.clients.forEach(c => c.emit('event', event))
   }
@@ -96,7 +96,7 @@ export default new class Events implements System {
     this.fire( { name: 'tip', opts: data })
     this.addToEventList({
       name: 'tip',
-      data: { username: data.username, currency: data.currency, amount: data.inMainCurrencyAmount, message: data.message }
+      data: { username: data.username, currency: data.currency, amount: data.inMainCurrencyAmount, message: data.message },
     })
   }
 
@@ -138,12 +138,12 @@ export default new class Events implements System {
           tier: data.tier,
         },
         message: data.message,
-        username: data.username
-      }
+        username: data.username,
+      },
     })
     this.addToEventList({
       name: 'sub',
-      data: { username: data.username, tier: data.tier, message: data.message }
+      data: { username: data.username, tier: data.tier, message: data.message },
     })
   }
 
@@ -157,13 +157,13 @@ export default new class Events implements System {
           overallMonths: data.overallMonths,
         },
         message: data.message,
-        username: data.username
-      }
+        username: data.username,
+      },
     })
 
     this.addToEventList({
       name: 'resub',
-      data: { username: data.username, tier: data.tier, message: data.message, months: data.months, overallMonths: data.overallMonths }
+      data: { username: data.username, tier: data.tier, message: data.message, months: data.months, overallMonths: data.overallMonths },
     })
   }
 
@@ -175,12 +175,12 @@ export default new class Events implements System {
         username: data.userName,
         amount: data.rewardCost,
         message: data.message,
-      }
+      },
     })
 
     this.addToEventList({
       name: 'redemption',
-      data: { name: data.rewardName, username: data.userName, amount: data.rewardCost, message: data.message }
+      data: { name: data.rewardName, username: data.userName, amount: data.rewardCost, message: data.message },
     })
   }
 }

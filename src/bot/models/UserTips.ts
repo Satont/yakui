@@ -24,7 +24,7 @@ export default class UserTips extends Model<UserTips> {
 
   @AllowNull(false)
   @Column(DataType.JSON)
-  public rates: object
+  public rates: Record<string, unknown>
 
   @AllowNull(false)
   @Column(DataType.REAL)

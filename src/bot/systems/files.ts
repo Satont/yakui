@@ -22,31 +22,30 @@ export default new class Files implements System {
   }
 
   sockets(client: SocketIO.Socket) {
-    const self = this
-    client.on('getOne', async (id: number, cb: Function) => {
+    client.on('getOne', async (id: number, cb) => {
       try {
-        cb(null, await self.getOne(id))
+        cb(null, await this.getOne(id))
       } catch (e) {
         cb(e, null)
       }
     })
-    client.on('getAll', async (cb: Function) => {
+    client.on('getAll', async (cb) => {
       try {
-        cb(null, await self.getAll())
+        cb(null, await this.getAll())
       } catch (e) {
         cb(e, null)
       }
     })
-    client.on('delete', async (id: number,cb: Function) => {
+    client.on('delete', async (id: number, cb) => {
       try {
-        cb(null, await self.delete(id))
+        cb(null, await this.delete(id))
       } catch (e) {
         cb(e, null)
       }
     })
-    client.on('insert', async (query: IInsert[], cb: Function) => {
+    client.on('insert', async (query: IInsert[], cb) => {
       try {
-        cb(null, await self.insert(query))
+        cb(null, await this.insert(query))
       } catch (e) {
         cb(e, null)
       }

@@ -17,7 +17,7 @@ export default class EventList extends Model<EventList> {
 
   @Default({})
   @Column(DataType.JSON)
-  public data: object
+  public data: Record<string, unknown>
 
   @Default(Date.now())
   @Column(DataType.BIGINT)

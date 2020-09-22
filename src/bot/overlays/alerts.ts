@@ -1,7 +1,7 @@
-import { System } from "typings"
-import { getNameSpace } from "@bot/libs/socket"
+import { System } from 'typings'
+import { getNameSpace } from '@bot/libs/socket'
 import { IEmitAlert } from 'typings/overlays'
-import { info } from "@bot/libs/logger"
+import { info } from '@bot/libs/logger'
 
 export default new class Alerts implements System {
   socket = getNameSpace('overlays/alerts')

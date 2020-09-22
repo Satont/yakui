@@ -1,12 +1,12 @@
-import { Integration } from "typings";
-import Settings from "@bot/models/Settings";
+import { Integration } from 'typings'
+import Settings from '@bot/models/Settings'
 import { error } from '@bot/libs/logger'
 import axios from 'axios'
 
 
 export default new class SatontRu implements Integration {
   private base = axios.create({
-    baseURL: 'http://api.satont.ru'
+    baseURL: 'http://api.satont.ru',
   })
 
   private apis: {
@@ -30,13 +30,13 @@ export default new class SatontRu implements Integration {
       vk: null,
       lastfm: null,
       twitchdj: null,
-    }
+    },
   }
 
   async init() {
     const [faceit, songs]: [Settings, Settings] = await Promise.all([
       Settings.findOne({ where: { space: 'satontapi', name: 'faceit' } }),
-      Settings.findOne({ where: { space: 'satontapi', name: 'songs' } })
+      Settings.findOne({ where: { space: 'satontapi', name: 'songs' } }),
     ])
     
     if (faceit) this.apis.faceit = faceit.value
@@ -44,7 +44,7 @@ export default new class SatontRu implements Integration {
   }
 
   async getFaceitData(): Promise<{ elo: number, lvl: number } | false> {
-    if (!this.apis.faceit.enabled || !this.apis.faceit.nickname.trim().length) return false;
+    if (!this.apis.faceit.enabled || !this.apis.faceit.nickname.trim().length) return false
 
     try {
       const { data } = await this.base.get('/faceit?nick=' + this.apis.faceit.nickname.trim())
@@ -57,12 +57,12 @@ export default new class SatontRu implements Integration {
   }
 
   async getSong(): Promise<string | false> {
-    if (!this.apis.songs.enabled) return false;
+    if (!this.apis.songs.enabled) return false
 
     try {
       const params = Object.entries(this.apis.songs)
-      .filter(entry => Boolean(entry[1]))
-      .map(entry => `${entry[0]}=${entry[1]}`)
+        .filter(entry => Boolean(entry[1]))
+        .map(entry => `${entry[0]}=${entry[1]}`)
 
       const { data } = await this.base.get('/song?' + params.join('&'))
       

@@ -1,6 +1,6 @@
 import { flatten } from 'lodash'
 
-import { Command } from "typings"
+import { Command } from 'typings'
 import CommandUsage from '@bot/models/CommandUsage'
 import { loadedSystems } from '@bot/libs/loader'
 

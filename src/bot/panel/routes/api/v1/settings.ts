@@ -10,15 +10,15 @@ const router = Router({
 router.get('/', isAdmin, checkSchema({
   space: {
     isString: true,
-    in: ['query']
-  }
+    in: ['query'],
+  },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
     const space = req.query.space as string
 
     const settings = await Settings.findAll({
-      where: { space }
+      where: { space },
     })
 
     res.send(settings)

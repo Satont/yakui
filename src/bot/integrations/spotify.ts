@@ -1,9 +1,9 @@
 import SpotifyApi from 'spotify-web-api-node'
 import axios from 'axios'
 
-import { Integration } from "typings";
-import Settings from "@bot/models/Settings";
-import { info, error } from '@bot/libs/logger';
+import { Integration } from 'typings'
+import Settings from '@bot/models/Settings'
+import { info, error } from '@bot/libs/logger'
 
 
 export default new class Spotify implements Integration {
@@ -15,16 +15,16 @@ export default new class Spotify implements Integration {
     const [access_token, refresh_token, enabled]: [Settings, Settings, Settings] = await Promise.all([
       Settings.findOne({ where: { space: 'spotify', name: 'access_token' }}),
       Settings.findOne({ where: { space: 'spotify', name: 'refresh_token' }}),
-      Settings.findOne({ where: { space: 'spotify', name: 'enabled' }})
+      Settings.findOne({ where: { space: 'spotify', name: 'enabled' }}),
     ])
 
-    if (!access_token || !refresh_token || !enabled) return;
-    if (!access_token.value.trim().length || !access_token.value.trim().length) return;
+    if (!access_token || !refresh_token || !enabled) return
+    if (!access_token.value.trim().length || !access_token.value.trim().length) return
 
     if (this.client) this.client = null
 
     this.client = new SpotifyApi({ 
-      accessToken: access_token.value
+      accessToken: access_token.value,
     })
 
     info('SPOTIFY: Successfuly initiliazed.')
@@ -34,7 +34,7 @@ export default new class Spotify implements Integration {
 
   private async refreshTokens() {
     clearInterval(this.refreshTimeout)
-    this.refreshTimeout = setTimeout(() => this.refreshTokens(), 1 * 60 * 60 * 1000);
+    this.refreshTimeout = setTimeout(() => this.refreshTokens(), 1 * 60 * 60 * 1000)
 
     try {
       const refresh_token: Settings = await Settings.findOne({ where: { space: 'spotify', name: 'refresh_token' }})
@@ -52,7 +52,7 @@ export default new class Spotify implements Integration {
   }
 
   async getSong() {
-    if (!this.client) return false;
+    if (!this.client) return false
     const data = await this.client.getMyCurrentPlayingTrack()
 
     if (!data.body || !data.body?.item || !data.body.is_playing) return false
@@ -62,7 +62,7 @@ export default new class Spotify implements Integration {
 
   listenDbUpdates() {
     Settings.afterSave((instance) => {
-      if (instance.space !== 'spotify') return;
+      if (instance.space !== 'spotify') return
 
       this.init()
     })

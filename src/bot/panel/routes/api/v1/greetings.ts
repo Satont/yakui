@@ -5,7 +5,7 @@ import isAdmin from '@bot/panel/middlewares/isAdmin'
 import greetings from '@bot/systems/greetings'
 
 const router = Router({
-  mergeParams: true
+  mergeParams: true,
 })
 
 router.get('/', async (req, res, next) => {
@@ -44,12 +44,12 @@ router.post('/', isAdmin, checkSchema({
   },
   message: {
     isString: true,
-    in: ['body']
+    in: ['body'],
   },
   enabled: {
     isBoolean: true,
     in: ['body'],
-  }
+  },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
@@ -65,7 +65,7 @@ router.post('/', isAdmin, checkSchema({
         username: body.username,
         userId: body.userId ? Number(body.userId) : null,
         message: body.message,
-        enabled: body.enabled
+        enabled: body.enabled,
       })
     }
     await greetings.init()
@@ -79,7 +79,7 @@ router.delete('/', isAdmin, checkSchema({
   id: {
     isNumeric: true,
     in: ['body'],
-  }
+  },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()

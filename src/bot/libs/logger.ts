@@ -5,7 +5,7 @@ import chalk from 'chalk'
 import { inspect } from 'util'
 
 const { format } = winston
-const { combine, printf } = format;
+const { combine, printf } = format
 
 declare module 'winston' {
   export interface Logger {
@@ -95,7 +95,7 @@ const log = winston.createLogger({
       maxFiles: 10,
       tailable: true,
     }),
-    new winston.transports.Console()
+    new winston.transports.Console(),
   ],
   transports: [
     new winston.transports.File({
@@ -108,10 +108,10 @@ const log = winston.createLogger({
         const timestamp = moment().format('YYYY-MM-DD[T]HH:mm:ss.SSS')
 
         return `${timestamp} ${info.level}: ${info.message}`
-      })
+      }),
     }),
-    new winston.transports.Console()
-  ]
+    new winston.transports.Console(),
+  ],
 })
 
 export const info = log.info.bind(log)
