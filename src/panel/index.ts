@@ -9,6 +9,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import './assets/css/sanitize.css'
 import './assets/css/main.css'
+import './assets/css/fonts.css'
 
 Vue.use(BootstrapVue)
 
