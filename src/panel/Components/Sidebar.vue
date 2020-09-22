@@ -43,8 +43,9 @@
         </router-link>
       </ul>
     </div>
-    <div class="menu_site-profile">
+    <div class="menu_site-profile" id="profile-popover">
       <Profile />
+      <ProfilePopover />
     </div>
   </aside>
 </template>
@@ -68,6 +69,7 @@ import { Vue, Component } from 'vue-property-decorator'
 
 import Logo from '../assets/icons/Logo.svg'
 import Profile from '../assets/icons/Profile.svg'
+import ProfilePopover from './ProfilePopover.vue'
 
 @Component({
   name: 'Sidebar',
@@ -86,6 +88,7 @@ import Profile from '../assets/icons/Profile.svg'
     AnchorIcon,
     GridIcon,
     SettingsIcon,
+    ProfilePopover,
   },
 })
 export default class Sidebar extends Vue {}

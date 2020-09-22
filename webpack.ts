@@ -31,9 +31,9 @@ export default {
   optimization: {
     minimize: true,
     minimizer: [
-      new TerserPlugin(),
+      !isDev() ? new TerserPlugin() : undefined,
       new CssMinimizerPlugin(),
-    ],
+    ].filter(Boolean),
   },
   module: {
     rules: [
