@@ -1,0 +1,92 @@
+button[type='button'] {
+  outline: none;
+}
+
+button[type='submit'] {
+  outline: none;
+}
+input:focus {
+  outline: none;
+}
+
+body,
+html {
+  height: 100%;
+}
+
+body {
+  background-color: #121212;
+  color: #fff;
+  font-family: 'Inter';
+}
+
+body::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+body::-webkit-scrollbar {
+  width: 6px;
+}
+
+body::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: rgb(32, 32, 32);
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+.container-fix {
+  width: calc(100% - 47px);
+  margin-left: 47px;
+}
+
+.my-bg-dark {
+  background-color: #1b1b1b !important;
+  height: 800px;
+}
+
+.event-info {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.event-info > * {
+  flex: 0 1 100%;
+}
+
+.event-nickname {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.event-type {
+  display: flex;
+  font-weight: bold;
+  font-size: 12px;
+  color: #a9a9a9;
+}
+
+.event {
+  margin-right: 2px;
+}
+
+.card-list::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+.card-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.card-list::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: rgb(32, 32, 32);
+}

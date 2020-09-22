@@ -24,6 +24,7 @@
     "./src",
     "src/**/*.ts",
     "src/**/*.vue",
+    "src/**/*.svg",
   ],
   "exclude": ["node_modules"]
 }
