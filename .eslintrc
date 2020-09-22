@@ -19,7 +19,10 @@
       "destructuring": "all",
       "ignoreReadBeforeAssign": false
     }],
-    "@typescript-eslint/no-explicit-any": "off"
+    "no-var": 2,
+    "comma-dangle": [2, "always-multiline"],
+    "@typescript-eslint/no-explicit-any": "off",
+    "brace-style": "error"
   },
   "parserOptions": {
     "ecmaFeatures": {

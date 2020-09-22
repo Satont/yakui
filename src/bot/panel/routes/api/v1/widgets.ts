@@ -36,7 +36,7 @@ router.post('/', isAdmin,  checkSchema({
   h: {
     isNumeric: true,
     in: ['body'],
-  }
+  },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
@@ -65,7 +65,7 @@ router.delete('/', isAdmin,  checkSchema({
   id: {
     isNumeric: true,
     in: ['body'],
-  }
+  },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()

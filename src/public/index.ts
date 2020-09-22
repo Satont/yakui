@@ -40,7 +40,7 @@ const start = async () => {
         <router-view v-if="!$root.loading" class="col-md-11 ml-sm-auto col-lg-11 px-md-4 pt-md-3"></router-view>
       </div>
     </div>
-    `
+    `,
   }).$mount('#app')
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

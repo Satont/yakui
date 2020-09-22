@@ -39,8 +39,8 @@ export default new class Users implements System {
       watch: {
         interval: 1,
         amount: 1,
-      }
-    }
+      },
+    },
   }
 
   private countWatchedTimeout: NodeJS.Timeout = null
@@ -49,12 +49,12 @@ export default new class Users implements System {
   private chatters: Array<{ username: string, id: string }> = []
 
   parsers = [
-    { fnc: this.parseMessage }
+    { fnc: this.parseMessage },
   ]
   commands: Command[] = [
     { name: 'sayb', permission: 'broadcaster', fnc: this.sayb, visible: false, description: 'Say something as broadcaster.' },
     { name: 'ignore add', permission: 'moderators', fnc: this.ignoreAdd, visible: false, description: 'Add some username to bot ignore list' },
-    { name: 'ignore remove', permission: 'moderators', fnc: this.ignoreRemove, visible: false, description: 'Remove some username from bot ignore list' }
+    { name: 'ignore remove', permission: 'moderators', fnc: this.ignoreRemove, visible: false, description: 'Remove some username from bot ignore list' },
   ]
 
   async init() {
@@ -110,7 +110,7 @@ export default new class Users implements System {
 
     const [daily, isNewDailyRow]: [UserDailyMessages, boolean] = await UserDailyMessages.findOrCreate({
       where: { userId: user.id, date: startOfDay.getTime() },
-      defaults: { count: 1 }
+      defaults: { count: 1 },
     })
 
     if (!isNewDailyRow) daily.increment({ count: 1 })
@@ -132,7 +132,7 @@ export default new class Users implements System {
 
     if (!user) user = await User.create({
       id,
-      username
+      username,
     }, { include: [UserTips, UserBits, UserDailyMessages] })
 
     return user
@@ -150,7 +150,7 @@ export default new class Users implements System {
 
       const [user, isNewUser]: [User, boolean] = await User.findOrCreate({
         where: { id: chatter.id },
-        defaults: { id: chatter.id, username: chatter.username, watched: 1 * 60 * 1000 }
+        defaults: { id: chatter.id, username: chatter.username, watched: 1 * 60 * 1000 },
       })
 
       const updatePoints = (new Date().getTime() - new Date(user.lastWatchedPoints).getTime() >= pointsInterval) && this.settings.points.enabled
@@ -213,7 +213,7 @@ export default new class Users implements System {
     users.splice(ignoredUsers.value.indexOf(opts.argument.toLowerCase()), 1)
 
     await ignoredUsers.update({
-      value: users
+      value: users,
     })
 
     return '$sender ✅'

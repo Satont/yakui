@@ -8,7 +8,7 @@ const router = Router()
 router.post('/bot', isAdmin, checkSchema({
   message: {
     isString: true,
-    in: ['body']
+    in: ['body'],
   },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -24,7 +24,7 @@ router.post('/bot', isAdmin, checkSchema({
 router.post('/broadcaster', isAdmin, checkSchema({
   message: {
     isString: true,
-    in: ['body']
+    in: ['body'],
   },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {

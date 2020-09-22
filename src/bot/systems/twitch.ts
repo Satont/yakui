@@ -19,7 +19,7 @@ export default new class Twitch implements System {
       fnc: this.setTitle,
       permission: 'moderators',
       visible: false,
-      description: 'Set title of channel.'
+      description: 'Set title of channel.',
     },
     {
       name: 'category',
@@ -27,8 +27,8 @@ export default new class Twitch implements System {
       aliases: ['game'],
       permission: 'moderators',
       visible: false,
-      description: 'Set category of channel'
-    }
+      description: 'Set category of channel',
+    },
   ]
 
   streamMetaData: {
@@ -36,7 +36,7 @@ export default new class Twitch implements System {
     startedAt: Date
   } = {
     viewers: 0,
-    startedAt: null
+    startedAt: null,
   }
 
   channelMetaData: {
@@ -78,7 +78,7 @@ export default new class Twitch implements System {
   async init() {
     const [latestSubscriber, latestReSubscriber] = await Promise.all([
       Settings.findOne({ where: { space: 'twitch', name: 'latestSubscriber' } }),
-      Settings.findOne({ where: { space: 'twitch', name: 'latestReSubscriber' } })
+      Settings.findOne({ where: { space: 'twitch', name: 'latestReSubscriber' } }),
     ])
 
     if (latestSubscriber) this.channelMetaData.latestSubscriber = latestSubscriber.value
@@ -101,7 +101,7 @@ export default new class Twitch implements System {
 
     this.streamMetaData = {
       viewers: data?.viewers ?? 0,
-      startedAt: data?.startDate ?? null
+      startedAt: data?.startDate ?? null,
     }
   }
 
@@ -140,7 +140,7 @@ export default new class Twitch implements System {
     return humanizeDuration(Date.now() - new Date(follow.data[0].followDate).getTime(), {
       units: ['y', 'mo', 'd', 'h', 'm'],
       round: true,
-      language: locales.translate('lang.code')
+      language: locales.translate('lang.code'),
     })
   }
 
@@ -150,7 +150,7 @@ export default new class Twitch implements System {
     return humanizeDuration(Date.now() - new Date(this.streamMetaData?.startedAt).getTime(), {
       units: ['mo', 'd', 'h', 'm', 's'],
       round: true,
-      language: locales.translate('lang.code')
+      language: locales.translate('lang.code'),
     })
   }
 
@@ -158,7 +158,7 @@ export default new class Twitch implements System {
     if (!opts.argument.trim().length) return
 
     await tmi.clients?.bot?.kraken.channels.updateChannel(tmi.channel?.id, {
-      status: opts.argument
+      status: opts.argument,
     })
 
     return '$sender ✅'
@@ -172,7 +172,7 @@ export default new class Twitch implements System {
     if (!suggestedGame) return
 
     await tmi.clients?.bot?.kraken.channels.updateChannel(tmi.channel?.id, {
-      game: suggestedGame.name
+      game: suggestedGame.name,
     })
 
     return '$sender ✅'

@@ -5,7 +5,7 @@ import variables from '@bot/systems/variables'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
 
 const router = Router({
-  mergeParams: true
+  mergeParams: true,
 })
 
 router.get('/', async (req, res, next) => {
@@ -44,7 +44,7 @@ router.post('/', isAdmin, checkSchema({
   },
   name: {
     isString: true,
-    in: ['body']
+    in: ['body'],
   },
   enabled: {
     isBoolean: true,
@@ -55,7 +55,7 @@ router.post('/', isAdmin, checkSchema({
     isString: true,
     in: ['body'],
     optional: true,
-  }
+  },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
@@ -70,7 +70,7 @@ router.post('/', isAdmin, checkSchema({
       await variable.update({
         name: body.name,
         enabled: body.enabled,
-        response: body.response
+        response: body.response,
       })
     }
     await variables.init()
@@ -84,7 +84,7 @@ router.delete('/', isAdmin, checkSchema({
   id: {
     isNumeric: true,
     in: ['body'],
-  }
+  },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()

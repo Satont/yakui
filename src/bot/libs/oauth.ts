@@ -10,14 +10,14 @@ export default new class Oauth {
 
     try {
       const { data } = await axios.get('https://id.twitch.tv/oauth2/validate', { headers: {
-        'Authorization': `OAuth ${token}`
+        'Authorization': `OAuth ${token}`,
       }})
 
       return {
         clientId: data.client_id,
         login: data.login,
         userId: data.user_id,
-        scopes: data.scopes
+        scopes: data.scopes,
       }
     } catch (e) {
       error(e)
@@ -31,7 +31,7 @@ export default new class Oauth {
 
       const [accessToken, accessTokenCreated]: [Settings, boolean] = await Settings.findOrCreate({ 
         where: { space: 'oauth', name: `${type}AccessToken` },
-        defaults: { space: 'oauth', name: `${type}AccessToken`, value: data.token }
+        defaults: { space: 'oauth', name: `${type}AccessToken`, value: data.token },
       })
 
       const [refreshToken, refreshTokenCreated]: [Settings, boolean] = await Settings.findOrCreate({ 
@@ -45,7 +45,7 @@ export default new class Oauth {
       info(`Access token of ${type} was refreshed.`)
       return {
         access_token: data.token,
-        refresh_token: data.refresh
+        refresh_token: data.refresh,
       }
     } catch (e) {
       error(e)

@@ -22,7 +22,7 @@ export default new class Locales {
   async init() {
     const [locale]: [Settings] = await Settings.findOrCreate({
       where: { space: 'general', name: 'locale' },
-      defaults: { value: 'ru' }
+      defaults: { value: 'ru' },
     })
     
     const lang = resolve(langsDir, `${locale.value}.json`)

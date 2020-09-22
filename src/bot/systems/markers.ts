@@ -14,8 +14,8 @@ export default new class Markers implements System {
       permission: 'moderators',
       description: 'Create new stream marker',
       visible: false,
-      fnc: this.addMarker
-    }
+      fnc: this.addMarker,
+    },
   ]
 
   async addMarker(opts: CommandOptions) {
@@ -42,7 +42,7 @@ export default new class Markers implements System {
         date: new Date(marker.creationDate).toISOString(),
         url: `${video.url}?t=${timestamp.hours}h${timestamp.minutes}m${timestamp.seconds}s`,
         preview: video.thumbnailUrl,
-        description: marker.description
+        description: marker.description,
       })
     }
 

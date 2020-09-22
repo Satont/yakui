@@ -24,7 +24,7 @@ export default new class TTS implements System {
 
   async init() {
     const settings: Settings = await Settings.findOne({
-      where: { space: 'tts', name: 'settings' }
+      where: { space: 'tts', name: 'settings' },
     })
 
     if (!settings) return

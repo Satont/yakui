@@ -4,8 +4,8 @@ import { merge } from 'lodash'
 const location = window.location.origin
 const options = {
   query: {
-    token: localStorage.getItem('accessToken')
-  }
+    token: localStorage.getItem('accessToken'),
+  },
 }
 
 const socket = io(location, options)

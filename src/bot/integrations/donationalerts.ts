@@ -31,11 +31,11 @@ export default new class Donationalerts implements Integration {
     this.connecting = true
     const [token, enabled]: [Settings, Settings] = await Promise.all([
       Settings.findOne({
-        where: { space: 'donationalerts', name: 'access_token' }
+        where: { space: 'donationalerts', name: 'access_token' },
       }),
       Settings.findOne({
-        where: { space: 'donationalerts', name: 'enabled' }
-      })
+        where: { space: 'donationalerts', name: 'enabled' },
+      }),
     ])
 
     if (!token || !enabled || !enabled?.value) return
@@ -127,7 +127,7 @@ export default new class Donationalerts implements Integration {
         rates: currency.rates,
         inMainCurrencyAmount: currency.exchange({ from: data.currency, amount: data.amount }),
         message: data.message,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       }
 
       if (data.billing_system !== 'fake' && user) {
@@ -141,7 +141,7 @@ export default new class Donationalerts implements Integration {
         currency: data.currency,
         inMainCurrencyAmount: currency.exchange({ from: data.currency, amount: data.amount }),
         message: data.message,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       })
     })
   }

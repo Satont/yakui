@@ -48,7 +48,7 @@ const start = async () => {
           { path: 'moderation', name: 'Moderation', component: () => import('./vue/pages/settings/moderation.vue') },
           { path: 'users', name: 'Users', component: () => import('./vue/pages/settings/users.vue') },
           { path: 'tts', name: 'TTS', component: () => import('./vue/pages/settings/tts.vue') },
-        ]
+        ],
       },
       { path: '/events', name: 'EventsManager', component: () => import('./vue/pages/events/index.vue') },
       {
@@ -59,7 +59,7 @@ const start = async () => {
           { path: 'spotify', name: 'Spotify', component: () => import('./vue/pages/integrations/spotify.vue') },
           { path: 'qiwi', name: 'Qiwi', component: () => import('./vue/pages/integrations/qiwi.vue') },
           { path: 'satontapi', name: 'Satont api', component: () => import('./vue/pages/integrations/satontapi.vue') },
-        ]
+        ],
       },
 
       { path: '/commands', name: 'CommandsManagerList', component: () => import('./vue/pages/commands/list.vue') },
@@ -94,7 +94,7 @@ const start = async () => {
       metadata: {
         stream: {
           viewers: 0,
-          startedAt: null
+          startedAt: null,
         },
         channel: {
           views: 0,
@@ -106,7 +106,7 @@ const start = async () => {
       },
       updateTimeout: null,
       lang: 'RU',
-      title: 'Bot Panel'
+      title: 'Bot Panel',
     },
     router,
     template: `
@@ -143,7 +143,7 @@ const start = async () => {
         else {
           this.metadata.uptime = humanizeDuration(Date.now() - new Date(this.metadata.stream.startedAt).getTime(), { units: ['mo', 'd', 'h', 'm', 's'], round: true })
         }
-      }
+      },
     },
     beforeDestroy() {
       clearTimeout(this.updateTimeout)

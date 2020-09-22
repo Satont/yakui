@@ -31,7 +31,7 @@ export default new class WebHooks {
 
     const options = {
       callbackUrl: this.callBackUrl,
-      validityInSeconds: this.validityInSeconds
+      validityInSeconds: this.validityInSeconds,
     }
 
     if (!this.callBackUrl.startsWith('https')) return false
@@ -61,7 +61,7 @@ export default new class WebHooks {
 
     const options = {
       callbackUrl: this.callBackUrl,
-      validityInSeconds: this.validityInSeconds
+      validityInSeconds: this.validityInSeconds,
     }
 
     if (!this.callBackUrl.startsWith('https')) return false

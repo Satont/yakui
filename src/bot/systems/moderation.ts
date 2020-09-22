@@ -8,7 +8,7 @@ const symbolsRegexp = /([^\s\u0500-\u052F\u0400-\u04FF\w]+)/g
 
 export default new class Moderation implements System {
   parsers = [
-    { fnc: this.parse }
+    { fnc: this.parse },
   ]
   commands: Command[] = [
     {
@@ -16,8 +16,8 @@ export default new class Moderation implements System {
       fnc: this.permit,
       permission: 'moderators',
       visible: false,
-      description: 'Give target user 1 permit.'
-    }
+      description: 'Give target user 1 permit.',
+    },
   ]
 
   permits: string[] = []

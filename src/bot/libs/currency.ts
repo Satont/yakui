@@ -31,7 +31,7 @@ export default new class Currency {
   private async getDbData() {
     const [currency]: [Settings] = await Settings.findOrCreate({ 
       where: { space: 'currency', name: 'botCurrency' },
-      defaults: { value: this.botCurrency }
+      defaults: { value: this.botCurrency },
     })
 
     this.botCurrency = currency.value

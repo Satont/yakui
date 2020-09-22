@@ -3,7 +3,7 @@ import Markers from '@bot/systems/markers'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
 
 const router = Router({
-  mergeParams: true
+  mergeParams: true,
 })
 
 router.get('/', isAdmin, async (req, res, next) => {

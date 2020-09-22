@@ -5,7 +5,7 @@ import isAdmin from '@bot/panel/middlewares/isAdmin'
 import timers from '@bot/systems/timers'
 
 const router = Router({
-  mergeParams: true
+  mergeParams: true,
 })
 
 router.get('/', isAdmin, async (req, res, next) => {
@@ -36,7 +36,7 @@ router.post('/', isAdmin, checkSchema({
   },
   name: {
     isString: true,
-    in: ['body']
+    in: ['body'],
   },
   enabled: {
     isBoolean: true,
@@ -82,7 +82,7 @@ router.delete('/', isAdmin, checkSchema({
   id: {
     isNumeric: true,
     in: ['body'],
-  }
+  },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()

@@ -17,7 +17,7 @@ export default new class Tmi {
     updateAccessToken: {
       bot: null,
       broadcaster: null,
-    }
+    },
   }
   private isAlreadyUpdating = {
     bot: false,
@@ -61,7 +61,7 @@ export default new class Tmi {
     const [accessToken, refreshToken, channel] = await Promise.all([
       Settings.findOne({ where: { space: 'oauth', name: `${type}AccessToken` } }),
       Settings.findOne({ where: { space: 'oauth', name: `${type}RefreshToken` } }),
-      Settings.findOne({ where: { space: 'oauth', name: 'channel' } })
+      Settings.findOne({ where: { space: 'oauth', name: 'channel' } }),
     ])
 
     if (!accessToken || !refreshToken || !channel) {
@@ -122,7 +122,7 @@ export default new class Tmi {
 
     this.clients[type].setAccessToken(new AccessToken({
       access_token: data.access_token,
-      refresh_token: data.refresh_token
+      refresh_token: data.refresh_token,
     }))
 
   }

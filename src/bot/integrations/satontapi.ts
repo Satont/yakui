@@ -6,7 +6,7 @@ import axios from 'axios'
 
 export default new class SatontRu implements Integration {
   private base = axios.create({
-    baseURL: 'http://api.satont.ru'
+    baseURL: 'http://api.satont.ru',
   })
 
   private apis: {
@@ -30,13 +30,13 @@ export default new class SatontRu implements Integration {
       vk: null,
       lastfm: null,
       twitchdj: null,
-    }
+    },
   }
 
   async init() {
     const [faceit, songs]: [Settings, Settings] = await Promise.all([
       Settings.findOne({ where: { space: 'satontapi', name: 'faceit' } }),
-      Settings.findOne({ where: { space: 'satontapi', name: 'songs' } })
+      Settings.findOne({ where: { space: 'satontapi', name: 'songs' } }),
     ])
     
     if (faceit) this.apis.faceit = faceit.value

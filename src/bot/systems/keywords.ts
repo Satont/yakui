@@ -7,7 +7,7 @@ import { isRegExp } from 'lodash'
 export default new class Keywords implements System {
   keywords: Array<{ name: string, response: string, cooldown?: number, enabled: boolean }> = []
   parsers = [
-    { fnc: this.parser }
+    { fnc: this.parser },
   ]
   cooldowns: string[] = []
 
@@ -18,7 +18,7 @@ export default new class Keywords implements System {
       name: keyword.name.toLowerCase(),
       response: keyword.response,
       cooldown: keyword.cooldown,
-      enabled: keyword.enabled
+      enabled: keyword.enabled,
     }))
   }
 

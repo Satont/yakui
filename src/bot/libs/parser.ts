@@ -64,7 +64,7 @@ export default new class Parser {
           audio: { 
             file: await File.findOne({ where: { id: command.sound.soundId } }) ,
             volume: command.sound.volume,
-          }
+          },
         })
       }
 
@@ -73,7 +73,7 @@ export default new class Parser {
       if (command.price) {
         const [user]: [User] = await User.findOrCreate({
           where: { id: raw.userInfo.userId },
-          defaults: { id: raw.userInfo.userId, username: raw.userInfo.userName }
+          defaults: { id: raw.userInfo.userId, username: raw.userInfo.userName },
         })
 
         if (user.points < command.price) {

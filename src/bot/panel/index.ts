@@ -54,11 +54,9 @@ app.use((err, req: Request, res: Response, next) => {
   console.log(err)
   if (err['errors'] && !res.headersSent) {
     return res.status(400).send({ code: 'validation_error', message: 'Error on validation.', data: err['errors'] })
-  }
-  else if (!res.headersSent) {
+  } else if (!res.headersSent) {
     res.status(500).send(err)
-  }
-  else next()
+  } else next()
 })
 
 export const server = http.createServer(app).listen(PORT, () => {

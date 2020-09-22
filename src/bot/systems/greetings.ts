@@ -6,7 +6,7 @@ import tmi from '@bot/libs/tmi'
 export default new class Greetings implements System {
   sended: string[] = []
   parsers = [
-    { fnc: this.parser }
+    { fnc: this.parser },
   ]
   greetings: Greeting[] = []
 

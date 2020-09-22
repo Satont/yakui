@@ -84,14 +84,14 @@ export default new class Variables implements System {
       .replace(/\$subs\.last\.sub\.ago/gimu, hd(Date.now() - twitch.channelMetaData.latestSubscriber?.timestamp, {
         units: ['mo', 'd', 'h', 'm'],
         round: true,
-        language: locales.translate('lang.code')
+        language: locales.translate('lang.code'),
       }) + ' ')
       .replace(/\$subs\.last\.sub\.tier/gimu, twitch.channelMetaData.latestSubscriber?.tier + ' ')
       .replace(/\$subs\.last\.resub\.username/gimu, twitch.channelMetaData.latestReSubscriber?.username + ' ')
       .replace(/\$subs\.last\.resub\.ago/gimu, hd(Date.now() - twitch.channelMetaData.latestReSubscriber?.timestamp, {
         units: ['mo', 'd', 'h', 'm'],
         round: true,
-        language: locales.translate('lang.code')
+        language: locales.translate('lang.code'),
       }) + ' ')
       .replace(/\$subs\.last\.resub\.tier/gimu, twitch.channelMetaData.latestReSubscriber?.tier + ' ')
       .replace(/\$subs\.last\.resub\.months/gimu, String(twitch.channelMetaData.latestReSubscriber?.months) + ' ')
@@ -188,7 +188,7 @@ export default new class Variables implements System {
         order: [[type, 'DESC']],
         attributes: ['username', [type, 'value']],
         offset,
-        raw: true
+        raw: true,
       })
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${((result.value / (1 * 60 * 1000)) / 60).toFixed(1)}h`).join(', ')
@@ -199,7 +199,7 @@ export default new class Variables implements System {
         order: [[type, 'DESC']],
         attributes: ['username', [type, 'value']],
         offset,
-        raw: true
+        raw: true,
       })
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ')
@@ -220,7 +220,7 @@ export default new class Variables implements System {
         OFFSET ${offset} ROWS
         LIMIT
           ${limit}`, {
-        replacements: { usernames: ignored }
+        replacements: { usernames: ignored },
       })
       result = query[0]
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}${currency.botCurrency}`).join(', ')
@@ -241,7 +241,7 @@ export default new class Variables implements System {
         OFFSET ${offset} ROWS
         LIMIT
         ${limit}`, {
-        replacements: { usernames: ignored }
+        replacements: { usernames: ignored },
       })
 
       result = query[0]
@@ -255,7 +255,7 @@ export default new class Variables implements System {
         where: { date: startOfDay.getTime() },
         order: [['count', 'DESC']],
         include: [{ model: UserModel, as: 'user', where: { username: { [Op.notIn]: ignored } } }],
-        offset
+        offset,
       })
 
       return (result as any).map((item: UserDailyMessages, index: number) => `${index + 1 + offset}. ${item.user.username} - ${item.count}`).join(', ')
@@ -266,7 +266,7 @@ export default new class Variables implements System {
         order: [[type, 'DESC']],
         attributes: ['username', [type, 'value']],
         offset,
-        raw: true
+        raw: true,
       })
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ')
@@ -291,9 +291,13 @@ export default new class Variables implements System {
           if (_.isObject(data)) {
             // Stringify object
             result = result.replace('(api._response)', JSON.stringify(data))
-          } else { result = result.replace('(api._response)', data.toString().replace(/^"(.*)"/, '$1')) }
+          } else {
+            result = result.replace('(api._response)', data.toString().replace(/^"(.*)"/, '$1')) 
+          }
         } else {
-          if (_.isBuffer(data)) { data = JSON.parse(data.toString()) }
+          if (_.isBuffer(data)) {
+            data = JSON.parse(data.toString()) 
+          }
           for (const tag of rData) {
             let path = data
             const ids = tag.replace('(api.', '').replace(')', '').split('.')
@@ -343,7 +347,7 @@ export default new class Variables implements System {
   async getSong() {
     const [spotifySong, satontApiSong] = await Promise.all([
       spotify.getSong(),
-      satontapi.getSong()
+      satontapi.getSong(),
     ])
     
     return spotifySong || satontApiSong || locales.translate('song.notPlaying')

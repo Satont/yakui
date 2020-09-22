@@ -14,7 +14,7 @@ export default async ({ raw, message, param }: { raw: TwitchPrivateMessage, mess
     _,
     user: await User.findOne({ where: { id: raw.userInfo.userId }}) || {},
     say: (message: string) => tmi.say({ message }),
-    timeout: (username, duration) => tmi.timeout({ username, duration })
+    timeout: (username, duration) => tmi.timeout({ username, duration }),
   }
 
   const run = await safeEval(toEval, context)

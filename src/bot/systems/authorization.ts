@@ -16,7 +16,7 @@ export default new class Authorization implements System {
   async init() {
     const [key]: [Settings] = await Settings.findOrCreate({
       where: { space: 'general', name: 'JWTKey' },
-      defaults: { value: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) }
+      defaults: { value: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) },
     })
 
     this.JWTKey = key.value
@@ -35,7 +35,7 @@ export default new class Authorization implements System {
       const twitchValidation = await axios.get(`https://id.twitch.tv/oauth2/validate`, {
         headers: {
           'Authorization': 'OAuth ' + accessTokenHeader,
-        }
+        },
       })
 
       if (userId !== twitchValidation.data.user_id) {

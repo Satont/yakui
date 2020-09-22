@@ -5,7 +5,7 @@ import '../panel/css/main.css'
 
 new Vue({
   data: () => ({
-    popoutUrl: null
+    popoutUrl: null,
   }),
   template: `
     <b-container class="center p-5 text-center">
@@ -16,7 +16,7 @@ new Vue({
     login() {
       const btoa = window.btoa(JSON.stringify({ popoutUrl: this.popoutUrl, url: this.url, referrer: document.referrer }))
       window.location.replace('http://oauth.satont.ru/?state=' + encodeURIComponent(btoa))
-    }
+    },
   },
   mounted() {
     const hash = window.location.hash
@@ -35,6 +35,6 @@ new Vue({
     }
   },
   computed: {
-    url: () => (window.location.origin)
-  }
+    url: () => (window.location.origin),
+  },
 }).$mount('#app')

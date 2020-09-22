@@ -15,7 +15,7 @@ export default new class Spotify implements Integration {
     const [access_token, refresh_token, enabled]: [Settings, Settings, Settings] = await Promise.all([
       Settings.findOne({ where: { space: 'spotify', name: 'access_token' }}),
       Settings.findOne({ where: { space: 'spotify', name: 'refresh_token' }}),
-      Settings.findOne({ where: { space: 'spotify', name: 'enabled' }})
+      Settings.findOne({ where: { space: 'spotify', name: 'enabled' }}),
     ])
 
     if (!access_token || !refresh_token || !enabled) return
@@ -24,7 +24,7 @@ export default new class Spotify implements Integration {
     if (this.client) this.client = null
 
     this.client = new SpotifyApi({ 
-      accessToken: access_token.value
+      accessToken: access_token.value,
     })
 
     info('SPOTIFY: Successfuly initiliazed.')

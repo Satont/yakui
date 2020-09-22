@@ -14,8 +14,8 @@ const router = new Router({
     { path: '/', component: () => import('./vue/customOverlay.vue') },
     { path: '/custom/:id', name: 'CustomOverlay', component: () => import('./vue/customOverlay.vue') },
     { path: '/alerts', name: 'Alerts', component: () => import('./vue/alerts.vue') },
-    { path: '/tts', name: 'TTS', component: () => import('./vue/tts.vue') }
-  ]
+    { path: '/tts', name: 'TTS', component: () => import('./vue/tts.vue') },
+  ],
 })
 
 const app = new Vue({
