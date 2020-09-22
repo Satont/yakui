@@ -7,10 +7,6 @@ export default new Router({
   routes: [
     {
       path: '/',
-      component: () => import('../Pages/Home.vue'),
-    },
-    {
-      path: '/dashboard',
       component: () => import('../Pages/Dashboard.vue'),
     },
   ],

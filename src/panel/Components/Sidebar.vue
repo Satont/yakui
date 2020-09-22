@@ -118,8 +118,16 @@ export default class Sidebar extends Vue {}
 }
 
 .menu_site-nav > ul > li {
-  margin: 10px;
+  margin: 8px;
   cursor: pointer;
+}
+
+.menu_site-item {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .menu_site-item > a:hover {
@@ -136,16 +144,11 @@ export default class Sidebar extends Vue {}
 
 .active_menu {
   color: #fff;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   background: rgb(30, 30, 30);
   border-radius: 4px;
 }
 
 .logo_site {
-  margin-top: 22px;
+  margin-top: 16px;
 }
 </style>
