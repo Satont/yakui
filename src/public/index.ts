@@ -43,12 +43,13 @@ const start = async () => {
     `
   }).$mount('#app')
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   router.beforeEach((to, from, next) => {
     app.loading = true
     next()
   })
 
-  router.afterEach((to, from) => {
+  router.afterEach(() => {
     app.loading = false
   })
 }
