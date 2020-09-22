@@ -42,9 +42,7 @@
     "clean-webpack-plugin": "^3.0.0",
     "css-minimizer-webpack-plugin": "^1.1.4",
     "eslint": "^7.9.0",
-    "file-loader": "^6.1.0",
     "html-webpack-plugin": "^4.4.1",
-    "image-webpack-loader": "^7.0.1",
     "nodemon": "^2.0.4",
     "terser-webpack-plugin": "^4.2.2",
     "ts-loader": "^8.0.3",
@@ -52,6 +50,7 @@
     "vue-feather-icons": "^5.1.0",
     "vue-loader": "^15.9.3",
     "vue-style-loader": "^4.1.2",
+    "vue-svg-loader": "^0.16.0",
     "vue-template-compiler": "^2.6.12",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12"

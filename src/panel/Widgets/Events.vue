@@ -41,10 +41,10 @@
 <script lang='ts'>
 import { Vue, Component } from 'vue-property-decorator'
 import EventsIcon from '../assets/icons/Events.svg'
-import Follow from './EventsType/Follow'
-import Subscribe from './EventsType/Subscribe'
-import Raid from './EventsType/Raid'
-import Donation from './EventsType/Donation'
+import Follow from './EventsType/Follow.vue'
+import Subscribe from './EventsType/Subscribe.vue'
+import Raid from './EventsType/Raid.vue'
+import Donation from './EventsType/Donation.vue'
 
 @Component({
   name: 'Events',

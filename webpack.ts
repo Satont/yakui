@@ -37,22 +37,13 @@ export default {
   },
   module: {
     rules: [
+      {
+        test: /\.svg$/,
+        loader: 'vue-svg-loader',
+      },
       { 
         test: /\.vue$/i,
         loader: 'vue-loader',
-      },
-      {
-        test: /\.(gif|png|jpe?g|svg)$/i,
-        use: [
-          'file-loader',
-          {
-            loader: 'image-webpack-loader',
-            options: {
-              bypassOnDebug: true,
-              disable: true,
-            },
-          },
-        ],
       },
       { 
         test: /\.css$/i, 
