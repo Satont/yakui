@@ -19,9 +19,7 @@
       </div>
       <div class="information">
         Title:
-        <span class="information_value"
-          >ОБЗОР НА CALL OF DUTY MODERN WARFARE / !CONTEST — КОНКУРС НА СКИНЫ</span
-        >
+        <span class="information_value">ОБЗОР НА CALL OF DUTY MODERN WARFARE / !CONTEST — КОНКУРС НА СКИНЫ</span>
       </div>
     </div>
   </header>
