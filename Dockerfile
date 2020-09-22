@@ -6,6 +6,7 @@ COPY . /app
 WORKDIR /app
 
 RUN npm install
+RUN npm run eslint
 RUN npm run build
 #RUN npm prune --production
 
