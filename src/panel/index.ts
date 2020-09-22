@@ -33,7 +33,7 @@ const start = async () => {
   store.commit('setLoggedUser', user)
 
   const filesSocket = getNameSpace({ name: 'systems/files' })
-  filesSocket.emit('getAll', (err, files) => store.commit('setFilesList', files))
+  filesSocket.emit('getAll', (_err, files) => store.commit('setFilesList', files))
 
   const router = new VueRouter({
     mode: 'history',
@@ -125,7 +125,7 @@ const start = async () => {
     methods: {
       async fetchMetadata() {
         clearTimeout(this.updateTimeout)
-        this.updateTimeout = setTimeout(() => this.fetchMetadata(), 10000);
+        this.updateTimeout = setTimeout(() => this.fetchMetadata(), 10000)
 
         const { data } = await this.$axios.get('/metaData')
 
@@ -139,7 +139,7 @@ const start = async () => {
         this.updateUptime()
       },
       updateUptime() {
-        if (!this.metadata.stream.startedAt) this.metadata.uptime = 'offline';
+        if (!this.metadata.stream.startedAt) this.metadata.uptime = 'offline'
         else {
           this.metadata.uptime = humanizeDuration(Date.now() - new Date(this.metadata.stream.startedAt).getTime(), { units: ['mo', 'd', 'h', 'm', 's'], round: true })
         }
@@ -151,11 +151,13 @@ const start = async () => {
     store,
   }).$mount('#app')
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   router.beforeEach((to, from, next) => {
     app.loading = true
     next()
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   router.afterEach((to, from) => {
     app.loading = false
   })

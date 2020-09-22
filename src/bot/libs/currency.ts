@@ -1,6 +1,6 @@
-import Settings from "@bot/models/Settings"
-import axios from "axios"
-import { info, error } from "./logger"
+import Settings from '@bot/models/Settings'
+import axios from 'axios'
+import { info, error } from './logger'
 
 export type currency = 'CAD' | 'HKD' | 'ISK' | 'PHP' | 'DKK' | 'HUF' | 'CZK' | 'GBP' | 'RON' | 'SEK' | 'IDR' | 'INR' | 'BRL' | 'RUB' | 'HRK' | 'JPY' | 'THB' | 'CHF' | 'EUR' | 'MYR' | 'BGN' | 'TRY' | 'CNY' | 'NOK' | 'NZD' | 'ZAR' | 'USD' | 'MXN' | 'SGD' | 'AUD' | 'ILS' | 'KRW' | 'PLN'
 
@@ -52,7 +52,7 @@ export default new class Currency {
     } catch (e) {
       error('CURRENCY: Cannot update', e)
     } finally {
-      this.updateRatesTimeout = setTimeout(() => this.updateRates(), 12 * 60 * 60 * 1000);
+      this.updateRatesTimeout = setTimeout(() => this.updateRates(), 12 * 60 * 60 * 1000)
     }
   }
 }

@@ -12,9 +12,9 @@ export default async (shouldBeLogged = true, admin = true) => {
     if (clientId.length === 0) {
       const { data } = await axios.get(`https://id.twitch.tv/oauth2/validate`, {
         headers: {
-            'Authorization': 'OAuth ' + code,
-          },
-        })
+          'Authorization': 'OAuth ' + code,
+        },
+      })
       clientId = data.client_id
       localStorage.setItem('clientId', clientId)
     }
@@ -38,7 +38,7 @@ export default async (shouldBeLogged = true, admin = true) => {
     const request = await axios.get('/oauth/validate', { headers: {
       'x-twitch-token': code,
       'x-twitch-userid': user.data.data[0].id,
-     }})
+    }})
 
     localStorage.setItem('accessToken', request.data.accessToken)
     localStorage.setItem('refreshToken', request.data.refreshToken)

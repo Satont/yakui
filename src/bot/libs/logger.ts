@@ -5,7 +5,7 @@ import chalk from 'chalk'
 import { inspect } from 'util'
 
 const { format } = winston
-const { combine, printf } = format;
+const { combine, printf } = format
 
 declare module 'winston' {
   export interface Logger {

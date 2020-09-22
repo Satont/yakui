@@ -4,6 +4,7 @@ import axios, { AxiosError } from 'axios'
 import { ValidationError } from 'express-validator'
 import { refresh } from '../../helpers/isLogged'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function AxiosPlugin<AxiosPluginOptions>(Vue: typeof _Vue, options?: AxiosPluginOptions): void {
   const instance = axios.create({
     baseURL: '/api/v1',
@@ -20,13 +21,13 @@ export default function AxiosPlugin<AxiosPluginOptions>(Vue: typeof _Vue, option
       switch (error.response.data.code) {
         case 'validation_error':
           message = (error.response.data.data as ValidationError[]).map(e => `${e.msg} ${e.param}=${e.value}`).join('\n')
-        break;
+          break
         case 'jwt expired':
           refresh().then(() => location.reload())
-        break;
+          break
         case 'jwt malformed':
           refresh().then(() => location.reload())
-        break;
+          break
       }
 
       Vue.$toast(message, {
@@ -44,7 +45,7 @@ export default function AxiosPlugin<AxiosPluginOptions>(Vue: typeof _Vue, option
     }
 
     return Promise.reject(error)
-  });
+  })
 
   Vue.prototype.$axios = instance
 }

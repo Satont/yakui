@@ -99,7 +99,7 @@ export default new class Variables implements System {
       .replace(/\$subs/gimu, String(twitch.channelMetaData.subs) + ' ')
 
     if (/\$song/gimu.test(result)) {
-      result = result.replace(/\$song/gimu, await this.getSong(result))
+      result = result.replace(/\$song/gimu, await this.getSong())
     }
 
     if (/\$commands/gimu.test(result)) {
@@ -146,8 +146,8 @@ export default new class Variables implements System {
     if (/\$faceit\.[a-z]{3}/gimu.test(result)) {
       const faceitData = await satontapi.getFaceitData()
       if (faceitData) result = result
-          .replace(/\$faceit\.elo/, String(faceitData.elo))
-          .replace(/\$faceit\.lvl/, String(faceitData.lvl))
+        .replace(/\$faceit\.elo/, String(faceitData.elo))
+        .replace(/\$faceit\.lvl/, String(faceitData.lvl))
     }
 
     result = await this.parseCustomVariables(result)
@@ -171,7 +171,7 @@ export default new class Variables implements System {
     return result
   }
 
-  async getTop(type: 'watched' | 'tips' | 'bits' | 'messages' | 'messages.today' | 'points', page: string = '1') {
+  async getTop(type: 'watched' | 'tips' | 'bits' | 'messages' | 'messages.today' | 'points', page = '1') {
     let result: Array<{ username: string, value: number }> = []
     if (isNaN(Number(page))) page = '1'
     if (Number(page) <= 0) page = '1'
@@ -220,8 +220,8 @@ export default new class Variables implements System {
         OFFSET ${offset} ROWS
         LIMIT
           ${limit}`, {
-            replacements: { usernames: ignored }
-          })
+        replacements: { usernames: ignored }
+      })
       result = query[0]
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}${currency.botCurrency}`).join(', ')
     } else if (type === 'bits') {
@@ -241,13 +241,13 @@ export default new class Variables implements System {
         OFFSET ${offset} ROWS
         LIMIT
         ${limit}`, {
-          replacements: { usernames: ignored }
-        })
+        replacements: { usernames: ignored }
+      })
 
       result = query[0]
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ')
     } else if (type === 'messages.today') {
-      const now = new Date();
+      const now = new Date()
       const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
       result = await UserDailyMessages.findAll({
@@ -291,9 +291,9 @@ export default new class Variables implements System {
           if (_.isObject(data)) {
             // Stringify object
             result = result.replace('(api._response)', JSON.stringify(data))
-          } else { result = result.replace('(api._response)', data.toString().replace(/^"(.*)"/, '$1')) };
+          } else { result = result.replace('(api._response)', data.toString().replace(/^"(.*)"/, '$1')) }
         } else {
-          if (_.isBuffer(data)) { data = JSON.parse(data.toString()) };
+          if (_.isBuffer(data)) { data = JSON.parse(data.toString()) }
           for (const tag of rData) {
             let path = data
             const ids = tag.replace('(api.', '').replace(')', '').split('.')
@@ -335,12 +335,12 @@ export default new class Variables implements System {
         const variable = await Variable.findOne({ where: { name: this.variables.find(v => v.name === match[0].replace('$_', '')).name }})
         await variable.update({ response: text })
         tmi.say({ message: `@${raw.userInfo.userName} ✅` })
-        return true;
+        return true
       } else return false
     } else return false
   }
 
-  async getSong(result: string) {
+  async getSong() {
     const [spotifySong, satontApiSong] = await Promise.all([
       spotify.getSong(),
       satontapi.getSong()

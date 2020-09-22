@@ -31,12 +31,14 @@ const app = new Vue({
   `,
 }).$mount('#app')
 
-router.beforeEach((to, from, next) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+router.beforeEach((_to, _from, next) => {
   app.loading = true
   next()
 })
 
-router.afterEach((to, from) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+router.afterEach((_to, _from) => {
   app.loading = false
 })
 

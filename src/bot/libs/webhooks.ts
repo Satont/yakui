@@ -1,6 +1,6 @@
-import tmi from "./tmi"
+import tmi from './tmi'
 import Settings from '@bot/models/Settings'
-import { info, error } from "./logger"
+import { info, error } from './logger'
 
 export default new class WebHooks {
   private callBackUrl: string = null
@@ -34,19 +34,19 @@ export default new class WebHooks {
       validityInSeconds: this.validityInSeconds
     }
 
-    if (!this.callBackUrl.startsWith('https')) return false;
+    if (!this.callBackUrl.startsWith('https')) return false
 
     try {
       switch (type) {
         case 'follows':
           await tmi.clients.bot.helix.webHooks.unsubscribeFromUserFollowsTo(channelId, options)
-        break;
+          break
         case 'streams':
           await tmi.clients.bot.helix.webHooks.unsubscribeFromStreamChanges(channelId, options)
-        break;
+          break
         case 'moderator':
           await tmi.clients.bot.helix.webHooks.unsubscribeFromModeratorEvents(channelId, options)
-        break;
+          break
       }
       info(`WEBHOOKS: Unsibscribed from ${type} topic, ${tmi.channel.name} [${tmi.channel.id}]`)
     } catch (e) {
@@ -64,19 +64,19 @@ export default new class WebHooks {
       validityInSeconds: this.validityInSeconds
     }
 
-    if (!this.callBackUrl.startsWith('https')) return false;
+    if (!this.callBackUrl.startsWith('https')) return false
 
     try {
       switch (type) {
         case 'follows':
           await tmi.clients.bot.helix.webHooks.subscribeToUserFollowsTo(channelId, options)
-        break;
+          break
         case 'streams':
           await tmi.clients.bot.helix.webHooks.subscribeToStreamChanges(channelId, options)
-        break;
+          break
         case 'moderator':
           await tmi.clients.bot.helix.webHooks.subscribeToModeratorEvents(channelId, options)
-        break;
+          break
       }
       info(`WEBHOOKS: Subscribed to ${type} topic, ${tmi.channel.name} [${tmi.channel.id}]`)
     } catch (e) {

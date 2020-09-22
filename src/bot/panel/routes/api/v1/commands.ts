@@ -131,7 +131,7 @@ router.post('/', isAdmin, checkSchema({
       commandSound.soundId = body.sound.soundId as any
       commandSound.volume = body.sound.volume as any
       await commandSound.save()
-    } else await CommandSound.destroy({ where: { commandId: command.id }}).catch(() => {})
+    } else await CommandSound.destroy({ where: { commandId: command.id }}).catch(() => null)
 
     await customcommands.init()
     res.json(command)

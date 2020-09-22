@@ -79,7 +79,7 @@ export default new class Events implements System {
     }
   }
 
-  async addToEventList({ name, data }: { name: string, data: object }) {
+  async addToEventList({ name, data }: { name: string, data: Record<string, unknown> }) {
     const event: EventList = await EventList.create({ name, data })
     this.clients.forEach(c => c.emit('event', event))
   }

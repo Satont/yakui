@@ -1,8 +1,8 @@
-import { System } from "typings"
-import { getNameSpace } from "@bot/libs/socket"
-import { info } from "@bot/libs/logger"
-import Settings from "@bot/models/Settings"
-import { TwitchPrivateMessage } from "twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage"
+import { System } from 'typings'
+import { getNameSpace } from '@bot/libs/socket'
+import { info } from '@bot/libs/logger'
+import Settings from '@bot/models/Settings'
+import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
 
 export default new class TTS implements System {
   socket = getNameSpace('overlays/tts')
@@ -27,7 +27,7 @@ export default new class TTS implements System {
       where: { space: 'tts', name: 'settings' }
     })
 
-    if (!settings) return;
+    if (!settings) return
 
     this.settings = settings.value
 
@@ -49,7 +49,7 @@ export default new class TTS implements System {
   }
 
   onMessageHighlight(data: TwitchPrivateMessage) {
-    if (!this.settings.triggerByHighlight) return;
+    if (!this.settings.triggerByHighlight) return
 
     this.emitTTS(data.message.value)
   }

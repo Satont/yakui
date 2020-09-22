@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 3000
 
 export const app = express()
 
-app.use(bodyparser.urlencoded({ extended: false }));
+app.use(bodyparser.urlencoded({ extended: false }))
 app.use(bodyparser.json())
 app.use('/twitch', twitch)
 app.use('/static', express.static(resolve(process.cwd(), 'public', 'dest')))

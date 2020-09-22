@@ -1,6 +1,6 @@
-import { System, ParserOptions } from "typings";
+import { System, ParserOptions } from 'typings'
 import Keyword from '@bot/models/Keyword'
-import tmi from "@bot/libs/tmi";
+import tmi from '@bot/libs/tmi'
 import variables from './variables'
 import { isRegExp } from 'lodash'
 
@@ -42,7 +42,7 @@ export default new class Keywords implements System {
 
       if (founded && item.cooldown && item.cooldown !== 0) {
         this.cooldowns.push(item.name)
-        setTimeout(() => this.cooldowns.splice(this.cooldowns.indexOf(item.name), 1), item.cooldown * 1000);
+        setTimeout(() => this.cooldowns.splice(this.cooldowns.indexOf(item.name), 1), item.cooldown * 1000)
       }
     }
   }

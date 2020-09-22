@@ -81,7 +81,7 @@ router.post('/', isAdmin, checkSchema({
 
     if (!user) throw new Error('User not found')
 
-    for (let bit of req.body.user.bits) {
+    for (const bit of req.body.user.bits) {
       if (bit.id) {
         const [instance, created]: [UserBits, boolean] = await UserBits.findOrCreate({
           where: { id: bit.id },
@@ -91,11 +91,11 @@ router.post('/', isAdmin, checkSchema({
       } else await UserBits.create(bit)
     }
 
-    for (let bit of req.body.delete.bits) {
+    for (const bit of req.body.delete.bits) {
       await UserBits.destroy({ where: { id: bit }})
     }
 
-    for (let tip of req.body.delete.tips) {
+    for (const tip of req.body.delete.tips) {
       await UserTips.destroy({ where: { id: tip }})
     }
 

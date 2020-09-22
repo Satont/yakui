@@ -15,6 +15,6 @@ const store = new Vuex.Store({
       Vue.set(state, 'loggedUser', user)
     }
   },
-});
+})
 
 export { store }

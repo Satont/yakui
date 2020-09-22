@@ -2,13 +2,13 @@ import Centrifuge from 'centrifuge'
 import axios from 'axios'
 import WebSocket from 'ws'
 
-import { Integration } from 'typings';
-import Settings from '@bot/models/Settings';
+import { Integration } from 'typings'
+import Settings from '@bot/models/Settings'
 import { onDonation } from '@bot/libs/eventsCaller'
 import currency, { currency as currencyType } from '@bot/libs/currency'
 import User from '@bot/models/User'
-import UserTips from '@bot/models/UserTips';
-import { error, info } from '@bot/libs/logger';
+import UserTips from '@bot/models/UserTips'
+import { error, info } from '@bot/libs/logger'
 
 type DonationAlertsEvent = {
   id: string;
@@ -27,7 +27,7 @@ export default new class Donationalerts implements Integration {
   connecting = false
 
   async init() {
-    if (this.connecting) return;
+    if (this.connecting) return
     this.connecting = true
     const [token, enabled]: [Settings, Settings] = await Promise.all([
       Settings.findOne({
@@ -60,14 +60,14 @@ export default new class Donationalerts implements Integration {
       onPrivateSubscribe: async ({ data }, cb) => {
         const request = await axios.post('https://www.donationalerts.com/api/v1/centrifuge/subscribe', data, {
           headers: { 'Authorization': `Bearer ${token}` },
-        });
+        })
         cb({ status: 200, data: { channels: request.data.channels } })
       },
     })
 
     const opts = await this.getOpts(token)
 
-    if (!opts) return;
+    if (!opts) return
 
     this.centrifugeSocket.setToken(opts.token)
     this.centrifugeSocket.connect()
@@ -77,13 +77,13 @@ export default new class Donationalerts implements Integration {
 
   private async getOpts(token: string) {
     if (token.trim() === '') {
-      throw new Error('Access token is empty.');
+      throw new Error('Access token is empty.')
     }
 
     try {
       const request = await axios.get('https://www.donationalerts.com/api/v1/user/oauth', {
         headers: { 'Authorization': `Bearer ${token}` },
-      });
+      })
 
       return {
         token: request.data.data.socket_connection_token,

@@ -22,6 +22,6 @@ sequelize.authenticate()
   .then(() => info('Connected to DB'))
   .then(() => connected = true)
   .catch((e) => {
-    error(`Can\'t connect to db ${e}`)
+    error(`Can't connect to db ${e}`)
     process.exit(1)
   })

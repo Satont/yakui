@@ -79,10 +79,10 @@ export default new class Authorization implements System {
       const userType = (!tmi.channel?.name || !admins.length ? true : admins.includes(data.username)) ? 'admin' : 'viewer'
 
       const accessToken = jwt.sign({
-          userId: data.userId,
-          username: data.username,
-          privileges: userType,
-        }, this.JWTKey, { expiresIn: `${accessTokenExpirationTime}s` })
+        userId: data.userId,
+        username: data.username,
+        privileges: userType,
+      }, this.JWTKey, { expiresIn: `${accessTokenExpirationTime}s` })
       const refreshToken = jwt.sign({
         userId: data.userId,
         username: data.username,

@@ -70,7 +70,7 @@ export default new class Users implements System {
     this.settings.admins = admins?.value ?? []
 
     if (points) this.settings.points = points.value
-    if (!this.settings.enabled) return;
+    if (!this.settings.enabled) return
 
     await this.getChatters()
     await this.countWatched()
@@ -78,7 +78,7 @@ export default new class Users implements System {
 
   async parseMessage(opts: ParserOptions) {
     if (!this.settings.enabled || opts.message.startsWith('!')) return
-    if (this.settings.ignoredUsers.includes(opts.raw.userInfo.userName)) return;
+    if (this.settings.ignoredUsers.includes(opts.raw.userInfo.userName)) return
     const [pointsPerMessage, pointsInterval] = [this.settings.points.messages.amount, this.settings.points.messages.interval * 60 * 1000]
 
     const [id, username] = [opts.raw.userInfo.userId, opts.raw.userInfo.userName]
@@ -103,9 +103,9 @@ export default new class Users implements System {
 
     user.save()
 
-    if (!twitch.streamMetaData?.startedAt) return;
+    if (!twitch.streamMetaData?.startedAt) return
 
-    const now = new Date();
+    const now = new Date()
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
     const [daily, isNewDailyRow]: [UserDailyMessages, boolean] = await UserDailyMessages.findOrCreate({
@@ -143,7 +143,7 @@ export default new class Users implements System {
     this.countWatchedTimeout = setTimeout(() => this.countWatched(), 1 * 60 * 1000)
     const [pointsPerWatch, pointsInterval] = [this.settings.points.watch.amount, this.settings.points.watch.interval * 60 * 1000]
 
-    if (!twitch.streamMetaData?.startedAt) return;
+    if (!twitch.streamMetaData?.startedAt) return
 
     for (const chatter of this.chatters) {
       if (this.settings.ignoredUsers.includes(chatter.username.toLowerCase())) continue
@@ -172,7 +172,7 @@ export default new class Users implements System {
     this.getChattersTimeout = setTimeout(() => this.getChatters(), 5 * 60 * 1000)
 
     this.chatters = []
-    if (!twitch.streamMetaData?.startedAt) return;
+    if (!twitch.streamMetaData?.startedAt) return
 
     for (const chunk of makeChunk((await tmi.clients?.bot?.unsupported.getChatters(tmi.channel?.name)).allChatters, 100)) {
 
@@ -194,7 +194,7 @@ export default new class Users implements System {
   }
 
   async ignoreAdd(opts: CommandOptions) {
-    if (!opts.argument.length) return;
+    if (!opts.argument.length) return
     const [ignoredUsers]: [Settings] = await Settings.findOrCreate({ where: { space: 'users', name: 'ignoredUsers' }, defaults: { value: [] } })
 
     await ignoredUsers.update({ value: [...ignoredUsers.value, opts.argument.toLowerCase() ].filter(Boolean) })
@@ -203,7 +203,7 @@ export default new class Users implements System {
   }
 
   async ignoreRemove(opts: CommandOptions) {
-    if (!opts.argument.length) return;
+    if (!opts.argument.length) return
     const ignoredUsers: Settings = await Settings.findOne({ where: { space: 'users', name: 'ignoredUsers' } })
 
     if (!ignoredUsers || !ignoredUsers?.value.length) return

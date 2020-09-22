@@ -55,7 +55,7 @@ export default new class Tmi {
   }
 
   async connect(type: 'bot' | 'broadcaster') {
-    if (this.isAlreadyUpdating[type]) return;
+    if (this.isAlreadyUpdating[type]) return
     this.isAlreadyUpdating[type] = true
 
     const [accessToken, refreshToken, channel] = await Promise.all([
@@ -160,7 +160,7 @@ export default new class Tmi {
       info(`TMI: ${type.charAt(0).toUpperCase() + type.substring(1)} client connected`)
       this.connected[type] = true
       client.join(this.channel?.name).catch((e) => {
-        if (e.message.includes('Did not receive a reply to join')) return;
+        if (e.message.includes('Did not receive a reply to join')) return
         else throw new Error(e)
       })
     })
@@ -175,11 +175,11 @@ export default new class Tmi {
 
     if (type === 'bot') {
       client.onAnyMessage(msg => {
-        if (msg.tags.get('msg-id') !== 'highlighted-message') return;
+        if (msg.tags.get('msg-id') !== 'highlighted-message') return
         onMessageHighlight(msg as TwitchPrivateMessage)
       })
       client.onAction(async (channel, username, message, raw) => {
-        chatIn(`${username} [${raw.userInfo.userId}]: ${message}`)
+        chatIn(`${username} [${raw.userInfo.userId}]: ${message}`);
 
         (raw as any).isAction = true
         events.fire({ name: 'message', opts: { username, message } })
@@ -204,11 +204,11 @@ export default new class Tmi {
       client.onRaid((channel, username, { viewerCount }) => {
         onRaided({ username, viewers: viewerCount })
       })
-      client.onSub((channel, username, subInfo, msg) => {
+      client.onSub((channel, username, subInfo) => {
         const tier = isNaN(Number(subInfo.plan)) ? 'Twitch prime' : String(Number(subInfo.plan) / 1000)
         onSubscribe({ username, tier, isPrime: subInfo.isPrime, message: subInfo.message })
       })
-      client.onResub((channel, username, subInfo, msg) => {
+      client.onResub((channel, username, subInfo) => {
         const tier = isNaN(Number(subInfo.plan)) ? 'Twitch prime' : String(Number(subInfo.plan) / 1000)
         onReSubscribe({ username, tier, message: subInfo.message, months: subInfo.streak, overallMonths: subInfo.months, isPrime: subInfo.isPrime })
       })
@@ -242,7 +242,7 @@ export default new class Tmi {
 
   listenDbUpdates() {
     Settings.afterCreate((value => {
-      if (value.space !== 'oauth') return;
+      if (value.space !== 'oauth') return
       setTimeout(() => {
         this.connect('bot')
         this.connect('broadcaster')

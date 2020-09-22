@@ -1,4 +1,3 @@
-import _Vue from 'vue'
 import io from 'socket.io-client'
 import { merge } from 'lodash'
 
