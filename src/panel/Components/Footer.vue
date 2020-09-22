@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import Github from '../../assets/icons/Github.svg'
+import Github from '../assets/icons/Github.svg'
 import Gitlab from '../assets/icons/Gitlab.svg'
 import Slack from '../assets/icons/Slack.svg'
 import Plus from '../assets/icons/Plus.svg'

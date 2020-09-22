@@ -8,9 +8,9 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import Chat from './Widgets/Chat.vue'
-import Events from './Widgets/Events.vue'
-import Stream from './Widgets/Stream.vue'
+import Chat from '../Widgets/Chat.vue'
+import Events from '../Widgets/Events.vue'
+import Stream from '../Widgets/Stream.vue'
 
 @Component({
   name: 'Dashboard',

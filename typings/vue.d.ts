@@ -1,4 +1,4 @@
-import { AxiosStatic } from "axios";
+import { AxiosStatic } from 'axios'
 import VueSocketIO from 'vue-socket.io-extended'
 
 declare module 'vue-plugin-load-script'

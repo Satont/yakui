@@ -10,7 +10,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import Placeholder from '../../assets/icons/Placeholder.svg'
+import Placeholder from '../assets/icons/Placeholder.svg'
 
 @Component({
   components: {

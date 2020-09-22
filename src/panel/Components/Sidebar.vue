@@ -49,7 +49,7 @@
   </aside>
 </template>
 
-<script>
+<script lang='ts'>
 import {
   HomeIcon,
   AwardIcon,
@@ -66,8 +66,8 @@ import {
 } from 'vue-feather-icons'
 import { Vue, Component } from 'vue-property-decorator'
 
-import Logo from '../../assets/icons/logo.svg'
-import Profile from '../../assets/icons/profile.svg'
+import Logo from '../assets/icons/Logo.svg'
+import Profile from '../assets/icons/Profile.svg'
 
 @Component({
   name: 'Sidebar',

@@ -28,7 +28,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import IconChat from '../../../assets/icons/Chat.svg'
+import IconChat from '../../assets/icons/Chat.svg'
 
 @Component({
   name: 'Chat',
