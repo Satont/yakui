@@ -1,7 +1,7 @@
 <template>
   <b-card title="Title" no-body header-tag="header" footer-tag="footer" class="my-bg-dark mt-3">
     <template v-slot:header>
-      <div class="chat-header">
+      <div class="widget-header">
         <div class="name-widget"><EventsIcon />Events</div>
       </div>
     </template>
