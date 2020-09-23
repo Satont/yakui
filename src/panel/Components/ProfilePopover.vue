@@ -65,7 +65,7 @@ export default class ProfilePopover extends Vue {
   font-size: 14px;
   line-height: 20px;
   color: #A9A9A9;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .profile-popover .item span:nth-child(2){
