@@ -28,7 +28,7 @@
       <span>{{ '234781' | formatNumbersWithSpaces }} RUB</span>
     </div>
 
-    <b-btn block size="sm" class="btn-logout">Log Out</b-btn>
+    <b-btn block size="sm" variant="purple">Log Out</b-btn>
   </b-popover>
 </template>
 
@@ -71,10 +71,5 @@ export default class ProfilePopover extends Vue {
 .profile-popover .item span:nth-child(2){
   color: #2F2F2F;
   font-weight: bold;
-}
-
-.btn-logout {
-  background-color: #6c43b5;
-  margin-top: 16px;
 }
 </style>

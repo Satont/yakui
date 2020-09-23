@@ -160,3 +160,18 @@ ul {
   align-items: center;
   padding: 15px;
 }
+
+.btn-purple {
+  background-color: #6c43b5;
+  color: #fff;
+}
+
+.btn-purple:hover {
+  color: #fff;
+  background-color: #7d56c0;
+}
+
+.btn-purple:focus {
+  color: #fff;
+  background-color: #7137cf;
+}
