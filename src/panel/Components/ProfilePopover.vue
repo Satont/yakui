@@ -7,15 +7,46 @@
     custom-class="profile-popover"
     boundary-padding="50"
   >
-    I am popover <b>component</b> content!
+    <div class="item d-flex justify-content-between">
+      <span>Points</span> 
+      <span>{{ '1980' | formatNumbersWithSpaces }}</span>
+    </div>
+    <div class="item d-flex justify-content-between">
+      <span>Messages</span> 
+      <span>{{ '1100891' | formatNumbersWithSpaces }}</span>
+    </div>
+    <div class="item d-flex justify-content-between">
+      <span>Watched</span> 
+      <span>1607.1h</span>
+    </div>
+    <div class="item d-flex justify-content-between">
+      <span>Bits</span> 
+      <span>{{ '988' | formatNumbersWithSpaces }}</span>
+    </div>
+    <div class="item d-flex justify-content-between">
+      <span>Donated</span> 
+      <span>{{ '234781' | formatNumbersWithSpaces }} RUB</span>
+    </div>
+
+    <b-btn block size="sm" class="btn-logout">Log Out</b-btn>
   </b-popover>
 </template>
 
-<script>
-export default {}
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator'
+
+@Component
+export default class ProfilePopover extends Vue {
+  
+}
 </script>
 
 <style>
+.profile-popover {
+  min-width: 200px;
+  z-index: 9999;
+}
+
 .profile-popover .arrow:after {
   left: 1px;
   border-width: 6px 6px 6px 0;
@@ -27,7 +58,23 @@ export default {}
   padding: 16px;
 }
 
-.profile-popover {
-  z-index: 9999;
+.profile-popover .item {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 20px;
+  color: #A9A9A9;
+  margin-bottom: 8px;
+}
+
+.profile-popover .item span:nth-child(2){
+  color: #2F2F2F;
+  font-weight: bold;
+}
+
+.btn-logout {
+  background-color: #6c43b5;
+  margin-top: 16px;
 }
 </style>

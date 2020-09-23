@@ -29,10 +29,10 @@ export default {
   },
   performance: { hints: false },
   optimization: {
-    minimize: true,
+    minimize: !isDev(),
     minimizer: [
       !isDev() ? new TerserPlugin() : undefined,
-      new CssMinimizerPlugin(),
+      !isDev() ? new CssMinimizerPlugin() : undefined,
     ].filter(Boolean),
   },
   module: {
@@ -70,10 +70,10 @@ export default {
   plugins: [
     new CleanWebpackPlugin(),
     new VueLoaderPlugin(),
-    new MiniCssExtractPlugin({
+    !isDev() ? new MiniCssExtractPlugin({
       filename: '[name].[contenthash].css',
       chunkFilename: '[id].[contenthash].css',
-    }),
+    }) : undefined,
     new HtmlPlugin({
       filename: '../panel.html', template: 'src/panel/index.html', chunks: ['panel'],
     }),
@@ -89,7 +89,7 @@ export default {
     new HtmlPlugin({
       filename: '../overlays.html', template: 'src/overlays/index.html', chunks: ['overlays'],
     }),
-  ],
+  ].filter(Boolean),
   resolve: {
     extensions: ['.ts', '.js', '.vue'],
     alias: {
