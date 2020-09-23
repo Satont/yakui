@@ -75,7 +75,7 @@ export default {
       chunkFilename: '[id].[contenthash].css',
     }) : undefined,
     new HtmlPlugin({
-      filename: '../panel.html', template: 'src/panel/index.html', chunks: ['panel'],
+      title: 'Yakui Dashboard', filename: '../panel.html', template: 'src/panel/index.html', chunks: ['panel'],
     }),
     new HtmlPlugin({
       filename: '../login.html', template: 'src/login/index.html', chunks: ['login'],
