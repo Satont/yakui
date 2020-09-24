@@ -35,12 +35,6 @@ export default new class TTS implements System {
   }
 
   async sockets(client: SocketIO.Socket) {
-    info(`Overlays::TTS: some client connected to socket`)
-    this.clients.push(client)
-    client.on('disconnect', () => {
-      const index = this.clients.indexOf(client)
-      this.clients.splice(index, 1)
-    })
     client.emit('settings', { ...this.settings, token: this.token })
   }
 

@@ -32,7 +32,8 @@ Vue.prototype.$dayjs = dayjs
 const start = async() => {
   const user = await isLogged(true, true)
   Store.commit('setLoggedUser', user)
-
+  console.log(user)
+  
   const metaData = await getMetadata()
   console.log(metaData)
   Store.commit('setMetaData', metaData)

@@ -25,7 +25,7 @@ import SubIcon from '../../assets/icons/Subscribe.svg'
 export default class Subscribe extends Vue {
   @Prop(String) readonly username: string
   @Prop(String) readonly date: string
-  @Prop(Date) readonly tier: string
+  @Prop(String) readonly tier: string
 
   get namedTier() {
     if (this.tier === '1') return '1st'

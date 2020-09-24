@@ -46,7 +46,7 @@ export default new class Users implements System {
   private countWatchedTimeout: NodeJS.Timeout = null
   private getChattersTimeout: NodeJS.Timeout = null
 
-  private chatters: Array<{ username: string, id: string }> = []
+  chatters: Array<{ username: string, id: string }> = []
 
   parsers = [
     { fnc: this.parseMessage },
@@ -172,9 +172,8 @@ export default new class Users implements System {
     this.getChattersTimeout = setTimeout(() => this.getChatters(), 5 * 60 * 1000)
 
     this.chatters = []
-    if (!twitch.streamMetaData?.startedAt) return
 
-    for (const chunk of makeChunk((await tmi.clients?.bot?.unsupported.getChatters(tmi.channel?.name)).allChatters, 100)) {
+    for (const chunk of makeChunk((await tmi.clients?.bot?.unsupported.getChatters(tmi.channel?.name))?.allChatters, 100)) {
 
       const users = (await tmi.clients?.bot?.helix.users.getUsersByNames(chunk)).map(user => ({ username: user.name, id: user.id }))
 

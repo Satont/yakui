@@ -11,6 +11,7 @@ const loader = async () => {
     integrations: 'Integration',
     customSystems: 'Custom System',
     overlays: 'Overlay',
+    widgets: 'Widget',
   }
   for (const folder of Object.keys(folders)) {
     try {
