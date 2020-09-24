@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import Layout from './Layout.vue'
 import FollowIcon from '../../assets/icons/Follow.svg'
 
@@ -25,5 +25,7 @@ import FollowIcon from '../../assets/icons/Follow.svg'
     FollowIcon,
   },
 })
-export default class Donation extends Vue {}
+export default class Donation extends Vue {
+ 
+}
 </script>

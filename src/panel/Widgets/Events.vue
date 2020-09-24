@@ -6,17 +6,14 @@
       </div>
     </template>
     <b-card-body class="p-0 card-list">
-      <Follow />
-      <Follow />
-      <Follow />
+      <div v-for="event of events" v-bind:key="event.id">
+        <Follow v-if="event.name === 'follow'" :username="event.data.username" :date="computeTime(event.timestamp)" />
+      </div>
       <Subscribe />
       <Raid />
       <Raid />
       <Subscribe />
-      <Follow />
-      <Follow />
       <Donation />
-      <Follow />
       <Donation />
       <Follow />
       <Donation />
@@ -45,6 +42,7 @@ import Follow from './EventsType/Follow.vue'
 import Subscribe from './EventsType/Subscribe.vue'
 import Raid from './EventsType/Raid.vue'
 import Donation from './EventsType/Donation.vue'
+import { getNameSpace } from '@panel/vue/plugins/socket'
 
 @Component({
   name: 'Events',
@@ -56,7 +54,19 @@ import Donation from './EventsType/Donation.vue'
     Donation,
   },
 })
-export default class Events extends Vue {}
+export default class Events extends Vue {
+  socket = getNameSpace({ name: 'widgets/eventlist' })
+  events = []
+
+  mounted() {
+    this.socket.emit('getAll', data => this.events = data)
+    this.socket.off('event').on('event', (event) => this.events.unshift(event))
+  }
+
+  computeTime(timestamp) {
+    return this.$dayjs(timestamp).from(this.$dayjs())
+  }
+}
 </script>
 
 <style scoped>

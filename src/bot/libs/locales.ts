@@ -12,7 +12,7 @@ const parameterizedString = (...args) => {
 const langsDir = resolve(process.cwd(), 'locales')
 
 export default new class Locales {
-  lang: any
+  lang: Record<string, any>
 
   constructor() {
     this.init()

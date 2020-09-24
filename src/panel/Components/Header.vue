@@ -32,12 +32,19 @@ import { Vue, Component } from 'vue-property-decorator'
 @Component
 export default class Header extends Vue {
   socket = getNameSpace({ name: 'systems/metaData' })
+  interval = null
 
   created() {
-    this.socket.on('data', data => {
-      console.log(data)
-      this.$store.commit('setMetadata', data)
-    })
+    this.refreshData()
+    setInterval(() => this.refreshData(), 5 * 1000)
+  }
+
+  refreshData() {
+    this.socket.emit('getData', data => this.$store.commit('setMetaData', data))
+  }
+
+  beforeDestroy() {
+    clearInterval(this.interval)
   }
 }
 </script>

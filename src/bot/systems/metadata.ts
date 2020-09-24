@@ -9,21 +9,17 @@ import locales from '@bot/libs/locales'
 export default new class Metadata implements System {
   timeout: NodeJS.Timeout = null
   socket = getNameSpace('systems/metaData')
-  clients: SocketIO.Socket[] = []
 
-  init() {
-    clearTimeout(this.timeout)
-    setTimeout(() => this.init(), 5 * 1000)
-
-    this.clients.forEach(client => {
+  sockets(client: SocketIO.Socket) {
+    client.on('getData', cb => {
       const data = {
         bot: { username: tmi.chatClients?.bot?.currentNick },
         channel: { ...twitch.channelMetaData, name: tmi.channel?.name },
         stream: twitch.streamMetaData,
         mainCurrency: currency.botCurrency,
-        lang: locales.translate('lang.code'),
+        lang: locales.lang,
       }
-      client.emit('data', data)
+      cb(data)
     })
   }
 }

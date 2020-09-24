@@ -18,7 +18,7 @@ const store = new Vuex.Store({
     setLoggedUser(state, user) {
       Vue.set(state, 'loggedUser', user)
     },
-    setMetadata(state, data) {
+    setMetaData(state, data) {
       Vue.set(state, 'metaData', data)
     },
   },

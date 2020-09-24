@@ -1,10 +1,10 @@
 <template>
   <Layout>
     <div class="event-info">
-      <div class="event-nickname">vinsentovangogo</div>
+      <div class="event-nickname">{{ username }}</div>
       <div class="event-type">
         <div class="event">Follow •</div>
-        <div class="event-date">Yesterday, 19:30</div>
+        <div class="event-date">{{ date }}</div>
       </div>
     </div>
     <div class="event-icon"><FollowIcon /></div>
@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import Layout from './Layout.vue'
 import FollowIcon from '../../assets/icons/Follow.svg'
 
@@ -22,5 +22,8 @@ import FollowIcon from '../../assets/icons/Follow.svg'
     FollowIcon,
   },
 })
-export default class Follow extends Vue {}
+export default class Follow extends Vue {
+  @Prop(String) readonly username: string
+  @Prop(Date) readonly date: string
+}
 </script>

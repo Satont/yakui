@@ -90,6 +90,9 @@ export default new class Events implements System {
       const index = this.clients.indexOf(client)
       this.clients.splice(index, 1)
     })
+    client.on('getAll', async (cb) => {
+      cb(await EventList.findAll({ limit: 100, order: [['timestamp', 'desc']] }))
+    })
   }
 
   onDonation(data: DonationData) {
