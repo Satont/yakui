@@ -24,7 +24,7 @@
     </div>
     <div class="item d-flex justify-content-between">
       <span>Donated</span> 
-      <span>{{ $store.state.loggedUser.tips | formatNumbersWithSpaces }} currency</span>
+      <span>{{ $store.state.loggedUser.tips | formatNumbersWithSpaces }} {{ $store.state.metaData.mainCurrency }}</span>
     </div>
 
     <b-btn block size="sm" variant="purple">Log Out</b-btn>
