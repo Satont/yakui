@@ -28,7 +28,7 @@ import FollowIcon from '../../assets/icons/Follow.svg'
 export default class Donation extends Vue {
   @Prop(String) readonly username: string
   @Prop(String) readonly date: string
-  @Prop(String) readonly service: string = 'unknown'
+  @Prop(String) readonly service: string
   @Prop(Number) readonly amount: number
   @Prop(String) readonly currency: string
   @Prop(String) readonly message: string

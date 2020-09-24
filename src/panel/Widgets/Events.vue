@@ -31,6 +31,7 @@
           :amount="event.data.amount"
           :currency="event.data.currency"
           :message="event.data.message"
+          :service="event.data.service || 'unknown'"
         />
       </div>
     </b-card-body>
@@ -60,8 +61,11 @@ export default class Events extends Vue {
   socket = getNameSpace({ name: 'widgets/eventlist' })
   events = []
 
-  mounted() {
-    this.socket.emit('getAll', data => this.events = data)
+  created() {
+    this.socket.emit('getAll', data => {
+      this.events = data
+      console.log(data)
+    })
     this.socket.off('event').on('event', (event) => this.events.unshift(event))
   }
 
