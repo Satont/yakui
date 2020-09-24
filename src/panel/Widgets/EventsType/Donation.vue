@@ -1,13 +1,13 @@
 <template>
   <Layout>
     <div class="event-info">
-      <div class="event-nickname">vinsentovangogo</div>
+      <div class="event-nickname">{{ username }}</div>
       <div class="event-type">
         <div class="event">
-          Donate with <span style="color: #F57D07">DA </span>the amount of
-          <span style="color: #fff">1250 RUB</span> •
+          Donate with <span style="color: #F57D07">{{ service }} </span>the amount of
+          <span style="color: #fff">{{ amount }} {{ currency }}</span> •
         </div>
-        <div class="event-date">Yesterday, 19:30</div>
+        <div class="event-date">{{ date }}</div>
       </div>
     </div>
     <div class="event-icon"><FollowIcon /></div>
@@ -26,6 +26,11 @@ import FollowIcon from '../../assets/icons/Follow.svg'
   },
 })
 export default class Donation extends Vue {
- 
+  @Prop(String) readonly username: string
+  @Prop(String) readonly date: string
+  @Prop(String) readonly service: string = 'unknown'
+  @Prop(Number) readonly amount: number
+  @Prop(String) readonly currency: string
+  @Prop(String) readonly message: string
 }
 </script>

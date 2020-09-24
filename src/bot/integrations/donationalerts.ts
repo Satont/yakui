@@ -175,7 +175,7 @@ export default new class Donationalerts implements Integration {
       }
 
       if (data.billing_system !== 'fake' && user) {
-        await UserTips.create(donationData)
+        UserTips.create(donationData).catch(error)
       }
 
       onDonation({
@@ -186,6 +186,7 @@ export default new class Donationalerts implements Integration {
         inMainCurrencyAmount: currency.exchange({ from: data.currency, amount: data.amount }),
         message: data.message,
         timestamp: Date.now(),
+        service: 'DA',
       })
     })
   }

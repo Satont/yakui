@@ -24,6 +24,6 @@ import FollowIcon from '../../assets/icons/Follow.svg'
 })
 export default class Follow extends Vue {
   @Prop(String) readonly username: string
-  @Prop(Date) readonly date: string
+  @Prop(String) readonly date: string
 }
 </script>

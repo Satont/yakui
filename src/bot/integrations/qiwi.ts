@@ -58,6 +58,7 @@ export default new class Qiwi implements Integration {
           message,
           amount,
           inMainCurrencyAmount: currency.exchange({ from: inComingCurrency, amount }),
+          service: 'Qiwi',
         })
       }
     } catch (e) {

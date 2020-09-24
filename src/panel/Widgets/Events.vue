@@ -7,30 +7,32 @@
     </template>
     <b-card-body class="p-0 card-list">
       <div v-for="event of events" v-bind:key="event.id">
-        <Follow v-if="event.name === 'follow'" :username="event.data.username" :date="computeTime(event.timestamp)" />
+        <Follow 
+          v-if="event.name === 'follow'" 
+          :username="event.data.username" 
+          :date="computeTime(event.timestamp)" 
+        />
+        <Subscribe 
+          v-if="event.name === 'sub'" 
+          :username="event.data.username" 
+          :date="computeTime(event.timestamp)" 
+          :tier="event.data.tier" 
+        />
+        <Raid 
+          v-if="event.name === 'raided'" 
+          :username="event.data.username" 
+          :date="computeTime(event.timestamp)" 
+          :viewers="event.data.viewers" 
+        />
+        <Donation 
+          v-if="event.name === 'tip'" 
+          :username="event.data.username" 
+          :date="computeTime(event.timestamp)"
+          :amount="event.data.amount"
+          :currency="event.data.currency"
+          :message="event.data.message"
+        />
       </div>
-      <Subscribe />
-      <Raid />
-      <Raid />
-      <Subscribe />
-      <Donation />
-      <Donation />
-      <Follow />
-      <Donation />
-      <Follow />
-      <Follow />
-      <Follow />
-      <Subscribe />
-      <Raid />
-      <Raid />
-      <Subscribe />
-      <Follow />
-      <Follow />
-      <Donation />
-      <Follow />
-      <Donation />
-      <Follow />
-      <Donation />
     </b-card-body>
   </b-card>
 </template>

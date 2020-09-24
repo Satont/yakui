@@ -1,10 +1,10 @@
 <template>
   <Layout>
     <div class="event-info">
-      <div class="event-nickname">vinsentovangogo</div>
+      <div class="event-nickname">{{ username }}</div>
       <div class="event-type">
-        <div class="event">Raid with <span style="color: #fff">100 viewers</span> •</div>
-        <div class="event-date">Yesterday, 19:30</div>
+        <div class="event">Raid with <span style="color: #fff">{{ viewers }} viewers</span> •</div>
+        <div class="event-date">{{ date }}</div>
       </div>
     </div>
     <div class="event-icon"><RaidIcon /></div>
@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import Layout from './Layout.vue'
 import RaidIcon from '../../assets/icons/Raid.svg'
 
@@ -22,7 +22,11 @@ import RaidIcon from '../../assets/icons/Raid.svg'
     RaidIcon,
   },
 })
-export default class Raid extends Vue {}
+export default class Raid extends Vue {
+  @Prop(String) readonly username: string
+  @Prop(String) readonly date: string
+  @Prop(Number) readonly viewers: number
+}
 </script>
 
 <style></style>

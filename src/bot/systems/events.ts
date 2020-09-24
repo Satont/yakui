@@ -96,10 +96,10 @@ export default new class Events implements System {
   }
 
   onDonation(data: DonationData) {
-    this.fire( { name: 'tip', opts: data })
+    this.fire({ name: 'tip', opts: data })
     this.addToEventList({
       name: 'tip',
-      data: { username: data.username, currency: data.currency, amount: data.inMainCurrencyAmount, message: data.message },
+      data: { username: data.username, currency: data.currency, amount: data.inMainCurrencyAmount, message: data.message, service: data.service },
     })
   }
 
