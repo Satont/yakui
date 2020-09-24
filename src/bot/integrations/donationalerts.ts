@@ -29,18 +29,25 @@ export default new class Donationalerts implements Integration {
   async init() {
     if (this.connecting) return
     this.connecting = true
-    const [token, enabled]: [Settings, Settings] = await Promise.all([
+    const [access_token, refresh_token, enabled]: [Settings, Settings, Settings] = await Promise.all([
       Settings.findOne({
         where: { space: 'donationalerts', name: 'access_token' },
+      }),
+      Settings.findOne({
+        where: { space: 'donationalerts', name: 'refresh_token' },
       }),
       Settings.findOne({
         where: { space: 'donationalerts', name: 'enabled' },
       }),
     ])
 
-    if (!token || !enabled || !enabled?.value) return
+    if (!access_token?.value || !refresh_token?.value || !enabled?.value) {
+      this.connecting = false
+      return
+    }
 
-    this.connect(token.value)
+    this.recheckToken()
+    this.connect()
   }
 
   async disconnect() {
@@ -50,8 +57,45 @@ export default new class Donationalerts implements Integration {
     this.centrifugeSocket = null
   }
 
-  async connect(token: string) {
-    if (!token.trim().length) throw 'DONATIONALERTS: token is empty'
+  async recheckToken() {
+    const [access_token, refresh_token]: [Settings, Settings] = await Promise.all([
+      Settings.findOne({
+        where: { space: 'donationalerts', name: 'access_token' },
+      }),
+      Settings.findOne({
+        where: { space: 'donationalerts', name: 'refresh_token' },
+      }),
+    ])
+
+    if (!access_token?.value || !refresh_token?.value) {
+      return
+    }
+
+    try {
+      await axios.get('https://www.donationalerts.com/api/v1/user/oauth', {
+        headers: { 'Authorization': `Bearer ${access_token.value}` },
+      })
+    } catch (e) {
+      if (e.response.status === 401) {
+        const { data } = await axios.post(`http://bot.satont.ru/api/donationalerts-refresh?refresh_token=${refresh_token.value}`)
+        access_token.value = data.access_token
+        refresh_token.value = data.refresh_token
+        await access_token.save()
+        await refresh_token.save()
+        info('DONATIONALERTS: Token successfuly refreshed')
+      } else error(e)
+    }
+
+  }
+
+  async connect() {
+    let token = await Settings.findOne({
+      where: { space: 'donationalerts', name: 'access_token' },
+    })
+
+    if (!token) throw 'DONATIONALERTS: token is empty'
+    token = token.value
+
     this.disconnect()
     info('DONATIONALERTS: Starting init')
 

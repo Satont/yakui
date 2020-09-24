@@ -115,16 +115,18 @@ export default new class Tmi {
     }
   }
 
-  private async intervaledUpdateAccessToken(type: 'bot' | 'broadcaster', data) {
+  private async intervaledUpdateAccessToken(type: 'bot' | 'broadcaster', data: { access_token: string, refresh_token: string }) {
     clearInterval(this.intervals.updateAccessToken[type])
-    this.intervals.updateAccessToken[type] = setTimeout(() => this.intervaledUpdateAccessToken(type, { access_token, refresh_token }), 10 * 60 * 1000)
-    const { access_token, refresh_token } = await OAuth.refresh(data.refresh_token, type)
 
-    this.clients[type].setAccessToken(new AccessToken({
-      access_token: data.access_token,
-      refresh_token: data.refresh_token,
-    }))
-
+    try {
+      const { access_token, refresh_token } = await OAuth.refresh(data.refresh_token, type)
+      const token = new AccessToken({ access_token, refresh_token })
+    
+      this.clients[type].setAccessToken(token)
+      this.intervals.updateAccessToken[type] = setTimeout(() => this.intervaledUpdateAccessToken(type, { access_token, refresh_token }), 10 * 60 * 1000)
+    } catch {
+      this.intervals.updateAccessToken[type] = setTimeout(() => this.intervaledUpdateAccessToken(type, data), 10 * 60 * 1000)
+    }
   }
 
   private async getChannel(name: string) {
