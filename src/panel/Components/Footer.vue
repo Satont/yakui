@@ -2,8 +2,16 @@
   <footer class="footer_site">
     <div class="footer_site-link">
       <div class="footer_socials-list">
-        <div class="footer_site-btn"><Gitlab class="footer_icon-social" /> sad_satont</div>
-        <div class="footer_site-btn"><Github class="footer_icon-social" /> sad_satont</div>
+        <a href="https://github.com/Satont" target="_blank">
+          <div class="footer_site-btn">
+            <Github class="footer_icon-social" /> satont
+          </div>
+        </a>
+        <a href="https://gitlab.com/Satont" target="_blank">
+          <div class="footer_site-btn">
+            <Gitlab class="footer_icon-social" /> satont
+          </div>
+        </a>
         <div class="footer_site-btn"><Slack class="footer_icon-social" /> sad_satont</div>
       </div>
       <div class="footer_site-btn-widget" v-if="$route.path === '/'">
@@ -58,6 +66,9 @@ export default {
 .footer_socials-list {
   display: flex;
   margin-left: 16px;
+}
+.footer_socials-list a, a:focus, a:hover, a:active {
+  text-decoration: none;
 }
 
 .footer_site-btn {
