@@ -1,7 +1,7 @@
-import { TwitchPrivateMessage } from "twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage"
-import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove, INewSubscriber, INewResubscriber } from "./events"
-import { PubSubRedemptionMessage } from "twitch-pubsub-client/lib"
-import CommandSound from "@bot/models/CommandSound"
+import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
+import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove, INewResubscriber } from './events'
+import { PubSubRedemptionMessage } from 'twitch-pubsub-client/lib'
+import CommandSound from '@bot/models/CommandSound'
 
 export type CommandPermission = 'viewers' | 'followers' | 'vips' | 'subscribers' | 'moderators' | 'broadcaster'
 export type HostType = { viewers: number, username: string }
@@ -19,7 +19,7 @@ export interface Command {
   enabled?: boolean,
   price?: number,
   type?: 'custom' | 'default',
-  sound?: CommandSound
+  sound?: CommandSound;
 }
 
 export interface CommandOptions {
@@ -41,6 +41,7 @@ export interface System {
   }>;
   commands?: Command[],
   socket?: SocketIO.Namespace,
+  clients?: SocketIO.Socket[]
   init?: () => void | Promise<void>,
   onStreamEnd?: () => void | Promise<void>,
   onStreamStart?: () => void | Promise<void>,
@@ -60,9 +61,7 @@ export interface System {
   onMessageHighlight?: (data: TwitchPrivateMessage) => void | Promise<void>
 }
 
-export interface Integration extends System {
-
-}
+export type Integration = System
 
 export interface UserPermissions {
   broadcaster: boolean,

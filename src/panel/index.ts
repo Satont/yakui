@@ -1,11 +1,13 @@
 import Vue from 'vue'
 import router from './Router/index'
 import App from './App.vue'
+import VueSocketIO from 'vue-socket.io-extended'
 
 import './Helpers/vueFilters'
 import Axios from './Plugins/axios'
 import Store from './Plugins/vuex'
 import isLogged from './Helpers/isLogged'
+//import Socket from './Plugins/socket'
 import { BootstrapVue } from 'bootstrap-vue'
 
 import 'bootstrap/dist/css/bootstrap.css'
@@ -17,6 +19,7 @@ import './assets/css/fonts.css'
 
 Vue.use(Axios)
 Vue.use(BootstrapVue)
+//Vue.use(VueSocketIO, Socket)
 
 Vue.config.productionTip = false
 

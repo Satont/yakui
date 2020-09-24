@@ -3,11 +3,11 @@
     <div class="header_site-information">
       <div class="information">
         Viewers:
-        <span class="information_value">1456</span>
+        <span class="information_value">{{ $store.state.metaData.stream.viewers }}</span>
       </div>
       <div class="information">
         Views:
-        <span class="information_value">10 474 560</span>
+        <span class="information_value">{{ $store.state.metaData.channel.views | formatNumbersWithSpaces }}</span>
       </div>
       <div class="information">
         Uptime:
@@ -15,18 +15,31 @@
       </div>
       <div class="information">
         Category:
-        <span class="information_value">Call of Duty: Modern Warfare</span>
+        <span class="information_value">{{ $store.state.metaData.channel.game }}</span>
       </div>
       <div class="information">
         Title:
-        <span class="information_value">ОБЗОР НА CALL OF DUTY MODERN WARFARE / !CONTEST — КОНКУРС НА СКИНЫ</span>
+        <span class="information_value">{{ $store.state.metaData.channel.title }}</span>
       </div>
     </div>
   </header>
 </template>
 
-<script>
-export default {}
+<script lang='ts'>
+import { getNameSpace } from '@panel/vue/plugins/socket'
+import { Vue, Component } from 'vue-property-decorator'
+
+@Component
+export default class Header extends Vue {
+  socket = getNameSpace({ name: 'systems/metaData' })
+
+  created() {
+    this.socket.on('data', data => {
+      console.log(data)
+      this.$store.commit('setMetadata', data)
+    })
+  }
+}
 </script>
 
 <style scoped>
