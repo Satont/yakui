@@ -41,7 +41,10 @@ export default new class Donationalerts implements Integration {
       }),
     ])
 
-    if (!access_token?.value || !refresh_token?.value || !enabled?.value) return
+    if (!access_token?.value || !refresh_token?.value || !enabled?.value) {
+      this.connecting = false
+      return
+    }
 
     this.recheckToken()
     this.connect()
