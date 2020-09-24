@@ -1,6 +1,5 @@
 <template>
   <b-popover 
-    show 
     target="profile-popover" 
     triggers="click" 
     placement="righttop" 
@@ -9,23 +8,23 @@
   >
     <div class="item d-flex justify-content-between">
       <span>Points</span> 
-      <span>{{ '1980' | formatNumbersWithSpaces }}</span>
+      <span>{{ $store.state.loggedUser.loggedUser.points | formatNumbersWithSpaces }}</span>
     </div>
     <div class="item d-flex justify-content-between">
       <span>Messages</span> 
-      <span>{{ '1100891' | formatNumbersWithSpaces }}</span>
+      <span>{{$store.state.loggedUser.loggedUser.messages | formatNumbersWithSpaces }}</span>
     </div>
     <div class="item d-flex justify-content-between">
       <span>Watched</span> 
-      <span>1607.1h</span>
+      <span>{{ $store.state.loggedUser.loggedUser.watched }}</span>
     </div>
     <div class="item d-flex justify-content-between">
       <span>Bits</span> 
-      <span>{{ '988' | formatNumbersWithSpaces }}</span>
+      <span>{{ $store.state.loggedUser.loggedUser.bits | formatNumbersWithSpaces }}</span>
     </div>
     <div class="item d-flex justify-content-between">
       <span>Donated</span> 
-      <span>{{ '234781' | formatNumbersWithSpaces }} RUB</span>
+      <span>{{ $store.state.loggedUser.loggedUser.tips | formatNumbersWithSpaces }} currency</span>
     </div>
 
     <b-btn block size="sm" variant="purple">Log Out</b-btn>

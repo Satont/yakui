@@ -44,7 +44,7 @@
       </ul>
     </div>
     <div class="menu_site-profile" id="profile-popover">
-      <Profile />
+      <img :src="$store.state.loggedUser.profile_image_url" />
       <ProfilePopover />
     </div>
   </aside>
@@ -143,6 +143,12 @@ export default class Sidebar extends Vue {}
 
 .menu_site-profile {
   padding-bottom: 24px;
+  cursor: pointer;
+}
+
+.menu_site-profile img {
+  width: 32px;
+  border-radius: 32px;
 }
 
 .active_menu {

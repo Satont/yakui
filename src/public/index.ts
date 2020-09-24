@@ -4,7 +4,7 @@ import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import '../panel/css/main.css'
-import isLogged from '../panel/helpers/isLogged'
+import isLogged from '../panel/Helpers/isLogged'
 import Axios from '../panel/vue/plugins/axios'
 
 Vue.use(VueRouter)

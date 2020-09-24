@@ -5,6 +5,8 @@
     <Section>
     <transition name="fade" mode="out-in">
       <Dashboard :style="dashboardVisibility" />
+    </transition>
+    <transition name="fade" mode="out-in">
       <router-view :style="routerViewVisibility" />
     </transition>
     <Footer />

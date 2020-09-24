@@ -23,11 +23,24 @@ Vue.config.productionTip = false
 const start = async() => {
   const user = await isLogged(true, true)
   Store.commit('setLoggedUser', user)
-
-  new Vue({
+  console.log(user)
+  
+  const app = new Vue({
+    data: () => ({
+      loading: false,
+    }),
     render: (h) => h(App),
     router,
     store: Store,
   }).$mount('#wrapper')
+
+  router.beforeEach((to, from, next) => {
+    app.loading = true
+    next()
+  })
+
+  router.afterEach(() => {
+    app.loading = false
+  })
 }
 start()

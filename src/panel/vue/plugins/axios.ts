@@ -1,8 +1,7 @@
 import _Vue from 'vue'
-import { TYPE, POSITION } from 'vue-toastification'
 import axios, { AxiosError } from 'axios'
 import { ValidationError } from 'express-validator'
-import { refresh } from '../../helpers/isLogged'
+import { refresh } from '../../Helpers/isLogged'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function AxiosPlugin<AxiosPluginOptions>(Vue: typeof _Vue, options?: AxiosPluginOptions): void {
@@ -29,19 +28,6 @@ export default function AxiosPlugin<AxiosPluginOptions>(Vue: typeof _Vue, option
           refresh().then(() => location.reload())
           break
       }
-
-      Vue.$toast(message, {
-        type: TYPE.ERROR,
-        position: POSITION.TOP_RIGHT,
-        timeout: 3000,
-        closeOnClick: true,
-        pauseOnFocusLoss: true,
-        pauseOnHover: true,
-        draggable: true,
-        draggablePercent: 0.6,
-        showCloseButtonOnHover: false,
-        icon: true,
-      })
     }
 
     return Promise.reject(error)
