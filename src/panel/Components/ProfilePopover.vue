@@ -8,23 +8,23 @@
   >
     <div class="item d-flex justify-content-between">
       <span>Points</span> 
-      <span>{{ $store.state.loggedUser.loggedUser.points | formatNumbersWithSpaces }}</span>
+      <span>{{ $store.state.loggedUser.points | formatNumbersWithSpaces }}</span>
     </div>
     <div class="item d-flex justify-content-between">
       <span>Messages</span> 
-      <span>{{$store.state.loggedUser.loggedUser.messages | formatNumbersWithSpaces }}</span>
+      <span>{{ $store.state.loggedUser.messages | formatNumbersWithSpaces }}</span>
     </div>
     <div class="item d-flex justify-content-between">
       <span>Watched</span> 
-      <span>{{ $store.state.loggedUser.loggedUser.watched }}</span>
+      <span>{{ $store.state.loggedUser.watched }}</span>
     </div>
     <div class="item d-flex justify-content-between">
       <span>Bits</span> 
-      <span>{{ $store.state.loggedUser.loggedUser.bits | formatNumbersWithSpaces }}</span>
+      <span>{{ $store.state.loggedUser.bits | formatNumbersWithSpaces }}</span>
     </div>
     <div class="item d-flex justify-content-between">
       <span>Donated</span> 
-      <span>{{ $store.state.loggedUser.loggedUser.tips | formatNumbersWithSpaces }} currency</span>
+      <span>{{ $store.state.loggedUser.tips | formatNumbersWithSpaces }} currency</span>
     </div>
 
     <b-btn block size="sm" variant="purple">Log Out</b-btn>
