@@ -19,7 +19,7 @@
     ></iframe>
     <template v-slot:footer>
       <div style="display: flex">
-        <input type="text" v-model="message" placeholder="Send your message" class="footer-input-widget" />
+        <input type="text" v-model="message" placeholder="Send message as bot" class="footer-input-widget" />
         <button type="submit" @click="sendMessage()" class="widget-btn btn-chat">Send</button>
       </div>
     </template>

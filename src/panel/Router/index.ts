@@ -6,8 +6,8 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/',
-      component: () => import('../Pages/Dashboard.vue'),
+      path: '/events',
+      component: () => import('../Pages/Events.vue'),
     },
   ],
 })
