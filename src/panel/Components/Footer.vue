@@ -6,7 +6,7 @@
         <div class="footer_site-btn"><Github class="footer_icon-social" /> sad_satont</div>
         <div class="footer_site-btn"><Slack class="footer_icon-social" /> sad_satont</div>
       </div>
-      <div class="footer_site-btn-widget">
+      <div class="footer_site-btn-widget" v-if="$route.path === '/'">
         <button
           type="button"
           class="btn-widget"
