@@ -1,12 +1,18 @@
 {
   "lang": {
     "name": "Russian",
-    "code": "ru"
+    "code": "ru",
+    "notFound": "Перевод для $path не найден"
   },
   "song": {
     "notPlaying": "сейчас ничего не играет"
   },
   "price": {
     "notEnought": "$0 у вас не хватает поинтов для использования этой команды."
+  },
+  "ui": {
+    "navbar": {
+      "viewers": "Зрителей"
+    }
   }
 }

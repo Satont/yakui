@@ -11,6 +11,7 @@ import './Helpers/vueFilters'
 import Axios from './Plugins/axios'
 import Store from './Plugins/vuex'
 import isLogged from './Helpers/isLogged'
+import translate from './Helpers/translate'
 import Socket from './Plugins/socket'
 import { BootstrapVue } from 'bootstrap-vue'
 
@@ -28,6 +29,7 @@ Vue.use(VueSocketIO, Socket)
 
 Vue.config.productionTip = false
 Vue.prototype.$dayjs = dayjs
+Vue.prototype.translate = translate
 
 const start = async() => {
   const user = await isLogged(true, true)

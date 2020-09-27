@@ -1,7 +1,8 @@
 {
   "lang": {
     "name": "English",
-    "code": "en"
+    "code": "en",
+    "notFound": "Transalte for $path not found"
   },
   "song": {
     "notPlaying": "currently not playing"

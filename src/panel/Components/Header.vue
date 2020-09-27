@@ -2,7 +2,7 @@
   <header class="header_site">
     <div class="header_site-information">
       <div class="information">
-        Viewers:
+        {{ translate('ui.navbar.viewers') }}:
         <span class="information_value">{{ $store.state.metaData.stream.viewers }}</span>
       </div>
       <div class="information">
