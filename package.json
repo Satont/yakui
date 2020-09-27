@@ -87,7 +87,7 @@
     "spotify-web-api-node": "^4.0.0",
     "strip-ansi": "^6.0.0",
     "ts-node": "^9.0.0",
-    "twitch": "^4.2.2",
+    "twitch": "^4.2.4",
     "twitch-auth": "^4.2.2",
     "twitch-chat-client": "^4.2.2",
     "twitch-pubsub-client": "^4.2.2",
