@@ -158,7 +158,7 @@ export default class Sidebar extends Vue {}
 }
 
 .active_menu {
-  background: rgb(27 27 27);
+  background: rgb(30 30 30);
   border-radius: 4px;
 }
 
