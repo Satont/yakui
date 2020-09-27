@@ -111,7 +111,6 @@ export default new class Tmi {
         .then(() => this.connect(type))
     } finally {
       this.isAlreadyUpdating[type] = false
-      console.timeEnd('start')
     }
   }
 
@@ -154,7 +153,7 @@ export default new class Tmi {
     const client = this.chatClients[type]
 
     client.onDisconnect((manually, reason) => {
-      info(`TMI: ${type} disconnected from server `, !manually ? reason.message : 'manually')
+      info(`TMI: ${type} disconnected from server ${reason}`)
       this.connect(type)
     })
 

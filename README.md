@@ -66,3 +66,7 @@ services:
 ## Help
 
 - [Discord server](https://discord.gg/5TFJmnr)
+
+## Credits
+
+Special thanks goes to sogehige, our bot logger was copyed from his project. 

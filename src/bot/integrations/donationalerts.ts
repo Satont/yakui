@@ -77,13 +77,13 @@ export default new class Donationalerts implements Integration {
       })
     } catch (e) {
       if (e.response.status === 401) {
-        const { data } = await axios.post(`http://bot.satont.ru/api/donationalerts-refresh?refresh_token=${refresh_token.value}`)
+        const { data } = await axios.get(`http://bot.satont.ru/api/donationalerts-refresh?refresh_token=${refresh_token.value}`)
         access_token.value = data.access_token
         refresh_token.value = data.refresh_token
         await access_token.save()
         await refresh_token.save()
         info('DONATIONALERTS: Token successfuly refreshed')
-      } else error(e)
+      } else error(e.message)
     }
 
   }
@@ -140,7 +140,7 @@ export default new class Donationalerts implements Integration {
 
   async listeners(opts: { token: string, id: number }) {
     this.centrifugeSocket.on('disconnect', (reason: unknown) => {
-      info('DONATIONALERTS: disconnected from socket: ', reason)
+      info(`DONATIONALERTS: disconnected from socket: ${reason}`)
       this.init()
     })
 
@@ -154,11 +154,11 @@ export default new class Donationalerts implements Integration {
       info('DONATIONALERTS: successfuly joined in donations channel')
     })
     this.channel.on('leaved', (reason) => {
-      info('DONATIONALERTS: disconnected from donations channel: ', reason)
+      info(`DONATIONALERTS: disconnected from donations channel: ${reason}`)
       this.init()
     })
     this.channel.on('unsubscribe', (reason) => {
-      info('DONATIONALERTS: unsibscribed from donations channel: ', reason)
+      info(`DONATIONALERTS: unsibscribed from donations channel: ${reason}`)
       this.init()
     })
     this.channel.on('publish', async ({ data }: { data: DonationAlertsEvent }) => {

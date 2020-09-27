@@ -50,7 +50,7 @@ export default new class Currency {
 
       info('CURRENCY: Successfuly updated')
     } catch (e) {
-      error('CURRENCY: Cannot update', e)
+      error('CURRENCY: Cannot update ${e}')
     } finally {
       this.updateRatesTimeout = setTimeout(() => this.updateRates(), 12 * 60 * 60 * 1000)
     }
