@@ -6,19 +6,19 @@
         <span class="information_value">{{ $store.state.metaData.stream.viewers }}</span>
       </div>
       <div class="information">
-        Views:
+        {{ translate('ui.navbar.views') }}:
         <span class="information_value">{{ $store.state.metaData.channel.views | formatNumbersWithSpaces }}</span>
       </div>
       <div class="information">
-        Uptime:
+        {{ translate('ui.navbar.uptime') }}:
         <span class="information_value">Currently Offline</span>
       </div>
       <div class="information">
-        Category:
+        {{ translate('ui.navbar.category') }}:
         <span class="information_value">{{ $store.state.metaData.channel.game }}</span>
       </div>
       <div class="information">
-        Title:
+        {{ translate('ui.navbar.title') }}:
         <span class="information_value">{{ $store.state.metaData.channel.title }}</span>
       </div>
     </div>

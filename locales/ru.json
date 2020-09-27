@@ -12,7 +12,11 @@
   },
   "ui": {
     "navbar": {
-      "viewers": "Зрителей"
+      "viewers": "Зрителей",
+      "views": "Просмотров",
+      "uptime": "Uptime",
+      "category": "Категория",
+      "title": "Название"
     }
   }
 }
