@@ -1,6 +1,6 @@
 import { System } from 'typings'
 import { getNameSpace } from '@bot/libs/socket'
-import { debug, info } from '@bot/libs/logger'
+import { debug } from '@bot/libs/logger'
 import Settings from '@bot/models/Settings'
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
 

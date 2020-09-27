@@ -42,7 +42,7 @@ if (!fs.existsSync(logDir)) fs.mkdirSync(logDir)
 const file = createStream('./logs/bot.log', {
   maxFiles: 10,
   size: '512M',
-  compress: 'gzip'
+  compress: 'gzip',
 })
 
 function format(level: string, message: any, category?: string) {

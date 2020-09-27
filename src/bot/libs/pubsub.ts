@@ -1,4 +1,4 @@
-import { PubSubClient, BasicPubSubClient } from 'twitch-pubsub-client'
+import { PubSubClient } from 'twitch-pubsub-client'
 import { error, info } from './logger'
 import tmi from './tmi'
 import { onRedemption } from './eventsCaller'
