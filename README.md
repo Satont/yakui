@@ -69,4 +69,4 @@ services:
 
 ## Credits
 
-Special thanks goes to sogehige, our bot logger was copyed from his project. 
+Special thanks goes to sogehige, our bot logger was copied from his project. 
