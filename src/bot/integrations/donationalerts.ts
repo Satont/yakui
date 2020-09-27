@@ -77,7 +77,7 @@ export default new class Donationalerts implements Integration {
       })
     } catch (e) {
       if (e.response.status === 401) {
-        const { data } = await axios.post(`http://bot.satont.ru/api/donationalerts-refresh?refresh_token=${refresh_token.value}`)
+        const { data } = await axios.get(`http://bot.satont.ru/api/donationalerts-refresh?refresh_token=${refresh_token.value}`)
         access_token.value = data.access_token
         refresh_token.value = data.refresh_token
         await access_token.save()
