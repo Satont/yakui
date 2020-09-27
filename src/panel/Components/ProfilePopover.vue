@@ -7,23 +7,23 @@
     boundary-padding="50"
   >
     <div class="item d-flex justify-content-between">
-      <span>Points</span> 
+      <span>{{ translate('ui.users.points') }}</span> 
       <span>{{ $store.state.loggedUser.points | formatNumbersWithSpaces }}</span>
     </div>
     <div class="item d-flex justify-content-between">
-      <span>Messages</span> 
+      <span>{{ translate('ui.users.messages') }}</span> 
       <span>{{ $store.state.loggedUser.messages | formatNumbersWithSpaces }}</span>
     </div>
     <div class="item d-flex justify-content-between">
-      <span>Watched</span> 
+      <span>{{ translate('ui.users.watched') }}</span> 
       <span>{{ $store.state.loggedUser.watched }}</span>
     </div>
     <div class="item d-flex justify-content-between">
-      <span>Bits</span> 
+      <span>{{ translate('ui.users.bits') }}</span> 
       <span>{{ $store.state.loggedUser.bits | formatNumbersWithSpaces }}</span>
     </div>
     <div class="item d-flex justify-content-between">
-      <span>Donated</span> 
+      <span>{{ translate('ui.users.tips') }}</span> 
       <span>{{ $store.state.loggedUser.tips | formatNumbersWithSpaces }} {{ $store.state.metaData.mainCurrency }}</span>
     </div>
 

@@ -17,6 +17,13 @@
       "uptime": "Uptime",
       "category": "Category",
       "title": "Title"
+    },
+    "users": {
+      "points": "Points",
+      "messages": "Messages",
+      "watched": "Watched",
+      "bits": "Bits",
+      "tips": "Tips"
     }
   }
 }

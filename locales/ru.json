@@ -17,6 +17,13 @@
       "uptime": "Uptime",
       "category": "Категория",
       "title": "Название"
+    },
+    "users": {
+      "points": "Поинтов",
+      "messages": "Сообщений",
+      "watched": "Просмотр",
+      "bits": "Битсов",
+      "tips": "Задоначено"
     }
   }
 }
