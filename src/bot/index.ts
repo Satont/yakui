@@ -1,13 +1,11 @@
 import './moduleAlias'
 import 'reflect-metadata'
 import 'source-map-support/register'
-console.time('start')
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config()
 import { connected } from '@bot/libs/db'
 import { error } from '@bot/libs/logger'
-import { inspect } from 'util'
 
 const start = async () => {
   if (!connected) return setTimeout(() => start(), 1000)
@@ -19,6 +17,12 @@ const start = async () => {
 
 start()
 
-process.on('unhandledRejection', (reason) => {
-  error(`${inspect(reason)}`)
+process.on('unhandledRejection', (reason) => error(reason))
+process.on('uncaughtException', (err: Error) => {
+  const date = new Date().toISOString()
+
+  process.report?.writeReport(`uncaughtException-${date}`, err)
+  error(err)
+
+  process.exit(1)
 })

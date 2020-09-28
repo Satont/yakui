@@ -1,7 +1,7 @@
 import { server } from '@bot/panel/index'
 import io from 'socket.io'
 import authorization from '@bot/systems/authorization'
-import { info } from './logger'
+import { debug } from './logger'
 
 const socket = io(server)
 
@@ -21,6 +21,6 @@ export default socket
 
 export const getNameSpace = (space: string) => {
   const namespace = socket.of(space)
-  info(`Libs::Socket: namespace ${namespace.name} successfuly created.`)
+  debug('socket', `namespace ${namespace.name} successfuly created.`)
   return namespace
 }

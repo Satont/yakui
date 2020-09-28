@@ -1,6 +1,6 @@
 import { System } from 'typings'
 import { getNameSpace } from '@bot/libs/socket'
-import { info } from '@bot/libs/logger'
+import { debug } from '@bot/libs/logger'
 import Settings from '@bot/models/Settings'
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
 
@@ -35,6 +35,12 @@ export default new class TTS implements System {
   }
 
   async sockets(client: SocketIO.Socket) {
+    debug('socket', 'Overlays::TTS: some client connected to socket')
+    this.clients.push(client)
+    client.on('disconnect', () => {
+      const index = this.clients.indexOf(client)
+      this.clients.splice(index, 1)
+    })
     client.emit('settings', { ...this.settings, token: this.token })
   }
 
