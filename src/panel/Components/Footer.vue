@@ -61,11 +61,12 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding-left: 16px;
+  padding-right: 16px;
 }
 
 .footer_socials-list {
   display: flex;
-  margin-left: 16px;
 }
 .footer_socials-list a, a:focus, a:hover, a:active {
   text-decoration: none;
