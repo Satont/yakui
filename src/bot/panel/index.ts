@@ -9,7 +9,7 @@ import { info } from '@bot/libs/logger'
 import twitch from './routes/twitch'
 import Authorization from '@bot/systems/authorization'
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT ? Number(process.env.PORT) : 3000
 
 export const app = express()
 
@@ -59,7 +59,7 @@ app.use((err, req: Request, res: Response, next) => {
   } else next()
 })
 
-export const server = http.createServer(app).listen(PORT, () => {
+export const server = http.createServer(app).listen(PORT, '0.0.0.0', () => {
   info(`PANEL: Server initiliazed on ${PORT}`)
 })
 
