@@ -45,6 +45,7 @@ export default new class Parser {
       }
     }
 
+    if (!command) return
     if (!users.hasPermission(raw.userInfo.badges, command.permission, raw)) return
 
     if (command.price && !this.cooldowns.includes(command.name)) {
