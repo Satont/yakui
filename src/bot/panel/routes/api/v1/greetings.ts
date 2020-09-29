@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
 import Greeting from '@bot/models/Greeting'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
-import greetings from '@bot/systems/greetings'
+import cache from '@bot/libs/cache'
 
 const router = Router({
   mergeParams: true,
@@ -10,9 +10,7 @@ const router = Router({
 
 router.get('/', async (req, res, next) => {
   try {
-    const greetings: Greeting[] = await Greeting.findAll()
-
-    res.json(greetings)
+    res.json([...cache.greetings.values()])
   } catch (e) {
     next(e)
   }
@@ -20,9 +18,7 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:id', isAdmin, async (req, res, next) => {
   try {
-    const greeting: Greeting[] = await Greeting.findOne({ where: { id: req.params.id }})
-
-    res.json(greeting)
+    res.json(cache.greetings.get(req.params.id))
   } catch (e) {
     next(e)
   }
@@ -68,7 +64,8 @@ router.post('/', isAdmin, checkSchema({
         enabled: body.enabled,
       })
     }
-    await greetings.init()
+    
+    await cache.updateGreetings()
     res.json(greeting)
   } catch (e) {
     next(e)
@@ -84,7 +81,7 @@ router.delete('/', isAdmin, checkSchema({
   try {
     validationResult(req).throw()
     await Greeting.destroy({ where: { id: req.body.id }})
-    await greetings.init()
+    await cache.updateGreetings()
     res.send('Ok')
   } catch (e) {
     next(e)

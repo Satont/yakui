@@ -1,22 +1,13 @@
-import { System } from 'typings'
-import Overlay from '@bot/models/Overlay'
+import cache from '@bot/libs/cache'
 import variables from './variables'
 
-export default new class Overlays implements System {
-  overlays: Overlay[] = []
-
-  async init() {
-    const overlays: Overlay[] = await Overlay.findAll()
-
-    this.overlays = overlays
+export default new class Overlays {
+  getOverlay(id: string) {
+    return cache.overlays.get(id)
   }
 
-  getOverlay(id: number) {
-    return this.overlays.find(o => o.id === id)
-  }
-
-  async parseOverlayData(id: number) {
-    const overlay = this.overlays.find(o => o.id === id)
+  async parseOverlayData(id: string) {
+    const overlay = cache.overlays.get(id)
 
     if (!overlay) throw `Overlay with ${id} not found.`
 

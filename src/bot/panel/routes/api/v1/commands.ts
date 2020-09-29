@@ -3,10 +3,10 @@ import { checkSchema, validationResult } from 'express-validator'
 import Command from '@bot/models/Command'
 import { Command as CommandType } from 'typings'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
-import CommandUsage from '@bot/models/CommandUsage'
 import Commands from '@bot/systems/commands'
 import customcommands from '@bot/systems/customcommands'
 import CommandSound from '@bot/models/CommandSound'
+import cache from '@bot/libs/cache'
 
 const router = Router({
   mergeParams: true,
@@ -14,7 +14,10 @@ const router = Router({
 
 router.get('/', async (req, res, next) => {
   try {
-    const commands = await Commands.getCommands()
+    const commands = Commands.getCommands().map(c => {
+      delete c.system
+      return c
+    })
 
     res.json(commands)
   } catch (e) {
@@ -24,10 +27,7 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:id', isAdmin, async (req, res, next) => {
   try {
-    const command: Command = await Command.findOne({ 
-      where: { id: req.params.id },
-      include: [CommandSound],
-    })
+    const command = cache.commands.get(req.params.id)
 
     res.json(command)
   } catch (e) {
@@ -88,14 +88,8 @@ router.post('/', isAdmin, checkSchema({
     validationResult(req).throw()
 
     const body: CommandType = req.body
-    const commands: CommandType[] = (await Commands.getCommands()).filter((c: CommandType) => c.id !== body.id)
-    const names: string[] = commands.reduce((array, command) => ([
-      ...array,
-      command.name,
-      ...command.aliases ?? [],
-    ]), [])
 
-    if (names.filter(Boolean).includes(body.name) || names.filter(Boolean).some(name => body.aliases?.includes(name))) {
+    if (cache.commands.has(body.name) || cache.commandsAliases.has(body.name) || body.aliases?.some(a => cache.commandsAliases.has(a) || cache.commands.has(a))) {
       return res.status(400).send({ message: 'This aliase or name already exists.' })
     }
 
@@ -103,12 +97,6 @@ router.post('/', isAdmin, checkSchema({
 
     if (body.id) {
       command = await Command.findOne({ where: { id: body.id } })
-
-      if (command.name !== body.name) {
-        CommandUsage.findAll({ where: { name: command.name } }).then((usages: CommandUsage[]) => {
-          for (const usage of usages) usage.update({ name: body.name })
-        })
-      }
 
       await command.update({
         name: body.name,
@@ -133,6 +121,7 @@ router.post('/', isAdmin, checkSchema({
     } else await CommandSound.destroy({ where: { commandId: command.id }}).catch(() => null)
 
     await customcommands.init()
+    cache.updateCommands()
     res.json(command)
   } catch (e) {
     next(e)
@@ -149,7 +138,8 @@ router.delete('/', isAdmin, checkSchema({
     validationResult(req).throw()
     await Command.destroy({ where: { id: req.body.id }})
     await customcommands.init()
-
+    
+    cache.updateCommands()
     res.send('Ok')
   } catch (e) {
     next(e)

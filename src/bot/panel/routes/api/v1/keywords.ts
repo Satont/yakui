@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
 import Keyword from '@bot/models/Keyword'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
-import keywords from '@bot/systems/keywords'
+import cache from '@bot/libs/cache'
 
 const router = Router({
   mergeParams: true,
@@ -10,9 +10,7 @@ const router = Router({
 
 router.get('/', async (req, res, next) => {
   try {
-    const keywords: Keyword[] = await Keyword.findAll()
-
-    res.json(keywords)
+    res.json([...cache.keywords.values()])
   } catch (e) {
     next(e)
   }
@@ -20,9 +18,9 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:id', isAdmin, async (req, res, next) => {
   try {
-    const keywords: Keyword[] = await Keyword.findOne({ where: { id: req.params.id }})
+    const keyword = cache.keywords.get(req.params.id)
 
-    res.json(keywords)
+    res.json(keyword)
   } catch (e) {
     next(e)
   }
@@ -71,7 +69,8 @@ router.post('/', isAdmin, checkSchema({
         cooldown: body.cooldown,
       })
     }
-    await keywords.init()
+    
+    await cache.updateKeywords()
     res.json(keyword)
   } catch (e) {
     next(e)
@@ -87,7 +86,8 @@ router.delete('/', isAdmin, checkSchema({
   try {
     validationResult(req).throw()
     await Keyword.destroy({ where: { id: req.body.id }})
-    await keywords.init()
+    
+    await cache.updateKeywords()
     res.send('Ok')
   } catch (e) {
     next(e)

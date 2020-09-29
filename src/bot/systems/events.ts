@@ -3,7 +3,6 @@ import { get } from 'lodash'
 
 import tmi from '@bot/libs/tmi'
 import { System, DonationData, HostType } from 'typings'
-import Event from '@bot/models/Event'
 import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove, INewResubscriber, INewSubscriber } from 'typings/events'
 import EventList from '@bot/models/EventList'
 import { getNameSpace } from '@bot/libs/socket'
@@ -11,24 +10,14 @@ import { PubSubRedemptionMessage } from 'twitch-pubsub-client/lib'
 import alerts from '@bot/overlays/alerts'
 import File from '@bot/models/File'
 import tts from '@bot/overlays/tts'
+import cache from '@bot/libs/cache'
 
 export default new class Events implements System {
-  events: Event[] = []
   socket = getNameSpace('widgets/eventlist')
   clients: SocketIO.Socket[] = []
 
-  async init() {
-    this.loadEvents()
-  }
-
-  async loadEvents() {
-    const events = await Event.findAll()
-
-    this.events = events
-  }
-
   async fire({ name, opts }: { name: string, opts: any }) {
-    const event = this.events.find(o => o.name === name)
+    const event = cache.events.get(name)
     if (!event) return
 
     for (const operation of event.operations) {

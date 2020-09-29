@@ -19,7 +19,9 @@ export interface Command {
   enabled?: boolean,
   price?: number,
   type?: 'custom' | 'default',
-  sound?: CommandSound;
+  sound?: CommandSound,
+  system?: System,
+  usage?: number
 }
 
 export interface CommandOptions {

@@ -42,6 +42,10 @@ export default class Command extends Model<Command> {
   @Column(DataType.INTEGER)
   public price: number
 
+  @Default(1)
+  @Column(DataType.INTEGER)
+  public usage: number
+
   @Default('viewers')
   @AllowNull(false)
   @Column(DataType.ENUM('viewers', 'followers', 'vips', 'subscribers', 'moderators', 'broadcaster'))

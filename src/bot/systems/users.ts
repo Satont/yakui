@@ -186,6 +186,8 @@ export default new class Users implements System {
   }
 
   hasPermission(badges: Map<string, string>, searchForPermission: CommandPermission, raw?: TwitchPrivateMessage) {
+    if (!searchForPermission) return true
+    
     const userPerms = Object.entries(tmi.getUserPermissions(badges, raw))
     const commandPermissionIndex = userPerms.indexOf(userPerms.find(v => v[0] === searchForPermission))
 
