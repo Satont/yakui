@@ -1,5 +1,5 @@
 import { Entity, Enum, PrimaryKey, Property, Unique, OneToOne } from '@mikro-orm/core'
-/* import { CommandPermission } from 'typings' */
+import { CommandPermission } from 'typings'
 import { CommandSound } from './CommandSound'
 
 @Entity({
