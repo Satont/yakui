@@ -1,5 +1,6 @@
+import { Options } from '@mikro-orm/core'
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection'
-console.log(process.cwd())
+
 export default {
   tsNode: true,
   metadataProvider: TsMorphMetadataProvider,
@@ -13,4 +14,4 @@ export default {
   entities: ['./dest/entities'],
   entitiesTs: ['./src/bot/entities'],
   cache: { pretty: true },
-}
+} as Options
