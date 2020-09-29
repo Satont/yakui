@@ -32,7 +32,7 @@ export class Command {
   visible = true
 
   @Enum()
-  permission!: any
+  permission!: CommandPermission
 
   @Property()
   price?: number = 0
