@@ -22,9 +22,10 @@ type DonationAlertsEvent = {
 }
 
 export default new class Donationalerts implements Integration {
-  centrifugeSocket: Centrifuge = null
-  channel: Centrifuge.Subscription = null
-  connecting = false
+  private centrifugeSocket: Centrifuge = null
+  private channel: Centrifuge.Subscription = null
+  private connecting = false
+  private readonly audioRegular = /https:\/\/static\.donationalerts\.ru\/audiodonations[./\w]+/gm
 
   async init() {
     if (this.connecting) return
@@ -164,13 +165,14 @@ export default new class Donationalerts implements Integration {
     this.channel.on('publish', async ({ data }: { data: DonationAlertsEvent }) => {
       const user: User = await User.findOne({ where: { username: data.username.toLowerCase() }})
 
+      const message = data.message?.replace(this.audioRegular, '<audio>')
       const donationData = {
         userId: user?.id,
         amount: data.amount,
         currency: data.currency,
         rates: currency.rates,
         inMainCurrencyAmount: currency.exchange({ from: data.currency, amount: data.amount }),
-        message: data.message,
+        message,
         timestamp: Date.now(),
       }
 
@@ -184,7 +186,7 @@ export default new class Donationalerts implements Integration {
         amount: data.amount,
         currency: data.currency,
         inMainCurrencyAmount: currency.exchange({ from: data.currency, amount: data.amount }),
-        message: data.message,
+        message,
         timestamp: Date.now(),
       })
     })
