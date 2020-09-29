@@ -27,6 +27,7 @@ Vue.component('loading', () => import('./vue/components/loadingAnimation.vue'))
 Vue.component('side-bar', () => import('./vue/components/sidebar.vue'))
 Vue.component('nav-bar', () => import('./vue/components/navbar.vue'))
 Vue.component('variables-list', () => import('./vue/components/variablesList.vue'))
+Vue.component('dashboard', () => import('./vue/pages/dashboard/index.vue'))
 
 const start = async () => {
   const user = await isLogged(true, true)
@@ -38,7 +39,7 @@ const start = async () => {
   const router = new VueRouter({
     mode: 'history',
     routes: [
-      { path: '/', name: 'Home', component: () => import('./vue/pages/dashboard/index.vue'), alias: '/home' },
+      { path: '/', name: 'Home', component: { template: `<div></div>` }, alias: '/home' },
       {
         path: '/settings',
         component: () => import('./vue/pages/settings/index.vue'),
@@ -115,7 +116,16 @@ const start = async () => {
       <div class="container-fluid">
         <side-bar></side-bar>
         <loading v-if="$root.loading"></loading>
-        <router-view v-if="!$root.loading" class="col-md-11 ml-sm-auto col-lg-11 px-md-4 pt-md-3"></router-view>
+        <div class="col-md-11 ml-sm-auto col-lg-11 px-md-4 pt-md-3">
+          <dashboard 
+            v-if="!$root.loading"  
+            :class="{ hidden: $route.path !== '/' }"
+          />
+          <router-view 
+            v-if="!$root.loading" 
+            :class="{ hidden: $route.path === '/' }"
+          />
+        </div>
       </div>
     </div>
     `,

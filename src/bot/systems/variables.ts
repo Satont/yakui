@@ -73,7 +73,6 @@ export default new class Variables implements System {
     const userInfo = opts.raw?.userInfo
     result = result
       .replace(/\$sender/gimu, '@' + userInfo?.userName ?? tmi.chatClients?.bot?.currentNick)
-      .replace(/\$followage/gimu, userInfo ? await twitch.getFollowAge(userInfo.userId) : 'invalid')
       .replace(/\$stream\.viewers/gimu, String(twitch.streamMetaData.viewers))
       .replace(/\$channel\.views/gimu, String(twitch.channelMetaData.views))
       .replace(/\$channel\.game/gimu, twitch.channelMetaData.game)
@@ -98,6 +97,10 @@ export default new class Variables implements System {
       .replace(/\$subs\.last\.resub\.overallMonths/gimu, String(twitch.channelMetaData.latestReSubscriber?.overallMonths) + ' ')
       .replace(/\$subs/gimu, String(twitch.channelMetaData.subs) + ' ')
 
+    if (/\$followage/gimu.test(result)) {
+      result = result.replace(/\$followage/gimu, userInfo ? await twitch.getFollowAge(userInfo.userId) : 'invalid')
+    }
+
     if (/\$song/gimu.test(result)) {
       result = result.replace(/\$song/gimu, await this.getSong())
     }
@@ -107,7 +110,7 @@ export default new class Variables implements System {
     }
 
     if (/\$prices/gimu.test(result)) {
-      result = result.replace(/\$prices/gimu, Commands.getPricesList().join(', '))
+      result = result.replace(/\$prices/gimu, Commands.getPricesList().map(c => `${c.name} — ${c.price}`).join(', '))
     }
 
     if (/\$top\.points/gimu.test(result)) {
@@ -140,7 +143,7 @@ export default new class Variables implements System {
     }
 
     if (/\$command\.stats\.used/gimu.test(result)) {
-      result = result.replace(/\$command\.stats\.used/gimu, String(await Commands.getCommandUsageStats(opts.command?.name)))
+      result = result.replace(/\$command\.stats\.used/gimu, String(opts.command?.usage ?? 'unknown'))
     }
 
     if (/\$faceit\.[a-z]{3}/gimu.test(result)) {
@@ -150,7 +153,9 @@ export default new class Variables implements System {
         .replace(/\$faceit\.lvl/, String(faceitData.lvl))
     }
 
-    result = await this.parseCustomVariables(result)
+    if (/\$_[0-9a-z]+/gimu.test(result)) {
+      result = await this.parseCustomVariables(result)
+    }
 
     if (includesOneOf(result, ['user.messages', 'user.tips', 'user.bits', 'user.watched', 'user.points', 'user.daily.messages']) && userInfo) {
       const user = await users.getUserStats({ id: userInfo?.userId })

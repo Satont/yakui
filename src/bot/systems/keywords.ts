@@ -1,31 +1,21 @@
 import { System, ParserOptions } from 'typings'
-import Keyword from '@bot/models/Keyword'
 import tmi from '@bot/libs/tmi'
 import variables from './variables'
 import { isRegExp } from 'lodash'
+import cache from '@bot/libs/cache'
 
 export default new class Keywords implements System {
-  keywords: Array<{ name: string, response: string, cooldown?: number, enabled: boolean }> = []
   parsers = [
     { fnc: this.parser },
   ]
   cooldowns: string[] = []
 
-  async init() {
-    const keywords: Keyword[] = await Keyword.findAll()
-
-    this.keywords = keywords.map(keyword => ({
-      name: keyword.name.toLowerCase(),
-      response: keyword.response,
-      cooldown: keyword.cooldown,
-      enabled: keyword.enabled,
-    }))
-  }
 
   async parser(opts: ParserOptions) {
     opts.message = opts.message.toLowerCase()
+    const keywords = [...cache.keywords.values()]
 
-    for (const item of this.keywords) {
+    for (const item of keywords) {
       if (!item.enabled || this.cooldowns.includes(item.name)) continue
       let founded = false
 

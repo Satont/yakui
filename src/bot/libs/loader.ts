@@ -2,6 +2,7 @@ import { resolve } from 'path'
 import getFiles from '@bot/commons/getFiles'
 import { System } from 'typings'
 import { error, info } from './logger'
+import cache from './cache'
 
 export const loadedSystems: System[] = []
 
@@ -34,4 +35,6 @@ const loader = async () => {
   }
 }
 
-loader()
+loader().then(async () => {
+  await cache.init()
+})

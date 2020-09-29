@@ -9,3 +9,7 @@ body {
   -webkit-box-shadow: none !important;
   box-shadow: none !important;
 }
+
+.hidden {
+  display: none;
+}

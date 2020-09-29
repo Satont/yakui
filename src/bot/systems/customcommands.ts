@@ -9,6 +9,7 @@ export default new class CustomCommands implements System {
     const commands: Command[] = await Command.findAll({
       include: [CommandSound],
     })
+
     this.commands = commands.map(command => ({
       id: command.id,
       name: command.name,
@@ -23,6 +24,7 @@ export default new class CustomCommands implements System {
       fnc: this.fnc,
       sound: command.sound || { soundId: '0', volume: 50 } as any,
       type: 'custom',
+      usage: command.usage,
     }))
   }
 

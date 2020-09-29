@@ -1,13 +1,13 @@
 import { Router } from 'express'
 import Event from '@bot/models/Event'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
-import events from '@bot/systems/events'
+import cache from '@bot/libs/cache'
 
 const router = Router()
 
 router.get('/', isAdmin, async (req, res, next) => {
   try {
-    const events = await Event.findAll()
+    const events = [...cache.events.values()]
 
     res.send(events)
   } catch (e) {
@@ -27,7 +27,8 @@ router.post('/', isAdmin, async (req, res, next) => {
     if (!created) {
       await event.update({ operations: data.operations })
     }
-    await events.init()
+    
+    await cache.updateEvents()
     res.send(event)
   } catch (e) {
     next(e)

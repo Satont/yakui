@@ -3,14 +3,14 @@ import { checkSchema, validationResult } from 'express-validator'
 import Overlays from '@bot/systems/overlays'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
 import Overlay from '@bot/models/Overlay'
-import overlays from '@bot/systems/overlays'
+import cache from '@bot/libs/cache'
 
 const router = Router({ mergeParams: true })
 
 
 router.get('/', async (req, res, next) => {
   try {
-    res.json(await Overlay.findAll())
+    res.json([...cache.overlays.values()])
   } catch (e) {
     next(e)
   }
@@ -18,7 +18,7 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:id', (req, res, next) => {
   try {
-    const overlay = Overlays.getOverlay(Number(req.params.id))
+    const overlay = Overlays.getOverlay(req.params.id)
 
     res.json(overlay)
   } catch (e) {
@@ -28,7 +28,7 @@ router.get('/:id', (req, res, next) => {
 
 router.get('/parse/:id', async (req, res, next) => {
   try {
-    const data = await Overlays.parseOverlayData(Number(req.params.id))
+    const data = await Overlays.parseOverlayData(req.params.id)
 
     res.json(data)
   } catch (e) {
@@ -78,7 +78,8 @@ router.post('/', isAdmin, checkSchema({
         js: req.body.js,
       })
     }
-    await overlays.init()
+    
+    await cache.updateOverlays()
     res.json(overlay)
   } catch (e) {
     next(e)
@@ -95,7 +96,7 @@ router.delete('/', isAdmin, checkSchema({
     validationResult(req).throw()
 
     await Overlay.destroy({ where: { id: req.body.id }})
-    await overlays.init()
+    await cache.updateOverlays()
     res.send('Ok')
   } catch (e) {
     next(e)
