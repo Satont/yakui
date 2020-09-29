@@ -1,5 +1,5 @@
 import { System, Command as CommandType, CommandOptions } from 'typings'
-import Command from '@bot/models/Command'
+import { Command } from '@bot/entities/Command'
 import CommandSound from '@bot/models/CommandSound'
 
 export default new class CustomCommands implements System {
