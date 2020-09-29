@@ -1,12 +1,13 @@
 import axios from 'axios'
 
 import { Integration } from 'typings'
-import Settings from '@bot/models/Settings'
+import { Settings } from '@bot/entities/Settings'
 import User  from '@bot/models/User'
 import UserTips from '@bot/models/UserTips'
 import currency from '@bot/libs/currency'
 import { onDonation } from '@bot/libs/eventsCaller'
 import { info, error } from '@bot/libs/logger'
+import { orm } from '@bot/libs/db'
 
 export default new class Qiwi implements Integration {
   pollTimeout: NodeJS.Timeout = null
@@ -14,9 +15,9 @@ export default new class Qiwi implements Integration {
 
   async init() {
     clearTimeout(this.pollTimeout)
-    const [enabled, token]: [Settings, Settings] = await Promise.all([
-      Settings.findOne({ where: { space: 'qiwi', name: 'enabled' } }),
-      Settings.findOne({ where: { space: 'qiwi', name: 'token' } }),
+    const [enabled, token] = await Promise.all([
+      orm.em.getRepository(Settings).findOne({ space: 'qiwi', name: 'enabled' }),
+      orm.em.getRepository(Settings).findOne({ space: 'qiwi', name: 'token' }),
     ])
 
     if (!enabled || !token || !token?.value.trim().length) return
@@ -63,11 +64,5 @@ export default new class Qiwi implements Integration {
     } catch (e) {
       error(e)
     }
-  }
-
-  listenDbUpdates() {
-    Settings.afterUpdate(instance => {
-      if (instance.space === 'qiwi') this.init()
-    })
   }
 }

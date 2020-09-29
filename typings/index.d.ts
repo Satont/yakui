@@ -3,7 +3,14 @@ import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove, INew
 import { PubSubRedemptionMessage } from 'twitch-pubsub-client/lib'
 import CommandSound from '@bot/models/CommandSound'
 
-export type CommandPermission = 'viewers' | 'followers' | 'vips' | 'subscribers' | 'moderators' | 'broadcaster'
+export enum CommandPermission {
+  'viewers',
+  'followers',
+  'vips',
+  'subscribers',
+  'moderators', 
+  'broadcaster'
+}
 export type HostType = { viewers: number, username: string }
 
 export interface Command {

@@ -1,7 +1,8 @@
 import { Integration } from 'typings'
-import Settings from '@bot/models/Settings'
+import { Settings } from '@bot/entities/Settings'
 import { error } from '@bot/libs/logger'
 import axios from 'axios'
+import { orm } from '@bot/libs/db'
 
 
 export default new class SatontRu implements Integration {
@@ -34,13 +35,13 @@ export default new class SatontRu implements Integration {
   }
 
   async init() {
-    const [faceit, songs]: [Settings, Settings] = await Promise.all([
-      Settings.findOne({ where: { space: 'satontapi', name: 'faceit' } }),
-      Settings.findOne({ where: { space: 'satontapi', name: 'songs' } }),
+    const [faceit, songs] = await Promise.all([
+      orm.em.getRepository(Settings).findOne({ space: 'satontapi', name: 'faceit' }),
+      orm.em.getRepository(Settings).findOne({ space: 'satontapi', name: 'songs' }),
     ])
     
-    if (faceit) this.apis.faceit = faceit.value
-    if (songs) this.apis.songs = songs.value
+    if (faceit) this.apis.faceit = faceit.value as any
+    if (songs) this.apis.songs = songs.value as any
   }
 
   async getFaceitData(): Promise<{ elo: number, lvl: number } | false> {
@@ -71,9 +72,5 @@ export default new class SatontRu implements Integration {
       error(e)
       return false
     }
-  }
-
-  listenDbUpdates() {
-    Settings.afterSave(() => this.init())
   }
 }

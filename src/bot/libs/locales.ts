@@ -1,8 +1,9 @@
 import { readFileSync } from 'fs'
 import { resolve} from 'path'
 import { get } from 'lodash'
-import Settings from '@bot/models/Settings'
+import {Settings} from '@bot/entities/Settings'
 import { info } from './logger'
+import { orm } from './db'
 
 const parameterizedString = (...args) => {
   const params = args.slice(1)
@@ -16,15 +17,14 @@ export default new class Locales {
 
   constructor() {
     this.init()
-    this.listenDbChanges()
   }
 
   async init() {
-    const [locale]: [Settings] = await Settings.findOrCreate({
-      where: { space: 'general', name: 'locale' },
-      defaults: { value: 'ru' },
-    })
-    
+    let locale = await orm.em.getRepository(Settings).findOne({ space: 'general', name: 'locale' })
+    if (!locale) {
+      locale = orm.em.getRepository(Settings).create({ space: 'general', name: 'locale', value: 'ru' })
+    }
+
     const lang = resolve(langsDir, `${locale.value}.json`)
     this.lang = JSON.parse(readFileSync(lang, 'utf-8'))
 
@@ -37,18 +37,5 @@ export default new class Locales {
 
     if (!result) return get(this.lang, 'errors.langStringNotFound')
     return parameterizedString(result, ...args.slice(1))
-  }
-
-  listenDbChanges() {
-    Settings.afterCreate((instance) => {
-      if (instance.name !== 'locale') return
-      
-      this.init()
-    })
-    Settings.afterUpdate((instance) => {
-      if (instance.name !== 'locale') return
-      
-      this.init()
-    })
   }
 }

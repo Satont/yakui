@@ -1,6 +1,7 @@
 import axios from 'axios'
-import Settings from '@bot/models/Settings'
+import {Settings} from '@bot/entities/Settings'
 import { info, error } from './logger'
+import { orm } from './db'
 
 export default new class Oauth {
   async validate (token: string | null, type: 'bot' | 'broadcaster') {
@@ -28,20 +29,19 @@ export default new class Oauth {
   async refresh(token: string, type: 'bot' | 'broadcaster') {
     try {
       const { data } = await axios.get('http://bot.satont.ru/api/refresh?refresh_token=' + token)
-
-      const [accessToken, accessTokenCreated]: [Settings, boolean] = await Settings.findOrCreate({ 
-        where: { space: 'oauth', name: `${type}AccessToken` },
-        defaults: { space: 'oauth', name: `${type}AccessToken`, value: data.token },
-      })
-
-      const [refreshToken, refreshTokenCreated]: [Settings, boolean] = await Settings.findOrCreate({ 
-        where: { space: 'oauth', name: `${type}RefreshToken` },
-        defaults: { space: 'oauth', name: `${type}RefreshToken`, value: data.refresh },
-      })
-
-      if (!accessTokenCreated) await accessToken.update({ value: data.token })
-      if (!refreshTokenCreated) await refreshToken.update({ value: data.refresh })
-
+      let accessToken = await orm.em.getRepository(Settings).findOne({ space: 'oauth', name: `${type}AccessToken` })
+      if (!accessToken) {
+        accessToken = orm.em.getRepository(Settings).create({ space: 'oauth', name: `${type}AccessToken`, value: data.token })
+      }
+      
+      let refreshToken = await orm.em.getRepository(Settings).findOne({ space: 'oauth', name: `${type}RefreshToken` })
+      if (!refreshToken) {
+        refreshToken = orm.em.getRepository(Settings).create({ space: 'oauth', name: `${type}RefreshToken`, value: data.token })
+      }
+    
+      
+      await orm.em.persistAndFlush(accessToken)
+      await orm.em.persistAndFlush(refreshToken)
       info(`Access token of ${type} was refreshed.`)
       return {
         access_token: data.token,

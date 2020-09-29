@@ -1,0 +1,84 @@
+{
+  "data": {
+    "className": "Events",
+    "properties": {
+      "id": {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number"
+      },
+      "name": {
+        "name": "name",
+        "reference": "scalar",
+        "length": 255,
+        "getter": false,
+        "setter": false,
+        "type": "string"
+      },
+      "operations": {
+        "name": "operations",
+        "reference": "scalar",
+        "nullable": true,
+        "default": "[]",
+        "getter": false,
+        "setter": false,
+        "type": "object",
+        "columnTypes": [
+          "json"
+        ]
+      }
+    },
+    "hooks": {},
+    "filters": {},
+    "primaryKeys": [
+      "id"
+    ],
+    "indexes": [],
+    "uniques": [
+      {
+        "name": "events_name_unique",
+        "properties": "name"
+      }
+    ],
+    "path": "./src/bot/entities/Events.ts",
+    "name": "Events",
+    "abstract": false,
+    "constructorParams": [],
+    "toJsonParams": [],
+    "useCache": true,
+    "compositePK": false,
+    "props": [
+      {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number"
+      },
+      {
+        "name": "name",
+        "reference": "scalar",
+        "length": 255,
+        "getter": false,
+        "setter": false,
+        "type": "string"
+      },
+      {
+        "name": "operations",
+        "reference": "scalar",
+        "nullable": true,
+        "default": "[]",
+        "getter": false,
+        "setter": false,
+        "type": "object",
+        "columnTypes": [
+          "json"
+        ]
+      }
+    ],
+    "collection": "events"
+  },
+  "origin": "./src/bot/entities/Events.ts",
+  "hash": "54888b39064bd33c844e71b32816c204",
+  "version": "4.0.7"
+}

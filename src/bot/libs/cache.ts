@@ -1,10 +1,11 @@
-import Event from '@bot/models/Event'
-import Greeting from '@bot/models/Greeting'
-import Overlay from '@bot/models/Overlay'
-import Keyword from '@bot/models/Keyword'
+import {Event} from '@bot/entities/Event'
+import {Greeting} from '@bot/entities/Greeting'
+import {Overlay} from '@bot/entities/Overlay'
+import {Keyword} from '@bot/entities/Keyword'
 import { Command, System } from 'typings'
 import { loadedSystems } from './loader'
 import { info } from './logger'
+import { orm } from './db'
 
 export default new class Cache {
   parsers: Map<string, { system: System, fnc: any }> = new Map()
@@ -50,7 +51,7 @@ export default new class Cache {
 
   async updateOverlays() {
     this.overlays = new Map()
-    for (const overlay of await Overlay.findAll() as Overlay[]) {
+    for (const overlay of await orm.em.getRepository(Overlay).findAll()) {
       this.overlays.set(String(overlay.id), overlay)
     }
 
@@ -60,7 +61,7 @@ export default new class Cache {
   async updateEvents() {
     this.events = new Map()
 
-    for (const event of await Event.findAll() as Event[]) {
+    for (const event of await orm.em.getRepository(Event).findAll()) {
       this.events.set(event.name, event)
     }
 
@@ -70,7 +71,7 @@ export default new class Cache {
   async updateGreetings() {
     this.greetings = new Map()
 
-    for (const greeting of await Greeting.findAll() as Greeting[]) {
+    for (const greeting of await orm.em.getRepository(Greeting).findAll()) {
       this.greetings.set(String(greeting.id), greeting)
     }
 
@@ -80,7 +81,7 @@ export default new class Cache {
   async updateKeywords() {
     this.keywords = new Map()
 
-    for (const keyword of await Keyword.findAll() as Keyword[]) {
+    for (const keyword of await orm.em.getRepository(Keyword).findAll()) {
       this.keywords.set(String(keyword.id), keyword)
     }
 

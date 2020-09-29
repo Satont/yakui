@@ -1,7 +1,9 @@
 import { Entity, Index, PrimaryKey, Property, Unique } from '@mikro-orm/core'
 
-@Entity()
-export class Users {
+@Entity({
+  tableName: 'users',
+})
+export class User {
 
   @Unique({ name: 'users_id_unique' })
   @PrimaryKey()

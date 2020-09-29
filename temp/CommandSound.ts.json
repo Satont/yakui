@@ -1,0 +1,103 @@
+{
+  "data": {
+    "className": "CommandSound",
+    "properties": {
+      "id": {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number"
+      },
+      "volume": {
+        "name": "volume",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "number"
+      },
+      "commandId": {
+        "name": "commandId",
+        "reference": "m:1",
+        "cascade": [
+          "all"
+        ],
+        "nullable": true,
+        "type": "Command",
+        "fieldNames": [
+          "commandId"
+        ]
+      },
+      "soundId": {
+        "name": "soundId",
+        "reference": "m:1",
+        "cascade": [
+          "all"
+        ],
+        "nullable": true,
+        "type": "Files",
+        "fieldNames": [
+          "soundId"
+        ]
+      }
+    },
+    "hooks": {},
+    "filters": {},
+    "primaryKeys": [
+      "id"
+    ],
+    "indexes": [],
+    "uniques": [],
+    "path": "./src/bot/entities/CommandSound.ts",
+    "name": "CommandSound",
+    "abstract": false,
+    "constructorParams": [],
+    "toJsonParams": [],
+    "useCache": true,
+    "compositePK": false,
+    "props": [
+      {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number"
+      },
+      {
+        "name": "volume",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "number"
+      },
+      {
+        "name": "commandId",
+        "reference": "m:1",
+        "cascade": [
+          "all"
+        ],
+        "nullable": true,
+        "type": "Command",
+        "fieldNames": [
+          "commandId"
+        ]
+      },
+      {
+        "name": "soundId",
+        "reference": "m:1",
+        "cascade": [
+          "all"
+        ],
+        "nullable": true,
+        "type": "Files",
+        "fieldNames": [
+          "soundId"
+        ]
+      }
+    ],
+    "collection": "command_sound"
+  },
+  "origin": "./src/bot/entities/CommandSound.ts",
+  "hash": "3eb5fb82dd5871265581a456f0a36bb0",
+  "version": "4.0.7"
+}

@@ -1,7 +1,9 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core'
 
-@Entity()
-export class Timers {
+@Entity({
+  tableName: 'timers',
+})
+export class Timer {
 
   @PrimaryKey()
   id!: number;
@@ -16,7 +18,7 @@ export class Timers {
   interval!: number;
 
   @Property({ columnType: 'json', nullable: true, default: '[]' })
-  responses?: object;
+  responses?: Record<string, any>;
 
   @Property({ nullable: true })
   last?: number;

@@ -1,5 +1,9 @@
 {
   "extends": "../../tsconfig.json",
+  "typeRoots" : [
+    "../typings",
+    "node_modules/@types"
+  ],
   "compilerOptions": {
     "outDir": "../../dest",
   },

@@ -1,0 +1,145 @@
+{
+  "data": {
+    "className": "SongsLikes",
+    "properties": {
+      "id": {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number"
+      },
+      "userId": {
+        "name": "userId",
+        "reference": "1:1",
+        "cascade": [
+          "all"
+        ],
+        "nullable": true,
+        "type": "Users",
+        "owner": true,
+        "unique": true,
+        "fieldNames": [
+          "userId"
+        ]
+      },
+      "name": {
+        "name": "name",
+        "reference": "scalar",
+        "length": 255,
+        "getter": false,
+        "setter": false,
+        "type": "string"
+      },
+      "createdAt": {
+        "name": "createdAt",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "fieldNames": [
+          "createdAt"
+        ],
+        "columnTypes": [
+          "int8"
+        ]
+      },
+      "updatedAt": {
+        "name": "updatedAt",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "fieldNames": [
+          "updatedAt"
+        ],
+        "columnTypes": [
+          "int8"
+        ]
+      }
+    },
+    "hooks": {},
+    "filters": {},
+    "primaryKeys": [
+      "id"
+    ],
+    "indexes": [],
+    "uniques": [
+      {
+        "name": "songs_likes_userid_name_unique",
+        "properties": [
+          "userId",
+          "name"
+        ]
+      }
+    ],
+    "path": "./src/bot/entities/SongsLikes.ts",
+    "name": "SongsLikes",
+    "abstract": false,
+    "constructorParams": [],
+    "toJsonParams": [],
+    "useCache": true,
+    "compositePK": false,
+    "props": [
+      {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number"
+      },
+      {
+        "name": "userId",
+        "reference": "1:1",
+        "cascade": [
+          "all"
+        ],
+        "nullable": true,
+        "type": "Users",
+        "owner": true,
+        "unique": true,
+        "fieldNames": [
+          "userId"
+        ]
+      },
+      {
+        "name": "name",
+        "reference": "scalar",
+        "length": 255,
+        "getter": false,
+        "setter": false,
+        "type": "string"
+      },
+      {
+        "name": "createdAt",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "fieldNames": [
+          "createdAt"
+        ],
+        "columnTypes": [
+          "int8"
+        ]
+      },
+      {
+        "name": "updatedAt",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "fieldNames": [
+          "updatedAt"
+        ],
+        "columnTypes": [
+          "int8"
+        ]
+      }
+    ],
+    "collection": "songs_likes"
+  },
+  "origin": "./src/bot/entities/SongsLikes.ts",
+  "hash": "b42e8eb15003fa74249553a355bba1ca",
+  "version": "4.0.7"
+}

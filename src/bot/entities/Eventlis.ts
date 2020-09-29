@@ -1,6 +1,8 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core'
 
-@Entity()
+@Entity({
+  tableName: 'eventlist',
+})
 export class Eventlist {
   @PrimaryKey()
   id!: number

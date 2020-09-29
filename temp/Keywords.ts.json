@@ -1,0 +1,117 @@
+{
+  "data": {
+    "className": "Keywords",
+    "properties": {
+      "id": {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number"
+      },
+      "name": {
+        "name": "name",
+        "reference": "scalar",
+        "length": 255,
+        "getter": false,
+        "setter": false,
+        "type": "string"
+      },
+      "response": {
+        "name": "response",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "columnTypes": [
+          "text"
+        ]
+      },
+      "enabled": {
+        "name": "enabled",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "boolean"
+      },
+      "cooldown": {
+        "name": "cooldown",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "number"
+      }
+    },
+    "hooks": {},
+    "filters": {},
+    "primaryKeys": [
+      "id"
+    ],
+    "indexes": [
+      {
+        "name": "keywords_name_index",
+        "properties": "name"
+      }
+    ],
+    "uniques": [
+      {
+        "name": "keywords_name_unique",
+        "properties": "name"
+      }
+    ],
+    "path": "./src/bot/entities/Keywords.ts",
+    "name": "Keywords",
+    "abstract": false,
+    "constructorParams": [],
+    "toJsonParams": [],
+    "useCache": true,
+    "compositePK": false,
+    "props": [
+      {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number"
+      },
+      {
+        "name": "name",
+        "reference": "scalar",
+        "length": 255,
+        "getter": false,
+        "setter": false,
+        "type": "string"
+      },
+      {
+        "name": "response",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "columnTypes": [
+          "text"
+        ]
+      },
+      {
+        "name": "enabled",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "boolean"
+      },
+      {
+        "name": "cooldown",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "number"
+      }
+    ],
+    "collection": "keywords"
+  },
+  "origin": "./src/bot/entities/Keywords.ts",
+  "hash": "dffe8647c1fbe21c058a53e23d492e2d",
+  "version": "4.0.7"
+}

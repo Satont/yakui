@@ -1,7 +1,9 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core'
 
-@Entity()
-export class Overlays {
+@Entity({
+  tableName: 'overlays',
+})
+export class Overlay {
 
   @PrimaryKey()
   id!: number;
@@ -16,6 +18,6 @@ export class Overlays {
   css?: string;
 
   @Property({ columnType: 'json', nullable: true, default: '[]' })
-  js?: object;
+  js?: Record<string, any>;
 
 }

@@ -1,0 +1,101 @@
+{
+  "data": {
+    "className": "Variables",
+    "properties": {
+      "id": {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number"
+      },
+      "name": {
+        "name": "name",
+        "reference": "scalar",
+        "length": 255,
+        "getter": false,
+        "setter": false,
+        "type": "string"
+      },
+      "response": {
+        "name": "response",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "columnTypes": [
+          "text"
+        ]
+      },
+      "enabled": {
+        "name": "enabled",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "boolean"
+      }
+    },
+    "hooks": {},
+    "filters": {},
+    "primaryKeys": [
+      "id"
+    ],
+    "indexes": [
+      {
+        "name": "variables_name_index",
+        "properties": "name"
+      }
+    ],
+    "uniques": [
+      {
+        "name": "variables_name_unique",
+        "properties": "name"
+      }
+    ],
+    "path": "./src/bot/entities/Variables.ts",
+    "name": "Variables",
+    "abstract": false,
+    "constructorParams": [],
+    "toJsonParams": [],
+    "useCache": true,
+    "compositePK": false,
+    "props": [
+      {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number"
+      },
+      {
+        "name": "name",
+        "reference": "scalar",
+        "length": 255,
+        "getter": false,
+        "setter": false,
+        "type": "string"
+      },
+      {
+        "name": "response",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "columnTypes": [
+          "text"
+        ]
+      },
+      {
+        "name": "enabled",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "boolean"
+      }
+    ],
+    "collection": "variables"
+  },
+  "origin": "./src/bot/entities/Variables.ts",
+  "hash": "a856d7f9487d2450959d9147740781cb",
+  "version": "4.0.7"
+}

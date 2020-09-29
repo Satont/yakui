@@ -3,12 +3,13 @@ import axios from 'axios'
 import WebSocket from 'ws'
 
 import { Integration } from 'typings'
-import Settings from '@bot/models/Settings'
+import { Settings } from '@bot/entities/Settings'
 import { onDonation } from '@bot/libs/eventsCaller'
 import currency, { currency as currencyType } from '@bot/libs/currency'
 import User from '@bot/models/User'
 import UserTips from '@bot/models/UserTips'
 import { error, info } from '@bot/libs/logger'
+import { orm } from '@bot/libs/db'
 
 type DonationAlertsEvent = {
   id: string;
@@ -30,16 +31,10 @@ export default new class Donationalerts implements Integration {
   async init() {
     if (this.connecting) return
     this.connecting = true
-    const [access_token, refresh_token, enabled]: [Settings, Settings, Settings] = await Promise.all([
-      Settings.findOne({
-        where: { space: 'donationalerts', name: 'access_token' },
-      }),
-      Settings.findOne({
-        where: { space: 'donationalerts', name: 'refresh_token' },
-      }),
-      Settings.findOne({
-        where: { space: 'donationalerts', name: 'enabled' },
-      }),
+    const [access_token, refresh_token, enabled] = await Promise.all([
+      orm.em.getRepository(Settings).findOne({ space: 'donationalerts', name: 'access_token' }),
+      orm.em.getRepository(Settings).findOne({ space: 'donationalerts', name: 'refresh_token' }),
+      orm.em.getRepository(Settings).findOne({ space: 'donationalerts', name: 'enabled' }),
     ])
 
     if (!access_token?.value || !refresh_token?.value || !enabled?.value) {
@@ -59,13 +54,9 @@ export default new class Donationalerts implements Integration {
   }
 
   async recheckToken() {
-    const [access_token, refresh_token]: [Settings, Settings] = await Promise.all([
-      Settings.findOne({
-        where: { space: 'donationalerts', name: 'access_token' },
-      }),
-      Settings.findOne({
-        where: { space: 'donationalerts', name: 'refresh_token' },
-      }),
+    const [access_token, refresh_token] = await Promise.all([
+      orm.em.getRepository(Settings).findOne({ space: 'donationalerts', name: 'access_token' }),
+      orm.em.getRepository(Settings).findOne({ space: 'donationalerts', name: 'refresh_token' }),
     ])
 
     if (!access_token?.value || !refresh_token?.value) {
@@ -81,8 +72,9 @@ export default new class Donationalerts implements Integration {
         const { data } = await axios.get(`http://bot.satont.ru/api/donationalerts-refresh?refresh_token=${refresh_token.value}`)
         access_token.value = data.access_token
         refresh_token.value = data.refresh_token
-        await access_token.save()
-        await refresh_token.save()
+
+        await orm.em.getRepository(Settings).persistAndFlush([access_token, refresh_token])
+
         info('DONATIONALERTS: Token successfuly refreshed')
       } else error(e.message)
     }
@@ -90,12 +82,10 @@ export default new class Donationalerts implements Integration {
   }
 
   async connect() {
-    let token = await Settings.findOne({
-      where: { space: 'donationalerts', name: 'access_token' },
-    })
+    const query = await orm.em.getRepository(Settings).findOne({ space: 'donationalerts', name: 'access_token' })
 
-    if (!token) throw 'DONATIONALERTS: token is empty'
-    token = token.value
+    if (!query) throw 'DONATIONALERTS: token is empty'
+    const token = query.value
 
     this.disconnect()
     info('DONATIONALERTS: Starting init')
@@ -189,12 +179,6 @@ export default new class Donationalerts implements Integration {
         message,
         timestamp: Date.now(),
       })
-    })
-  }
-
-  listenDbUpdates() {
-    Settings.afterUpdate(instance => {
-      if (instance.space === 'donationalerts') this.init()
     })
   }
 }

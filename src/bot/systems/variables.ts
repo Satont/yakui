@@ -11,7 +11,7 @@ import { sequelize } from '@bot/libs/db'
 import { Op } from 'sequelize'
 import currency from '@bot/libs/currency'
 import Axios from 'axios'
-import { System, Command } from 'typings'
+import { System, Command, CommandPermission } from 'typings'
 import Variable from '@bot/models/Variable'
 import spotify from '@bot/integrations/spotify'
 import locales from '@bot/libs/locales'
@@ -336,7 +336,7 @@ export default new class Variables implements System {
   }
 
   async changeCustomVariable({ raw, text, response }: { raw: TwitchPrivateMessage, response: string, text: string }) {
-    const isAdmin = users.hasPermission(raw.userInfo.badges, 'moderators', raw)
+    const isAdmin = users.hasPermission(raw.userInfo.badges, CommandPermission['moderators'], raw)
 
     if (isAdmin && text.length) {
       const match = response.match(/\$_(\S*)/g)

@@ -1,0 +1,115 @@
+{
+  "data": {
+    "className": "Greetings",
+    "properties": {
+      "id": {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number"
+      },
+      "userId": {
+        "name": "userId",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "number",
+        "fieldNames": [
+          "userId"
+        ]
+      },
+      "username": {
+        "name": "username",
+        "reference": "scalar",
+        "length": 255,
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "string"
+      },
+      "message": {
+        "name": "message",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "columnTypes": [
+          "text"
+        ]
+      },
+      "enabled": {
+        "name": "enabled",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "boolean"
+      }
+    },
+    "hooks": {},
+    "filters": {},
+    "primaryKeys": [
+      "id"
+    ],
+    "indexes": [],
+    "uniques": [],
+    "path": "./src/bot/entities/Greetings.ts",
+    "name": "Greetings",
+    "abstract": false,
+    "constructorParams": [],
+    "toJsonParams": [],
+    "useCache": true,
+    "compositePK": false,
+    "props": [
+      {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number"
+      },
+      {
+        "name": "userId",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "number",
+        "fieldNames": [
+          "userId"
+        ]
+      },
+      {
+        "name": "username",
+        "reference": "scalar",
+        "length": 255,
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "string"
+      },
+      {
+        "name": "message",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "columnTypes": [
+          "text"
+        ]
+      },
+      {
+        "name": "enabled",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "boolean"
+      }
+    ],
+    "collection": "greetings"
+  },
+  "origin": "./src/bot/entities/Greetings.ts",
+  "hash": "324fb5a4c02cff7e6d905290b8aaafbd",
+  "version": "4.0.7"
+}

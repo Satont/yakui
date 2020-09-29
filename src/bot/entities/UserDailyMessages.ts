@@ -1,14 +1,16 @@
 import { Cascade, Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core'
-import { Users } from './Users'
+import { User } from './User'
 
-@Entity()
-export class UsersDailyMessages {
+@Entity({
+  tableName: 'users_daily_messages',
+})
+export class UserDailyMessages {
 
   @PrimaryKey()
   id!: number;
 
-  @ManyToOne({ entity: () => Users, fieldName: 'userId', cascade: [Cascade.ALL], nullable: true })
-  userId?: Users;
+  @ManyToOne({ entity: () => User, fieldName: 'userId', cascade: [Cascade.ALL], nullable: true })
+  userId?: User;
 
   @Property({ nullable: true })
   count?: number = 1;

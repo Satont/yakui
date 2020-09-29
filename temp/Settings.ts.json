@@ -1,0 +1,99 @@
+{
+  "data": {
+    "className": "Settings",
+    "properties": {
+      "id": {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number"
+      },
+      "space": {
+        "name": "space",
+        "reference": "scalar",
+        "length": 255,
+        "getter": false,
+        "setter": false,
+        "type": "string"
+      },
+      "name": {
+        "name": "name",
+        "reference": "scalar",
+        "length": 255,
+        "getter": false,
+        "setter": false,
+        "type": "string"
+      },
+      "value": {
+        "name": "value",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "columnTypes": [
+          "text"
+        ]
+      }
+    },
+    "hooks": {},
+    "filters": {},
+    "primaryKeys": [
+      "id"
+    ],
+    "indexes": [],
+    "uniques": [
+      {
+        "name": "settings_space_name_unique",
+        "properties": [
+          "space",
+          "name"
+        ]
+      }
+    ],
+    "path": "./src/bot/entities/Settings.ts",
+    "name": "Settings",
+    "abstract": false,
+    "constructorParams": [],
+    "toJsonParams": [],
+    "useCache": true,
+    "compositePK": false,
+    "props": [
+      {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number"
+      },
+      {
+        "name": "space",
+        "reference": "scalar",
+        "length": 255,
+        "getter": false,
+        "setter": false,
+        "type": "string"
+      },
+      {
+        "name": "name",
+        "reference": "scalar",
+        "length": 255,
+        "getter": false,
+        "setter": false,
+        "type": "string"
+      },
+      {
+        "name": "value",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "columnTypes": [
+          "text"
+        ]
+      }
+    ],
+    "collection": "settings"
+  },
+  "origin": "./src/bot/entities/Settings.ts",
+  "hash": "e79e23cb482091fc14472ed59c1c40a6",
+  "version": "4.0.7"
+}

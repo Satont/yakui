@@ -2,7 +2,7 @@ import { ApiClient as Twitch, AccessToken } from 'twitch'
 import{ ChatClient as Chat } from 'twitch-chat-client'
 import { StaticAuthProvider } from 'twitch-auth'
 
-import Settings from '@bot/models/Settings'
+import {Settings} from '@bot/entities/Settings'
 import OAuth from './oauth'
 import Parser from './parser'
 import { UserPermissions } from 'typings'
@@ -11,6 +11,7 @@ import { info, error, chatOut, chatIn, timeout, whisperOut } from './logger'
 import { onHosting, onHosted, onRaided, onSubscribe, onReSubscribe, onMessageHighlight } from './eventsCaller'
 import users from '@bot/systems/users'
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
+import { orm } from './db'
 
 export default new class Tmi {
   private intervals = {
@@ -51,7 +52,6 @@ export default new class Tmi {
   constructor() {
     this.connect('bot')
     this.connect('broadcaster')
-    this.listenDbUpdates()
   }
 
   async connect(type: 'bot' | 'broadcaster') {
@@ -59,9 +59,9 @@ export default new class Tmi {
     this.isAlreadyUpdating[type] = true
 
     const [accessToken, refreshToken, channel] = await Promise.all([
-      Settings.findOne({ where: { space: 'oauth', name: `${type}AccessToken` } }),
-      Settings.findOne({ where: { space: 'oauth', name: `${type}RefreshToken` } }),
-      Settings.findOne({ where: { space: 'oauth', name: 'channel' } }),
+      orm.em.getRepository(Settings).findOne({ space: 'oauth', name: `${type}AccessToken` }),
+      orm.em.getRepository(Settings).findOne({ space: 'oauth', name: `${type}RefreshToken` }),
+      orm.em.getRepository(Settings).findOne({ space: 'oauth', name: 'channel' }),
     ])
 
     if (!accessToken || !refreshToken || !channel) {
@@ -239,16 +239,6 @@ export default new class Tmi {
       subscribers: badges.has('subscriber') || badges.has('founder'),
       viewers: true,
     }
-  }
-
-  listenDbUpdates() {
-    Settings.afterCreate((value => {
-      if (value.space !== 'oauth') return
-      setTimeout(() => {
-        this.connect('bot')
-        this.connect('broadcaster')
-      }, 5000)
-    }))
   }
 
   private async loadLibs() {

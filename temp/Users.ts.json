@@ -1,0 +1,183 @@
+{
+  "data": {
+    "className": "Users",
+    "properties": {
+      "id": {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number"
+      },
+      "username": {
+        "name": "username",
+        "reference": "scalar",
+        "length": 255,
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "string"
+      },
+      "messages": {
+        "name": "messages",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "number"
+      },
+      "watched": {
+        "name": "watched",
+        "reference": "scalar",
+        "nullable": true,
+        "default": "0",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "columnTypes": [
+          "int8"
+        ]
+      },
+      "points": {
+        "name": "points",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "number"
+      },
+      "lastMessagePoints": {
+        "name": "lastMessagePoints",
+        "reference": "scalar",
+        "nullable": true,
+        "default": "1",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "fieldNames": [
+          "lastMessagePoints"
+        ],
+        "columnTypes": [
+          "int8"
+        ]
+      },
+      "lastWatchedPoints": {
+        "name": "lastWatchedPoints",
+        "reference": "scalar",
+        "nullable": true,
+        "default": "1",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "fieldNames": [
+          "lastWatchedPoints"
+        ],
+        "columnTypes": [
+          "int8"
+        ]
+      }
+    },
+    "hooks": {},
+    "filters": {},
+    "primaryKeys": [
+      "id"
+    ],
+    "indexes": [
+      {
+        "name": "users_username_index",
+        "properties": "username"
+      }
+    ],
+    "uniques": [
+      {
+        "name": "users_id_unique",
+        "properties": "id"
+      }
+    ],
+    "path": "./src/bot/entities/Users.ts",
+    "name": "Users",
+    "abstract": false,
+    "constructorParams": [],
+    "toJsonParams": [],
+    "useCache": true,
+    "compositePK": false,
+    "props": [
+      {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number"
+      },
+      {
+        "name": "username",
+        "reference": "scalar",
+        "length": 255,
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "string"
+      },
+      {
+        "name": "messages",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "number"
+      },
+      {
+        "name": "watched",
+        "reference": "scalar",
+        "nullable": true,
+        "default": "0",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "columnTypes": [
+          "int8"
+        ]
+      },
+      {
+        "name": "points",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "number"
+      },
+      {
+        "name": "lastMessagePoints",
+        "reference": "scalar",
+        "nullable": true,
+        "default": "1",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "fieldNames": [
+          "lastMessagePoints"
+        ],
+        "columnTypes": [
+          "int8"
+        ]
+      },
+      {
+        "name": "lastWatchedPoints",
+        "reference": "scalar",
+        "nullable": true,
+        "default": "1",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "fieldNames": [
+          "lastWatchedPoints"
+        ],
+        "columnTypes": [
+          "int8"
+        ]
+      }
+    ],
+    "collection": "users"
+  },
+  "origin": "./src/bot/entities/Users.ts",
+  "hash": "36e51cfe0bba93ecb74127e4a56ca957",
+  "version": "4.0.7"
+}

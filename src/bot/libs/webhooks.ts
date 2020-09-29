@@ -1,6 +1,7 @@
 import tmi from './tmi'
-import Settings from '@bot/models/Settings'
+import {Settings} from '@bot/entities/Settings'
 import { info, error } from './logger'
+import { orm } from './db'
 
 export default new class WebHooks {
   private callBackUrl: string = null
@@ -8,13 +9,12 @@ export default new class WebHooks {
   private initTimeout: NodeJS.Timeout = null
 
   constructor() {
-    this.listenDbUpdates()
     this.init()
   }
 
   async init() {
     clearTimeout(this.initTimeout)
-    const url: Settings = await Settings.findOne({ where: { space: 'general', name: 'siteUrl' } })
+    const url = await orm.em.getRepository(Settings).findOne({ space: 'general', name: 'siteUrl' })
     if (!url) return
 
     this.callBackUrl = `${url.value}/twitch/webhooks/callback`
@@ -84,13 +84,5 @@ export default new class WebHooks {
     }
 
     return true
-  }
-
-  listenDbUpdates() {
-    Settings.afterUpdate(instance => {
-      if (instance.space === 'general' && instance.name === 'siteUrl') {
-        this.init()
-      }
-    })
   }
 }

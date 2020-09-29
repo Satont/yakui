@@ -1,7 +1,9 @@
 import { Cascade, Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core'
-import { Users } from './Users'
+import { User } from './User'
 
-@Entity()
+@Entity({
+  tableName: 'users_bits',
+})
 export class UsersBits {
 
   @PrimaryKey()
@@ -16,7 +18,7 @@ export class UsersBits {
   @Property({ columnType: 'int8' })
   timestamp!: string;
 
-  @ManyToOne({ entity: () => Users, fieldName: 'userId', cascade: [Cascade.ALL], nullable: true })
-  userId?: Users;
+  @ManyToOne({ entity: () => User, fieldName: 'userId', cascade: [Cascade.ALL], nullable: true })
+  userId?: User;
 
 }

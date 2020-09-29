@@ -1,8 +1,9 @@
 import { System } from 'typings'
 import { getNameSpace } from '@bot/libs/socket'
 import { debug } from '@bot/libs/logger'
-import Settings from '@bot/models/Settings'
+import {Settings} from '@bot/entities/Settings'
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
+import { orm } from '@bot/libs/db'
 
 export default new class TTS implements System {
   socket = getNameSpace('overlays/tts')
@@ -23,13 +24,11 @@ export default new class TTS implements System {
   }
 
   async init() {
-    const settings: Settings = await Settings.findOne({
-      where: { space: 'tts', name: 'settings' },
-    })
+    const settings = await orm.em.getRepository(Settings).findOne({ space: 'tts', name: 'settings' })
 
     if (!settings) return
 
-    this.settings = settings.value
+    this.settings = settings.value as any
 
     this.clients.forEach(c => c.emit('settings', { ...this.settings, token: this.token }))
   }
@@ -52,12 +51,5 @@ export default new class TTS implements System {
     if (!this.settings.triggerByHighlight) return
 
     this.emitTTS(data.message.value)
-  }
-
-  async listenDbUpdates() {
-    Settings.afterSave(instance => {
-      if (instance.space !== 'tts') return
-      this.init()
-    })
   }
 }

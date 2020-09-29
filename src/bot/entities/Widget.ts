@@ -1,7 +1,9 @@
 import { Entity, PrimaryKey, Property, Unique } from '@mikro-orm/core'
 
-@Entity()
-export class Widgets {
+@Entity({
+  tableName: 'widgets'
+})
+export class Widget {
 
   @PrimaryKey()
   id!: number;

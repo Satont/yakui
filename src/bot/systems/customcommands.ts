@@ -1,15 +1,13 @@
 import { System, Command as CommandType, CommandOptions } from 'typings'
 import { Command } from '@bot/entities/Command'
-import CommandSound from '@bot/models/CommandSound'
+import { orm } from '@bot/libs/db'
 
 export default new class CustomCommands implements System {
   commands: CommandType[] = []
 
   async init() {
-    const commands: Command[] = await Command.findAll({
-      include: [CommandSound],
-    })
-
+    const commands = await orm.em.getRepository(Command).findAll()
+    console.log(commands)
     this.commands = commands.map(command => ({
       id: command.id,
       name: command.name,
@@ -26,6 +24,7 @@ export default new class CustomCommands implements System {
       type: 'custom',
       usage: command.usage,
     }))
+
   }
 
   async fnc(opts: CommandOptions) {

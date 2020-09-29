@@ -4,12 +4,12 @@ import 'source-map-support/register'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config()
-import { start as dbConnect, orm, connected } from '@bot/libs/db'
+import { start as dbConnect, orm } from '@bot/libs/db'
 import { error } from '@bot/libs/logger'
 
 const start = async () => {
   await dbConnect()
-  if (!await orm.isConnected() || !connected) return setTimeout(() => start(), 1000)
+  if (!await orm.isConnected()) return setTimeout(() => start(), 1000)
 
   await import('@bot/libs/locales')
   await import('@bot/libs/tmi')

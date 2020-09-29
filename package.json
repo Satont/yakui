@@ -5,7 +5,7 @@
   "scripts": {
     "migrate": "knex migrate:latest",
     "prestart": "knex migrate:latest",
-    "start": "cross-env NODE_ENV=production node --experimental-report --report-on-fatalerror --report-directory=./logs/ --always_compact --optimize_for_size --gc_interval=100 dest/index",
+    "start": "cross-env NODE_ENV=production node --experimental-report --report-on-fatalerror --report-directory=./logs/ --always_compact --optimize_for_size --gc_interval=100 dest/index.js",
     "build": "npm run build:web && npm run build:bot",
     "dev": "npm run dev:web & npm run dev:bot",
     "dev:bot": "nodemon",
@@ -20,6 +20,7 @@
     "node": ">=12"
   },
   "devDependencies": {
+    "@mikro-orm/cli": "^4.0.7",
     "@types/body-parser": "^1.19.0",
     "@types/connect-history-api-fallback": "^1.3.3",
     "@types/css-minimizer-webpack-plugin": "^1.1.0",
@@ -56,6 +57,7 @@
   "dependencies": {
     "@mikro-orm/core": "^4.0.7",
     "@mikro-orm/postgresql": "^4.0.7",
+    "@mikro-orm/reflection": "^4.0.7",
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
     "bootstrap": "^4.5.2",
@@ -106,6 +108,14 @@
     "ws": "^7.3.1"
   },
   "_moduleAliases": {
-    "@bot": "dest/"
+    "@bot": "dest/",
+    "@": "./"
+  },
+  "mikro-orm": {
+    "useTsNode": true,
+    "configPaths": [
+      "./src/bot/mikro-orm.config.ts",
+      "./dest/mikro-orm.config.js"
+    ]
   }
 }

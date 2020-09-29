@@ -1,13 +1,15 @@
 import { Entity, Index, PrimaryKey, Property, Unique } from '@mikro-orm/core'
 
-@Entity()
-export class Keywords {
+@Entity({
+  tableName: 'variables',
+})
+export class Variable {
 
   @PrimaryKey()
   id!: number;
 
-  @Index({ name: 'keywords_name_index' })
-  @Unique({ name: 'keywords_name_unique' })
+  @Index({ name: 'variables_name_index' })
+  @Unique({ name: 'variables_name_unique' })
   @Property({ length: 255 })
   name!: string;
 
@@ -16,8 +18,5 @@ export class Keywords {
 
   @Property({ nullable: true })
   enabled?: boolean = true;
-
-  @Property({ nullable: true })
-  cooldown?: number = 30;
 
 }

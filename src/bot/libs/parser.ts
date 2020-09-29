@@ -6,11 +6,12 @@ import Variables from '@bot/systems/variables'
 
 import users from '@bot/systems/users'
 import variables from '@bot/systems/variables'
-import User from '@bot/models/User'
+import {User} from '@bot/entities/User'
 import locales from './locales'
-import File from '@bot/models/File'
+import {File} from '@bot/entities/File'
 import cache from './cache'
-import CommandModel from '@bot/models/Command'
+import { Command as CommandModel } from '@bot/entities/Command'
+import { orm } from './db'
 
 export default new class Parser {
   systems: { [x: string]: System } = {}
@@ -49,26 +50,28 @@ export default new class Parser {
     if (!users.hasPermission(raw.userInfo.badges, command.permission, raw)) return
 
     if (command.price && !this.cooldowns.includes(command.name)) {
-      const [user]: [User] = await User.findOrCreate({
-        where: { id: raw.userInfo.userId },
-        defaults: { id: raw.userInfo.userId, username: raw.userInfo.userName },
-      })
-
+      let user = await orm.em.getRepository(User).findOne({ id: Number(raw.userInfo.userId) })
+      if (!user) {
+        user = orm.em.getRepository(User).create({ id: Number(raw.userInfo.userId), username: raw.userInfo.userName })
+      }
       if (user.points < command.price) {
         tmi.say({ message: locales.translate('price.notEnought', raw.userInfo.userName) })
         return
-      } else user.decrement({ points: command.price })
+      } else user.points -= command.price
+      await orm.em.persistAndFlush(user)
     }
 
     if (command.type === 'custom') {
-      CommandModel.increment({ usage: 1 }, { where: { id: command.id }})
+      const cmd = await orm.em.getRepository(CommandModel).findOne({ id: command.id })
+      cmd.usage += 1
+      orm.em.persistAndFlush(cmd)
     }
     
     if (command.sound && (command.sound.soundId as any) !== '0' && !this.cooldowns.includes(command.name)) {
       const alerts = await import('@bot/overlays/alerts')
       alerts.default.emitAlert({ 
         audio: { 
-          file: await File.findOne({ where: { id: command.sound.soundId } }) ,
+          file: await orm.em.getRepository(File).findOne({ id: command.sound.soundId }),
           volume: command.sound.volume,
         },
       })

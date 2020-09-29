@@ -1,7 +1,11 @@
-import { Entity, Enum, PrimaryKey, Property, Unique } from '@mikro-orm/core'
+import { Entity, Enum, PrimaryKey, Property, Unique, OneToOne } from '@mikro-orm/core'
+/* import { CommandPermission } from 'typings' */
+import { CommandSound } from './CommandSound'
 
-@Entity()
-export class Commands {
+@Entity({
+  tableName: 'commands',
+})
+export class Command {
   @PrimaryKey()
   id!: number
 
@@ -28,20 +32,15 @@ export class Commands {
   visible = true
 
   @Enum()
-  permission!: Permission
+  permission!: any
 
   @Property()
   price?: number = 0
 
   @Property({ nullable: true })
   usage?: number = 1
+  
+  @OneToOne()
+  sound?: CommandSound
 }
 
-export enum Permission {
-  'viewers',
-  'followers',
-  'vips',
-  'subscribers',
-  'moderators', 
-  'broadcaster'
-}

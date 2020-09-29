@@ -1,7 +1,9 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core'
 
-@Entity()
-export class Greetings {
+@Entity({
+  tableName: 'greetings',
+})
+export class Greeting {
 
   @PrimaryKey()
   id!: number;
@@ -15,7 +17,7 @@ export class Greetings {
   @Property({ columnType: 'text' })
   message!: string;
 
-  @Property({ nullable: true })
-  enabled?: boolean = true;
+  @Property()
+  enabled? = true;
 
 }

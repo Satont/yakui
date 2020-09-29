@@ -1,7 +1,9 @@
 import { Entity, PrimaryKey, Property, Unique } from '@mikro-orm/core'
 
-@Entity()
-export class Events {
+@Entity({
+  tableName: 'events',
+})
+export class Event {
 
   @PrimaryKey()
   id!: number;
@@ -11,6 +13,6 @@ export class Events {
   name!: string;
 
   @Property({ columnType: 'json', nullable: true, default: '[]' })
-  operations?: object;
+  operations?: Record<string, any>;
 
 }

@@ -1,5 +1,4 @@
 import { Table, Column, Model, DataType, PrimaryKey, AutoIncrement, Default, AllowNull, HasOne } from 'sequelize-typescript'
-import { CommandPermission } from 'typings'
 import CommandSound from './CommandSound'
 
 @Table({
@@ -49,7 +48,7 @@ export default class Command extends Model<Command> {
   @Default('viewers')
   @AllowNull(false)
   @Column(DataType.ENUM('viewers', 'followers', 'vips', 'subscribers', 'moderators', 'broadcaster'))
-  public permission: CommandPermission
+  public permission: any
 
   @HasOne(() => CommandSound)
   sound: CommandSound

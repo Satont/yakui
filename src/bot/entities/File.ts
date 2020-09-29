@@ -1,7 +1,9 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core'
 
-@Entity()
-export class Files {
+@Entity({
+  tableName: 'files',
+})
+export class File {
 
   @PrimaryKey()
   id!: number;
