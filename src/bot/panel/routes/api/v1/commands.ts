@@ -27,7 +27,7 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:id', isAdmin, async (req, res, next) => {
   try {
-    const command = cache.commands.get(req.params.id)
+    const command = Commands.getCommandById(req.params.id)
 
     res.json(command)
   } catch (e) {

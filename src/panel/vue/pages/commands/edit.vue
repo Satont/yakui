@@ -116,8 +116,6 @@ export default class CommandsManagerEdit extends Vue {
     const id = this.$route.params.id as any
 
     if (id) {
-      this.command = this.$route.params as any
-
       const { data } = await this.$axios.get('/commands/' + id)
 
       this.command = data
@@ -126,7 +124,7 @@ export default class CommandsManagerEdit extends Vue {
   }
 
   get soundsList() {
-    return this.$store.state.filesList.filter(s => s.type.startsWith('audio'))
+    return this.$store.state.filesList?.filter(s => s.type.startsWith('audio'))
   }
 
   async del() {
