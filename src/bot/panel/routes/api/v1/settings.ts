@@ -1,7 +1,8 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
-import Settings from '@bot/models/Settings'
+import {Settings} from '@bot/entities/Settings'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
+import { RequestContext, wrap } from '@mikro-orm/core'
 
 const router = Router({
   mergeParams: true,
@@ -16,10 +17,8 @@ router.get('/', isAdmin, checkSchema({
   try {
     validationResult(req).throw()
     const space = req.query.space as string
-
-    const settings = await Settings.findAll({
-      where: { space },
-    })
+    const repository = RequestContext.getEntityManager().getRepository(Settings)
+    const settings = await repository.find({ space })
 
     res.send(settings)
   } catch (e) {
@@ -30,17 +29,18 @@ router.get('/', isAdmin, checkSchema({
 router.post('/', isAdmin, async (req, res, next) => {
   const body: { space: string, name: string, value: any }[] = req.body
   try {
+    const repository = RequestContext.getEntityManager().getRepository(Settings)
+    const entities: Settings[] = []
     for (const data of body) {
-      const [item, created]: [Settings, boolean] = await Settings.findOrCreate({
-        where: { space: data.space, name: data.name },
-        defaults: data,
+      const item = await repository.findOne({ space: data.space, name: data.name }) || repository.create(data)
+      
+      wrap(item).assign({
+        value: data.value,
       })
-
-      if (!created) {
-        await item.update({ value: data.value })
-      }
+      entities.push(item)
     }
 
+    await repository.persistAndFlush(entities)
     res.send('Ok')
   } catch (e) {
     next(e)
