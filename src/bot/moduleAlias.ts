@@ -7,7 +7,7 @@ const paths = {
   src: isProduction ? resolve(process.cwd(), 'dest') : resolve(process.cwd(), 'src'),
   bot: isProduction ? resolve(process.cwd(), 'dest') : resolve(process.cwd(), 'src', 'bot'),
 }
-console.log(paths)
+
 moduleAlias.addAlias('@src', paths.src)
 moduleAlias.addAlias('@bot', paths.bot)
 moduleAlias.addAlias('@', process.cwd())

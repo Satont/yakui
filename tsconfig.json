@@ -2,9 +2,11 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
+      "@/*": ["./*"],
       "@bot/*": ["src/bot/*"],
       "@panel/*": ["src/panel/*"],
-      "@login/*": ["src/login/*"]
+      "@login/*": ["src/login/*"],
+      "typings": ["typings"]
     },
     "target": "es6",
     "module": "commonjs",
@@ -16,8 +18,8 @@
     "skipLibCheck": true,
     "declaration": true,
     "typeRoots" : [
-      "typings",
-      "node_modules/@types"
+      "node_modules/@types",
+      "typings"
     ]
   },
   "include": [
@@ -25,6 +27,7 @@
     "./src",
     "src/**/*.ts",
     "src/**/*.vue",
+    "typings/*"
   ],
   "exclude": ["node_modules"],
 }

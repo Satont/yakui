@@ -1,8 +1,10 @@
 import { Options } from '@mikro-orm/core'
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection'
+import { info } from './libs/logger'
 
 export default {
-  tsNode: true,
+  logger: (msg: string) => info(msg),
+  debug: true,
   metadataProvider: TsMorphMetadataProvider,
   dbName: process.env.DB_NAME,
   host: process.env.DB_HOST,
@@ -11,7 +13,11 @@ export default {
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   baseDir: process.cwd(),
-  entities: ['./dest/entities'],
-  entitiesTs: ['./src/bot/entities'],
+  entities: ['./dest/entities/**/*.js'],
+  entitiesTs: ['./src/bot/entities/**/*.ts'],
   cache: { pretty: true },
+  pool: {
+    min: 1,
+    max: 10,
+  },
 } as Options
