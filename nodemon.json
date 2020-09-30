@@ -1,6 +1,6 @@
 {
   "watch": ["src/bot"],
-  "exec": "npm run migrate && ts-node --files src/bot/index.ts",
+  "exec": "npm run migrate && ts-node src/bot/index.ts",
   "ext": "ts",
   "ignore": [
     "src/bot/data/migrations/**"

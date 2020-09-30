@@ -1,5 +1,6 @@
 import { Entity, Enum, PrimaryKey, Property, Unique, OneToOne } from '@mikro-orm/core'
 import { CommandPermission } from '@src/typings'
+import JsonType from '../customTypes/JsonType'
 import { CommandSound } from './CommandSound'
 
 @Entity({
@@ -13,7 +14,7 @@ export class Command {
   @Property({ length: 255 })
   name!: string
 
-  @Property()
+  @Property({ columnType: 'json' })
   aliases?: string[] = []
 
   @Property()

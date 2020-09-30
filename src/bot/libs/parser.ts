@@ -8,7 +8,6 @@ import users from '@bot/systems/users'
 import variables from '@bot/systems/variables'
 import {User} from '@bot/entities/User'
 import locales from './locales'
-import {File} from '@bot/entities/File'
 import cache from './cache'
 import { Command as CommandModel } from '@bot/entities/Command'
 import { orm } from './db'
@@ -67,11 +66,11 @@ export default new class Parser {
       orm.em.persistAndFlush(cmd)
     }
     
-    if (command.sound && (command.sound.soundId as any) !== '0' && !this.cooldowns.includes(command.name)) {
+    if (command.sound && !this.cooldowns.includes(command.name)) {
       const alerts = await import('@bot/overlays/alerts')
-      alerts.default.emitAlert({ 
+      alerts.default.emitAlert({
         audio: { 
-          file: await orm.em.getRepository(File).findOne({ id: command.sound.soundId }),
+          file: command.sound.file,
           volume: command.sound.volume,
         },
       })

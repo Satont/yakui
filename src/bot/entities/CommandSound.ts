@@ -14,8 +14,8 @@ export class CommandSound {
   volume?: number = 50;
 
   @ManyToOne({ entity: () => Command, fieldName: 'commandId', cascade: [Cascade.ALL] })
-  commandId!: Command;
+  command!: Command;
 
   @ManyToOne({ entity: () => File, fieldName: 'soundId', cascade: [Cascade.ALL] })
-  soundId!: File;
+  file!: File;
 }

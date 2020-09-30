@@ -1,8 +1,7 @@
-import { Router, Request, Response, NextFunction, response } from 'express'
+import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
 import {Command} from '@bot/entities/Command'
 import {CommandSound} from '@bot/entities/CommandSound'
-import { Command as CommandType } from '@src/typings'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
 import Commands from '@bot/systems/commands'
 import customcommands from '@bot/systems/customcommands'
@@ -88,7 +87,7 @@ router.post('/', isAdmin, checkSchema({
   try {
     validationResult(req).throw()
 
-    const body: CommandType = req.body
+    const body = req.body
 
     if (cache.commands.has(body.name) || cache.commandsAliases.has(body.name) || body.aliases?.some(a => cache.commandsAliases.has(a) || cache.commands.has(a))) {
       return res.status(400).send({ message: 'This aliase or name already exists.' })
@@ -121,7 +120,7 @@ router.post('/', isAdmin, checkSchema({
       })
     } else {
       const soundRespository = RequestContext.getEntityManager().getRepository(CommandSound)
-      const sound = await soundRespository.findOne({ commandId: command.id })
+      const sound = await soundRespository.findOne({ command: command.id })
       await soundRespository.removeAndFlush(sound)
     }
 

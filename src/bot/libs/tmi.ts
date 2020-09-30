@@ -109,6 +109,7 @@ export default new class Tmi {
       error(e)
       OAuth.refresh(refreshToken.value, type)
         .then(() => this.connect(type))
+        .catch(error)
     } finally {
       this.isAlreadyUpdating[type] = false
     }
@@ -162,7 +163,7 @@ export default new class Tmi {
       this.connected[type] = true
       client.join(this.channel?.name).catch((e) => {
         if (e.message.includes('Did not receive a reply to join')) return
-        else throw new Error(e)
+        else error(e)
       })
     })
 

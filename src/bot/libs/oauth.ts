@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import {Settings} from '@bot/entities/Settings'
 import { info, error } from './logger'
 import { orm } from './db'
@@ -21,8 +21,8 @@ export default new class Oauth {
         scopes: data.scopes,
       }
     } catch (e) {
-      error(e)
-      throw (`Can't validate access token of ${type}`)
+      error((e as AxiosError).response.data ? e.response.data : e)
+      throw `Can't validate access token of ${type}`
     }
   }
 
@@ -39,17 +39,18 @@ export default new class Oauth {
         refreshToken = orm.em.getRepository(Settings).create({ space: 'oauth', name: `${type}RefreshToken`, value: data.token })
       }
     
-      
-      await orm.em.persistAndFlush(accessToken)
-      await orm.em.persistAndFlush(refreshToken)
+      accessToken.value = data.token
+      refreshToken.value = data.refresh
+
+      await orm.em.persistAndFlush([accessToken, refreshToken])
       info(`Access token of ${type} was refreshed.`)
       return {
         access_token: data.token,
         refresh_token: data.refresh,
       }
     } catch (e) {
-      error(e)
-      throw new Error(`Can't refresh access token of ${type}`)
+      error((e as AxiosError).response?.data ? e.response.data : e)
+      throw `Can't refresh access token of ${type}`
     }
   }
 }
