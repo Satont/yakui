@@ -67,8 +67,6 @@ export default new class Users implements System {
       repository.findOne({ space: 'users', name: 'botAdmins' }),
     ])
 
-    const user = await orm.em.getRepository(User).findOne(128644134)
-    console.log(user, typeof user.watched, user.watched === 72120000)
     this.settings.ignoredUsers = ignoredUsers?.value as any ?? []
     this.settings.enabled = enabled?.value as any ?? true
     this.settings.admins = admins?.value as any ?? []
