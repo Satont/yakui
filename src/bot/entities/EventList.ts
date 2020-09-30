@@ -1,4 +1,5 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core'
+import MyBigInt from '../customTypes/BigInt'
 
 @Entity({
   tableName: 'eventlist',
@@ -13,6 +14,6 @@ export class EventList {
   @Property({ columnType: 'json' })
   data!: Record<string, any>
 
-  @Property({ columnType: 'int8' })
-  timestamp!: string
+  @Property({ columnType: 'int8', type: MyBigInt })
+  timestamp!: number
 }

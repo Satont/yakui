@@ -1,11 +1,11 @@
 import { chunk as makeChunk } from 'lodash'
 
 import { System, ParserOptions, Command, CommandOptions, CommandPermission } from '@src/typings'
-import User from '@bot/models/User'
+import {User} from '@bot/entities/User'
 import tmi from '@bot/libs/tmi'
 import UserTips from '@bot/models/UserTips'
 import UserBits from '@bot/models/UserBits'
-import UserDailyMessages from '@bot/models/UserDailyMessages'
+import {UserDailyMessages} from '@bot/entities/UserDailyMessages'
 import twitch from './twitch'
 import {Settings} from '@bot/entities/Settings'
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
@@ -67,6 +67,8 @@ export default new class Users implements System {
       repository.findOne({ space: 'users', name: 'botAdmins' }),
     ])
 
+    const user = await orm.em.getRepository(User).findOne(128644134)
+    console.log(user)
     this.settings.ignoredUsers = ignoredUsers?.value as any ?? []
     this.settings.enabled = enabled?.value as any ?? true
     this.settings.admins = admins?.value as any ?? []
@@ -85,16 +87,11 @@ export default new class Users implements System {
 
     const [id, username] = [opts.raw.userInfo.userId, opts.raw.userInfo.userName]
 
-    const [user, created]: [User, boolean] = await User.findOrCreate({
-      where: { id },
-      defaults: { id, username, messages: 1 },
-    })
+    const repository = orm.em.getRepository(User)
+    const user = await repository.findOne(Number(id)) || repository.create({ id: Number(id), username })
 
     user.username = opts.raw.userInfo.userName
-
-    if (!created && twitch.streamMetaData?.startedAt) {
-      user.messages = user.messages + 1
-    }
+    user.messages +=  1
 
     const updatePoints = (Number(user.lastMessagePoints) + pointsInterval <= user.messages) && this.settings.points.enabled
 
@@ -103,19 +100,18 @@ export default new class Users implements System {
       user.lastMessagePoints = new Date().getTime()
     }
 
-    user.save()
+    repository.persistAndFlush(user)
 
     if (!twitch.streamMetaData?.startedAt) return
 
     const now = new Date()
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
-    const [daily, isNewDailyRow]: [UserDailyMessages, boolean] = await UserDailyMessages.findOrCreate({
-      where: { userId: user.id, date: startOfDay.getTime() },
-      defaults: { count: 1 },
-    })
+    const dailyRepository = orm.em.getRepository(UserDailyMessages)
+    const daily = await dailyRepository.findOne({ userId: user.id, date: startOfDay.getTime() }) || dailyRepository.create({ userId: user.id, date: startOfDay.getTime() })
 
-    if (!isNewDailyRow) daily.increment({ count: 1 })
+    daily.count += 1
+    dailyRepository.persistAndFlush(daily)
   }
 
   async getUserStats({ id, username }: { id?: string, username?: string }): Promise<User> {
@@ -124,23 +120,22 @@ export default new class Users implements System {
     if (!id) {
       const byName = await tmi?.clients?.bot?.helix.users.getUserByName(username)
       id = byName.id
+      username = byName.name
     }
 
-    let user = await User.findOne({
-      where: { id },
-      include: [UserTips, UserBits, UserDailyMessages],
-      attributes: { include: ['totalTips', 'totalTips', 'todayMessages' ]},
-    })
+    const repository = orm.em.getRepository(User)
+    const user = await repository.findOne(Number(id), ['tips', 'bits', 'daily'])
 
-    if (!user) user = await User.create({
-      id,
-      username,
-    }, { include: [UserTips, UserBits, UserDailyMessages] })
+    if (user) return user
 
-    return user
+    const create = repository.create({ id: Number(id), username })
+    repository.persistAndFlush(create)
+    return create
   }
 
   private async countWatched() {
+    const repository = orm.em.getRepository(User)
+
     clearTimeout(this.countWatchedTimeout)
     this.countWatchedTimeout = setTimeout(() => this.countWatched(), 1 * 60 * 1000)
     const [pointsPerWatch, pointsInterval] = [this.settings.points.watch.amount, this.settings.points.watch.interval * 60 * 1000]
@@ -150,21 +145,18 @@ export default new class Users implements System {
     for (const chatter of this.chatters) {
       if (this.settings.ignoredUsers.includes(chatter.username.toLowerCase())) continue
 
-      const [user, isNewUser]: [User, boolean] = await User.findOrCreate({
-        where: { id: chatter.id },
-        defaults: { id: chatter.id, username: chatter.username, watched: 1 * 60 * 1000 },
-      })
+      const user = await repository.findOne(Number(chatter.id)) || repository.create({ id: Number(chatter.id), username: chatter.username })
 
       const updatePoints = (new Date().getTime() - new Date(user.lastWatchedPoints).getTime() >= pointsInterval) && this.settings.points.enabled
 
       if (pointsPerWatch !== 0 && pointsInterval !== 0 && updatePoints) {
         user.lastWatchedPoints = new Date().getTime()
-        user.points = user.points + pointsPerWatch
+        user.points +=  pointsPerWatch
       }
 
-      if (!isNewUser) user.watched = user.watched + 1 * 60 * 1000
+      user.watched += 1 * 60 * 1000
 
-      user.save()
+      repository.persistAndFlush(user)
     }
 
   }

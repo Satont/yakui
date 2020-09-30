@@ -1,4 +1,5 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core'
+import MyBigInt from '../customTypes/BigInt'
 
 @Entity({
   tableName: 'timers',
@@ -23,7 +24,6 @@ export class Timer {
   @Property({ nullable: true })
   last?: number;
 
-  @Property({ columnType: 'int8', fieldName: 'triggerTimeStamp', nullable: true, default: '0' })
+  @Property({ columnType: 'int8', fieldName: 'triggerTimeStamp', nullable: true, default: '0', type: MyBigInt })
   triggerTimeStamp?: number;
-
 }

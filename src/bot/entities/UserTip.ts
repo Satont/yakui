@@ -1,4 +1,5 @@
 import { Cascade, Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core'
+import MyBigInt from '../customTypes/BigInt'
 import { User } from './User'
 
 @Entity({
@@ -24,8 +25,8 @@ export class UserTip {
   @Property({ columnType: 'text', nullable: true })
   message?: string;
 
-  @Property({ columnType: 'int8' })
-  timestamp!: string;
+  @Property({ columnType: 'int8', type: MyBigInt })
+  timestamp!: number;
 
   @ManyToOne({ entity: () => User, fieldName: 'userId', cascade: [Cascade.ALL], nullable: true })
   user?: User;

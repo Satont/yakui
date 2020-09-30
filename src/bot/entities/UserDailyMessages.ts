@@ -1,11 +1,11 @@
-import { Cascade, Entity, ManyToOne, PrimaryKey, Property, OneToOne } from '@mikro-orm/core'
+import { Cascade, Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core'
+import MyBigInt from '../customTypes/BigInt'
 import { User } from './User'
 
 @Entity({
   tableName: 'users_daily_messages',
 })
 export class UserDailyMessages {
-
   @PrimaryKey()
   id!: number;
 
@@ -13,11 +13,11 @@ export class UserDailyMessages {
   userId?: User;
 
   @Property({ nullable: true })
-  count?: number = 1;
+  count?: number = 0;
 
-  @Property({ columnType: 'int8' })
+  @Property({ columnType: 'int8', type: MyBigInt })
   date!: number;
 
-  @OneToOne(() => User, user => user.dailyMessages)
+  @ManyToOne(() => User)
   user!: User;
 }
