@@ -10,6 +10,9 @@ export class SongLike {
   @PrimaryKey()
   id!: number;
 
+  @Property()
+  userId: number
+
   @OneToOne({ entity: () => User, fieldName: 'userId', cascade: [Cascade.ALL], nullable: true })
   user?: User;
 
