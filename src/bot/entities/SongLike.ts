@@ -11,7 +11,7 @@ export class SongLike {
   id!: number;
 
   @OneToOne({ entity: () => User, fieldName: 'userId', cascade: [Cascade.ALL], nullable: true })
-  userId?: User;
+  user?: User;
 
   @Property({ length: 255 })
   name!: string;

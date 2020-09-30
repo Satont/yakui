@@ -1,13 +1,15 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
-import Widget from '@bot/models/Widget'
+import {Widget} from '@bot/entities/Widget'
 import { checkSchema, validationResult } from 'express-validator'
+import { RequestContext, wrap } from '@mikro-orm/core'
 
 const router = Router()
 
 router.get('/', isAdmin, async (req, res, next) => {
   try {
-    const widgets: Widget[] = await Widget.findAll()
+    const repository = RequestContext.getEntityManager().getRepository(Widget)
+    const widgets = await repository.findAll()
 
     res.json(widgets)
   } catch (e) {
@@ -40,20 +42,12 @@ router.post('/', isAdmin,  checkSchema({
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
-    let widget: Widget
-    if (!req.body.id) {
-      widget = await Widget.create(req.body)
-    } else {
-      widget = await Widget.findOne({ where: { id: req.body.id }})
 
-      widget.h = req.body.h
-      widget.w = req.body.w
-      widget.y = req.body.y
-      widget.x = req.body.x
-      widget.name = req.body.name
+    const repository = RequestContext.getEntityManager().getRepository(Widget)
+    const widget = await repository.findOne(req.body.id) || repository.create(req.body)
 
-      await widget.save()
-    }
+    wrap(widget).assign(req.body)
+    await repository.persistAndFlush(widget)
 
     res.json(widget)
   } catch (e) {
@@ -69,8 +63,10 @@ router.delete('/', isAdmin,  checkSchema({
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
-    await Widget.destroy({ where: { id: req.body.id }})
+    const repository = RequestContext.getEntityManager().getRepository(Widget)
+    const widget = await repository.findOne(req.body.id)
 
+    await repository.removeAndFlush(widget)
     res.json('Ok')
   } catch (e) {
     next(e)

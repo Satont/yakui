@@ -28,6 +28,5 @@ export class UserTip {
   timestamp!: string;
 
   @ManyToOne({ entity: () => User, fieldName: 'userId', cascade: [Cascade.ALL], nullable: true })
-  userId?: User;
-
+  user?: User;
 }

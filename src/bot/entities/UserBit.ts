@@ -5,7 +5,6 @@ import { User } from './User'
   tableName: 'users_bits',
 })
 export class UserBit {
-
   @PrimaryKey()
   id!: number;
 
@@ -19,6 +18,5 @@ export class UserBit {
   timestamp!: string;
 
   @ManyToOne({ entity: () => User, fieldName: 'userId', cascade: [Cascade.ALL], nullable: true })
-  userId?: User;
-
+  user?: User;
 }

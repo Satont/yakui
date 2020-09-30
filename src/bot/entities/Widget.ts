@@ -23,5 +23,4 @@ export class Widget {
 
   @Property()
   h!: number;
-
 }

@@ -1,5 +1,7 @@
-import { Entity, Index, PrimaryKey, Property, Unique, OneToOne } from '@mikro-orm/core'
+import { Entity, Index, PrimaryKey, Property, Unique, OneToOne, OneToMany, Collection } from '@mikro-orm/core'
+import { UserBit } from './UserBit'
 import { UserDailyMessages } from './UserDailyMessages'
+import { UserTip } from './UserTip'
 
 @Entity({
   tableName: 'users',
@@ -31,4 +33,10 @@ export class User {
 
   @OneToOne()
   dailyMessages?: UserDailyMessages
+
+  @OneToMany(() => UserBit, bit => bit.user)
+  bits? = new Collection<UserBit>(this);
+
+  @OneToMany(() => UserTip, tip => tip.user)
+  tips? = new Collection<UserBit>(this);
 }

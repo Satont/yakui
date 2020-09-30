@@ -1,13 +1,12 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
-import { Op } from 'sequelize'
 
-import User from '@bot/models/User'
-import UserBits from '@bot/models/UserBits'
-import UserTips from '@bot/models/UserTips'
+import {User} from '@bot/entities/User'
 import currency from '@bot/libs/currency'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
-
+import { RequestContext, wrap } from '@mikro-orm/core'
+import { UserBit } from '@/src/bot/entities/UserBit'
+import { UserTip } from '@/src/bot/entities/UserTip'
 
 const router = Router({
   mergeParams: true,
@@ -16,21 +15,19 @@ const router = Router({
 router.get('/', async (req, res, next) => {
   try {
     const body = req.query as any
-    let where = undefined
-    if (body.byUsername) {
-      where = { username: { [Op.like]: `%${body.byUsername}%` } }
-    }
+    const repository = RequestContext.getEntityManager().getRepository(User)
+    const where = body.byUsername ? {
+      username: { $like: body.byUsername },
+    } : {}
 
-    const { count, rows }: { count: number, rows: User[] } = await User.findAndCountAll({
-      where,
-      order: [ [body.sortBy, JSON.parse(body.sortDesc) ? 'DESC': 'ASC'] ],
-      offset: (Number(body.page) - 1) * Number(body.perPage),
+    const [users, total] = await repository.findAndCount(where, {
       limit: Number(body.perPage),
-      attributes: { include: ['totalTips', 'totalBits', 'watchedFormatted' ]},
-      include: [UserBits, UserTips],
+      offset: (Number(body.page) - 1) * Number(body.perPage),
+      orderBy: { [body.soryBy]: JSON.parse(body.sortDesc) ? 'desc': 'asc' },
+      populate: ['tips', 'bits'],
     })
 
-    res.json({ users: rows, total: count })
+    res.json({ users , total })
   } catch (e) {
     next(e)
   }
@@ -38,11 +35,8 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:id', async (req, res, next) => {
   try {
-    const user: User[] = await User.findOne({
-      where: { id: req.params.id },
-      include: [UserBits, UserTips],
-      attributes: { include: ['totalTips', 'totalBits', 'watchedFormatted' ]},
-    })
+    const repository = RequestContext.getEntityManager().getRepository(User)
+    const user = await repository.findOne(Number(req.params.id), ['bits', 'tips'])
 
     res.json(user)
   } catch (e) {
@@ -58,8 +52,10 @@ router.delete('/', isAdmin, checkSchema({
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
-    await User.destroy({ where: { id: req.body.id } })
-
+    const repository = RequestContext.getEntityManager().getRepository(User)
+    const user = await repository.findOne(Number(req.params.id))
+    
+    await repository.removeAndFlush(user)
     res.send('Ok')
   } catch (e) {
     next(e)
@@ -74,51 +70,45 @@ router.post('/', isAdmin, checkSchema({
   try {
     validationResult(req).throw()
 
-    const user: User = await User.findOne({
-      where: { id: req.body.user?.id },
-      include: [UserBits, UserTips],
-    })
+    const repository = RequestContext.getEntityManager().getRepository(User)
+    const bitRepository = RequestContext.getEntityManager().getRepository(UserBit)
+    const tipRepository = RequestContext.getEntityManager().getRepository(UserTip)
+    const user = await repository.findOne(Number(req.body.user?.id), ['bits', 'tips'])
 
     if (!user) throw new Error('User not found')
 
-    for (const bit of req.body.user.bits) {
-      if (bit.id) {
-        const [instance, created]: [UserBits, boolean] = await UserBits.findOrCreate({
-          where: { id: bit.id },
-          defaults: bit,
-        })
-        if (!created) await instance.update(bit)
-      } else await UserBits.create(bit)
+    for (const bodyBit of req.body.user.bits) {
+      const bit = await bitRepository.findOne(bodyBit.id) || bitRepository.create(bodyBit)
+      wrap(bit).assign(bodyBit)
+      repository.persistAndFlush(bit)
     }
 
     for (const bit of req.body.delete.bits) {
-      await UserBits.destroy({ where: { id: bit }})
+      await bitRepository.removeAndFlush(await bitRepository.findOne({ id: bit }))
     }
 
     for (const tip of req.body.delete.tips) {
-      await UserTips.destroy({ where: { id: tip }})
+      await tipRepository.removeAndFlush(await tipRepository.findOne({ id: tip }))
     }
 
-    for (let tip of req.body.user.tips) {
-      tip = {
-        ...tip,
-        inMainCurrencyAmount: currency.exchange({ amount: tip.amount, from: tip.currency }),
+    for (let bodyTip of req.body.user.tips) {
+      bodyTip = {
+        ...bodyTip,
+        inMainCurrencyAmount: currency.exchange({ amount: bodyTip.amount, from: bodyTip.currency }),
         rates: currency.rates,
       }
 
-      if (tip.id) {
-        const [instance, created]: [UserTips, boolean] = await UserTips.findOrCreate({
-          where: { id: tip.id },
-          defaults: tip,
-        })
-        if (!created) await instance.update(tip)
-      } else await UserTips.create(tip)
+      const tip = await tipRepository.findOne(bodyTip.id) || tipRepository.create(bodyTip)
+      wrap(tip).assign(bodyTip)
+      
+      await repository.persistAndFlush(tip)
     }
 
     delete req.body.user.bits
     delete req.body.user.tips
 
-    await user.update(req.body.user)
+    wrap(user).assign(req.body.user)
+    await repository.persistAndFlush(user)
 
     res.send('Ok')
   } catch (e) {

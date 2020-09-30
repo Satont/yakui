@@ -4,7 +4,6 @@ import JsonType from '../customTypes/JsonType'
 @Entity()
 @Unique({ name: 'settings_space_name_unique', properties: ['space', 'name'] })
 export class Settings {
-
   @PrimaryKey()
   id!: number;
 
