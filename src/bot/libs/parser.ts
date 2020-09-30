@@ -1,6 +1,6 @@
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
 
-import { Command, System } from 'typings'
+import { Command, System } from '@src/typings'
 import tmi from './tmi'
 import Variables from '@bot/systems/variables'
 

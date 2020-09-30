@@ -1,6 +1,6 @@
 import { resolve } from 'path'
 import getFiles from '@bot/commons/getFiles'
-import { System } from 'typings'
+import { System } from '@src/typings'
 import { error, info } from './logger'
 import cache from './cache'
 

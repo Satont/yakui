@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import { Integration } from 'typings'
+import { Integration } from '@src/typings'
 import { Settings } from '@bot/entities/Settings'
 import User  from '@bot/models/User'
 import UserTips from '@bot/models/UserTips'
@@ -62,7 +62,7 @@ export default new class Qiwi implements Integration {
         })
       }
     } catch (e) {
-      error(e)
+      error(e.message)
     }
   }
 }

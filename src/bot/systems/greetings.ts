@@ -1,4 +1,4 @@
-import { System, ParserOptions } from 'typings'
+import { System, ParserOptions } from '@src/typings'
 import variables from './variables'
 import tmi from '@bot/libs/tmi'
 import cache from '@bot/libs/cache'

@@ -2,7 +2,7 @@ import Centrifuge from 'centrifuge'
 import axios from 'axios'
 import WebSocket from 'ws'
 
-import { Integration } from 'typings'
+import { Integration } from '@src/typings'
 import { Settings } from '@bot/entities/Settings'
 import { onDonation } from '@bot/libs/eventsCaller'
 import currency, { currency as currencyType } from '@bot/libs/currency'

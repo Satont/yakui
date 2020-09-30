@@ -1,12 +1,13 @@
-import { Router, Request, Response, NextFunction } from 'express'
+import { Router, Request, Response, NextFunction, response } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
-import Command from '@bot/models/Command'
-import { Command as CommandType } from 'typings'
+import {Command} from '@bot/entities/Command'
+import {CommandSound} from '@bot/entities/CommandSound'
+import { Command as CommandType } from '@src/typings'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
 import Commands from '@bot/systems/commands'
 import customcommands from '@bot/systems/customcommands'
-import CommandSound from '@bot/models/CommandSound'
 import cache from '@bot/libs/cache'
+import { RequestContext, wrap } from '@mikro-orm/core'
 
 const router = Router({
   mergeParams: true,
@@ -94,11 +95,12 @@ router.post('/', isAdmin, checkSchema({
     }
 
     let command: Command
+    const repository = RequestContext.getEntityManager().getRepository(Command)
 
     if (body.id) {
-      command = await Command.findOne({ where: { id: body.id } })
+      command = await repository.findOne({ id: body.id })
 
-      await command.update({
+      wrap(command).assign({
         name: body.name,
         aliases: body.aliases,
         cooldown: body.cooldown,
@@ -108,17 +110,20 @@ router.post('/', isAdmin, checkSchema({
         response: body.response,
         price: body.price,
       })
-    } else command = await Command.create(body)
+    } else command = repository.create(body)
 
     if (body.sound?.soundId && body.sound?.soundId as any !== '0') {
-      const [commandSound]: [CommandSound] = await CommandSound.findOrCreate({ 
-        where: { commandId: command.id },
-        defaults: { commandId: command.id, soundId: body.sound.soundId as any },
+      command.sound = new CommandSound()
+      wrap(command.sound).assign({ 
+        commandId: command.id, 
+        soundId: body.sound.soundId,
+        volume: body.sound.volume,
       })
-      commandSound.soundId = body.sound.soundId as any
-      commandSound.volume = body.sound.volume as any
-      await commandSound.save()
-    } else await CommandSound.destroy({ where: { commandId: command.id }}).catch(() => null)
+    } else {
+      const soundRespository = RequestContext.getEntityManager().getRepository(CommandSound)
+      const sound = await soundRespository.findOne({ commandId: command.id })
+      await soundRespository.removeAndFlush(sound)
+    }
 
     await customcommands.init()
     cache.updateCommands()
@@ -136,9 +141,11 @@ router.delete('/', isAdmin, checkSchema({
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
-    await Command.destroy({ where: { id: req.body.id }})
+    const repository = RequestContext.getEntityManager().getRepository(Command)
+    const command = await repository.findOne({ id: req.body.id })
+    await repository.removeAndFlush(command)
+
     await customcommands.init()
-    
     cache.updateCommands()
     res.send('Ok')
   } catch (e) {

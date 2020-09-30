@@ -1,6 +1,6 @@
 import {File} from '@bot/entities/File'
 import { getNameSpace } from '@bot/libs/socket'
-import { System } from 'typings'
+import { System } from '@src/typings'
 import { orm } from '@bot/libs/db'
 
 export default new class Files implements System {

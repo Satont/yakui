@@ -1,7 +1,7 @@
 import { Entity, PrimaryKey, Property, Unique } from '@mikro-orm/core'
 
 @Entity({
-  tableName: 'widgets'
+  tableName: 'widgets',
 })
 export class Widget {
 

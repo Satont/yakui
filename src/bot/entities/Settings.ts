@@ -1,4 +1,5 @@
 import { Entity, PrimaryKey, Property, Unique } from '@mikro-orm/core'
+import JsonType from '../customTypes/JsonType'
 
 @Entity()
 @Unique({ name: 'settings_space_name_unique', properties: ['space', 'name'] })
@@ -13,7 +14,6 @@ export class Settings {
   @Property({ length: 255 })
   name!: string;
 
-  @Property({ columnType: 'text' })
-  value!: string;
-
+  @Property({ type: JsonType, columnType: 'text' })
+  value!: any
 }

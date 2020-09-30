@@ -1,4 +1,4 @@
-import { System } from 'typings'
+import { System } from '@src/typings'
 import { getNameSpace } from '@bot/libs/socket'
 import { debug } from '@bot/libs/logger'
 import {Settings} from '@bot/entities/Settings'

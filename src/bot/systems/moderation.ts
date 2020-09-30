@@ -1,4 +1,4 @@
-import { System, Command, CommandOptions, ParserOptions, UserPermissions, CommandPermission } from 'typings'
+import { System, Command, CommandOptions, ParserOptions, UserPermissions, CommandPermission } from '@src/typings'
 import { Warnings, ISettings } from 'typings/moderation'
 import tmi from '@bot/libs/tmi'
 import {Settings} from '@bot/entities/Settings'

@@ -110,7 +110,8 @@
   },
   "_moduleAliases": {
     "@bot": "dest/",
-    "@": "./"
+    "@": "./",
+    "@src": "./src"
   },
   "mikro-orm": {
     "useTsNode": true,

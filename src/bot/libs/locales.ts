@@ -25,6 +25,7 @@ export default new class Locales {
       locale = orm.em.getRepository(Settings).create({ space: 'general', name: 'locale', value: 'ru' })
       await orm.em.persistAndFlush(locale)
     }
+    console.log(locale)
 
     const lang = resolve(langsDir, `${locale.value}.json`)
     this.lang = JSON.parse(readFileSync(lang, 'utf-8'))

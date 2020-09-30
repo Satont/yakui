@@ -36,7 +36,7 @@ export default new class Currency {
       await orm.em.getRepository(Settings).persistAndFlush(currency)
     }
   
-    this.botCurrency = this.botCurrency[currency.value]
+    this.botCurrency = currency[currency.value]
   }
 
   private async updateRates() {

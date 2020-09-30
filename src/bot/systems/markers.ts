@@ -2,7 +2,7 @@ import humanizeDuration from 'humanize-duration'
 import moment from 'moment'
 import 'moment-precise-range-plugin'
 
-import { System, Command, CommandOptions, MarkerInList, CommandPermission } from 'typings'
+import { System, Command, CommandOptions, MarkerInList, CommandPermission } from '@src/typings'
 import tmi from '@bot/libs/tmi'
 import { error } from '@bot/libs/logger'
 

@@ -3,10 +3,12 @@
     "baseUrl": "./",
     "paths": {
       "@/*": ["./*"],
+      "@src/*": ["src/*"],
       "@bot/*": ["src/bot/*"],
       "@panel/*": ["src/panel/*"],
       "@login/*": ["src/login/*"],
-      "typings": ["typings"]
+      "typings": ["typings"],
+      "@typings": ["src/typings/*"]
     },
     "target": "es6",
     "module": "commonjs",
@@ -26,8 +28,7 @@
     "./",
     "./src",
     "src/**/*.ts",
-    "src/**/*.vue",
-    "typings/*"
+    "src/**/*.vue"
   ],
   "exclude": ["node_modules"],
 }

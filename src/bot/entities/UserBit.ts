@@ -4,7 +4,7 @@ import { User } from './User'
 @Entity({
   tableName: 'users_bits',
 })
-export class UsersBit {
+export class UserBit {
 
   @PrimaryKey()
   id!: number;

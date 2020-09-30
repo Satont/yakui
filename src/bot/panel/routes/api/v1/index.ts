@@ -1,4 +1,6 @@
 import { Router } from 'express'
+import { RequestContext } from '@mikro-orm/core'
+
 import commands from './commands'
 import timers from './timers'
 import users from './users'
@@ -14,8 +16,13 @@ import overlays from './overlays'
 import widgets from './widgets'
 import chatMessage from './chatMessage'
 import files from './files'
+import { orm } from '@/src/bot/libs/db'
 
 const router = Router()
+
+router.use((req, res, next) => {
+  RequestContext.create(orm.em, next)
+})
 
 router.get('/', (req, res) => {
   res.send('This is api v1')

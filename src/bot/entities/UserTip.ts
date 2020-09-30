@@ -4,7 +4,7 @@ import { User } from './User'
 @Entity({
   tableName: 'users_tips',
 })
-export class UsersTips {
+export class UserTip {
 
   @PrimaryKey()
   id!: number;

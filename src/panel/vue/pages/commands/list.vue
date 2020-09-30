@@ -37,7 +37,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
-import { Command } from 'typings'
+import { Command } from '@src/typings'
 import { EnvChecker } from '../helpers/mixins'
 
 @Component

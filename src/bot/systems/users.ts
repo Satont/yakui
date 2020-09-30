@@ -1,6 +1,6 @@
 import { chunk as makeChunk } from 'lodash'
 
-import { System, ParserOptions, Command, CommandOptions, CommandPermission } from '../../../typings'
+import { System, ParserOptions, Command, CommandOptions, CommandPermission } from '@src/typings'
 import User from '@bot/models/User'
 import tmi from '@bot/libs/tmi'
 import UserTips from '@bot/models/UserTips'

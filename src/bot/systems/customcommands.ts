@@ -1,4 +1,4 @@
-import { System, Command as CommandType, CommandOptions } from 'typings'
+import { System, Command as CommandType, CommandOptions } from '@src/typings'
 import { Command } from '@bot/entities/Command'
 import { orm } from '@bot/libs/db'
 
@@ -6,8 +6,8 @@ export default new class CustomCommands implements System {
   commands: CommandType[] = []
 
   async init() {
-    const commands = await orm.em.getRepository(Command).findAll()
-    console.log(commands)
+    const commands = await orm.em.getRepository(Command).findAll({ populate: ['sound'] })
+
     this.commands = commands.map(command => ({
       id: command.id,
       name: command.name,

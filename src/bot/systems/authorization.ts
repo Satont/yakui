@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import axios from 'axios'
 import jwt from 'jsonwebtoken'
 
-import { System } from 'typings'
+import { System } from '@src/typings'
 import tmi from '@bot/libs/tmi'
 import { error } from '@bot/libs/logger'
 import {Settings} from '@bot/entities/Settings'
