@@ -1,19 +1,23 @@
 import { System } from 'typings'
 import tmi from '@bot/libs/tmi'
-import Timer from '@bot/models/Timer'
+import {Timer} from '@bot/entities/Timer'
 import twitch from './twitch'
 import variables from './variables'
+import { orm } from '@bot/libs/db'
 
 export default new class Timers implements System {
   timers: Timer[] = []
   timeout: NodeJS.Timeout
 
   async init() {
-    const timers: Timer[] = await Timer.findAll()
+    const timers = await orm.em.getRepository(Timer).findAll()
 
     for (const timer of timers) {
-      await timer.update({ last: 0, triggerTimeStamp: Date.now() })
+      timer.last = 0
+      timer.triggerTimeStamp = Date.now()
     }
+
+    await orm.em.persistAndFlush(timers)
 
     this.timers = timers
 
@@ -30,7 +34,9 @@ export default new class Timers implements System {
       if ((Date.now() - timer.triggerTimeStamp) > timer.interval * 1000) {
         const message = await variables.parseMessage({ message: timer.responses[timer.last] })
         tmi.say({ message })
-        timer.update({ last: ++timer.last % timer.responses.length, triggerTimeStamp: Date.now() })
+        timer.last = ++timer.last % timer.responses.length
+        timer.triggerTimeStamp = Date.now()
+        orm.em.getRepository(Timer).persistAndFlush(timer)
       }
     }
   }

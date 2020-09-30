@@ -1,4 +1,4 @@
-import { Cascade, Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core'
+import { Cascade, Entity, ManyToOne, PrimaryKey, Property, OneToOne } from '@mikro-orm/core'
 import { User } from './User'
 
 @Entity({
@@ -16,6 +16,8 @@ export class UserDailyMessages {
   count?: number = 1;
 
   @Property({ columnType: 'int8' })
-  date!: string;
+  date!: number;
 
+  @OneToOne(() => User, user => user.dailyMessages)
+  user!: User;
 }

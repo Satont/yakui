@@ -2,7 +2,6 @@ import { PubSubClient } from 'twitch-pubsub-client'
 import { error, info } from './logger'
 import tmi from './tmi'
 import { onRedemption } from './eventsCaller'
-import Settings from '@bot/models/Settings'
 
 export default new class PubSub {
   client: PubSubClient = null
@@ -34,13 +33,5 @@ export default new class PubSub {
     } catch (e) {
       error('PUBSUB: ' + e)
     }
-  }
-
-  listenDbUpdates() {
-    Settings.afterCreate(value => {
-      if (value.space !== 'oauth') return
-
-      setTimeout(() => this.init(), 5000)
-    })
   }
 }

@@ -4,13 +4,14 @@ import { get } from 'lodash'
 import tmi from '@bot/libs/tmi'
 import { System, DonationData, HostType } from 'typings'
 import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove, INewResubscriber, INewSubscriber } from 'typings/events'
-import EventList from '@bot/models/EventList'
+import {EventList} from '@bot/entities/EventList'
 import { getNameSpace } from '@bot/libs/socket'
 import { PubSubRedemptionMessage } from 'twitch-pubsub-client/lib'
 import alerts from '@bot/overlays/alerts'
-import File from '@bot/models/File'
+import {File} from '@bot/entities/File'
 import tts from '@bot/overlays/tts'
 import cache from '@bot/libs/cache'
+import { orm } from '@bot/libs/db'
 
 export default new class Events implements System {
   socket = getNameSpace('widgets/eventlist')
@@ -27,7 +28,7 @@ export default new class Events implements System {
         await tmi.say({ message })
       }
       if (operation.key === 'playAudio') {
-        const file = await File.findOne({ where: { id: operation.audioId } })
+        const file = await orm.em.getRepository(File).findOne({ id: operation.audioId })
         alerts.emitAlert({ audio: { file: file, volume: operation.audioVolume }  })
       }
       if (operation.key === 'TTS') tts.emitTTS(await this.prepareMessage(operation.message, opts))
@@ -69,7 +70,9 @@ export default new class Events implements System {
   }
 
   async addToEventList({ name, data }: { name: string, data: Record<string, unknown> }) {
-    const event: EventList = await EventList.create({ name, data })
+    const event = orm.em.getRepository(EventList).create({ name, data })
+    orm.em.persistAndFlush(event)
+
     this.clients.forEach(c => c.emit('event', event))
   }
 

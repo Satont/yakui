@@ -1,4 +1,5 @@
-import { Entity, Index, PrimaryKey, Property, Unique } from '@mikro-orm/core'
+import { Entity, Index, PrimaryKey, Property, Unique, OneToOne } from '@mikro-orm/core'
+import { UserDailyMessages } from './UserDailyMessages'
 
 @Entity({
   tableName: 'users',
@@ -17,7 +18,7 @@ export class User {
   messages?: number;
 
   @Property({ columnType: 'int8', nullable: true, default: '0' })
-  watched?: string;
+  watched?: number;
 
   @Property({ nullable: true })
   points?: number;
@@ -28,4 +29,6 @@ export class User {
   @Property({ columnType: 'int8', fieldName: 'lastWatchedPoints', nullable: true, default: '1' })
   lastWatchedPoints?: string;
 
+  @OneToOne()
+  dailyMessages?: UserDailyMessages
 }

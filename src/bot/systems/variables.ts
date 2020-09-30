@@ -6,19 +6,18 @@ import twitch from './twitch'
 import includesOneOf from '@bot/commons/includesOneOf'
 import users from './users'
 import tmi from '@bot/libs/tmi'
-import UserModel from '@bot/models/User'
-import { sequelize } from '@bot/libs/db'
-import { Op } from 'sequelize'
+import {User as UserModel} from '@bot/entities/User'
 import currency from '@bot/libs/currency'
 import Axios from 'axios'
 import { System, Command, CommandPermission } from 'typings'
-import Variable from '@bot/models/Variable'
+import {Variable} from '@bot/entities/Variable'
 import spotify from '@bot/integrations/spotify'
 import locales from '@bot/libs/locales'
 import evaluate from '@bot/commons/eval'
 import satontapi from '@bot/integrations/satontapi'
 import Commands from './commands'
-import UserDailyMessages from '@bot/models/UserDailyMessages'
+import {UserDailyMessages} from '@bot/entities/UserDailyMessages'
+import { orm } from '@bot/libs/db'
 
 export default new class Variables implements System {
   variables: Array<{ name: string, response: string, custom?: boolean }> = [
@@ -62,8 +61,10 @@ export default new class Variables implements System {
   ]
 
   async init() {
-    const variables: [] = (await Variable.findAll({ raw: true }))
+    const repository = orm.em.getRepository(Variable)
+    const variables = (await repository.findAll())
       .map((variable: Variable) => ({ name: `$_${variable.name}`, response: variable.response, custom: true }))
+      
 
     this.variables.push(...variables)
   }
@@ -187,29 +188,27 @@ export default new class Variables implements System {
     const limit = 10
 
     if (type === 'watched') {
-      result = await UserModel.findAll({
-        limit,
-        where: { username: { [Op.notIn]: ignored } },
-        order: [[type, 'DESC']],
-        attributes: ['username', [type, 'value']],
+      result = (await orm.em.getRepository(UserModel).find({
+        username: { $nin: ignored },
+      }, { 
+        limit, 
+        orderBy: { [type]: 'DESC' },
         offset,
-        raw: true,
-      })
+      })).map(user => ({ username: user.username, value: user[type] }))
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${((result.value / (1 * 60 * 1000)) / 60).toFixed(1)}h`).join(', ')
     } else if (type === 'messages') {
-      result = await UserModel.findAll({
-        limit,
-        where: { username: { [Op.notIn]: ignored } },
-        order: [[type, 'DESC']],
-        attributes: ['username', [type, 'value']],
+      result = (await orm.em.getRepository(UserModel).find({
+        username: { $nin: ignored },
+      }, { 
+        limit, 
+        orderBy: { [type]: 'DESC' },
         offset,
-        raw: true,
-      })
+      })).map(user => ({ username: user.username, value: user[type] }))
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ')
     } else if (type === 'tips') {
-      const query = await sequelize.query(`
+      /* const query = await sequelize.query(`
         SELECT
           "users"."id",
           "users"."username",
@@ -228,9 +227,9 @@ export default new class Variables implements System {
         replacements: { usernames: ignored },
       })
       result = query[0]
-      return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}${currency.botCurrency}`).join(', ')
+      return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}${currency.botCurrency}`).join(', ') */
     } else if (type === 'bits') {
-      const query = await sequelize.query(`
+      /* const query = await sequelize.query(`
         SELECT
           "users"."id",
           "users"."username",
@@ -250,29 +249,29 @@ export default new class Variables implements System {
       })
 
       result = query[0]
-      return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ')
+      return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ') */
     } else if (type === 'messages.today') {
       const now = new Date()
       const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
-      result = await UserDailyMessages.findAll({
+      result = (await orm.em.getRepository(UserDailyMessages).find({
+        date: startOfDay.getTime(),
+      }, {
         limit,
-        where: { date: startOfDay.getTime() },
-        order: [['count', 'DESC']],
-        include: [{ model: UserModel, as: 'user', where: { username: { [Op.notIn]: ignored } } }],
+        orderBy: { count: 'desc' },
         offset,
-      })
+        populate: ['user'],
+      })).map(daily => ({ username: daily.user.username, value: daily.count }))
 
       return (result as any).map((item: UserDailyMessages, index: number) => `${index + 1 + offset}. ${item.user.username} - ${item.count}`).join(', ')
     } if (type === 'points') {
-      result = await UserModel.findAll({
-        limit,
-        where: { username: { [Op.notIn]: ignored } },
-        order: [[type, 'DESC']],
-        attributes: ['username', [type, 'value']],
+      result = (await orm.em.getRepository(UserModel).find({
+        username: { $nin: ignored },
+      }, { 
+        limit, 
+        orderBy: { [type]: 'DESC' },
         offset,
-        raw: true,
-      })
+      })).map(user => ({ username: user.username, value: user[type] }))
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ')
     } else {
@@ -341,8 +340,9 @@ export default new class Variables implements System {
     if (isAdmin && text.length) {
       const match = response.match(/\$_(\S*)/g)
       if (match) {
-        const variable = await Variable.findOne({ where: { name: this.variables.find(v => v.name === match[0].replace('$_', '')).name }})
-        await variable.update({ response: text })
+        const variable = await orm.em.getRepository(Variable).findOne({ name: this.variables.find(v => v.name === match[0].replace('$_', '')).name }) 
+        variable.response = text 
+        await orm.em.persistAndFlush(variable)
         tmi.say({ message: `@${raw.userInfo.userName} ✅` })
         return true
       } else return false

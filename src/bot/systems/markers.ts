@@ -2,7 +2,7 @@ import humanizeDuration from 'humanize-duration'
 import moment from 'moment'
 import 'moment-precise-range-plugin'
 
-import { System, Command, CommandOptions, MarkerInList } from 'typings'
+import { System, Command, CommandOptions, MarkerInList, CommandPermission } from 'typings'
 import tmi from '@bot/libs/tmi'
 import { error } from '@bot/libs/logger'
 
@@ -11,7 +11,7 @@ export default new class Markers implements System {
     {
       name: 'marker add',
       aliases: ['highlight', 'addMarker', 'newMarker', 'marker new', 'new marker', 'marker'],
-      permission: 'moderators',
+      permission: CommandPermission['moderators'],
       description: 'Create new stream marker',
       visible: false,
       fnc: this.addMarker,

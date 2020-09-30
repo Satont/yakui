@@ -5,7 +5,8 @@ import jwt from 'jsonwebtoken'
 import { System } from 'typings'
 import tmi from '@bot/libs/tmi'
 import { error } from '@bot/libs/logger'
-import Settings from '@bot/models/Settings'
+import {Settings} from '@bot/entities/Settings'
+import { orm } from '@bot/libs/db'
 
 const accessTokenExpirationTime = 1 * 24 * 60 * 60 // 1 day
 const refreshTokenExpirationTime = 31 * 24 * 60 * 60 // 31 day
@@ -14,10 +15,12 @@ export default new class Authorization implements System {
   JWTKey: string
 
   async init() {
-    const [key]: [Settings] = await Settings.findOrCreate({
-      where: { space: 'general', name: 'JWTKey' },
-      defaults: { value: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) },
-    })
+    let key = await orm.em.getRepository(Settings).findOne({ space: 'general', name: 'JWTKey' })
+    if (!key) {
+      const value = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+      key = orm.em.getRepository(Settings).create({ space: 'general', name: 'JWTKey', value })
+      await orm.em.persistAndFlush(key)
+    }
 
     this.JWTKey = key.value
   }
@@ -43,7 +46,7 @@ export default new class Authorization implements System {
       }
       const username = twitchValidation.data.login
       const admins: string[] = [tmi?.channel?.name]
-      const botAdmins: Settings = await Settings.findOne({ where: { space: 'users', name: 'botAdmins' } })
+      const botAdmins: Settings = await orm.em.getRepository(Settings).findOne({ space: 'users', name: 'botAdmins' } )
       if (botAdmins) admins.push(...botAdmins.value)
 
       const userType = (!tmi.channel?.name || !admins.length ? true : admins.includes(username)) ? 'admin' : 'viewer'
@@ -73,7 +76,7 @@ export default new class Authorization implements System {
       const data = jwt.verify(refreshTokenFromHeader, this.JWTKey) as { userId: number, username: string }
 
       const admins: string[] = [tmi?.channel?.name]
-      const botAdmins: Settings = await Settings.findOne({ where: { space: 'users', name: 'botAdmins' } })
+      const botAdmins: Settings = await orm.em.getRepository(Settings).findOne({ space: 'users', name: 'botAdmins' } )
       if (botAdmins) admins.push(...botAdmins.value)
 
       const userType = (!tmi.channel?.name || !admins.length ? true : admins.includes(data.username)) ? 'admin' : 'viewer'

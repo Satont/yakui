@@ -23,6 +23,7 @@ export default new class Locales {
     let locale = await orm.em.getRepository(Settings).findOne({ space: 'general', name: 'locale' })
     if (!locale) {
       locale = orm.em.getRepository(Settings).create({ space: 'general', name: 'locale', value: 'ru' })
+      await orm.em.persistAndFlush(locale)
     }
 
     const lang = resolve(langsDir, `${locale.value}.json`)

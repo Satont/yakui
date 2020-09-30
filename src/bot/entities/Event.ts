@@ -13,6 +13,6 @@ export class Event {
   name!: string;
 
   @Property({ columnType: 'json', nullable: true, default: '[]' })
-  operations?: Record<string, any>;
+  operations?: any[];
 
 }

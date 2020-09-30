@@ -7,8 +7,9 @@ import UserTips from '@bot/models/UserTips'
 import UserBits from '@bot/models/UserBits'
 import UserDailyMessages from '@bot/models/UserDailyMessages'
 import twitch from './twitch'
-import Settings from '@bot/models/Settings'
+import {Settings} from '@bot/entities/Settings'
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
+import { orm } from '@bot/libs/db'
 
 export default new class Users implements System {
   settings: {
@@ -52,24 +53,25 @@ export default new class Users implements System {
     { fnc: this.parseMessage },
   ]
   commands: Command[] = [
-    { name: 'sayb', permission: 'broadcaster', fnc: this.sayb, visible: false, description: 'Say something as broadcaster.' },
-    { name: 'ignore add', permission: 'moderators', fnc: this.ignoreAdd, visible: false, description: 'Add some username to bot ignore list' },
-    { name: 'ignore remove', permission: 'moderators', fnc: this.ignoreRemove, visible: false, description: 'Remove some username from bot ignore list' },
+    { name: 'sayb', permission: CommandPermission['broadcaster'], fnc: this.sayb, visible: false, description: 'Say something as broadcaster.' },
+    { name: 'ignore add', permission: CommandPermission['moderators'], fnc: this.ignoreAdd, visible: false, description: 'Add some username to bot ignore list' },
+    { name: 'ignore remove', permission: CommandPermission['moderators'], fnc: this.ignoreRemove, visible: false, description: 'Remove some username from bot ignore list' },
   ]
 
   async init() {
-    const [enabled, ignoredUsers, points, admins]: [Settings, Settings, Settings, Settings] = await Promise.all([
-      Settings.findOne({ where: { space: 'users', name: 'enabled' } }),
-      Settings.findOne({ where: { space: 'users', name: 'ignoredUsers' } }),
-      Settings.findOne({ where: { space: 'users', name: 'points' } }),
-      Settings.findOne({ where: { space: 'users', name: 'botAdmins' } }),
+    const repository = orm.em.getRepository(Settings)
+    const [enabled, ignoredUsers, points, admins] = await Promise.all([
+      repository.findOne({ space: 'users', name: 'enabled' }),
+      repository.findOne({ space: 'users', name: 'ignoredUsers' }),
+      repository.findOne({ space: 'users', name: 'points' }),
+      repository.findOne({ space: 'users', name: 'botAdmins' }),
     ])
 
-    this.settings.ignoredUsers = ignoredUsers?.value?.filter(Boolean) ?? []
-    this.settings.enabled = enabled?.value ?? true
-    this.settings.admins = admins?.value ?? []
+    this.settings.ignoredUsers = ignoredUsers?.value as any ?? []
+    this.settings.enabled = enabled?.value as any ?? true
+    this.settings.admins = admins?.value as any ?? []
 
-    if (points) this.settings.points = points.value
+    if (points) this.settings.points = points.value as any
     if (!this.settings.enabled) return
 
     await this.getChatters()
@@ -190,43 +192,40 @@ export default new class Users implements System {
     if (!searchForPermission) return true
     
     const userPerms = Object.entries(tmi.getUserPermissions(badges, raw))
-    const commandPermissionIndex = userPerms.indexOf(userPerms.find(v => v[0] === searchForPermission))
+    const commandPermissionIndex = userPerms.indexOf(userPerms.find(v => Object.keys(searchForPermission).indexOf(v[0])))
 
     return userPerms.some((p, index) => p[1] && index <= commandPermissionIndex)
   }
 
   async ignoreAdd(opts: CommandOptions) {
     if (!opts.argument.length) return
-    const [ignoredUsers]: [Settings] = await Settings.findOrCreate({ where: { space: 'users', name: 'ignoredUsers' }, defaults: { value: [] } })
-
-    await ignoredUsers.update({ value: [...ignoredUsers.value, opts.argument.toLowerCase() ].filter(Boolean) })
+    const repository = orm.em.getRepository(Settings)
+    let ignoredUsers = await repository.findOne({ space: 'users', name: 'ignoredUsers' })
+    if (!ignoredUsers) {
+      ignoredUsers = repository.create({ space: 'users', name: 'ignoredUsers', value: [] as any })
+    }
+    
+    ignoredUsers.value = [...ignoredUsers.value, opts.argument.toLowerCase()] as any
+    await orm.em.persistAndFlush(ignoredUsers)
 
     return '$sender ✅'
   }
 
   async ignoreRemove(opts: CommandOptions) {
     if (!opts.argument.length) return
-    const ignoredUsers: Settings = await Settings.findOne({ where: { space: 'users', name: 'ignoredUsers' } })
+    const repository = orm.em.getRepository(Settings)
+    const ignoredUsers = await repository.findOne({ space: 'users', name: 'ignoredUsers' })
 
     if (!ignoredUsers || !ignoredUsers?.value.length) return
     if (!ignoredUsers.value.includes(opts.argument.toLowerCase())) return
 
-    const users = ignoredUsers.value
-    users.splice(ignoredUsers.value.indexOf(opts.argument.toLowerCase()), 1)
+    const users = ignoredUsers.value;
 
-    await ignoredUsers.update({
-      value: users,
-    })
+    (users as any).splice(ignoredUsers.value.indexOf(opts.argument.toLowerCase()), 1) 
+
+    ignoredUsers.value = users
+    await orm.em.persistAndFlush(ignoredUsers)
 
     return '$sender ✅'
-  }
-
-
-  listenDbUpdates() {
-    Settings.afterSave(instance => {
-      if (instance.space !== 'users') return
-
-      this.init()
-    })
   }
 }

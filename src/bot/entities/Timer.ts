@@ -24,6 +24,6 @@ export class Timer {
   last?: number;
 
   @Property({ columnType: 'int8', fieldName: 'triggerTimeStamp', nullable: true, default: '0' })
-  triggerTimeStamp?: string;
+  triggerTimeStamp?: number;
 
 }
