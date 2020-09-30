@@ -36,7 +36,7 @@ export default new class Timers implements System {
         tmi.say({ message })
         timer.last = ++timer.last % timer.responses.length
         timer.triggerTimeStamp = Date.now()
-        orm.em.getRepository(Timer).persistAndFlush(timer)
+        await orm.em.getRepository(Timer).persistAndFlush(timer)
       }
     }
   }

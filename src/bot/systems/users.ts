@@ -125,7 +125,7 @@ export default new class Users implements System {
     if (user) return user
 
     const create = repository.create({ id: Number(id), username })
-    repository.persistAndFlush(create)
+    await repository.persistAndFlush(create)
     return create
   }
 
@@ -152,7 +152,7 @@ export default new class Users implements System {
 
       user.watched += 1 * 60 * 1000
 
-      repository.persistAndFlush(user)
+      await repository.persistAndFlush(user)
     }
 
   }
