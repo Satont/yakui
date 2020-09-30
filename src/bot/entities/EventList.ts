@@ -14,6 +14,6 @@ export class EventList {
   @Property({ columnType: 'json' })
   data!: Record<string, any>
 
-  @Property({ columnType: 'int8', type: MyBigInt })
+  @Property({ type: MyBigInt })
   timestamp!: number
 }

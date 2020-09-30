@@ -24,6 +24,6 @@ export class Timer {
   @Property({ nullable: true })
   last?: number;
 
-  @Property({ columnType: 'int8', fieldName: 'triggerTimeStamp', nullable: true, default: '0', type: MyBigInt })
+  @Property({ fieldName: 'triggerTimeStamp', nullable: true, default: '0', type: MyBigInt })
   triggerTimeStamp?: number;
 }

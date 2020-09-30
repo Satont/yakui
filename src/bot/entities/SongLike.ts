@@ -20,10 +20,10 @@ export class SongLike {
   @Property({ length: 255 })
   name!: string;
 
-  @Property({ columnType: 'int8', fieldName: 'createdAt', type: MyBigInt })
+  @Property({ fieldName: 'createdAt', type: MyBigInt })
   createdAt!: number;
 
-  @Property({ columnType: 'int8', fieldName: 'updatedAt', nullable: true, type: MyBigInt })
+  @Property({ fieldName: 'updatedAt', nullable: true, type: MyBigInt })
   updatedAt?: number;
 
 }

@@ -25,7 +25,7 @@ export class UserTip {
   @Property({ columnType: 'text', nullable: true })
   message?: string;
 
-  @Property({ columnType: 'int8', type: MyBigInt })
+  @Property({ type: MyBigInt })
   timestamp!: number;
 
   @ManyToOne({ entity: () => User, fieldName: 'userId', cascade: [Cascade.ALL], nullable: true })

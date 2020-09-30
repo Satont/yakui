@@ -9,13 +9,13 @@ export class UserBit {
   @PrimaryKey()
   id!: number;
 
-  @Property({ columnType: 'int8' })
-  amount!: string;
+  @Property({ type: MyBigInt })
+  amount!: number;
 
   @Property({ columnType: 'text', nullable: true })
   message?: string;
 
-  @Property({ columnType: 'int8', type: MyBigInt })
+  @Property({ type: MyBigInt })
   timestamp!: number;
 
   @ManyToOne({ entity: () => User, fieldName: 'userId', cascade: [Cascade.ALL], nullable: true })

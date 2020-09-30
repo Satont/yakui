@@ -15,7 +15,7 @@ export class UserDailyMessages {
   @Property({ nullable: true })
   count?: number = 0;
 
-  @Property({ columnType: 'int8', type: MyBigInt })
+  @Property({ type: MyBigInt })
   date!: number;
 
   @ManyToOne(() => User)

@@ -20,16 +20,16 @@ export class User {
   @Property({ nullable: true })
   messages?: number = 0;
 
-  @Property({ columnType: 'int8', nullable: true, default: '0', type: MyBigInt })
+  @Property({ nullable: true, default: '0', type: MyBigInt })
   watched?: number = 0;
 
   @Property({ nullable: true })
   points?: number;
 
-  @Property({ columnType: 'int8', fieldName: 'lastMessagePoints', nullable: true, default: '1', type: MyBigInt })
+  @Property({ fieldName: 'lastMessagePoints', nullable: true, default: '1', type: MyBigInt })
   lastMessagePoints?: number;
 
-  @Property({ columnType: 'int8', fieldName: 'lastWatchedPoints', nullable: true, default: '1', type: MyBigInt })
+  @Property({ fieldName: 'lastWatchedPoints', nullable: true, default: '1', type: MyBigInt })
   lastWatchedPoints?: number;
 
   @OneToOne()
