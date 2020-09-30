@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
 import Overlays from '@bot/systems/overlays'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
-import {Overlay} from '@bot/entities/Overlay'
+import { Overlay } from '@bot/entities/Overlay'
 import cache from '@bot/libs/cache'
 import { RequestContext, wrap } from '@mikro-orm/core'
 

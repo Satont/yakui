@@ -2,7 +2,7 @@ import { ApiClient as Twitch, AccessToken } from 'twitch'
 import{ ChatClient as Chat } from 'twitch-chat-client'
 import { StaticAuthProvider } from 'twitch-auth'
 
-import {Settings} from '@bot/entities/Settings'
+import { Settings } from '@bot/entities/Settings'
 import OAuth from './oauth'
 import Parser from './parser'
 import { UserPermissions } from '@src/typings'
@@ -191,7 +191,7 @@ export default new class Tmi {
         chatIn(`${username} [${raw.userInfo.userId}]: ${message}`)
 
         if (raw.isCheer) {
-          events.fire({ name: 'bits', opts: { amount: raw.totalBits, message }})
+          events.fire({ name: 'bits', opts: { amount: raw.totalBits, message } })
         } else {
           events.fire({ name: 'message', opts: { username, message } })
           await Parser.parse(message, raw)

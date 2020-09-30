@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs'
-import { resolve} from 'path'
+import { resolve } from 'path'
 import { get } from 'lodash'
-import {Settings} from '@bot/entities/Settings'
+import { Settings } from '@bot/entities/Settings'
 import { info } from './logger'
 import { orm } from './db'
 

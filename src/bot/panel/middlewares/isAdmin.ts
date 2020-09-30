@@ -10,7 +10,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
   try {
     if (token) {
       const user = jwt.verify(token, Authorization.JWTKey) as { userId: number, username: string, privileges: string }
-      if (!user || user.privileges !== 'admin') return res.status(401).send({message: 'You must be admin.' })
+      if (!user || user.privileges !== 'admin') return res.status(401).send({ message: 'You must be admin.' })
     }
     if (JWTToken) {
       const verify = JWTToken === Authorization.JWTKey

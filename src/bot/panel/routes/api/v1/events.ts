@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import {Event} from '@bot/entities/Event'
+import { Event } from '@bot/entities/Event'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
 import cache from '@bot/libs/cache'
 import { RequestContext } from '@mikro-orm/core'

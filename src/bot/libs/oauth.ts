@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios'
-import {Settings} from '@bot/entities/Settings'
+import { Settings } from '@bot/entities/Settings'
 import { info, error } from './logger'
 import { orm } from './db'
 
@@ -12,7 +12,7 @@ export default new class Oauth {
     try {
       const { data } = await axios.get('https://id.twitch.tv/oauth2/validate', { headers: {
         'Authorization': `OAuth ${token}`,
-      }})
+      } })
 
       return {
         clientId: data.client_id,

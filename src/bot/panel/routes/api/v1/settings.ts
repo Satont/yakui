@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
-import {Settings} from '@bot/entities/Settings'
+import { Settings } from '@bot/entities/Settings'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
 import { RequestContext, wrap } from '@mikro-orm/core'
 

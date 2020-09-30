@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken'
 import { System } from '@src/typings'
 import tmi from '@bot/libs/tmi'
 import { error } from '@bot/libs/logger'
-import {Settings} from '@bot/entities/Settings'
+import { Settings } from '@bot/entities/Settings'
 import { orm } from '@bot/libs/db'
 
 const accessTokenExpirationTime = 1 * 24 * 60 * 60 // 1 day

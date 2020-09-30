@@ -6,7 +6,7 @@ import Variables from '@bot/systems/variables'
 
 import users from '@bot/systems/users'
 import variables from '@bot/systems/variables'
-import {User} from '@bot/entities/User'
+import { User } from '@bot/entities/User'
 import locales from './locales'
 import cache from './cache'
 import { Command as CommandModel } from '@bot/entities/Command'

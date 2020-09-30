@@ -4,11 +4,11 @@ import { get } from 'lodash'
 import tmi from '@bot/libs/tmi'
 import { System, DonationData, HostType } from '@src/typings'
 import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove, INewResubscriber, INewSubscriber } from '@src/typings/events'
-import {EventList} from '@bot/entities/EventList'
+import { EventList } from '@bot/entities/EventList'
 import { getNameSpace } from '@bot/libs/socket'
 import { PubSubRedemptionMessage } from 'twitch-pubsub-client/lib'
 import alerts from '@bot/overlays/alerts'
-import {File} from '@bot/entities/File'
+import { File } from '@bot/entities/File'
 import tts from '@bot/overlays/tts'
 import cache from '@bot/libs/cache'
 import { orm } from '@bot/libs/db'
@@ -113,12 +113,12 @@ export default new class Events implements System {
   }
 
   onAddModerator({ event_data: { user_name: username } }: IWebHookModeratorAdd) {
-    this.fire({ name: 'newmod', opts: { username }})
+    this.fire({ name: 'newmod', opts: { username } })
     this.addToEventList({ name: 'newmod', data: { username } })
   }
 
   onRemoveModerator({ event_data: { user_name: username } }: IWebHookModeratorRemove) {
-    this.fire({ name: 'removemod', opts: { username }})
+    this.fire({ name: 'removemod', opts: { username } })
     this.addToEventList({ name: 'removemod', data: { username } })
   }
 

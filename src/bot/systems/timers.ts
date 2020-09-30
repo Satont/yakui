@@ -1,6 +1,6 @@
 import { System } from '@src/typings'
 import tmi from '@bot/libs/tmi'
-import {Timer} from '@bot/entities/Timer'
+import { Timer } from '@bot/entities/Timer'
 import twitch from './twitch'
 import variables from './variables'
 import { orm } from '@bot/libs/db'

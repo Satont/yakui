@@ -1,4 +1,4 @@
-import {Settings} from '@bot/entities/Settings'
+import { Settings } from '@bot/entities/Settings'
 import axios from 'axios'
 import { orm } from './db'
 import { info, error } from './logger'

@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
-import {Timer} from '@bot/entities/Timer'
+import { Timer } from '@bot/entities/Timer'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
 import timers from '@bot/systems/timers'
 import { RequestContext, wrap } from '@mikro-orm/core'

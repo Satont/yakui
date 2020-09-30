@@ -4,7 +4,7 @@ import { onStreamStart, onStreamEnd } from '@bot/libs/eventsCaller'
 import locales from '@bot/libs/locales'
 import { System, Command, CommandOptions, CommandPermission } from '@src/typings'
 import { INewSubscriber, INewResubscriber } from '@src/typings/events'
-import {Settings} from '@bot/entities/Settings'
+import { Settings } from '@bot/entities/Settings'
 import { error } from '@bot/libs/logger'
 import { orm } from '@bot/libs/db'
 

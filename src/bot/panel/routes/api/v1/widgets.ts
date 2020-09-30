@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
-import {Widget} from '@bot/entities/Widget'
+import { Widget } from '@bot/entities/Widget'
 import { checkSchema, validationResult } from 'express-validator'
 import { RequestContext, wrap } from '@mikro-orm/core'
 

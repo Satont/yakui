@@ -1,4 +1,4 @@
-import { Router} from 'express'
+import { Router } from 'express'
 import Markers from '@bot/systems/markers'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
 

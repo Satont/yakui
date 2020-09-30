@@ -12,7 +12,7 @@ export default async ({ raw, message, param }: { raw: TwitchPrivateMessage, mess
     sender: raw.userInfo.userName,
     param,
     _,
-    user: await User.findOne({ where: { id: raw.userInfo.userId }}) || {},
+    user: await User.findOne({ where: { id: raw.userInfo.userId } }) || {},
     say: (message: string) => tmi.say({ message }),
     timeout: (username, duration) => tmi.timeout({ username, duration }),
   }

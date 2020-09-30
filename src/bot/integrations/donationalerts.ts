@@ -153,7 +153,7 @@ export default new class Donationalerts implements Integration {
       this.init()
     })
     this.channel.on('publish', async ({ data }: { data: DonationAlertsEvent }) => {
-      const user: User = await User.findOne({ where: { username: data.username.toLowerCase() }})
+      const user: User = await User.findOne({ where: { username: data.username.toLowerCase() } })
 
       const message = data.message?.replace(this.audioRegular, '<audio>')
       const donationData = {

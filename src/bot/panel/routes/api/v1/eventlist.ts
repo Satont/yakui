@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
-import {EventList} from '@bot/entities/EventList'
+import { EventList } from '@bot/entities/EventList'
 import { RequestContext } from '@mikro-orm/core'
 
 const router = Router({

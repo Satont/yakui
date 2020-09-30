@@ -1,7 +1,7 @@
 import { System, Command, CommandOptions, ParserOptions, UserPermissions, CommandPermission } from '@src/typings'
 import { Warnings, ISettings } from '@src/typings/moderation'
 import tmi from '@bot/libs/tmi'
-import {Settings} from '@bot/entities/Settings'
+import { Settings } from '@bot/entities/Settings'
 import { orm } from '@bot/libs/db'
 import tlds from 'tlds'
 
@@ -101,7 +101,7 @@ export default new class Moderation implements System {
     if (this.doesWarned({ type, username })) {
       tmi.timeout({ username, duration: settings.timeout.time, reason: settings.timeout.message })
 
-      this.removeFromWarned({ type, username})
+      this.removeFromWarned({ type, username })
       return true
     } else {
       tmi.timeout({ username, duration: settings.warning.time, reason: settings.warning.message })
@@ -138,7 +138,7 @@ export default new class Moderation implements System {
     if (this.doesWarned({ type, username })) {
       tmi.timeout({ username, duration: settings.timeout.time, reason: settings.timeout.message })
 
-      this.removeFromWarned({ type, username})
+      this.removeFromWarned({ type, username })
       return true
     } else {
       tmi.timeout({ username, duration: settings.warning.time, reason: settings.warning.message })
@@ -162,7 +162,7 @@ export default new class Moderation implements System {
     if (this.doesWarned({ type, username })) {
       tmi.timeout({ username, duration: settings.timeout.time, reason: settings.timeout.message })
 
-      this.removeFromWarned({ type, username})
+      this.removeFromWarned({ type, username })
       return true
     } else {
       tmi.timeout({ username, duration: settings.warning.time, reason: settings.warning.message })
@@ -204,7 +204,7 @@ export default new class Moderation implements System {
     if (this.doesWarned({ type, username })) {
       tmi.timeout({ username, duration: settings.timeout.time, reason: settings.timeout.message })
 
-      this.removeFromWarned({ type, username})
+      this.removeFromWarned({ type, username })
       return true
     } else {
       tmi.timeout({ username, duration: settings.warning.time, reason: settings.warning.message })
@@ -229,7 +229,7 @@ export default new class Moderation implements System {
     if (this.doesWarned({ type, username })) {
       tmi.timeout({ username, duration: settings.timeout.time, reason: settings.timeout.message })
 
-      this.removeFromWarned({ type, username})
+      this.removeFromWarned({ type, username })
       return true
     } else {
       tmi.timeout({ username, duration: settings.warning.time, reason: settings.warning.message })
@@ -253,7 +253,7 @@ export default new class Moderation implements System {
     if (this.doesWarned({ type, username })) {
       tmi.timeout({ username, duration: settings.timeout.time, reason: settings.timeout.message })
 
-      this.removeFromWarned({ type, username})
+      this.removeFromWarned({ type, username })
       return true
     } else {
       tmi.timeout({ username, duration: settings.warning.time, reason: settings.warning.message })
@@ -279,7 +279,7 @@ export default new class Moderation implements System {
 
       if (this.doesWarned({ type, username })) {
         tmi.timeout({ username, duration: settings.timeout.time, reason: settings.timeout.message })
-        this.removeFromWarned({ type, username})
+        this.removeFromWarned({ type, username })
       } else {
         tmi.timeout({ username, duration: settings.warning.time, reason: settings.warning.message })
         this.warnings[type].push(username)

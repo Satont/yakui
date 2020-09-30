@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
 
-import {User} from '@bot/entities/User'
+import { User } from '@bot/entities/User'
 import currency from '@bot/libs/currency'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
 import { RequestContext, wrap } from '@mikro-orm/core'

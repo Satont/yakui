@@ -39,7 +39,7 @@ export default new class Qiwi implements Integration {
         const inComingCurrency = event.attributes.DONATION_CURRENCY
         const message = event.attributes.DONATION_MESSAGE ?? ''
 
-        const user: User = await User.findOne({ where: { username: sender.toLowerCase() }})
+        const user: User = await User.findOne({ where: { username: sender.toLowerCase() } })
         if (user) {
           UserTips.create({
             userId: user.id,

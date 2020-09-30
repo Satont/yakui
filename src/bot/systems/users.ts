@@ -1,13 +1,11 @@
 import { chunk as makeChunk } from 'lodash'
 
 import { System, ParserOptions, Command, CommandOptions, CommandPermission } from '@src/typings'
-import {User} from '@bot/entities/User'
+import { User } from '@bot/entities/User'
 import tmi from '@bot/libs/tmi'
-import UserTips from '@bot/models/UserTips'
-import UserBits from '@bot/models/UserBits'
-import {UserDailyMessages} from '@bot/entities/UserDailyMessages'
+import { UserDailyMessages } from '@bot/entities/UserDailyMessages'
 import twitch from './twitch'
-import {Settings} from '@bot/entities/Settings'
+import { Settings } from '@bot/entities/Settings'
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
 import { orm } from '@bot/libs/db'
 

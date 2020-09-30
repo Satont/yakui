@@ -1,5 +1,5 @@
 import tmi from './tmi'
-import {Settings} from '@bot/entities/Settings'
+import { Settings } from '@bot/entities/Settings'
 import { info, error } from './logger'
 import { orm } from './db'
 

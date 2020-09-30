@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import {File} from '@bot/entities/File'
+import { File } from '@bot/entities/File'
 import { RequestContext } from '@mikro-orm/core'
 
 const router = Router({ mergeParams: true })
