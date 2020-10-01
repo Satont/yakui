@@ -95,8 +95,8 @@ export default new class Users implements System {
       user.points = user.points + pointsPerMessage
       user.lastMessagePoints = new Date().getTime()
     }
-
-    await repository.persistAndFlush(user)
+    repository.persist(user)
+    await repository.flush()
 
     if (!twitch.streamMetaData?.startedAt) return
 
@@ -110,7 +110,8 @@ export default new class Users implements System {
     }) 
 
     daily.count += 1
-    await dailyRepository.persistAndFlush(daily)
+    dailyRepository.persist(daily)
+    await dailyRepository.flush()
   }
 
   async getUserStats({ id, username }: { id?: string, username?: string }): Promise<User> {

@@ -19,7 +19,7 @@ router.get('/', isAdmin, checkSchema({
     const space = req.query.space as string
     const repository = RequestContext.getEntityManager().getRepository(Settings)
     const settings = await repository.find({ space })
-    console.log(settings)
+
     res.send(settings)
   } catch (e) {
     next(e)

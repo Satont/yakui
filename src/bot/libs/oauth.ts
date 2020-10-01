@@ -43,7 +43,8 @@ export default new class Oauth {
       accessToken.value = data.token
       refreshToken.value = data.refresh
 
-      await repository.persistAndFlush([accessToken, refreshToken])
+      repository.persist([accessToken, refreshToken])
+      await repository.flush()
       info(`Access token of ${type} was refreshed.`)
       return {
         access_token: data.token,

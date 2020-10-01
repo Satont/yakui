@@ -54,7 +54,7 @@ router.delete('/', isAdmin, checkSchema({
     validationResult(req).throw()
     const repository = RequestContext.getEntityManager().getRepository(User)
     const user = await repository.findOne(Number(req.params.id))
-    console.log('im in delete')
+
     await repository.removeAndFlush(user)
     res.send('Ok')
   } catch (e) {
@@ -79,8 +79,7 @@ router.post('/', isAdmin, checkSchema({
 
     for (const bodyBit of req.body.user.bits) {
       const bit = bodyBit.id ? await bitRepository.findOne(bodyBit.id) : new UserBit()
-      wrap(bit).assign(bodyBit)
-      console.log(bit)
+
       bitRepository.persist(bit)
     }
     
