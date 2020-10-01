@@ -47,7 +47,7 @@ import { Vue, Component, Mixins } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import { EnvChecker } from '../helpers/mixins'
 
-import User from '@bot/models/User'
+import { User } from '@bot/entities/User'
 
 @Component({
   mixins: [EnvChecker]

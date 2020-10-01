@@ -22,7 +22,7 @@
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import { Route } from 'vue-router'
-import Variable from '@bot/models/Variable'
+import { Variable } from '@bot/entities/Variable'
 
 @Component({})
 export default class CustomVariablesManagerEdit extends Vue {

@@ -18,6 +18,6 @@ export class Overlay {
   css?: string;
 
   @Property({ columnType: 'json', nullable: true, default: '[]' })
-  js?: Record<string, any>;
+  js?: string[];
 
 }

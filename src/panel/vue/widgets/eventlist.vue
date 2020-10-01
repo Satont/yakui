@@ -36,7 +36,7 @@
 
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator'
-import EventList from '../../../bot/models/EventList'
+import { EventList } from '@src/bot/entities/EventList'
 import humanizeDuration from 'humanize-duration'
 import { Socket } from 'vue-socket.io-extended'
 import { getNameSpace } from '../plugins/socket'

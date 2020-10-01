@@ -6,8 +6,8 @@ import { Integration } from '@src/typings'
 import { Settings } from '@bot/entities/Settings'
 import { onDonation } from '@bot/libs/eventsCaller'
 import currency, { currency as currencyType } from '@bot/libs/currency'
-import User from '@bot/models/User'
-import UserTips from '@bot/models/UserTips'
+import { User } from '@bot/entities/User'
+import { UserTip } from '@bot/entities/UserTip'
 import { error, info } from '@bot/libs/logger'
 import { orm } from '@bot/libs/db'
 
@@ -153,9 +153,10 @@ export default new class Donationalerts implements Integration {
       this.init()
     })
     this.channel.on('publish', async ({ data }: { data: DonationAlertsEvent }) => {
-      const user: User = await User.findOne({ where: { username: data.username.toLowerCase() } })
+      const user = await orm.em.getRepository(User).findOne({ username: data.username.toLowerCase() })
 
       const message = data.message?.replace(this.audioRegular, '<audio>')
+
       const donationData = {
         userId: user?.id,
         amount: data.amount,
@@ -167,7 +168,12 @@ export default new class Donationalerts implements Integration {
       }
 
       if (data.billing_system !== 'fake' && user) {
-        await UserTips.create(donationData)
+        const tip = orm.em.getRepository(UserTip).create({
+          ...donationData,
+          inMainCurrencyAmount: String(donationData.inMainCurrencyAmount),
+          amount: String(donationData.amount),
+        })
+        await orm.em.getRepository(UserTip).persistAndFlush(tip)
       }
 
       onDonation({

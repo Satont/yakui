@@ -2,8 +2,8 @@ import axios from 'axios'
 
 import { Integration } from '@src/typings'
 import { Settings } from '@bot/entities/Settings'
-import User  from '@bot/models/User'
-import UserTips from '@bot/models/UserTips'
+import { User }  from '@bot/entities/User'
+import { UserTip } from '@bot/entities/UserTip'
 import currency from '@bot/libs/currency'
 import { onDonation } from '@bot/libs/eventsCaller'
 import { info, error } from '@bot/libs/logger'
@@ -39,17 +39,18 @@ export default new class Qiwi implements Integration {
         const inComingCurrency = event.attributes.DONATION_CURRENCY
         const message = event.attributes.DONATION_MESSAGE ?? ''
 
-        const user: User = await User.findOne({ where: { username: sender.toLowerCase() } })
+        const user = await orm.em.getRepository(User).findOne({ username: sender.toLowerCase() })
         if (user) {
-          UserTips.create({
+          const tip = orm.em.getRepository(UserTip).create({
             userId: user.id,
-            amount,
+            amount: event.attributes.DONATION_AMOUNT,
             rates: currency.rates,
             currency: inComingCurrency,
-            inMainCurrencyAmount: currency.exchange({ from: inComingCurrency, amount }),
+            inMainCurrencyAmount: String(currency.exchange({ from: inComingCurrency, amount })),
             message,
             timestamp: Date.now(),
-          }).catch(error)
+          })
+          await orm.em.getRepository(UserTip).persistAndFlush(tip)
         }
 
         onDonation({

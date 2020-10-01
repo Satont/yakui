@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import Overlay from '@bot/models/Overlay'
+import { Overlay } from '@bot/entities/Overlay'
 import axios from 'axios'
 
 @Component
