@@ -1,6 +1,9 @@
+import dotenv from 'dotenv'
 import { Options } from '@mikro-orm/core'
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection'
 import { info } from './libs/logger'
+
+dotenv.config()
 
 export default {
   logger: (msg: string) => info(msg),
@@ -19,5 +22,13 @@ export default {
   pool: {
     min: 1,
     max: 10,
+  },
+  migrations: {
+    tableName: 'mikro_orm_migrations',
+    path: './src/bot/data/migrations',
+    transactional: true,
+    dropTables: true,
+    safe: true,
+    emit: 'ts',
   },
 } as Options

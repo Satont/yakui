@@ -11,6 +11,6 @@ export default class MyBigInt extends Type<Number, string> {
   }
 
   getColumnType() {
-    return `MyBigInt`
+    return `int8`
   }
 }

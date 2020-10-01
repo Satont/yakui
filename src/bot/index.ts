@@ -1,9 +1,9 @@
 import './moduleAlias'
 import 'reflect-metadata'
 import 'source-map-support/register'
+import dotenv from 'dotenv'
+dotenv.config()
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-require('dotenv').config()
 import { start as dbConnect, orm } from '@bot/libs/db'
 import { error } from '@bot/libs/logger'
 
