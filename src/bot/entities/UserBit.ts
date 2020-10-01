@@ -21,6 +21,6 @@ export class UserBit {
   @Property()
   userId?: number
 
-  @ManyToOne({ entity: () => User, fieldName: 'userId', nullable: true })
+  @ManyToOne({ entity: () => User, nullable: true, persist: false })
   user?: User;
 }

@@ -1,5 +1,6 @@
 import { Entity, Index, PrimaryKey, Property, Unique, OneToOne, OneToMany, Collection } from '@mikro-orm/core'
 import MyBigInt from '../customTypes/BigInt'
+import { SongLike } from './SongLike'
 import { UserBit } from './UserBit'
 import { UserDailyMessages } from './UserDailyMessages'
 import { UserTip } from './UserTip'
@@ -17,32 +18,35 @@ export class User {
   @Property({ length: 255, nullable: true })
   username?: string;
 
-  @Property({ nullable: true })
+  @Property({ nullable: true, default: 0 })
   messages?: number = 0;
 
-  @Property({ nullable: true, type: MyBigInt })
+  @Property({ nullable: true, type: MyBigInt, default: 0 })
   watched?: number = 0;
 
-  @Property({ nullable: true })
+  @Property({ nullable: true, default: 0 })
   points?: number = 0;
 
-  @Property({ type: MyBigInt })
+  @Property({ type: MyBigInt, default: 0 })
   lastMessagePoints?: number = 0;
 
-  @Property({ type: MyBigInt })
+  @Property({ type: MyBigInt, default: 0 })
   lastWatchedPoints?: number = 0;
 
   @OneToOne({ persist: false })
   dailyMessages?: UserDailyMessages
 
-  @OneToMany(() => UserBit, bit => bit.user)
+  @OneToMany(() => UserBit, bit => bit.user, { persist: false })
   bits? = new Collection<UserBit>(this)
 
-  @OneToMany(() => UserTip, tip => tip.user)
+  @OneToMany(() => UserTip, tip => tip.user, { persist: false })
   tips? = new Collection<UserTip>(this)
 
-  @OneToMany(() => UserDailyMessages, daily => daily.user)
+  @OneToMany(() => UserDailyMessages, daily => daily.user, { persist: false })
   daily? = new Collection<UserDailyMessages>(this)
+
+  @OneToMany(() => SongLike, songlike => songlike.user, { persist: false })
+  songs_likes? = new Collection<SongLike>(this)
 
   @Property({ persist: false })
   get todayMessages() {

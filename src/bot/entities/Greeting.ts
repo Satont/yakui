@@ -8,7 +8,7 @@ export class Greeting {
   @PrimaryKey()
   id!: number;
 
-  @Property({ fieldName: 'userId', nullable: true })
+  @Property({ nullable: true })
   userId?: number;
 
   @Property({ length: 255, nullable: true })
@@ -17,7 +17,7 @@ export class Greeting {
   @Property({ columnType: 'text' })
   message!: string;
 
-  @Property()
+  @Property({ default: true })
   enabled? = true;
 
 }

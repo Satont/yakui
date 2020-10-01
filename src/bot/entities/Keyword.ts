@@ -16,10 +16,10 @@ export class Keyword {
   @Property({ columnType: 'text' })
   response!: string;
 
-  @Property()
+  @Property({ default: true })
   enabled? = true;
 
-  @Property()
+  @Property({ default: 30 })
   cooldown? = 30;
 
 }

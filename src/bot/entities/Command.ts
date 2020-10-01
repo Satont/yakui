@@ -12,10 +12,10 @@ export class Command {
   @Property({ length: 255 })
   name!: string
   
-  @Property({ columnType: 'json' })
+  @Property({ columnType: 'json', default: '[]' })
   aliases?: string[] = []
   
-  @Property()
+  @Property({ default: 10 })
   cooldown?: number = 10
 
   @Property()
@@ -24,19 +24,19 @@ export class Command {
   @Property()
   response!: string
   
-  @Property()
+  @Property({ default: true })
   enabled = true
   
-  @Property()
+  @Property({ default: true })
   visible = true
   
-  @Enum()
-  permission!: CommandPermission
+  @Enum({ default: 'viewers' })
+  permission: CommandPermission = CommandPermission.VIEWERS
   
-  @Property()
+  @Property({ default: 0 })
   price?: number = 0
   
-  @Property()
+  @Property({ default: 0 })
   usage?: number = 0
   
   @Property({ unique: false })
@@ -45,7 +45,7 @@ export class Command {
   @Property()
   sound_volume?: number
   
-  @OneToOne({ fieldName: 'sound_file_id', persist: false })
+  @OneToOne({ persist: false })
   sound_file?: File
 }
 

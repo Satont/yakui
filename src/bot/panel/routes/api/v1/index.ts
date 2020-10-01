@@ -16,7 +16,7 @@ import overlays from './overlays'
 import widgets from './widgets'
 import chatMessage from './chatMessage'
 import files from './files'
-import { orm } from '@/src/bot/libs/db'
+import { orm } from '@bot/libs/db'
 
 const router = Router()
 

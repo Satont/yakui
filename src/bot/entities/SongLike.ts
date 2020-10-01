@@ -1,6 +1,6 @@
-import { Entity, OneToOne, PrimaryKey, Property, Unique } from '@mikro-orm/core'
-import MyBigInt from '../customTypes/BigInt'
+import { Entity, PrimaryKey, Property, Unique, ManyToOne } from '@mikro-orm/core'
 import { User } from './User'
+import MyBigInt from '../customTypes/BigInt'
 
 @Entity({
   tableName: 'songs_likes',
@@ -14,16 +14,15 @@ export class SongLike {
   @Property()
   userId: number
 
-  @OneToOne({ entity: () => User, fieldName: 'userId', nullable: true })
-  user?: User;
-
   @Property({ length: 255 })
   name!: string;
 
-  @Property({ fieldName: 'createdAt', type: MyBigInt })
+  @Property({ type: MyBigInt })
   createdAt!: number;
 
-  @Property({ fieldName: 'updatedAt', nullable: true, type: MyBigInt })
+  @Property({ nullable: true, type: MyBigInt })
   updatedAt?: number;
 
+  @ManyToOne({ entity: () => User, persist: false })
+  user?: User;
 }

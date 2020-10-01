@@ -12,18 +12,18 @@ export class Timer {
   @Property({ length: 255 })
   name!: string;
 
-  @Property({ nullable: true })
+  @Property({ nullable: true, default: true })
   enabled?: boolean = true;
 
   @Property()
   interval!: number;
 
   @Property({ columnType: 'json', nullable: true, default: '[]' })
-  responses?: Record<string, any>;
+  responses?: string[];
 
   @Property({ nullable: true })
   last?: number;
 
-  @Property({ fieldName: 'triggerTimeStamp', nullable: true, default: '0', type: MyBigInt })
+  @Property({ nullable: true, default: '0', type: MyBigInt })
   triggerTimeStamp?: number;
 }

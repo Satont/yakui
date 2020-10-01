@@ -5,8 +5,8 @@ import { User } from '@bot/entities/User'
 import currency from '@bot/libs/currency'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
 import { RequestContext, wrap } from '@mikro-orm/core'
-import { UserBit } from '@/src/bot/entities/UserBit'
-import { UserTip } from '@/src/bot/entities/UserTip'
+import { UserBit } from '@bot/entities/UserBit'
+import { UserTip } from '@bot/entities/UserTip'
 
 const router = Router({
   mergeParams: true,

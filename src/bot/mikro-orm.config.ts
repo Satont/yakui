@@ -27,6 +27,7 @@ export default {
   migrations: {
     tableName: 'mikro_orm_migrations',
     path: './src/bot/data/migrations',
+    allOrNothing: false,
     transactional: true,
     dropTables: true,
     safe: true,

@@ -13,7 +13,7 @@ export class UserTip {
   @Property({ columnType: 'float4' })
   amount!: string;
 
-  @Property({ fieldName: 'inMainCurrencyAmount', columnType: 'float4' })
+  @Property({ columnType: 'float4' })
   inMainCurrencyAmount!: string;
 
   @Property({ columnType: 'json' })
@@ -31,6 +31,6 @@ export class UserTip {
   @Property()
   userId?: number
 
-  @ManyToOne({ entity: () => User, fieldName: 'userId', nullable: true })
+  @ManyToOne({ entity: () => User, nullable: true, persist: false })
   user?: User;
 }
