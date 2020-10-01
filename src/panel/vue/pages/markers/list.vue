@@ -21,7 +21,7 @@
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import Timer from '@bot/models/Timer'
-import { MarkerInList } from '../../../../../typings'
+import { MarkerInList } from '@src/typings'
 
 @Component
 export default class TimersManagerList extends Vue {

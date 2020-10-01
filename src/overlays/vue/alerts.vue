@@ -9,7 +9,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { getNameSpace } from '@panel/vue/plugins/socket'
-import { IEmitAlert } from 'typings/overlays'
+import { IEmitAlert } from '@src/typings/overlays'
 
 @Component
 export default class Alerts extends Vue {

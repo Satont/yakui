@@ -67,7 +67,7 @@
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import { Route } from 'vue-router'
-import { Command } from '@src/typings'
+import { Command, CommandPermission } from '@src/typings'
 import { getNameSpace } from '@panel/vue/plugins/socket'
 
 @Component
@@ -77,7 +77,7 @@ export default class CommandsManagerEdit extends Vue {
     response: null,
     cooldown: 10,
     visible: true,
-    permission: 'viewers',
+    permission: 'viewers' as any,
     description: null,
     aliases: [],
     price: 0,
