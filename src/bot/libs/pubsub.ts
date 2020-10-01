@@ -15,7 +15,7 @@ export default new class PubSub {
       return
     }
 
-    if (this.client) this.client = null
+    if (this.client) return
 
     this.client = new PubSubClient()
     try {
