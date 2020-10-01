@@ -147,7 +147,7 @@ export default new class Users implements System {
 
       if (pointsPerWatch !== 0 && pointsInterval !== 0 && updatePoints) {
         user.lastWatchedPoints = new Date().getTime()
-        user.points +=  pointsPerWatch
+        user.points += pointsPerWatch
       }
 
       user.watched += 1 * 60 * 1000
