@@ -27,22 +27,23 @@ export default new class Oauth {
   }
 
   async refresh(token: string, type: 'bot' | 'broadcaster') {
+    const repository = orm.em.getRepository(Settings)
     try {
       const { data } = await axios.get('http://bot.satont.ru/api/refresh?refresh_token=' + token)
-      let accessToken = await orm.em.getRepository(Settings).findOne({ space: 'oauth', name: `${type}AccessToken` })
+      let accessToken = await repository.findOne({ space: 'oauth', name: `${type}AccessToken` })
       if (!accessToken) {
-        accessToken = orm.em.getRepository(Settings).create({ space: 'oauth', name: `${type}AccessToken`, value: data.token })
+        accessToken = repository.create({ space: 'oauth', name: `${type}AccessToken`, value: data.token })
       }
       
-      let refreshToken = await orm.em.getRepository(Settings).findOne({ space: 'oauth', name: `${type}RefreshToken` })
+      let refreshToken = await repository.findOne({ space: 'oauth', name: `${type}RefreshToken` })
       if (!refreshToken) {
-        refreshToken = orm.em.getRepository(Settings).create({ space: 'oauth', name: `${type}RefreshToken`, value: data.token })
+        refreshToken = repository.create({ space: 'oauth', name: `${type}RefreshToken`, value: data.token })
       }
     
       accessToken.value = data.token
       refreshToken.value = data.refresh
 
-      await orm.em.persistAndFlush([accessToken, refreshToken])
+      await repository.persistAndFlush([accessToken, refreshToken])
       info(`Access token of ${type} was refreshed.`)
       return {
         access_token: data.token,
