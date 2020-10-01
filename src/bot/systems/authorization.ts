@@ -21,7 +21,7 @@ export default new class Authorization implements System {
       key = orm.em.getRepository(Settings).create({ space: 'general', name: 'JWTKey', value })
       await orm.em.persistAndFlush(key)
     }
-    console.log(key)
+
     this.JWTKey = key.value
   }
 

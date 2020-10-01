@@ -1,4 +1,4 @@
-import { Entity, Enum, PrimaryKey, Property, Unique, OneToOne } from '@mikro-orm/core'
+import { Entity, Enum, PrimaryKey, Property, Unique, ManyToOne } from '@mikro-orm/core'
 import { File } from './File'
 
 @Entity({
@@ -45,7 +45,7 @@ export class Command {
   @Property()
   sound_volume?: number
   
-  @OneToOne({ persist: false })
+  @ManyToOne(() => File, { persist: false })
   sound_file?: File
 }
 

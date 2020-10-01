@@ -95,8 +95,12 @@ export default class CommandsManagerEdit extends Vue {
   get selectOptions() {
     return [
       { value: null, text: 'No sound' },
-      ...this.$store.state.filesList?.filter(s => s.type.startsWith('audio')).map(file => ({ value: file.id, text: file.name }))
+      ...this.audiosList
     ]
+  }
+
+  get audiosList(): any[] {
+    return this.$store.state.filesList?.filter(s => s.type.startsWith('audio'))?.map(file => ({ value: file.id, text: file.name })) || []
   }
 
   async onSubmit(event) {

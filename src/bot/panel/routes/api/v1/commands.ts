@@ -78,7 +78,18 @@ router.post('/', isAdmin, checkSchema({
     in: ['body'],
     optional: true,
   },
-  sound: {
+  sound_file_id: {
+    isNumeric: true,
+    in: ['body'],
+    optional: {
+      options: {
+        nullable: true,
+        checkFalsy: false,
+      },
+    },
+  },
+  sound_volume: {
+    isNumeric: true,
     in: ['body'],
     optional: true,
   },
@@ -104,19 +115,7 @@ router.post('/', isAdmin, checkSchema({
 
     const command = body.id ? await repository.findOne({ id: body.id }) : repository.create(Command)
  
-    wrap(command).assign({
-      name: body.name,
-      aliases: body.aliases,
-      cooldown: body.cooldown,
-      description: body.description,
-      visible: body.visible,
-      permission: body.permission,
-      response: body.response,
-      price: body.price,
-      sound_file_id: body.sound_file_id,
-      sound_volume: body.sound_volume,
-    })
-
+    wrap(command).assign(body)
     await repository.persistAndFlush(command)
 
     await customcommands.init()
