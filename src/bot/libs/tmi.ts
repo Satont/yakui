@@ -50,8 +50,12 @@ export default new class Tmi {
   channel: { name: string, id: string }
 
   constructor() {
-    this.connect('bot')
-    this.connect('broadcaster')
+    this.init()
+  }
+
+  async init() {
+    await this.connect('bot')
+    await this.connect('broadcaster')
   }
 
   async connect(type: 'bot' | 'broadcaster') {
@@ -107,9 +111,8 @@ export default new class Tmi {
       }
     } catch (e) {
       error(e)
-      OAuth.refresh(refreshToken.value, type)
-        .then(() => this.connect(type))
-        .catch(error)
+      await OAuth.refresh(refreshToken.value, type).catch(error)
+      await this.connect(type)
     } finally {
       this.isAlreadyUpdating[type] = false
     }

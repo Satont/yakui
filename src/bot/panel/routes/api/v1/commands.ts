@@ -118,19 +118,19 @@ router.post('/', isAdmin, checkSchema({
     } else command = repository.assign(new Command(), body)
 
     if (body.sound?.soundId && body.sound?.soundId as any !== '0') {
-      command.sound = new CommandSound()
-      wrap(command.sound).assign({ 
+      const sound = new CommandSound()
+      wrap(sound).assign({ 
         commandId: command.id, 
         soundId: body.sound.soundId,
         volume: body.sound.volume,
       })
+      await soundRespository.persistAndFlush(sound)
     } else {
       const sound = await soundRespository.findOne({ command: command.id })
       if (sound) soundRespository.remove(sound)
     }
 
-    repository.persistAndFlush(command)
-    soundRespository.persistAndFlush(command.sound)
+    await repository.persistAndFlush(command)
     await customcommands.init()
     cache.updateCommands()
     res.json(command)
