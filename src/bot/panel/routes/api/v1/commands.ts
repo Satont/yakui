@@ -92,9 +92,9 @@ router.post('/', isAdmin, checkSchema({
       ...array,
       command.name,
       ...command.aliases ?? [],
-    ]), [])
-    
-    if (names.filter(Boolean).includes(body.name) || names.filter(Boolean).some(name => body.aliases?.includes(name))) {
+    ]), []).filter(Boolean)
+    console.log(names)
+    if (names.includes(body.name) || names.some(name => body.aliases?.includes(name))) {
       return res.status(400).send({ message: 'This aliase or name already exists.' })
     }
     
@@ -117,6 +117,8 @@ router.post('/', isAdmin, checkSchema({
       })
     } else command = repository.assign(new Command(), body)
 
+    await repository.persistAndFlush(command)
+
     if (body.sound?.soundId && body.sound?.soundId as any !== '0') {
       const sound = new CommandSound()
       wrap(sound).assign({ 
@@ -130,7 +132,6 @@ router.post('/', isAdmin, checkSchema({
       if (sound) soundRespository.remove(sound)
     }
 
-    await repository.persistAndFlush(command)
     await customcommands.init()
     cache.updateCommands()
     res.json(command)

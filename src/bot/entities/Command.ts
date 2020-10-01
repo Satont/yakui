@@ -40,7 +40,7 @@ export class Command {
   @Property({ nullable: true })
   usage?: number = 1
   
-  @OneToOne()
+  @OneToOne({ fieldName: 'id' })
   sound?: CommandSound
 }
 
