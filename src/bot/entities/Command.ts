@@ -38,11 +38,8 @@ export class Command {
   
   @Property({ default: 0 })
   usage?: number = 0
-  
-  @Property()
-  sound_file_id?: number
 
-  @ManyToOne({ fieldName: 'sound_file_id', persist: false })
+  @ManyToOne({ fieldName: 'sound_file_id' })
   sound_file?: File
   
   @Property()

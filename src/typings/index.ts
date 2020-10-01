@@ -26,9 +26,8 @@ export interface Command {
   enabled?: boolean,
   price?: number,
   type?: 'custom' | 'default',
-  sound_file_id?: number,
   sound_volume?: number,
-  sound_file?: File,
+  sound_file?: File | number,
   system?: System,
   usage?: number
 }

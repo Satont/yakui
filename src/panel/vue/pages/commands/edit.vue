@@ -47,7 +47,7 @@
         <b-form-select id="sound" v-model="command.sound_file" :options="selectOptions"></b-form-select>
       </b-form-group>
       
-      <div v-if="command.sound_file_id">
+      <div v-if="command.sound_file">
         <label for='pitch'>Sound volume: {{ command.sound_volume }}</label>
         <b-form-input id='pitch' v-model='command.sound_volume' type='range' min='1' max='100' step="1"></b-form-input>
       </div>

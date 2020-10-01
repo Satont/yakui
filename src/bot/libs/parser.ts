@@ -11,6 +11,7 @@ import locales from './locales'
 import cache from './cache'
 import { Command as CommandModel } from '@bot/entities/Command'
 import { orm } from './db'
+import { File } from '../entities/File'
 
 export default new class Parser {
   systems: { [x: string]: System } = {}
@@ -70,7 +71,7 @@ export default new class Parser {
       const alerts = await import('@bot/overlays/alerts')
       alerts.default.emitAlert({
         audio: { 
-          file: command.sound_file,
+          file: command.sound_file as File,
           volume: command.sound_volume,
         },
       })
