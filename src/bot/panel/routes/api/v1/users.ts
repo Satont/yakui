@@ -17,13 +17,13 @@ router.get('/', async (req, res, next) => {
     const body = req.query as any
     const repository = RequestContext.getEntityManager().getRepository(User)
     const where = body.byUsername ? {
-      username: { $like: body.byUsername },
+      username: { $like: `%${body.byUsername}%` },
     } : {}
 
     const [users, total] = await repository.findAndCount(where, {
       limit: Number(body.perPage),
       offset: (Number(body.page) - 1) * Number(body.perPage),
-      orderBy: { [body.soryBy]: JSON.parse(body.sortDesc) ? 'desc': 'asc' },
+      orderBy: { [body.sortBy]: JSON.parse(body.sortDesc) ? 'desc': 'asc' },
       populate: ['tips', 'bits'],
     })
 

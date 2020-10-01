@@ -104,7 +104,12 @@ export default new class Users implements System {
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
     const dailyRepository = orm.em.getRepository(UserDailyMessages)
-    const daily = await dailyRepository.findOne({ userId: user.id, date: startOfDay.getTime() }) || dailyRepository.create({ userId: user.id, date: startOfDay.getTime() })
+    const daily = await dailyRepository.findOne({ userId: user.id, date: startOfDay.getTime() }) 
+        || dailyRepository.create({ 
+          userId: user.id, 
+          date: startOfDay.getTime(),
+          count: 0,
+        })
 
     daily.count += 1
     await dailyRepository.persistAndFlush(daily)
@@ -141,7 +146,14 @@ export default new class Users implements System {
     for (const chatter of this.chatters) {
       if (this.settings.ignoredUsers.includes(chatter.username.toLowerCase())) continue
 
-      const user = await repository.findOne(Number(chatter.id)) || repository.create({ id: Number(chatter.id), username: chatter.username })
+      const user = await repository.findOne(Number(chatter.id)) 
+        || repository.create({ 
+          id: Number(chatter.id), 
+          username: chatter.username, 
+          watched: 0,
+          lastWatchedPoints: 0,
+          points: 0,
+        })
 
       const updatePoints = (new Date().getTime() - new Date(user.lastWatchedPoints).getTime() >= pointsInterval) && this.settings.points.enabled
 

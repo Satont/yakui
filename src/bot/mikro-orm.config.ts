@@ -7,7 +7,7 @@ dotenv.config()
 
 export default {
   logger: (msg: string) => info(msg),
-  debug: false,
+  debug: true,
   metadataProvider: TsMorphMetadataProvider,
   dbName: process.env.DB_NAME,
   host: process.env.DB_HOST,
