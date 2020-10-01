@@ -13,6 +13,6 @@ export class Settings {
   @Property({ length: 255 })
   name!: string;
 
-  @Property({ type: JsonType, columnType: 'text' })
+  @Property({ type: JsonType })
   value!: any
 }

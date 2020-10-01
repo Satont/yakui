@@ -1,7 +1,6 @@
 import { Type } from '@mikro-orm/core'
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export default class MyBigInt extends Type<Number, string> {
+export default class MyBigInt extends Type<number, string> {
   convertToDatabaseValue(v: number) {
     return String(v)
   }

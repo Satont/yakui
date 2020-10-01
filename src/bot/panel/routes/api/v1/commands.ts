@@ -126,11 +126,11 @@ router.post('/', isAdmin, checkSchema({
       })
     } else {
       const sound = await soundRespository.findOne({ command: command.id })
-      soundRespository.remove(sound)
+      if (sound) soundRespository.remove(sound)
     }
-    
-    await repository.flush()
-    await soundRespository.flush()
+
+    repository.persistAndFlush(command)
+    soundRespository.persistAndFlush(command.sound)
     await customcommands.init()
     cache.updateCommands()
     res.json(command)

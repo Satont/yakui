@@ -1,6 +1,6 @@
 import { Migration } from '@mikro-orm/migrations'
 
-export class Migration20201001080740 extends Migration {
+export class Migration20201001084252 extends Migration {
 
   async up(): Promise<void> {
     this.addSql('create table "widgets" ("id" serial primary key, "name" varchar(255) not null, "x" int4 not null, "y" int4 not null, "w" int4 not null, "h" int4 not null);')
@@ -25,7 +25,7 @@ export class Migration20201001080740 extends Migration {
     this.addSql('create table "songs_likes" ("id" serial primary key, "userId" int4 not null, "userId" int4 null, "name" varchar(255) not null, "createdAt" int8 not null, "updatedAt" int8 null);')
     this.addSql('alter table "songs_likes" add constraint "songs_likes_userId_unique" unique ("userId");')
 
-    this.addSql('create table "settings" ("id" serial primary key, "space" varchar(255) not null, "name" varchar(255) not null, "value" text not null);')
+    this.addSql('create table "Settings" ("id" serial primary key, "space" varchar(255) not null, "name" varchar(255) not null, "value" text not null);')
 
     this.addSql('create table "overlays" ("id" serial primary key, "name" varchar(255) not null, "data" text not null, "css" text null, "js" json null default \'[]\');')
 
@@ -46,7 +46,7 @@ export class Migration20201001080740 extends Migration {
     this.addSql('alter table "commands" add constraint "commands_name_unique" unique ("name");')
     this.addSql('alter table "commands" add constraint "commands_sound_unique" unique ("sound");')
 
-    this.addSql('create table "commands_sound" ("id" serial primary key, "volume" int4 null, "commandId" int4 not null, "soundId" int4 not null);')
+    this.addSql('create table "commands_sound" ("id" serial primary key, "volume" int4 null, "commandId" int4 not null, "commandId" int4 not null, "soundId" int4 not null);')
 
     this.addSql('alter table "users" add constraint "users_dailymessages_foreign" foreign key ("dailyMessages") references "users_daily_messages" ("id") on update cascade on delete set null;')
 
@@ -65,7 +65,7 @@ export class Migration20201001080740 extends Migration {
 
     this.addSql('alter table "songs_likes" add constraint "songs_likes_userid_name_unique" unique ("userId", "name");')
 
-    this.addSql('alter table "settings" add constraint "settings_space_name_unique" unique ("space", "name");')
+    this.addSql('alter table "Settings" add constraint "settings_space_name_unique" unique ("space", "name");')
   }
 
 }
