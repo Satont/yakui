@@ -13,6 +13,9 @@ export class CommandSound {
   @Property()
   volume?: number = 50;
 
+  @Property()
+  commandId!: number
+
   @ManyToOne({ entity: () => Command, fieldName: 'commandId' })
   command!: Command;
 
