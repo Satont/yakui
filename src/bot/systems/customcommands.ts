@@ -6,7 +6,7 @@ export default new class CustomCommands implements System {
   commands: CommandType[] = []
 
   async init() {
-    const commands = await orm.em.getRepository(Command).findAll({ populate: ['sound.file'] })
+    const commands = await orm.em.getRepository(Command).findAll({ populate: ['sound'] })
     console.log(commands)
     this.commands = commands.map(command => ({
       id: command.id,
@@ -20,7 +20,7 @@ export default new class CustomCommands implements System {
       visible: command.visible,
       enabled: command.enabled,
       fnc: this.fnc,
-      sound: command['sound.file'],
+      sound_file: command.sound_file,
       type: 'custom',
       usage: command.usage,
     }))

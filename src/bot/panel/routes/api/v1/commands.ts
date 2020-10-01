@@ -113,10 +113,9 @@ router.post('/', isAdmin, checkSchema({
       permission: body.permission,
       response: body.response,
       price: body.price,
-      sound: body.sound,
+      sound_file_id: body.sound_file_id,
+      sound_volume: body.sound_volume,
     })
-
-    console.log(command)
 
     await repository.persistAndFlush(command)
 

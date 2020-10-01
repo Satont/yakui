@@ -9,6 +9,7 @@ import {
 } from './events'
 import { PubSubRedemptionMessage } from 'twitch-pubsub-client/lib'
 import { File } from '../bot/entities/File'
+import { CommandPermission } from '@bot/entities/Command'
 
 export type HostType = { viewers: number, username: string }
 
