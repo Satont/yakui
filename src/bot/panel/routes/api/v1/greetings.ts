@@ -53,7 +53,7 @@ router.post('/', isAdmin, checkSchema({
     const body = req.body
 
     const repository = RequestContext.getEntityManager().getRepository(Greeting)
-    const greeting = await repository.findOne({ id: Number(body.id) }) || repository.create(body)
+    const greeting = body.id ? await repository.findOne({ id: Number(body.id) }) : repository.create(body)
 
     wrap(greeting).assign({
       username: body.username,

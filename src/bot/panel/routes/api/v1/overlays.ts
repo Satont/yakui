@@ -68,7 +68,7 @@ router.post('/', isAdmin, checkSchema({
     validationResult(req).throw()
 
     const repository = RequestContext.getEntityManager().getRepository(Overlay)
-    const overlay = await repository.findOne({ id: req.body.id }) || repository.create(req.body)
+    const overlay = req.body.id ? await repository.findOne({ id: req.body.id }) : repository.create(req.body)
 
     wrap(overlay).assign({
       name: req.body.name,

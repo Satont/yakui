@@ -58,7 +58,7 @@ router.post('/', isAdmin, checkSchema({
     const body = req.body
 
     const repository = RequestContext.getEntityManager().getRepository(Keyword)
-    const keyword = await repository.findOne({ id: body.id }) || repository.create(body)
+    const keyword = body.id ? await repository.findOne({ id: body.id }) : repository.create(body)
 
     wrap(keyword).assign({
       name: body.name,

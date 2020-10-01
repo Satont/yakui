@@ -59,11 +59,9 @@ router.post('/', isAdmin, checkSchema({
     validationResult(req).throw()
     const body = req.body
 
-    let timer: Timer
     const repository = RequestContext.getEntityManager().getRepository(Timer)
-
-    if (body.id) timer = await repository.findOne({ id: Number(body.id) })
-    else timer = repository.create(body)
+    
+    const timer = body.id ? await repository.findOne({ id: Number(body.id) }) : repository.create(body)
 
     wrap(timer).assign({
       name: body.name,

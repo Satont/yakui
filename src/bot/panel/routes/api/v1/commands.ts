@@ -88,13 +88,19 @@ router.post('/', isAdmin, checkSchema({
     validationResult(req).throw()
 
     const body = req.body
-
-    if (cache.commands.has(body.name) || cache.commandsAliases.has(body.name) || body.aliases?.some(a => cache.commandsAliases.has(a) || cache.commands.has(a))) {
+    const names: string[] = Commands.getCommands().reduce((array, command) => ([
+      ...array,
+      command.name,
+      ...command.aliases ?? [],
+    ]), [])
+    
+    if (names.filter(Boolean).includes(body.name) || names.filter(Boolean).some(name => body.aliases?.includes(name))) {
       return res.status(400).send({ message: 'This aliase or name already exists.' })
     }
-
+    
     let command: Command
     const repository = RequestContext.getEntityManager().getRepository(Command)
+    const soundRespository = RequestContext.getEntityManager().getRepository(CommandSound)
 
     if (body.id) {
       command = await repository.findOne({ id: body.id })
@@ -109,7 +115,7 @@ router.post('/', isAdmin, checkSchema({
         response: body.response,
         price: body.price,
       })
-    } else command = repository.create(body)
+    } else command = repository.assign(new Command(), body)
 
     if (body.sound?.soundId && body.sound?.soundId as any !== '0') {
       command.sound = new CommandSound()
@@ -119,11 +125,12 @@ router.post('/', isAdmin, checkSchema({
         volume: body.sound.volume,
       })
     } else {
-      const soundRespository = RequestContext.getEntityManager().getRepository(CommandSound)
       const sound = await soundRespository.findOne({ command: command.id })
-      await soundRespository.removeAndFlush(sound)
+      soundRespository.remove(sound)
     }
-
+    
+    await repository.flush()
+    await soundRespository.flush()
     await customcommands.init()
     cache.updateCommands()
     res.json(command)

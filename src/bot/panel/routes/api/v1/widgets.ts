@@ -44,7 +44,7 @@ router.post('/', isAdmin,  checkSchema({
     validationResult(req).throw()
 
     const repository = RequestContext.getEntityManager().getRepository(Widget)
-    const widget = await repository.findOne(req.body.id) || repository.create(req.body)
+    const widget = req.body.id ? await repository.findOne(req.body.id) : repository.create(req.body)
 
     wrap(widget).assign(req.body)
     await repository.persistAndFlush(widget)
