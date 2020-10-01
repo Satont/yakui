@@ -3,8 +3,7 @@
   "version": "4.0.0",
   "description": "",
   "scripts": {
-    "migrate": "mikro-orm migration:up",
-    "prestart": "npm run migrate",
+    "prestart": "npm run migration:up",
     "start": "cross-env NODE_ENV=production node --experimental-report --report-on-fatalerror --report-directory=./logs/ --always_compact --optimize_for_size --gc_interval=100 dest/index.js",
     "build": "npm run build:web && npm run build:bot",
     "dev": "npm run dev:web & npm run dev:bot",
@@ -14,7 +13,10 @@
     "build:bot": "cross-env NODE_ENV=production tsc --project src/bot/tsconfig.json",
     "inspector": "cross-env NODE_ENV=production node --experimental-report --report-on-fatalerror --report-directory=./logs/ --always_compact --optimize_for_size --gc_interval=100 --inspect=0.0.0.0:9229 --nolazy dest/index",
     "eslint": "npx eslint --ext .ts src",
-    "eslint:fix": "npx eslint --ext .ts --fix src"
+    "eslint:fix": "npx eslint --ext .ts --fix src",
+    "migration:create": "mikro-orm migration:create",
+    "migration:up": "mikro-orm migration:up",
+    "migration:down": "mikro-orm migration:down"
   },
   "engines": {
     "node": ">=12"
