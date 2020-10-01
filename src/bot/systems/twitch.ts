@@ -2,11 +2,12 @@ import tmi from '@bot/libs/tmi'
 import humanizeDuration from 'humanize-duration'
 import { onStreamStart, onStreamEnd } from '@bot/libs/eventsCaller'
 import locales from '@bot/libs/locales'
-import { System, Command, CommandOptions, CommandPermission } from '@src/typings'
+import { System, Command, CommandOptions } from '@src/typings'
 import { INewSubscriber, INewResubscriber } from '@src/typings/events'
 import { Settings } from '@bot/entities/Settings'
 import { error } from '@bot/libs/logger'
 import { orm } from '@bot/libs/db'
+import { CommandPermission } from '@bot/entities/Command'
 
 export default new class Twitch implements System {
   private intervals = {
@@ -18,7 +19,7 @@ export default new class Twitch implements System {
     {
       name: 'title',
       fnc: this.setTitle,
-      permission: CommandPermission['moderators'],
+      permission: CommandPermission.MODERATORS,
       visible: false,
       description: 'Set title of channel.',
     },
@@ -26,7 +27,7 @@ export default new class Twitch implements System {
       name: 'category',
       fnc: this.setGame,
       aliases: ['game'],
-      permission: CommandPermission['moderators'],
+      permission: CommandPermission.MODERATORS,
       visible: false,
       description: 'Set category of channel',
     },

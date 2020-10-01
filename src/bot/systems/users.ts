@@ -1,6 +1,6 @@
 import { chunk as makeChunk } from 'lodash'
 
-import { System, ParserOptions, Command, CommandOptions, CommandPermission } from '@src/typings'
+import { System, ParserOptions, Command, CommandOptions } from '@src/typings'
 import { User } from '@bot/entities/User'
 import tmi from '@bot/libs/tmi'
 import { UserDailyMessages } from '@bot/entities/UserDailyMessages'
@@ -8,6 +8,7 @@ import twitch from './twitch'
 import { Settings } from '@bot/entities/Settings'
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
 import { orm } from '@bot/libs/db'
+import { CommandPermission } from '@bot/entities/Command'
 
 export default new class Users implements System {
   settings: {
@@ -51,9 +52,9 @@ export default new class Users implements System {
     { fnc: this.parseMessage },
   ]
   commands: Command[] = [
-    { name: 'sayb', permission: CommandPermission['broadcaster'], fnc: this.sayb, visible: false, description: 'Say something as broadcaster.' },
-    { name: 'ignore add', permission: CommandPermission['moderators'], fnc: this.ignoreAdd, visible: false, description: 'Add some username to bot ignore list' },
-    { name: 'ignore remove', permission: CommandPermission['moderators'], fnc: this.ignoreRemove, visible: false, description: 'Remove some username from bot ignore list' },
+    { name: 'sayb', permission: CommandPermission.BROADCASTER, fnc: this.sayb, visible: false, description: 'Say something as broadcaster.' },
+    { name: 'ignore add', permission: CommandPermission.MODERATORS, fnc: this.ignoreAdd, visible: false, description: 'Add some username to bot ignore list' },
+    { name: 'ignore remove', permission: CommandPermission.MODERATORS, fnc: this.ignoreRemove, visible: false, description: 'Remove some username from bot ignore list' },
   ]
 
   async init() {

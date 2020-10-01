@@ -66,12 +66,12 @@ export default new class Parser {
       await orm.em.persistAndFlush(cmd)
     }
     
-    if (command.sound && !this.cooldowns.includes(command.name)) {
+    if (command.sound_file && !this.cooldowns.includes(command.name)) {
       const alerts = await import('@bot/overlays/alerts')
       alerts.default.emitAlert({
         audio: { 
-          file: command.sound.file,
-          volume: command.sound.volume,
+          file: command.sound_file,
+          volume: command.sound_volume,
         },
       })
     }

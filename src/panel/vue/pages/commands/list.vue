@@ -17,8 +17,8 @@
       <template v-slot:cell(actions)="row">
          <b-button-group size="sm">
           <b-button @click="row.toggleDetails">{{ row.detailsShowing ? 'Hide' : 'Show' }} Details</b-button>
-          <b-button variant="primary" v-if="$store.state.loggedUser.userType === 'admin' && row.item.type === 'custom' && !isPublic()" @click="edit(row.item)">Edit</b-button>
-          <b-button variant="danger" v-if="$store.state.loggedUser.userType === 'admin' && row.item.type === 'custom' && !isPublic()" @click="del(row.item)">Delete</b-button>
+          <b-button variant="primary" v-if="buttonShouldBeVissible(row.item.type)" @click="edit(row.item)">Edit</b-button>
+          <b-button variant="danger" v-if="buttonShouldBeVissible(row.item.type)" @click="del(row.item)">Delete</b-button>
         </b-button-group>
       </template>
 
@@ -48,7 +48,7 @@ export default class CommandsManagerList extends EnvChecker {
     { key: 'name', label: 'Name' },
     { key: 'decoratedResponse', label: 'Response' },
     'permission',
-    { key: 'used', label: 'Used' },
+    { key: 'usage', label: 'Used' },
     { key: 'actions' },
   ]
 
@@ -77,6 +77,10 @@ export default class CommandsManagerList extends EnvChecker {
 
         return { ...c, decoratedResponse }
       })
+  }
+
+  buttonShouldBeVissible(type) {
+    return this.$store.state.loggedUser.userType === 'admin' && type === 'custom' && !this.isPublic()
   }
 
   async edit(params) {

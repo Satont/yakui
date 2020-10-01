@@ -8,16 +8,7 @@ import {
   IWebHookStreamChanged,
 } from './events'
 import { PubSubRedemptionMessage } from 'twitch-pubsub-client/lib'
-import { CommandSound } from '@bot/entities/CommandSound'
-
-export enum CommandPermission {
-  'viewers',
-  'followers',
-  'vips',
-  'subscribers',
-  'moderators', 
-  'broadcaster'
-}
+import { File } from '../bot/entities/File'
 
 export type HostType = { viewers: number, username: string }
 
@@ -34,7 +25,9 @@ export interface Command {
   enabled?: boolean,
   price?: number,
   type?: 'custom' | 'default',
-  sound?: CommandSound,
+  sound_file_id?: number,
+  sound_volume?: number,
+  sound_file?: File,
   system?: System,
   usage?: number
 }

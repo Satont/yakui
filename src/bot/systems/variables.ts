@@ -9,7 +9,7 @@ import tmi from '@bot/libs/tmi'
 import { User as UserModel } from '@bot/entities/User'
 //import currency from '@bot/libs/currency'
 import Axios from 'axios'
-import { System, Command, CommandPermission } from '@src/typings'
+import { System, Command } from '@src/typings'
 import { Variable } from '@bot/entities/Variable'
 import spotify from '@bot/integrations/spotify'
 import locales from '@bot/libs/locales'
@@ -18,6 +18,7 @@ import satontapi from '@bot/integrations/satontapi'
 import Commands from './commands'
 import { UserDailyMessages } from '@bot/entities/UserDailyMessages'
 import { orm } from '@bot/libs/db'
+import { CommandPermission } from '../entities/Command'
 
 export default new class Variables implements System {
   variables: Array<{ name: string, response: string, custom?: boolean }> = [
@@ -335,7 +336,7 @@ export default new class Variables implements System {
   }
 
   async changeCustomVariable({ raw, text, response }: { raw: TwitchPrivateMessage, response: string, text: string }) {
-    const isAdmin = users.hasPermission(raw.userInfo.badges, CommandPermission['moderators'], raw)
+    const isAdmin = users.hasPermission(raw.userInfo.badges, CommandPermission.MODERATORS, raw)
 
     if (isAdmin && text.length) {
       const match = response.match(/\$_(\S*)/g)

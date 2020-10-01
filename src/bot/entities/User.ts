@@ -32,7 +32,7 @@ export class User {
   @Property({ type: MyBigInt })
   lastWatchedPoints?: number = 0;
 
-  @OneToOne()
+  @OneToOne({ persist: false })
   dailyMessages?: UserDailyMessages
 
   @OneToMany(() => UserBit, bit => bit.user)
