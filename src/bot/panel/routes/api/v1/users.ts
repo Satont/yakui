@@ -80,6 +80,8 @@ router.post('/', isAdmin, checkSchema({
     for (const bodyBit of req.body.user.bits) {
       const bit = bodyBit.id ? await bitRepository.findOne(bodyBit.id) : new UserBit()
       wrap(bit).assign(bodyBit)
+      console.log(bit)
+      bitRepository.persist(bit)
     }
     
     for (const id of req.body.delete.bits) {
@@ -99,6 +101,7 @@ router.post('/', isAdmin, checkSchema({
       
       const tip = bodyTip.id ? await tipRepository.findOne(bodyTip.id) : new UserTip()
       wrap(tip).assign(bodyTip)
+      tipRepository.persist(tip)
     }
     
     delete req.body.user.bits

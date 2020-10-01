@@ -18,6 +18,9 @@ export class UserBit {
   @Property({ type: MyBigInt })
   timestamp!: number;
 
+  @Property()
+  userId?: number
+
   @ManyToOne({ entity: () => User, fieldName: 'userId', nullable: true })
   user?: User;
 }
