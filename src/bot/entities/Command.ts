@@ -39,14 +39,14 @@ export class Command {
   @Property({ default: 0 })
   usage?: number = 0
   
-  @Property({ unique: false })
+  @Property()
   sound_file_id?: number
+
+  @ManyToOne({ fieldName: 'sound_file_id', persist: false })
+  sound_file?: File
   
   @Property()
   sound_volume?: number
-  
-  @ManyToOne(() => File, { persist: false })
-  sound_file?: File
 }
 
 export enum CommandPermission {

@@ -44,7 +44,7 @@
       </b-form-group>
 
       <b-form-group label="Command sound" label-for="sound">
-        <b-form-select id="sound" v-model="command.sound_file_id" :options="selectOptions"></b-form-select>
+        <b-form-select id="sound" v-model="command.sound_file" :options="selectOptions"></b-form-select>
       </b-form-group>
       
       <div v-if="command.sound_file_id">
@@ -79,7 +79,7 @@ export default class CommandsManagerEdit extends Vue {
     aliases: [],
     price: 0,
     enabled: true,
-    sound_file_id: null,
+    sound_file: null,
     sound_volume: 50,
   }
 

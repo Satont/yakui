@@ -26,7 +26,7 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:id', isAdmin, async (req, res, next) => {
   try {
-    const command = Commands.getCommandById(req.params.id)
+    const command = await RequestContext.getEntityManager().getRepository(Command).findOne(Number(req.params.id))
 
     res.json(command)
   } catch (e) {
@@ -78,7 +78,7 @@ router.post('/', isAdmin, checkSchema({
     in: ['body'],
     optional: true,
   },
-  sound_file_id: {
+  sound_file: {
     isNumeric: true,
     in: ['body'],
     optional: {
@@ -115,7 +115,7 @@ router.post('/', isAdmin, checkSchema({
 
     const command = body.id ? await repository.findOne({ id: body.id }) : repository.create(Command)
  
-    wrap(command).assign(body)
+    repository.assign(command, body)
     await repository.persistAndFlush(command)
 
     await customcommands.init()
