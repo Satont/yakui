@@ -54,7 +54,7 @@ router.delete('/', isAdmin, checkSchema({
     validationResult(req).throw()
     const repository = RequestContext.getEntityManager().getRepository(User)
     const user = await repository.findOne(Number(req.params.id))
-    
+    console.log('im in delete')
     await repository.removeAndFlush(user)
     res.send('Ok')
   } catch (e) {
@@ -73,42 +73,42 @@ router.post('/', isAdmin, checkSchema({
     const repository = RequestContext.getEntityManager().getRepository(User)
     const bitRepository = RequestContext.getEntityManager().getRepository(UserBit)
     const tipRepository = RequestContext.getEntityManager().getRepository(UserTip)
-    const user = await repository.findOne(Number(req.body.user?.id), ['bits', 'tips'])
+    const user = await repository.findOne(req.body.user.id, ['bits', 'tips'])
 
     if (!user) throw new Error('User not found')
 
     for (const bodyBit of req.body.user.bits) {
-      const bit = await bitRepository.findOne(bodyBit.id) || bitRepository.create(bodyBit)
+      const bit = bodyBit.id ? await bitRepository.findOne(bodyBit.id) : new UserBit()
       wrap(bit).assign(bodyBit)
-      repository.persistAndFlush(bit)
     }
-
-    for (const bit of req.body.delete.bits) {
-      await bitRepository.removeAndFlush(await bitRepository.findOne({ id: bit }))
+    
+    for (const id of req.body.delete.bits) {
+      bitRepository.remove(await bitRepository.findOne({ id }))
     }
-
-    for (const tip of req.body.delete.tips) {
-      await tipRepository.removeAndFlush(await tipRepository.findOne({ id: tip }))
+    
+    for (const id of req.body.delete.tips) {
+      tipRepository.remove(await tipRepository.findOne({ id }))
     }
-
+    
     for (let bodyTip of req.body.user.tips) {
       bodyTip = {
         ...bodyTip,
         inMainCurrencyAmount: currency.exchange({ amount: bodyTip.amount, from: bodyTip.currency }),
         rates: currency.rates,
       }
-
-      const tip = await tipRepository.findOne(bodyTip.id) || tipRepository.create(bodyTip)
-      wrap(tip).assign(bodyTip)
       
-      await repository.persistAndFlush(tip)
+      const tip = bodyTip.id ? await tipRepository.findOne(bodyTip.id) : new UserTip()
+      wrap(tip).assign(bodyTip)
     }
-
+    
     delete req.body.user.bits
     delete req.body.user.tips
-
+    
     wrap(user).assign(req.body.user)
-    await repository.persistAndFlush(user)
+
+    await bitRepository.flush()
+    await tipRepository.flush()
+    await repository.flush()
 
     res.send('Ok')
   } catch (e) {

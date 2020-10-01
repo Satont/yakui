@@ -1,5 +1,5 @@
 import dotenv from 'dotenv'
-import { Options } from '@mikro-orm/core'
+import { Options, EntityCaseNamingStrategy  } from '@mikro-orm/core'
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection'
 import { info } from './libs/logger'
 
@@ -19,6 +19,7 @@ export default {
   entities: ['./dest/entities/**/*.js'],
   entitiesTs: ['./src/bot/entities/**/*.ts'],
   cache: { pretty: true },
+  namingStrategy: EntityCaseNamingStrategy ,
   pool: {
     min: 1,
     max: 10,

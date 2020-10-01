@@ -1,4 +1,4 @@
-import { Cascade, Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core'
+import { Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core'
 import MyBigInt from '../customTypes/BigInt'
 import { User } from './User'
 
@@ -9,7 +9,7 @@ export class UserDailyMessages {
   @PrimaryKey()
   id!: number;
 
-  @ManyToOne({ entity: () => User, fieldName: 'userId', cascade: [Cascade.ALL], nullable: true })
+  @ManyToOne({ entity: () => User, fieldName: 'userId', nullable: true })
   userId?: User;
 
   @Property({ nullable: true })

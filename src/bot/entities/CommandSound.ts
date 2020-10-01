@@ -1,4 +1,4 @@
-import { Cascade, Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core'
+import { Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core'
 import { Command } from './Command'
 import { File } from './File'
 
@@ -13,9 +13,9 @@ export class CommandSound {
   @Property()
   volume?: number = 50;
 
-  @ManyToOne({ entity: () => Command, fieldName: 'commandId', cascade: [Cascade.ALL] })
+  @ManyToOne({ entity: () => Command, fieldName: 'commandId' })
   command!: Command;
 
-  @ManyToOne({ entity: () => File, fieldName: 'soundId', cascade: [Cascade.ALL] })
+  @ManyToOne({ entity: () => File, fieldName: 'soundId' })
   file!: File;
 }

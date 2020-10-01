@@ -1,4 +1,4 @@
-import { Cascade, Entity, OneToOne, PrimaryKey, Property, Unique } from '@mikro-orm/core'
+import { Entity, OneToOne, PrimaryKey, Property, Unique } from '@mikro-orm/core'
 import MyBigInt from '../customTypes/BigInt'
 import { User } from './User'
 
@@ -14,7 +14,7 @@ export class SongLike {
   @Property()
   userId: number
 
-  @OneToOne({ entity: () => User, fieldName: 'userId', cascade: [Cascade.ALL], nullable: true })
+  @OneToOne({ entity: () => User, fieldName: 'userId', nullable: true })
   user?: User;
 
   @Property({ length: 255 })
