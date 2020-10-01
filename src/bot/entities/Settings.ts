@@ -1,7 +1,9 @@
 import { Entity, PrimaryKey, Property, Unique } from '@mikro-orm/core'
 import JsonType from '../customTypes/JsonType'
 
-@Entity()
+@Entity({
+  tableName: 'settings',
+})
 @Unique({ name: 'settings_space_name_unique', properties: ['space', 'name'] })
 export class Settings {
   @PrimaryKey()
