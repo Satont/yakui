@@ -9,15 +9,12 @@ export class UserDailyMessages {
   @PrimaryKey()
   id!: number;
 
-  @Property()
-  userId?: number
-  
   @Property({ nullable: true, default: 0 })
   count?: number = 0;
   
   @Property({ type: MyBigInt })
   date!: number;
   
-  @ManyToOne({ entity: () => User, nullable: true, persist: false })
-  user?: User;
+  @ManyToOne({ entity: () => User, fieldName: 'userId' })
+  user!: User;
 }
