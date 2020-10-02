@@ -1,6 +1,6 @@
 import { chunk as makeChunk } from 'lodash'
 
-import { System, ParserOptions, Command, CommandOptions } from '@src/typings'
+import { System, ParserOptions, Command, CommandOptions, UserPermissions } from '@src/typings'
 import { User } from '@bot/entities/User'
 import tmi from '@bot/libs/tmi'
 import { UserDailyMessages } from '@bot/entities/UserDailyMessages'
@@ -179,10 +179,20 @@ export default new class Users implements System {
     tmi.chatClients?.broadcaster?.say(tmi.channel?.name, opts.argument)
   }
 
+  getUserPermissions(badges: Map<string, string>, raw?: TwitchPrivateMessage): UserPermissions {
+    return {
+      broadcaster: badges.has('broadcaster') || this.settings?.admins?.includes(raw?.userInfo.userName),
+      moderators: badges.has('moderator'),
+      vips: badges.has('vip'),
+      subscribers: badges.has('subscriber') || badges.has('founder'),
+      viewers: true,
+    }
+  }
+
   hasPermission(badges: Map<string, string>, searchForPermission: CommandPermission, raw?: TwitchPrivateMessage) {
     if (!searchForPermission) return true
     
-    const userPerms = Object.entries(tmi.getUserPermissions(badges, raw))
+    const userPerms = Object.entries(this.getUserPermissions(badges, raw))
     const commandPermissionIndex = userPerms.indexOf(userPerms.find(v => Object.keys(searchForPermission).indexOf(v[0])))
 
     return userPerms.some((p, index) => p[1] && index <= commandPermissionIndex)
@@ -191,11 +201,9 @@ export default new class Users implements System {
   async ignoreAdd(opts: CommandOptions) {
     if (!opts.argument.length) return
     const repository = orm.em.getRepository(Settings)
-    let ignoredUsers = await repository.findOne({ space: 'users', name: 'ignoredUsers' })
-    if (!ignoredUsers) {
-      ignoredUsers = repository.create({ space: 'users', name: 'ignoredUsers', value: [] as any })
-    }
-    
+    const data = { space: 'users', name: 'ignoredUsers' }
+    const ignoredUsers = await repository.findOne(data) || repository.create({ ...data, value: [] })
+
     ignoredUsers.value = [...ignoredUsers.value, opts.argument.toLowerCase()] as any
     await orm.em.persistAndFlush(ignoredUsers)
 
@@ -210,9 +218,9 @@ export default new class Users implements System {
     if (!ignoredUsers || !ignoredUsers?.value.length) return
     if (!ignoredUsers.value.includes(opts.argument.toLowerCase())) return
 
-    const users = ignoredUsers.value;
+    const users: string[] = ignoredUsers.value
 
-    (users as any).splice(ignoredUsers.value.indexOf(opts.argument.toLowerCase()), 1) 
+    users.splice(ignoredUsers.value.indexOf(opts.argument.toLowerCase()), 1) 
 
     ignoredUsers.value = users
     await orm.em.persistAndFlush(ignoredUsers)

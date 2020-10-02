@@ -5,11 +5,9 @@ import { StaticAuthProvider } from 'twitch-auth'
 import { Settings } from '@bot/entities/Settings'
 import OAuth from './oauth'
 import Parser from './parser'
-import { UserPermissions } from '@src/typings'
 import events from '@bot/systems/events'
 import { info, error, chatOut, chatIn, timeout, whisperOut } from './logger'
 import { onHosting, onHosted, onRaided, onSubscribe, onReSubscribe, onMessageHighlight } from './eventsCaller'
-import users from '@bot/systems/users'
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
 import { orm } from './db'
 
@@ -237,16 +235,6 @@ export default new class Tmi {
   async whispers({ type = 'bot', message, target }: { type?: 'bot' | 'broadcaster', message: string, target: string }) {
     if (process.env.NODE_ENV === 'production') this.chatClients[type]?.whisper(target, message)
     whisperOut(`${target}: ${message}`)
-  }
-
-  getUserPermissions(badges: Map<string, string>, raw?: TwitchPrivateMessage): UserPermissions {
-    return {
-      broadcaster: badges.has('broadcaster') || users.settings?.admins?.includes(raw?.userInfo.userName),
-      moderators: badges.has('moderator'),
-      vips: badges.has('vip'),
-      subscribers: badges.has('subscriber') || badges.has('founder'),
-      viewers: true,
-    }
   }
 
   private async loadLibs() {

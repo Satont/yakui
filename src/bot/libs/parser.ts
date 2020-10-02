@@ -11,7 +11,7 @@ import locales from './locales'
 import cache from './cache'
 import { Command as CommandModel } from '@bot/entities/Command'
 import { orm } from './db'
-import { File } from '../entities/File'
+import { File } from '@bot/entities/File'
 
 export default new class Parser {
   systems: { [x: string]: System } = {}
@@ -92,7 +92,7 @@ export default new class Parser {
     commandResult = await Variables.parseMessage({ message: commandResult, raw, argument, command })
     
     if (!commandResult.length) return
-    const userPerms = tmi.getUserPermissions(raw.userInfo.badges, raw)
+    const userPerms = users.getUserPermissions(raw.userInfo.badges, raw)
     this.cooldowns.includes(command.name) && (!userPerms.broadcaster && !userPerms.moderators)
       ? tmi.whispers({ target: raw.userInfo.userName, message: commandResult })
       : tmi.say({ message: commandResult })
