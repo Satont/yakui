@@ -104,7 +104,7 @@ export default new class Tmi {
       }
       await this.chatClients[type].connect()
 
-      await this.intervaledUpdateAccessToken(type, { access_token: accessToken.value, refresh_token: refreshToken.value })
+      await this.intervaledUpdateAccessToken(type)
       if (type === 'broadcaster') {
         const pubsub = await import('./pubsub')
         await pubsub.default.init()
@@ -118,17 +118,21 @@ export default new class Tmi {
     }
   }
 
-  private async intervaledUpdateAccessToken(type: 'bot' | 'broadcaster', data: { access_token: string, refresh_token: string }) {
+  private async intervaledUpdateAccessToken(type: 'bot' | 'broadcaster') {
     clearInterval(this.intervals.updateAccessToken[type])
 
+    const refreshToken = await orm.em.getRepository(Settings).findOne({ space: 'oauth', name: `${type}RefreshToken` })
+
     try {
-      const { access_token, refresh_token } = await OAuth.refresh(data.refresh_token, type)
+      const { access_token, refresh_token } = await OAuth.refresh(refreshToken.value, type)
       const token = new AccessToken({ access_token, refresh_token })
     
       this.clients[type].setAccessToken(token)
-      this.intervals.updateAccessToken[type] = setTimeout(() => this.intervaledUpdateAccessToken(type, { access_token, refresh_token }), 10 * 60 * 1000)
-    } catch {
-      this.intervals.updateAccessToken[type] = setTimeout(() => this.intervaledUpdateAccessToken(type, data), 10 * 60 * 1000)
+      this.intervals.updateAccessToken[type] = setTimeout(() => this.intervaledUpdateAccessToken(type), 10 * 60 * 1000)
+    } catch (e) {
+      error(e)
+    } finally {
+      this.intervals.updateAccessToken[type] = setTimeout(() => this.intervaledUpdateAccessToken(type), 10 * 60 * 1000)
     }
   }
 
@@ -188,7 +192,7 @@ export default new class Tmi {
 
         (raw as any).isAction = true
         events.fire({ name: 'message', opts: { username, message } })
-        await Parser.parse(message, raw)
+        Parser.parse(message, raw)
       })
       client.onMessage(async (channel, username, message, raw) => {
         chatIn(`${username} [${raw.userInfo.userId}]: ${message}`)
@@ -197,7 +201,7 @@ export default new class Tmi {
           events.fire({ name: 'bits', opts: { amount: raw.totalBits, message } })
         } else {
           events.fire({ name: 'message', opts: { username, message } })
-          await Parser.parse(message, raw)
+          Parser.parse(message, raw)
         }
       })
       client.onHost((channel, username, viewers) => {
