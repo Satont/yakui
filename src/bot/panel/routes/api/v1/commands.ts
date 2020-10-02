@@ -5,7 +5,7 @@ import isAdmin from '@bot/panel/middlewares/isAdmin'
 import Commands from '@bot/systems/commands'
 import customcommands from '@bot/systems/customcommands'
 import cache from '@bot/libs/cache'
-import { RequestContext, wrap } from '@mikro-orm/core'
+import { RequestContext } from '@mikro-orm/core'
 
 const router = Router({
   mergeParams: true,
