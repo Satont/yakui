@@ -7,7 +7,7 @@ dotenv.config()
 
 export default {
   logger: (msg: string) => info(msg),
-  debug: false,
+  debug: true,
   metadataProvider: TsMorphMetadataProvider,
   dbName: process.env.DB_NAME,
   host: process.env.DB_HOST,
@@ -21,8 +21,12 @@ export default {
   cache: { pretty: true },
   namingStrategy: EntityCaseNamingStrategy ,
   pool: {
-    min: 1,
+    min: 2,
     max: 10,
+  },
+  driverOptions: {
+    idleTimeoutMillis: 0,
+    connectionTimeoutMillis: 0,    
   },
   migrations: {
     tableName: 'mikro_orm_migrations',

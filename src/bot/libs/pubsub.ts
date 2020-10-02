@@ -1,10 +1,11 @@
-import { PubSubClient } from 'twitch-pubsub-client'
+import { PubSubClient, BasicPubSubClient } from 'twitch-pubsub-client'
 import { error, info } from './logger'
 import tmi from './tmi'
 import { onRedemption } from './eventsCaller'
 
 export default new class PubSub {
-  client: PubSubClient = null
+  basicPubSubClient: BasicPubSubClient = null
+  inited = false
 
   async init() {
     if (!tmi.clients.broadcaster) return
@@ -15,23 +16,24 @@ export default new class PubSub {
       return
     }
 
-    if (this.client) return
+    this.basicPubSubClient = new BasicPubSubClient()
+    const pubSubClient = new PubSubClient(this.basicPubSubClient)
 
-    this.client = new PubSubClient()
     try {
-      await this.client.registerUserListener(tmi.clients.broadcaster)
-      this.listeners()
+      await pubSubClient.registerUserListener(tmi.clients.broadcaster)
+      await pubSubClient.onRedemption(tmi.channel.id, onRedemption)
+      this.inited = true
+
+      info('PUBSUB: SUCCESSFULY SUBSCRIBED TO REDEMPTION EVENTS')
     } catch (e) {
       error('PUBSUB: ' + e)
     }
   }
 
-  async listeners() {
-    try {
-      await this.client.onRedemption(tmi.channel.id, onRedemption)
-      info('PUBSUB: SUCCESSFULY SUBSCRIBED TO REDEMPTION EVENTS')
-    } catch (e) {
-      error('PUBSUB: ' + e)
-    }
+  async disconnect() {
+    if (!this.basicPubSubClient) return
+
+    this.basicPubSubClient.disconnect()
+    this.basicPubSubClient = null
   }
 }
