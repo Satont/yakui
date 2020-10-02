@@ -50,7 +50,7 @@ export default new class Oauth {
         refresh_token: data.refresh,
       }
     } catch (e) {
-      error((e as AxiosError).response?.data ? e.response.data : e)
+      error(e)
       throw `Can't refresh access token of ${type}`
     }
   }

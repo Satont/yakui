@@ -30,13 +30,13 @@ export default new class Currency {
   }
 
   private async getDbData() {
-    let currency = await orm.em.getRepository(Settings).findOne({ space: 'currency', name: 'botCurrency' })
-    if (!currency) {
-      currency = orm.em.getRepository(Settings).create({ space: 'currency', name: 'botCurrency', value: this.botCurrency })
-      await orm.em.getRepository(Settings).persistAndFlush(currency)
-    }
-  
-    this.botCurrency = currency[currency.value]
+    const repository = orm.em.getRepository(Settings)
+
+    const data = { space: 'currency', name: 'botCurrency' }
+    const currency = await repository.findOne(data) || repository.create({ ...data, value: this.botCurrency })
+    await repository.persistAndFlush(currency)
+
+    this.botCurrency = currency.value
   }
 
   private async updateRates() {

@@ -5,7 +5,7 @@ import WebSocket from 'ws'
 import { Integration } from '@src/typings'
 import { Settings } from '@bot/entities/Settings'
 import { onDonation } from '@bot/libs/eventsCaller'
-import currency, { currency as currencyType } from '@bot/libs/currency'
+import currencyLib, { currency as currencyType } from '@bot/libs/currency'
 import { User } from '@bot/entities/User'
 import { UserTip } from '@bot/entities/UserTip'
 import { error, info } from '@bot/libs/logger'
@@ -156,22 +156,23 @@ export default new class Donationalerts implements Integration {
       const user = await orm.em.getRepository(User).findOne({ username: data.username.toLowerCase() })
 
       const message = data.message?.replace(this.audioRegular, '<audio>')
-
+      console.log(data)
       const donationData = {
         userId: user?.id,
         amount: data.amount,
         currency: data.currency,
-        rates: currency.rates,
-        inMainCurrencyAmount: currency.exchange({ from: data.currency, amount: data.amount }),
+        rates: currencyLib.rates,
+        inMainCurrencyAmount: currencyLib.exchange({ from: data.currency, amount: data.amount }),
         message,
         timestamp: Date.now(),
       }
 
-      if (data.billing_system !== 'fake' && user) {
+      if (/* data.billing_system !== 'fake' &&  */user) {
         const tip = orm.em.getRepository(UserTip).create({
           ...donationData,
           inMainCurrencyAmount: String(donationData.inMainCurrencyAmount),
           amount: String(donationData.amount),
+          user,
         })
         await orm.em.getRepository(UserTip).persistAndFlush(tip)
       }
@@ -181,7 +182,7 @@ export default new class Donationalerts implements Integration {
         userId: user?.id,
         amount: data.amount,
         currency: data.currency,
-        inMainCurrencyAmount: currency.exchange({ from: data.currency, amount: data.amount }),
+        inMainCurrencyAmount: currencyLib.exchange({ from: data.currency, amount: data.amount }),
         message,
         timestamp: Date.now(),
       })

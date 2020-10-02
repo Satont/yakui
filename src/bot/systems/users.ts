@@ -80,6 +80,8 @@ export default new class Users implements System {
   async parseMessage(opts: ParserOptions) {
     if (!this.settings.enabled || opts.message.startsWith('!')) return
     if (this.settings.ignoredUsers.includes(opts.raw.userInfo.userName)) return
+    if (!twitch.streamMetaData.startedAt) return
+  
     const [pointsPerMessage, pointsInterval] = [this.settings.points.messages.amount, this.settings.points.messages.interval * 60 * 1000]
 
     const [id, username] = [opts.raw.userInfo.userId, opts.raw.userInfo.userName]
@@ -99,14 +101,12 @@ export default new class Users implements System {
     repository.persist(user)
     await repository.flush()
 
-    if (!twitch.streamMetaData?.startedAt) return
-
     const now = new Date()
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
     const dailyRepository = orm.em.getRepository(UserDailyMessages)
-    const daily = await dailyRepository.findOne({ userId: user.id, date: startOfDay.getTime() }) || dailyRepository.assign(new UserDailyMessages(), { 
-      userId: user.id, 
+    const daily = await dailyRepository.findOne({ user: user.id, date: startOfDay.getTime() }) || dailyRepository.assign(new UserDailyMessages(), { 
+      user, 
       date: startOfDay.getTime(),
     }) 
 
@@ -135,13 +135,12 @@ export default new class Users implements System {
   }
 
   private async countWatched() {
-    const repository = orm.em.getRepository(User)
-
     clearTimeout(this.countWatchedTimeout)
     this.countWatchedTimeout = setTimeout(() => this.countWatched(), 1 * 60 * 1000)
     const [pointsPerWatch, pointsInterval] = [this.settings.points.watch.amount, this.settings.points.watch.interval * 60 * 1000]
-
+    
     if (!twitch.streamMetaData?.startedAt) return
+    const repository = orm.em.getRepository(User)
 
     for (const chatter of this.chatters) {
       if (this.settings.ignoredUsers.includes(chatter.username.toLowerCase())) continue
@@ -167,9 +166,8 @@ export default new class Users implements System {
     this.getChattersTimeout = setTimeout(() => this.getChatters(), 5 * 60 * 1000)
 
     this.chatters = []
-    if (!twitch.streamMetaData?.startedAt) return
 
-    for (const chunk of makeChunk((await tmi.clients?.bot?.unsupported.getChatters(tmi.channel?.name)).allChatters, 100)) {
+    for (const chunk of makeChunk((await tmi.clients?.bot?.unsupported.getChatters(tmi.channel?.name))?.allChatters, 100)) {
 
       const users = (await tmi.clients?.bot?.helix.users.getUsersByNames(chunk)).map(user => ({ username: user.name, id: user.id }))
 

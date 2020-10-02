@@ -49,6 +49,7 @@ export default new class Qiwi implements Integration {
             inMainCurrencyAmount: String(currency.exchange({ from: inComingCurrency, amount })),
             message,
             timestamp: Date.now(),
+            user,
           })
           await orm.em.getRepository(UserTip).persistAndFlush(tip)
         }
