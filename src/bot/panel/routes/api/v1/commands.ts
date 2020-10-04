@@ -88,8 +88,16 @@ router.post('/', isAdmin, checkSchema({
     validationResult(req).throw()
 
     const body: CommandType = req.body
+    const names: string[] = Commands.getCommands()
+      .filter(c => c.id !== body.id)
+      .reduce((array, command) => ([
+        ...array,
+        command.name,
+        ...command.aliases ?? [],
+      ]), [])
+      .filter(Boolean)
 
-    if (cache.commands.has(body.name) || cache.commandsAliases.has(body.name) || body.aliases?.some(a => cache.commandsAliases.has(a) || cache.commands.has(a))) {
+    if (names.includes(body.name) || names.some(name => body.aliases?.includes(name))) {
       return res.status(400).send({ message: 'This aliase or name already exists.' })
     }
 
