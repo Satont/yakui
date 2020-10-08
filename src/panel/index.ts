@@ -35,6 +35,7 @@ const start = async () => {
   const metaDataSocket = getNameSpace({ name: 'systems/metaData' })
   await new Promise((res) => metaDataSocket.emit('getData', data => {
     store.commit('setMetaData', data)
+    document.title = data.bot?.username?.toUpperCase()
     res()
   }))
 
