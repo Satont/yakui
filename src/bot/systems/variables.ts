@@ -7,7 +7,7 @@ import includesOneOf from '@bot/commons/includesOneOf'
 import users from './users'
 import tmi from '@bot/libs/tmi'
 import { User as UserModel } from '@bot/entities/User'
-//import currency from '@bot/libs/currency'
+import currency from '@bot/libs/currency'
 import Axios from 'axios'
 import { System, Command } from '@src/typings'
 import { Variable } from '@bot/entities/Variable'
@@ -19,6 +19,7 @@ import Commands from './commands'
 import { UserDailyMessages } from '@bot/entities/UserDailyMessages'
 import { orm } from '@bot/libs/db'
 import { CommandPermission } from '../entities/Command'
+import { QueryBuilder } from '@mikro-orm/postgresql'
 
 export default new class Variables implements System {
   variables: Array<{ name: string, response: string, custom?: boolean }> = [
@@ -68,6 +69,8 @@ export default new class Variables implements System {
       
 
     this.variables.push(...variables)
+
+    this.getTop('tips')
   }
 
   async parseMessage(opts: { message: string, raw?: TwitchPrivateMessage, argument?: string, command?: Command }) {
@@ -185,7 +188,7 @@ export default new class Variables implements System {
 
     const offset = (Number(page) - 1) * 10
 
-    const ignored = [...users.settings.ignoredUsers, tmi.channel.name.toLowerCase(), tmi.chatClients.bot.currentNick ]
+    const ignored = [...users.settings.ignoredUsers, tmi.channel?.name.toLowerCase(), tmi.chatClients?.bot?.currentNick ].filter(Boolean)
     const limit = 10
 
     if (type === 'watched') {
@@ -209,48 +212,37 @@ export default new class Variables implements System {
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ')
     } else if (type === 'tips') {
-      /* const query = await sequelize.query(`
-        SELECT
-          "users"."id",
-          "users"."username",
-          (SUM("users_tips"."inMainCurrencyAmount")) AS "value"
-        FROM
-          "users"
-        INNER JOIN "users_tips" ON "users"."id" = "users_tips"."userId"
-        WHERE "users"."username" NOT IN(:usernames)
-        GROUP BY
-          "users"."id"
-        ORDER BY
-          value DESC
-        OFFSET ${offset} ROWS
-        LIMIT
-          ${limit}`, {
-        replacements: { usernames: ignored },
-      })
-      result = query[0]
-      return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}${currency.botCurrency}`).join(', ') */
-    } else if (type === 'bits') {
-      /* const query = await sequelize.query(`
-        SELECT
-          "users"."id",
-          "users"."username",
-          (SUM("users_bits"."amount")) AS "value"
-        FROM
-          "users"
-          INNER JOIN "users_bits" ON "users"."id" = "users_bits"."userId"
-        WHERE "users"."username" NOT IN(:usernames)
-        GROUP BY
-          "users"."id"
-        ORDER BY
-          value DESC
-        OFFSET ${offset} ROWS
-        LIMIT
-        ${limit}`, {
-        replacements: { usernames: ignored },
-      })
+      const qb: QueryBuilder<UserModel> = (orm.em as any).createQueryBuilder(UserModel, 'user')
 
-      result = query[0]
-      return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ') */
+      const result: Array<{ id: number, username: string, value: number }> = await orm.em.getConnection().execute(qb
+        .select(['user.id', 'user.username'])
+        .where({ username: { $nin: ignored } })
+        .join('user.tips', 'tips')
+        .addSelect('SUM("tips"."inMainCurrencyAmount") as "value"')
+        .offset(offset)
+        .limit(limit)
+        .groupBy('id')
+        .getKnexQuery()
+        .orderBy('value', 'desc')
+        .toQuery())
+
+      return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}${currency.botCurrency}`).join(', ')
+    } else if (type === 'bits') {
+      const qb: QueryBuilder<UserModel> = (orm.em as any).createQueryBuilder(UserModel, 'user')
+
+      const result: Array<{ id: number, username: string, value: number }> = await orm.em.getConnection().execute(qb
+        .select(['user.id', 'user.username'])
+        .where({ username: { $nin: ignored } })
+        .join('user.bits', 'bits')
+        .addSelect('SUM("bits"."inMainCurrencyAmount") as "value"')
+        .offset(offset)
+        .limit(limit)
+        .groupBy('id')
+        .getKnexQuery()
+        .orderBy('value', 'desc')
+        .toQuery())
+
+      return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ')
     } else if (type === 'messages.today') {
       const now = new Date()
       const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
