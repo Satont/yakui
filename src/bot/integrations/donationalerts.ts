@@ -68,17 +68,28 @@ export default new class Donationalerts implements Integration {
         headers: { 'Authorization': `Bearer ${access_token.value}` },
       })
     } catch (e) {
-      if (e.response.status === 401) {
-        const { data } = await axios.get(`http://bot.satont.ru/api/donationalerts-refresh?refresh_token=${refresh_token.value}`)
-        access_token.value = data.access_token
-        refresh_token.value = data.refresh_token
-
-        await orm.em.getRepository(Settings).persistAndFlush([access_token, refresh_token])
-
-        info('DONATIONALERTS: Token successfuly refreshed')
-      } else error(e.message)
+      if (e.response.status === 401) await this.refreshToken()
+      else error(e.message)
     }
+  }
 
+  async refreshToken() {
+    try {
+      const [access_token, refresh_token] = await Promise.all([
+        orm.em.getRepository(Settings).findOne({ space: 'donationalerts', name: 'access_token' }),
+        orm.em.getRepository(Settings).findOne({ space: 'donationalerts', name: 'refresh_token' }),
+      ])
+  
+      const { data } = await axios.get(`http://bot.satont.ru/api/donationalerts-refresh?refresh_token=${refresh_token.value}`)
+      access_token.value = data.access_token
+      refresh_token.value = data.refresh_token
+  
+      await orm.em.getRepository(Settings).persistAndFlush([access_token, refresh_token])
+  
+      info('DONATIONALERTS: Token successfuly refreshed')
+    } catch (e) {
+      error(`'DONATIONALERTS: cannot refresh token: ${e.message}`)
+    }
   }
 
   async connect() {
@@ -167,11 +178,9 @@ export default new class Donationalerts implements Integration {
         timestamp: Date.now(),
       }
 
-      if (/* data.billing_system !== 'fake' &&  */user) {
+      if (data.billing_system !== 'fake' && user) {
         const tip = orm.em.getRepository(UserTip).create({
           ...donationData,
-          inMainCurrencyAmount: String(donationData.inMainCurrencyAmount),
-          amount: String(donationData.amount),
           user,
         })
         await orm.em.getRepository(UserTip).persistAndFlush(tip)

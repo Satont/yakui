@@ -11,13 +11,13 @@ export class UserTip {
   id!: number;
 
   @Property({ columnType: 'float4' })
-  amount!: string;
+  amount!: number;
 
   @Property({ columnType: 'float4' })
-  inMainCurrencyAmount!: string;
+  inMainCurrencyAmount!: number;
 
   @Property({ columnType: 'json' })
-  rates!: Record<string, any>;
+  rates!: Record<string, number>;
 
   @Property({ length: 255 })
   currency!: string;

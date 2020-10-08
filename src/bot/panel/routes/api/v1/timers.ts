@@ -11,7 +11,7 @@ const router = Router({
 
 router.get('/', isAdmin, async (req, res, next) => {
   try {
-    const timers = RequestContext.getEntityManager().getRepository(Timer).findAll()
+    const timers = await RequestContext.getEntityManager().getRepository(Timer).findAll()
 
     res.json(timers)
   } catch (e) {
@@ -21,7 +21,7 @@ router.get('/', isAdmin, async (req, res, next) => {
 
 router.get('/:id', isAdmin, async (req, res, next) => {
   try {
-    const timer = RequestContext.getEntityManager().getRepository(Timer).findOne({ id: Number(req.params.id) })
+    const timer = await RequestContext.getEntityManager().getRepository(Timer).findOne({ id: Number(req.params.id) })
 
     res.json(timer)
   } catch (e) {
@@ -70,7 +70,9 @@ router.post('/', isAdmin, checkSchema({
       responses: body.responses,
     })
 
-    repository.persistAndFlush(timer)
+    await repository.persistAndFlush(timer)
+    await timers.init()
+
     res.json(timer)
   } catch (e) {
     next(e)
@@ -88,9 +90,10 @@ router.delete('/', isAdmin, checkSchema({
     
     const repository = RequestContext.getEntityManager().getRepository(Timer)
     const timer = await repository.findOne({ id: Number(req.body.id) })
-    await repository.removeAndFlush(timer)
 
+    await repository.removeAndFlush(timer)
     await timers.init()
+
     res.send('Ok')
   } catch (e) {
     next(e)

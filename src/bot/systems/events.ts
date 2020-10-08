@@ -70,8 +70,9 @@ export default new class Events implements System {
   }
 
   async addToEventList({ name, data }: { name: string, data: Record<string, unknown> }) {
-    const event = orm.em.getRepository(EventList).create({ name, data, timestamp: Date.now() })
-    await orm.em.persistAndFlush(event)
+    const repository = orm.em.getRepository(EventList)
+    const event = repository.assign(new EventList(), { name, data, timestamp: Date.now() })
+    await repository.persistAndFlush(event)
 
     this.clients.forEach(c => c.emit('event', event))
   }

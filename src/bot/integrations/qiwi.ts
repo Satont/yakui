@@ -46,7 +46,7 @@ export default new class Qiwi implements Integration {
             amount: event.attributes.DONATION_AMOUNT,
             rates: currency.rates,
             currency: inComingCurrency,
-            inMainCurrencyAmount: String(currency.exchange({ from: inComingCurrency, amount })),
+            inMainCurrencyAmount: currency.exchange({ from: inComingCurrency, amount }),
             message,
             timestamp: Date.now(),
             user,

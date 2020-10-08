@@ -98,8 +98,8 @@ export default new class Users implements System {
       user.points = user.points + pointsPerMessage
       user.lastMessagePoints = new Date().getTime()
     }
-    repository.persist(user)
-    await repository.flush()
+
+    await repository.persistAndFlush(user)
 
     const now = new Date()
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
@@ -111,8 +111,7 @@ export default new class Users implements System {
     }) 
 
     daily.count += 1
-    dailyRepository.persist(daily)
-    await dailyRepository.flush()
+    await dailyRepository.persistAndFlush(daily)
   }
 
   async getUserStats({ id, username }: { id?: string, username?: string }): Promise<User> {
@@ -140,7 +139,9 @@ export default new class Users implements System {
     const [pointsPerWatch, pointsInterval] = [this.settings.points.watch.amount, this.settings.points.watch.interval * 60 * 1000]
     
     if (!twitch.streamMetaData?.startedAt) return
+
     const repository = orm.em.getRepository(User)
+    const usersForUpdate: User[] = []
 
     for (const chatter of this.chatters) {
       if (this.settings.ignoredUsers.includes(chatter.username.toLowerCase())) continue
@@ -155,10 +156,10 @@ export default new class Users implements System {
       }
 
       user.watched += 1 * 60 * 1000
-
-      await repository.persistAndFlush(user)
+      usersForUpdate.push(user)
     }
 
+    await repository.persistAndFlush(usersForUpdate)
   }
 
   private async getChatters() {

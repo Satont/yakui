@@ -11,7 +11,6 @@ import metaData from './metaData'
 import keywords from './keywords'
 import variables from './variables'
 import greetings from './greetings'
-import markers from './markers'
 import overlays from './overlays'
 import widgets from './widgets'
 import chatMessage from './chatMessage'
@@ -38,7 +37,6 @@ router.use('/eventlist', eventlist)
 router.use('/keywords', keywords)
 router.use('/variables', variables)
 router.use('/greetings', greetings)
-router.use('/markers', markers)
 router.use('/overlays', overlays)
 router.use('/widgets', widgets)
 router.use('/chatMessage', chatMessage)

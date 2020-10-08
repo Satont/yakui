@@ -7,7 +7,7 @@ import { User } from './User'
 })
 export class UserBit {
   @PrimaryKey()
-  id!: number;
+  id: number;
 
   @Property({ type: MyBigInt })
   amount!: number;

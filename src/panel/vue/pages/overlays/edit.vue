@@ -7,7 +7,7 @@
       :href="href">
     Open
     </b-btn>
-    <b-btn v-clipboard:copy="href" block class="mt-1">Copy url</b-btn>
+    <b-btn v-clipboard:copy="href" v-if="overlay.id" block class="mt-1">Copy url</b-btn>
 
     <b-form v-on:submit.prevent="onSubmit">
       <b-form-group label="Name" label-for="name">
@@ -49,6 +49,7 @@ import { Overlay } from '@bot/entities/Overlay'
 @Component
 export default class Edit extends Vue {
   overlay = {
+    id: null,
     name: null,
     data: null,
     js: [],

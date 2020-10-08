@@ -79,7 +79,7 @@ router.post('/', isAdmin, checkSchema({
 
     for (const bodyBit of req.body.user.bits) {
       const bit = bodyBit.id ? await bitRepository.findOne(bodyBit.id) : new UserBit()
-
+      bitRepository.assign(bit, { ...bodyBit, user: bodyBit.userId })
       bitRepository.persist(bit)
     }
     
@@ -96,10 +96,12 @@ router.post('/', isAdmin, checkSchema({
         ...bodyTip,
         inMainCurrencyAmount: currency.exchange({ amount: bodyTip.amount, from: bodyTip.currency }),
         rates: currency.rates,
+        amount: Number(bodyTip.amount),
       }
       
       const tip = bodyTip.id ? await tipRepository.findOne(bodyTip.id) : new UserTip()
-      wrap(tip).assign(bodyTip)
+
+      tipRepository.assign(tip, bodyTip)
       tipRepository.persist(tip)
     }
     
