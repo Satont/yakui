@@ -7,10 +7,14 @@ import isAdmin from '@bot/panel/middlewares/isAdmin'
 import { RequestContext, wrap } from '@mikro-orm/core'
 import { UserBit } from '@bot/entities/UserBit'
 import { UserTip } from '@bot/entities/UserTip'
+import { orm } from '@/src/bot/libs/db'
+import { QueryBuilder } from '@mikro-orm/postgresql'
 
 const router = Router({
   mergeParams: true,
 })
+
+const qb: QueryBuilder<User> = (orm.em as any).createQueryBuilder(User, 'user')
 
 router.get('/', async (req, res, next) => {
   try {
@@ -20,14 +24,30 @@ router.get('/', async (req, res, next) => {
       username: { $like: `%${body.byUsername}%` },
     } : {}
 
-    const [users, total] = await repository.findAndCount(where, {
+
+    const query = qb
+      .select('user.*')
+      .join('user.tips', 'userTips', null, 'leftJoin')
+      .join('user.bits', 'userBits', null, 'leftJoin')
+      .addSelect('COALESCE(SUM("userTips"."inMainCurrencyAmount"), 0) as "tips"')
+      .addSelect('COALESCE(SUM("userBits"."amount"), 0) as "bits"')
+      .offset((Number(body.page) - 1) * Number(body.perPage))
+      .limit(Number(body.perPage))
+      .groupBy('id')
+      .getKnexQuery()
+      .orderByRaw(`"${body.sortBy}" ${JSON.parse(body.sortDesc) ? 'DESC': 'ASC'} NULLS LAST`)
+      .toQuery()
+
+    const users = await orm.em.getConnection().execute(query)
+    const total = await repository.count()
+    /* const [users, total] = await repository.findAndCount(where, {
       limit: Number(body.perPage),
       offset: (Number(body.page) - 1) * Number(body.perPage),
       orderBy: { [body.sortBy]: JSON.parse(body.sortDesc) ? 'desc': 'asc' },
       populate: ['tips', 'bits'],
-    })
+    }) */
 
-    res.json({ users , total })
+    res.json({ users, total })
   } catch (e) {
     next(e)
   }

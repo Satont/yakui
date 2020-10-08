@@ -65,9 +65,9 @@ export default class UsersManagerList extends Mixins(EnvChecker) {
     { key: 'index', label: '#', tdClass: 'indexes' },
     { key: 'username', sortable: true },
     { key: 'messages', sortable: true },
-    { key: 'watched', sortable: true, label: 'Watched (hours)', formatter: value => this.watchedHours(value) },
-    { key: 'totalTips', sortable: false, label: 'tips' },
-    { key: 'totalBits', sortable: false, label: 'bits' },
+    { key: 'watched', sortable: true, label: 'Watched', formatter: value => this.watchedHours(value) },
+    { key: 'tips', sortable: true, label: 'Tips', formatter: value => this.tipsFormat(value) },
+    { key: 'bits', sortable: true, label: 'Bits' },
     { key: 'points', sortable: true },
   ]
 
@@ -113,6 +113,18 @@ export default class UsersManagerList extends Mixins(EnvChecker) {
     const minutes = Number(time) / (1 * 60 * 1000)
     const hours = (minutes / 60).toFixed(1)
     return `${hours}h`
+  }
+
+  tipsFormat(value) {
+    return new Intl.NumberFormat(this.getLocale(), {
+      currencyDisplay: 'symbol',
+      style: 'currency',
+      currency: (this.$root as any).metadata.mainCurrency
+    }).format(value)
+  }
+
+  getLocale() {
+    return (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.language
   }
 
 }
