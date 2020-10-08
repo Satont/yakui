@@ -41,12 +41,6 @@ router.get('/', async (req, res, next) => {
 
     const users = await orm.em.getConnection().execute(query)
     const total = await repository.count()
-    /* const [users, total] = await repository.findAndCount(where, {
-      limit: Number(body.perPage),
-      offset: (Number(body.page) - 1) * Number(body.perPage),
-      orderBy: { [body.sortBy]: JSON.parse(body.sortDesc) ? 'desc': 'asc' },
-      populate: ['tips', 'bits'],
-    }) */
 
     res.json({ users, total })
   } catch (e) {
