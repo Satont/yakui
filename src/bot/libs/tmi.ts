@@ -2,15 +2,14 @@ import { ApiClient as Twitch, AccessToken } from 'twitch'
 import{ ChatClient as Chat } from 'twitch-chat-client'
 import { StaticAuthProvider } from 'twitch-auth'
 
-import Settings from '@bot/models/Settings'
+import { Settings } from '@bot/entities/Settings'
 import OAuth from './oauth'
 import Parser from './parser'
-import { UserPermissions } from 'typings'
 import events from '@bot/systems/events'
 import { info, error, chatOut, chatIn, timeout, whisperOut } from './logger'
 import { onHosting, onHosted, onRaided, onSubscribe, onReSubscribe, onMessageHighlight } from './eventsCaller'
-import users from '@bot/systems/users'
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
+import { orm } from './db'
 
 export default new class Tmi {
   private intervals = {
@@ -49,9 +48,12 @@ export default new class Tmi {
   channel: { name: string, id: string }
 
   constructor() {
-    this.connect('bot')
-    this.connect('broadcaster')
-    this.listenDbUpdates()
+    this.init()
+  }
+
+  async init() {
+    await this.connect('bot')
+    await this.connect('broadcaster')
   }
 
   async connect(type: 'bot' | 'broadcaster') {
@@ -59,9 +61,9 @@ export default new class Tmi {
     this.isAlreadyUpdating[type] = true
 
     const [accessToken, refreshToken, channel] = await Promise.all([
-      Settings.findOne({ where: { space: 'oauth', name: `${type}AccessToken` } }),
-      Settings.findOne({ where: { space: 'oauth', name: `${type}RefreshToken` } }),
-      Settings.findOne({ where: { space: 'oauth', name: 'channel' } }),
+      orm.em.getRepository(Settings).findOne({ space: 'oauth', name: `${type}AccessToken` }),
+      orm.em.getRepository(Settings).findOne({ space: 'oauth', name: `${type}RefreshToken` }),
+      orm.em.getRepository(Settings).findOne({ space: 'oauth', name: 'channel' }),
     ])
 
     if (!accessToken || !refreshToken || !channel) {
@@ -100,31 +102,35 @@ export default new class Tmi {
       }
       await this.chatClients[type].connect()
 
-      await this.intervaledUpdateAccessToken(type, { access_token: accessToken.value, refresh_token: refreshToken.value })
+      await this.intervaledUpdateAccessToken(type)
       if (type === 'broadcaster') {
         const pubsub = await import('./pubsub')
         await pubsub.default.init()
       }
     } catch (e) {
       error(e)
-      OAuth.refresh(refreshToken.value, type)
-        .then(() => this.connect(type))
+      await OAuth.refresh(refreshToken.value, type).catch(error)
+      await this.connect(type)
     } finally {
       this.isAlreadyUpdating[type] = false
     }
   }
 
-  private async intervaledUpdateAccessToken(type: 'bot' | 'broadcaster', data: { access_token: string, refresh_token: string }) {
+  private async intervaledUpdateAccessToken(type: 'bot' | 'broadcaster') {
     clearInterval(this.intervals.updateAccessToken[type])
 
+    const refreshToken = await orm.em.getRepository(Settings).findOne({ space: 'oauth', name: `${type}RefreshToken` })
+
     try {
-      const { access_token, refresh_token } = await OAuth.refresh(data.refresh_token, type)
+      const { access_token, refresh_token } = await OAuth.refresh(refreshToken.value, type)
       const token = new AccessToken({ access_token, refresh_token })
     
       this.clients[type].setAccessToken(token)
-      this.intervals.updateAccessToken[type] = setTimeout(() => this.intervaledUpdateAccessToken(type, { access_token, refresh_token }), 10 * 60 * 1000)
-    } catch {
-      this.intervals.updateAccessToken[type] = setTimeout(() => this.intervaledUpdateAccessToken(type, data), 10 * 60 * 1000)
+      this.intervals.updateAccessToken[type] = setTimeout(() => this.intervaledUpdateAccessToken(type), 10 * 60 * 1000)
+    } catch (e) {
+      error(e)
+    } finally {
+      this.intervals.updateAccessToken[type] = setTimeout(() => this.intervaledUpdateAccessToken(type), 10 * 60 * 1000)
     }
   }
 
@@ -162,7 +168,7 @@ export default new class Tmi {
       this.connected[type] = true
       client.join(this.channel?.name).catch((e) => {
         if (e.message.includes('Did not receive a reply to join')) return
-        else throw new Error(e)
+        else error(e)
       })
     })
 
@@ -184,16 +190,16 @@ export default new class Tmi {
 
         (raw as any).isAction = true
         events.fire({ name: 'message', opts: { username, message } })
-        await Parser.parse(message, raw)
+        Parser.parse(message, raw)
       })
       client.onMessage(async (channel, username, message, raw) => {
         chatIn(`${username} [${raw.userInfo.userId}]: ${message}`)
 
         if (raw.isCheer) {
-          events.fire({ name: 'bits', opts: { amount: raw.totalBits, message }})
+          events.fire({ name: 'bits', opts: { amount: raw.totalBits, message } })
         } else {
           events.fire({ name: 'message', opts: { username, message } })
-          await Parser.parse(message, raw)
+          Parser.parse(message, raw)
         }
       })
       client.onHost((channel, username, viewers) => {
@@ -229,26 +235,6 @@ export default new class Tmi {
   async whispers({ type = 'bot', message, target }: { type?: 'bot' | 'broadcaster', message: string, target: string }) {
     if (process.env.NODE_ENV === 'production') this.chatClients[type]?.whisper(target, message)
     whisperOut(`${target}: ${message}`)
-  }
-
-  getUserPermissions(badges: Map<string, string>, raw?: TwitchPrivateMessage): UserPermissions {
-    return {
-      broadcaster: badges.has('broadcaster') || users.settings?.admins?.includes(raw?.userInfo.userName),
-      moderators: badges.has('moderator'),
-      vips: badges.has('vip'),
-      subscribers: badges.has('subscriber') || badges.has('founder'),
-      viewers: true,
-    }
-  }
-
-  listenDbUpdates() {
-    Settings.afterCreate((value => {
-      if (value.space !== 'oauth') return
-      setTimeout(() => {
-        this.connect('bot')
-        this.connect('broadcaster')
-      }, 5000)
-    }))
   }
 
   private async loadLibs() {

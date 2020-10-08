@@ -1,6 +1,6 @@
 import { resolve } from 'path'
 import getFiles from '@bot/commons/getFiles'
-import { System } from 'typings'
+import { System } from '@src/typings'
 import { error, info } from './logger'
 import cache from './cache'
 
@@ -21,8 +21,12 @@ const loader = async () => {
         const loadedFile: System = (await import(resolve(__dirname, '..', folder, file))).default
         if (typeof loadedFile.init !== 'undefined') await loadedFile.init()
         if (typeof loadedFile.listenDbUpdates !== 'undefined') await loadedFile.listenDbUpdates()
-        if (typeof loadedFile.sockets !== 'undefined' && loadedFile.socket) {
-          loadedFile.socket.on('connection', client => loadedFile.sockets(client))
+        if (loadedFile.socket) {
+          loadedFile.socket.on('connection', client => {
+            if (loadedFile.sockets) loadedFile.sockets(client)
+            loadedFile.clients?.push(client)
+            client.on('disconnect', () => loadedFile.clients?.splice(loadedFile.clients?.indexOf(client), 1))
+          })
         }
   
         info(`${folders[folder]} ${loadedFile.constructor.name.toUpperCase()} loaded`)

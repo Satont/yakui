@@ -10,3 +10,4 @@ const paths = {
 
 moduleAlias.addAlias('@src', paths.src)
 moduleAlias.addAlias('@bot', paths.bot)
+moduleAlias.addAlias('@', process.cwd())

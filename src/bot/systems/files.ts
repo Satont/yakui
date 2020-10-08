@@ -1,24 +1,31 @@
-import File from '@bot/models/File'
+import { File } from '@bot/entities/File'
 import { getNameSpace } from '@bot/libs/socket'
-import { System } from 'typings'
+import { System } from '@src/typings'
+import { orm } from '@bot/libs/db'
 
 export default new class Files implements System {
   socket = getNameSpace('systems/files')
 
   async insert(files: IInsert[]) {
-    return await File.bulkCreate(files)
+    const filesEntities: File[] = []
+    for (const file of files) {
+      filesEntities.push(orm.em.getRepository(File).create(file))
+    }
+    await orm.em.persistAndFlush(filesEntities)
+    return filesEntities
   }
 
   async getOne(id: number) {
-    return await File.findOne({ where: { id } })
+    return await orm.em.getRepository(File).findOne({ id })
   }
 
   async getAll() {
-    return await File.findAll()
+    return await orm.em.getRepository(File).findAll()
   }
 
   async delete(id: number) {
-    return await File.destroy({ where: { id } })
+    const file = await orm.em.getRepository(File).findOne({ id })
+    return await orm.em.getRepository(File).removeAndFlush(file)
   }
 
   sockets(client: SocketIO.Socket) {

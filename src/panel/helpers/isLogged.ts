@@ -22,7 +22,7 @@ export default async (shouldBeLogged = true, admin = true) => {
     const user = await axios.get(`https://api.twitch.tv/helix/users`, { headers: {
       'Authorization': 'Bearer ' + code,
       'Client-Id': clientId,
-    }})
+    } })
 
     if (!user.data.data.length) {
       localStorage.removeItem('userId')
@@ -38,7 +38,7 @@ export default async (shouldBeLogged = true, admin = true) => {
     const request = await axios.get('/oauth/validate', { headers: {
       'x-twitch-token': code,
       'x-twitch-userid': user.data.data[0].id,
-    }})
+    } })
 
     localStorage.setItem('accessToken', request.data.accessToken)
     localStorage.setItem('refreshToken', request.data.refreshToken)
@@ -84,7 +84,7 @@ export const refresh = async () => {
   }
   const { data } = await axios.get('/oauth/validate', { headers: {
     'x-twitch-token': refreshToken,
-  }})
+  } })
 
   localStorage.setItem('accessToken', data.accessToken)
   localStorage.setItem('refreshToken', data.refreshToken)

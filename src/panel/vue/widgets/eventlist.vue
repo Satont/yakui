@@ -36,7 +36,7 @@
 
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator'
-import EventList from '../../../bot/models/EventList'
+import { EventList } from '@src/bot/entities/EventList'
 import humanizeDuration from 'humanize-duration'
 import { Socket } from 'vue-socket.io-extended'
 import { getNameSpace } from '../plugins/socket'
@@ -59,7 +59,7 @@ export default class Events extends Vue {
   }
 
   humanize(val) {
-    return humanizeDuration(Date.now() - val, { units: ['mo', 'd', 'h', 'm', 's'], round: true, language: (this.$root as any).metadata.lang })
+    return humanizeDuration(Date.now() - val, { units: ['mo', 'd', 'h', 'm', 's'], round: true, language: this.$store.state.metaData.lang })
   }
 
   mounted() {

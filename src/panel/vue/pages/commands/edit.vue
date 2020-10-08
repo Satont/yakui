@@ -44,15 +44,12 @@
       </b-form-group>
 
       <b-form-group label="Command sound" label-for="sound">
-        <select v-model="command.sound.soundId" class="form-control">
-          <option value="0" selected>No sound</option>
-          <option v-for="sound of soundsList" v-bind:key="sound.id" v-bind:value="sound.id">{{ sound.name }}</option>
-        </select>
+        <b-form-select id="sound" v-model="command.sound_file" :options="selectOptions"></b-form-select>
       </b-form-group>
       
-      <div v-if="command.sound.soundId && command.sound.soundId !== '0'">
-        <label for='pitch'>Sound volume: {{ command.sound.volume }}</label>
-        <b-form-input id='pitch' v-model='command.sound.volume' type='range' min='1' max='100' step="1"></b-form-input>
+      <div v-if="command.sound_file">
+        <label for='pitch'>Sound volume: {{ command.sound_volume }}</label>
+        <b-form-input id='pitch' v-model='command.sound_volume' type='range' min='1' max='100' step="1"></b-form-input>
       </div>
 
       <b-button class="btn-block" variant="success" v-if="command.enabled" @click.prevent="command.enabled = !command.enabled">Enabled</b-button>
@@ -67,7 +64,7 @@
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import { Route } from 'vue-router'
-import { Command } from 'typings'
+import { Command } from '@src/typings'
 import { getNameSpace } from '@panel/vue/plugins/socket'
 
 @Component
@@ -77,15 +74,13 @@ export default class CommandsManagerEdit extends Vue {
     response: null,
     cooldown: 10,
     visible: true,
-    permission: 'viewers',
+    permission: 'viewers' as any,
     description: null,
     aliases: [],
     price: 0,
     enabled: true,
-    sound: {
-      soundId: '0',
-      volume: 50,
-    } as any,
+    sound_file: null,
+    sound_volume: 50,
   }
 
   avaliablePermissions = [
@@ -96,6 +91,17 @@ export default class CommandsManagerEdit extends Vue {
     { value: 'moderators', text: 'Moderators' },
     { value: 'broadcaster', text: 'Broadcaster' },
   ]
+
+  get selectOptions() {
+    return [
+      { value: null, text: 'No sound' },
+      ...this.audiosList
+    ]
+  }
+
+  get audiosList(): any[] {
+    return this.$store.state.filesList?.filter(s => s.type.startsWith('audio'))?.map(file => ({ value: file.id, text: file.name })) || []
+  }
 
   async onSubmit(event) {
     event.preventDefault()
@@ -119,12 +125,7 @@ export default class CommandsManagerEdit extends Vue {
       const { data } = await this.$axios.get('/commands/' + id)
 
       this.command = data
-      this.command.sound = data.sound || { soundId: '0', volume: 50 }
     }
-  }
-
-  get soundsList() {
-    return this.$store.state.filesList?.filter(s => s.type.startsWith('audio'))
   }
 
   async del() {

@@ -1,14 +1,14 @@
 import { chunk as makeChunk } from 'lodash'
 
-import { System, ParserOptions, Command, CommandOptions, CommandPermission } from '../../../typings'
-import User from '@bot/models/User'
+import { System, ParserOptions, Command, CommandOptions, UserPermissions } from '@src/typings'
+import { User } from '@bot/entities/User'
 import tmi from '@bot/libs/tmi'
-import UserTips from '@bot/models/UserTips'
-import UserBits from '@bot/models/UserBits'
-import UserDailyMessages from '@bot/models/UserDailyMessages'
+import { UserDailyMessages } from '@bot/entities/UserDailyMessages'
 import twitch from './twitch'
-import Settings from '@bot/models/Settings'
+import { Settings } from '@bot/entities/Settings'
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
+import { orm } from '@bot/libs/db'
+import { CommandPermission } from '@bot/entities/Command'
 
 export default new class Users implements System {
   settings: {
@@ -52,24 +52,25 @@ export default new class Users implements System {
     { fnc: this.parseMessage },
   ]
   commands: Command[] = [
-    { name: 'sayb', permission: 'broadcaster', fnc: this.sayb, visible: false, description: 'Say something as broadcaster.' },
-    { name: 'ignore add', permission: 'moderators', fnc: this.ignoreAdd, visible: false, description: 'Add some username to bot ignore list' },
-    { name: 'ignore remove', permission: 'moderators', fnc: this.ignoreRemove, visible: false, description: 'Remove some username from bot ignore list' },
+    { name: 'sayb', permission: CommandPermission.BROADCASTER, fnc: this.sayb, visible: false, description: 'Say something as broadcaster.' },
+    { name: 'ignore add', permission: CommandPermission.MODERATORS, fnc: this.ignoreAdd, visible: false, description: 'Add some username to bot ignore list' },
+    { name: 'ignore remove', permission: CommandPermission.MODERATORS, fnc: this.ignoreRemove, visible: false, description: 'Remove some username from bot ignore list' },
   ]
 
   async init() {
-    const [enabled, ignoredUsers, points, admins]: [Settings, Settings, Settings, Settings] = await Promise.all([
-      Settings.findOne({ where: { space: 'users', name: 'enabled' } }),
-      Settings.findOne({ where: { space: 'users', name: 'ignoredUsers' } }),
-      Settings.findOne({ where: { space: 'users', name: 'points' } }),
-      Settings.findOne({ where: { space: 'users', name: 'botAdmins' } }),
+    const repository = orm.em.getRepository(Settings)
+    const [enabled, ignoredUsers, points, admins] = await Promise.all([
+      repository.findOne({ space: 'users', name: 'enabled' }),
+      repository.findOne({ space: 'users', name: 'ignoredUsers' }),
+      repository.findOne({ space: 'users', name: 'points' }),
+      repository.findOne({ space: 'users', name: 'botAdmins' }),
     ])
 
-    this.settings.ignoredUsers = ignoredUsers?.value?.filter(Boolean) ?? []
-    this.settings.enabled = enabled?.value ?? true
-    this.settings.admins = admins?.value ?? []
+    this.settings.ignoredUsers = ignoredUsers?.value as any ?? []
+    this.settings.enabled = enabled?.value as any ?? true
+    this.settings.admins = admins?.value as any ?? []
 
-    if (points) this.settings.points = points.value
+    if (points) this.settings.points = points.value as any
     if (!this.settings.enabled) return
 
     await this.getChatters()
@@ -79,20 +80,17 @@ export default new class Users implements System {
   async parseMessage(opts: ParserOptions) {
     if (!this.settings.enabled || opts.message.startsWith('!')) return
     if (this.settings.ignoredUsers.includes(opts.raw.userInfo.userName)) return
+    if (!twitch.streamMetaData.startedAt) return
+  
     const [pointsPerMessage, pointsInterval] = [this.settings.points.messages.amount, this.settings.points.messages.interval * 60 * 1000]
 
     const [id, username] = [opts.raw.userInfo.userId, opts.raw.userInfo.userName]
 
-    const [user, created]: [User, boolean] = await User.findOrCreate({
-      where: { id },
-      defaults: { id, username, messages: 1 },
-    })
+    const repository = orm.em.getRepository(User)
+    const user = await repository.findOne(Number(id)) || repository.assign(new User(), { id: Number(id), username, messages: 0 })
 
     user.username = opts.raw.userInfo.userName
-
-    if (!created && twitch.streamMetaData?.startedAt) {
-      user.messages = user.messages + 1
-    }
+    user.messages +=  1
 
     const updatePoints = (Number(user.lastMessagePoints) + pointsInterval <= user.messages) && this.settings.points.enabled
 
@@ -101,19 +99,19 @@ export default new class Users implements System {
       user.lastMessagePoints = new Date().getTime()
     }
 
-    user.save()
-
-    if (!twitch.streamMetaData?.startedAt) return
+    await repository.persistAndFlush(user)
 
     const now = new Date()
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
-    const [daily, isNewDailyRow]: [UserDailyMessages, boolean] = await UserDailyMessages.findOrCreate({
-      where: { userId: user.id, date: startOfDay.getTime() },
-      defaults: { count: 1 },
-    })
+    const dailyRepository = orm.em.getRepository(UserDailyMessages)
+    const daily = await dailyRepository.findOne({ user: user.id, date: startOfDay.getTime() }) || dailyRepository.assign(new UserDailyMessages(), { 
+      user, 
+      date: startOfDay.getTime(),
+    }) 
 
-    if (!isNewDailyRow) daily.increment({ count: 1 })
+    daily.count += 1
+    await dailyRepository.persistAndFlush(daily)
   }
 
   async getUserStats({ id, username }: { id?: string, username?: string }): Promise<User> {
@@ -122,49 +120,46 @@ export default new class Users implements System {
     if (!id) {
       const byName = await tmi?.clients?.bot?.helix.users.getUserByName(username)
       id = byName.id
+      username = byName.name
     }
 
-    let user = await User.findOne({
-      where: { id },
-      include: [UserTips, UserBits, UserDailyMessages],
-      attributes: { include: ['totalTips', 'totalTips', 'todayMessages' ]},
-    })
+    const repository = orm.em.getRepository(User)
+    const user = await repository.findOne(Number(id), ['tips', 'bits', 'daily'])
 
-    if (!user) user = await User.create({
-      id,
-      username,
-    }, { include: [UserTips, UserBits, UserDailyMessages] })
+    if (user) return user
 
-    return user
+    const create = repository.create({ id: Number(id), username })
+    await repository.persistAndFlush(create)
+    return create
   }
 
   private async countWatched() {
     clearTimeout(this.countWatchedTimeout)
     this.countWatchedTimeout = setTimeout(() => this.countWatched(), 1 * 60 * 1000)
     const [pointsPerWatch, pointsInterval] = [this.settings.points.watch.amount, this.settings.points.watch.interval * 60 * 1000]
-
+    
     if (!twitch.streamMetaData?.startedAt) return
+
+    const repository = orm.em.getRepository(User)
+    const usersForUpdate: User[] = []
 
     for (const chatter of this.chatters) {
       if (this.settings.ignoredUsers.includes(chatter.username.toLowerCase())) continue
 
-      const [user, isNewUser]: [User, boolean] = await User.findOrCreate({
-        where: { id: chatter.id },
-        defaults: { id: chatter.id, username: chatter.username, watched: 1 * 60 * 1000 },
-      })
+      const user = await repository.findOne(Number(chatter.id)) || repository.assign(new User(), { id: Number(chatter.id), username: chatter.username })
 
       const updatePoints = (new Date().getTime() - new Date(user.lastWatchedPoints).getTime() >= pointsInterval) && this.settings.points.enabled
 
       if (pointsPerWatch !== 0 && pointsInterval !== 0 && updatePoints) {
         user.lastWatchedPoints = new Date().getTime()
-        user.points = user.points + pointsPerWatch
+        user.points += pointsPerWatch
       }
 
-      if (!isNewUser) user.watched = user.watched + 1 * 60 * 1000
-
-      user.save()
+      user.watched += 1 * 60 * 1000
+      usersForUpdate.push(user)
     }
 
+    await repository.persistAndFlush(usersForUpdate)
   }
 
   private async getChatters() {
@@ -172,9 +167,8 @@ export default new class Users implements System {
     this.getChattersTimeout = setTimeout(() => this.getChatters(), 5 * 60 * 1000)
 
     this.chatters = []
-    if (!twitch.streamMetaData?.startedAt) return
 
-    for (const chunk of makeChunk((await tmi.clients?.bot?.unsupported.getChatters(tmi.channel?.name)).allChatters, 100)) {
+    for (const chunk of makeChunk((await tmi.clients?.bot?.unsupported.getChatters(tmi.channel?.name))?.allChatters, 100)) {
 
       const users = (await tmi.clients?.bot?.helix.users.getUsersByNames(chunk)).map(user => ({ username: user.name, id: user.id }))
 
@@ -186,47 +180,52 @@ export default new class Users implements System {
     tmi.chatClients?.broadcaster?.say(tmi.channel?.name, opts.argument)
   }
 
+  getUserPermissions(badges: Map<string, string>, raw?: TwitchPrivateMessage): UserPermissions {
+    return {
+      broadcaster: badges.has('broadcaster') || this.settings?.admins?.includes(raw?.userInfo.userName),
+      moderators: badges.has('moderator'),
+      vips: badges.has('vip'),
+      subscribers: badges.has('subscriber') || badges.has('founder'),
+      viewers: true,
+    }
+  }
+
   hasPermission(badges: Map<string, string>, searchForPermission: CommandPermission, raw?: TwitchPrivateMessage) {
     if (!searchForPermission) return true
     
-    const userPerms = Object.entries(tmi.getUserPermissions(badges, raw))
-    const commandPermissionIndex = userPerms.indexOf(userPerms.find(v => v[0] === searchForPermission))
+    const userPerms = Object.entries(this.getUserPermissions(badges, raw))
+    const commandPermissionIndex = userPerms.indexOf(userPerms.find(v => Object.keys(searchForPermission).indexOf(v[0])))
 
     return userPerms.some((p, index) => p[1] && index <= commandPermissionIndex)
   }
 
   async ignoreAdd(opts: CommandOptions) {
     if (!opts.argument.length) return
-    const [ignoredUsers]: [Settings] = await Settings.findOrCreate({ where: { space: 'users', name: 'ignoredUsers' }, defaults: { value: [] } })
+    const repository = orm.em.getRepository(Settings)
+    const data = { space: 'users', name: 'ignoredUsers' }
+    const ignoredUsers = await repository.findOne(data) || repository.create({ ...data, value: [] })
 
-    await ignoredUsers.update({ value: [...ignoredUsers.value, opts.argument.toLowerCase() ].filter(Boolean) })
+    ignoredUsers.value = [...ignoredUsers.value, opts.argument.toLowerCase()] as any
+    await orm.em.persistAndFlush(ignoredUsers)
 
     return '$sender ✅'
   }
 
   async ignoreRemove(opts: CommandOptions) {
     if (!opts.argument.length) return
-    const ignoredUsers: Settings = await Settings.findOne({ where: { space: 'users', name: 'ignoredUsers' } })
+    const repository = orm.em.getRepository(Settings)
+    const ignoredUsers = await repository.findOne({ space: 'users', name: 'ignoredUsers' })
 
     if (!ignoredUsers || !ignoredUsers?.value.length) return
     if (!ignoredUsers.value.includes(opts.argument.toLowerCase())) return
 
-    const users = ignoredUsers.value
-    users.splice(ignoredUsers.value.indexOf(opts.argument.toLowerCase()), 1)
+    const users: string[] = ignoredUsers.value
 
-    await ignoredUsers.update({
-      value: users,
-    })
+    users.splice(ignoredUsers.value.indexOf(opts.argument.toLowerCase()), 1) 
+
+    ignoredUsers.value = users
+    await orm.em.persistAndFlush(ignoredUsers)
 
     return '$sender ✅'
-  }
-
-
-  listenDbUpdates() {
-    Settings.afterSave(instance => {
-      if (instance.space !== 'users') return
-
-      this.init()
-    })
   }
 }

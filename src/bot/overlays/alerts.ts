@@ -1,6 +1,6 @@
-import { System } from 'typings'
+import { System } from '@src/typings'
 import { getNameSpace } from '@bot/libs/socket'
-import { IEmitAlert } from 'typings/overlays'
+import { IEmitAlert } from '@src/typings/overlays'
 import { debug } from '@bot/libs/logger'
 
 export default new class Alerts implements System {
@@ -16,7 +16,7 @@ export default new class Alerts implements System {
     })
   }
 
-  emitAlert(data: IEmitAlert) {
+  async emitAlert(data: IEmitAlert) {
     this.clients.forEach(c => c.emit('alert', data))
   }
 }

@@ -1,5 +1,6 @@
-import Settings from '@bot/models/Settings'
+import { Settings } from '@bot/entities/Settings'
 import axios from 'axios'
+import { orm } from './db'
 import { info, error } from './logger'
 
 export type currency = 'CAD' | 'HKD' | 'ISK' | 'PHP' | 'DKK' | 'HUF' | 'CZK' | 'GBP' | 'RON' | 'SEK' | 'IDR' | 'INR' | 'BRL' | 'RUB' | 'HRK' | 'JPY' | 'THB' | 'CHF' | 'EUR' | 'MYR' | 'BGN' | 'TRY' | 'CNY' | 'NOK' | 'NZD' | 'ZAR' | 'USD' | 'MXN' | 'SGD' | 'AUD' | 'ILS' | 'KRW' | 'PLN'
@@ -29,10 +30,11 @@ export default new class Currency {
   }
 
   private async getDbData() {
-    const [currency]: [Settings] = await Settings.findOrCreate({ 
-      where: { space: 'currency', name: 'botCurrency' },
-      defaults: { value: this.botCurrency },
-    })
+    const repository = orm.em.getRepository(Settings)
+
+    const data = { space: 'currency', name: 'botCurrency' }
+    const currency = await repository.findOne(data) || repository.create({ ...data, value: this.botCurrency })
+    await repository.persistAndFlush(currency)
 
     this.botCurrency = currency.value
   }

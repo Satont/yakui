@@ -1,4 +1,4 @@
-import { System, ParserOptions } from 'typings'
+import { System, ParserOptions } from '@src/typings'
 import tmi from '@bot/libs/tmi'
 import variables from './variables'
 import { isRegExp } from 'lodash'
@@ -21,12 +21,12 @@ export default new class Keywords implements System {
 
       if (isRegExp(item.name) && opts.message.match(item.name)) {
         const message = await variables.parseMessage({ message: item.response, raw: opts.raw })
-        tmi.say({ message})
+        tmi.say({ message })
         founded = true
       } else if (opts.message.includes(item.name)) {
         const message = await variables.parseMessage({ message: item.response, raw: opts.raw })
 
-        tmi.say({ message})
+        tmi.say({ message })
         founded = true
       } else continue
 

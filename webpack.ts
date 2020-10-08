@@ -10,7 +10,7 @@ const isDev = () => process.env.NODE_ENV === 'development'
 
 export default {
   devServer: {
-    historyApiFallback: true
+    historyApiFallback: true,
   },
   mode: 'development',
   entry: {
@@ -33,13 +33,13 @@ export default {
     minimizer: [
       new TerserPlugin(),
       new CssMinimizerPlugin(),
-    ]
+    ],
   },
   module: {
     rules: [
       { 
         test: /\.vue$/i,
-        loader: 'vue-loader'
+        loader: 'vue-loader',
       },
       { 
         test: /\.css$/i, 
@@ -52,16 +52,16 @@ export default {
             },
           },
           'css-loader',
-        ]
+        ],
       },
       { 
         test: /\.ts$/i,
         use: { 
           loader: 'ts-loader', 
-          options: { experimentalFileCaching: true, appendTsSuffixTo: [/\.vue$/] } 
-        }
-      }
-    ]
+          options: { experimentalFileCaching: true, appendTsSuffixTo: [/\.vue$/] },
+        },
+      },
+    ],
   },
   plugins: [
     new CleanWebpackPlugin(),
@@ -71,19 +71,19 @@ export default {
       chunkFilename: '[id].[contenthash].css',
     }),
     new HtmlPlugin({
-      filename: '../panel.html', template: 'src/panel/index.html', chunks: ['panel']
+      filename: '../panel.html', template: 'src/panel/index.html', chunks: ['panel'],
     }),
     new HtmlPlugin({
-      filename: '../login.html', template: 'src/login/index.html', chunks: ['login']
+      filename: '../login.html', template: 'src/login/index.html', chunks: ['login'],
     }),
     new HtmlPlugin({
-      filename: '../oauth.html', template: 'src/oauth/index.html', chunks: ['oauth']
+      filename: '../oauth.html', template: 'src/oauth/index.html', chunks: ['oauth'],
     }),
     new HtmlPlugin({
-      filename: '../public.html', template: 'src/public/index.html', chunks: ['public']
+      filename: '../public.html', template: 'src/public/index.html', chunks: ['public'],
     }),
     new HtmlPlugin({
-      filename: '../overlays.html', template: 'src/overlays/index.html', chunks: ['overlays']
+      filename: '../overlays.html', template: 'src/overlays/index.html', chunks: ['overlays'],
     }),
   ],
   resolve: {
@@ -94,7 +94,7 @@ export default {
       '@src': resolve(__dirname, 'src'),
       '@bot': resolve(__dirname, 'src', 'bot'),
       '@panel': resolve(__dirname, 'src', 'panel'),
-      '@login': resolve(__dirname, 'src', 'login')
-    }
-  }
+      '@login': resolve(__dirname, 'src', 'login'),
+    },
+  },
 }

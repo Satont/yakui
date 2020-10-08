@@ -1,8 +1,9 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
-import Timer from '@bot/models/Timer'
+import { Timer } from '@bot/entities/Timer'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
 import timers from '@bot/systems/timers'
+import { RequestContext, wrap } from '@mikro-orm/core'
 
 const router = Router({
   mergeParams: true,
@@ -10,7 +11,7 @@ const router = Router({
 
 router.get('/', isAdmin, async (req, res, next) => {
   try {
-    const timers: Timer[] = await Timer.findAll()
+    const timers = await RequestContext.getEntityManager().getRepository(Timer).findAll()
 
     res.json(timers)
   } catch (e) {
@@ -20,7 +21,7 @@ router.get('/', isAdmin, async (req, res, next) => {
 
 router.get('/:id', isAdmin, async (req, res, next) => {
   try {
-    const timer: Timer[] = await Timer.findOne({ where: { id: req.params.id }})
+    const timer = await RequestContext.getEntityManager().getRepository(Timer).findOne({ id: Number(req.params.id) })
 
     res.json(timer)
   } catch (e) {
@@ -58,20 +59,20 @@ router.post('/', isAdmin, checkSchema({
     validationResult(req).throw()
     const body = req.body
 
-    let timer: Timer
+    const repository = RequestContext.getEntityManager().getRepository(Timer)
+    
+    const timer = body.id ? await repository.findOne({ id: Number(body.id) }) : repository.create(body)
 
-    if (body.id) timer = await Timer.findOne({ where: { id: body.id } })
-    else timer = await Timer.create(body)
+    wrap(timer).assign({
+      name: body.name,
+      enabled: body.enabled,
+      interval: body.interval,
+      responses: body.responses,
+    })
 
-    if (body.id) {
-      await timer.update({
-        name: body.name,
-        enabled: body.enabled,
-        interval: body.interval,
-        responses: body.responses,
-      })
-    }
+    await repository.persistAndFlush(timer)
     await timers.init()
+
     res.json(timer)
   } catch (e) {
     next(e)
@@ -86,8 +87,13 @@ router.delete('/', isAdmin, checkSchema({
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
-    await Timer.destroy({ where: { id: req.body.id }})
+    
+    const repository = RequestContext.getEntityManager().getRepository(Timer)
+    const timer = await repository.findOne({ id: Number(req.body.id) })
+
+    await repository.removeAndFlush(timer)
     await timers.init()
+
     res.send('Ok')
   } catch (e) {
     next(e)

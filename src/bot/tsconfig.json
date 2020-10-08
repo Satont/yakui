@@ -2,10 +2,12 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dest",
+    "declaration": true
   },
   "include": [
     "./**/*.js",
     "./**/*.ts",
+    "../../typings", "../../mikro-orm.config.ts",
   ],
   "exclude": [
     "node_modules"

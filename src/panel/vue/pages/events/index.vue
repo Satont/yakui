@@ -73,7 +73,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import Event from '@bot/models/Event'
+import { Event } from '@bot/entities/Event'
 
 export default Vue.extend({
   data: () => ({

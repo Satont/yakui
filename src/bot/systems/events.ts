@@ -2,15 +2,16 @@ import safeEval from 'safe-eval'
 import { get } from 'lodash'
 
 import tmi from '@bot/libs/tmi'
-import { System, DonationData, HostType } from 'typings'
-import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove, INewResubscriber, INewSubscriber } from 'typings/events'
-import EventList from '@bot/models/EventList'
+import { System, DonationData, HostType } from '@src/typings'
+import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove, INewResubscriber, INewSubscriber } from '@src/typings/events'
+import { EventList } from '@bot/entities/EventList'
 import { getNameSpace } from '@bot/libs/socket'
 import { PubSubRedemptionMessage } from 'twitch-pubsub-client/lib'
 import alerts from '@bot/overlays/alerts'
-import File from '@bot/models/File'
+import { File } from '@bot/entities/File'
 import tts from '@bot/overlays/tts'
 import cache from '@bot/libs/cache'
+import { orm } from '@bot/libs/db'
 
 export default new class Events implements System {
   socket = getNameSpace('widgets/eventlist')
@@ -27,7 +28,7 @@ export default new class Events implements System {
         await tmi.say({ message })
       }
       if (operation.key === 'playAudio') {
-        const file = await File.findOne({ where: { id: operation.audioId } })
+        const file = await orm.em.getRepository(File).findOne({ id: operation.audioId })
         alerts.emitAlert({ audio: { file: file, volume: operation.audioVolume }  })
       }
       if (operation.key === 'TTS') tts.emitTTS(await this.prepareMessage(operation.message, opts))
@@ -69,7 +70,10 @@ export default new class Events implements System {
   }
 
   async addToEventList({ name, data }: { name: string, data: Record<string, unknown> }) {
-    const event: EventList = await EventList.create({ name, data })
+    const repository = orm.em.getRepository(EventList)
+    const event = repository.assign(new EventList(), { name, data, timestamp: Date.now() })
+    await repository.persistAndFlush(event)
+
     this.clients.forEach(c => c.emit('event', event))
   }
 
@@ -110,12 +114,12 @@ export default new class Events implements System {
   }
 
   onAddModerator({ event_data: { user_name: username } }: IWebHookModeratorAdd) {
-    this.fire({ name: 'newmod', opts: { username }})
+    this.fire({ name: 'newmod', opts: { username } })
     this.addToEventList({ name: 'newmod', data: { username } })
   }
 
   onRemoveModerator({ event_data: { user_name: username } }: IWebHookModeratorRemove) {
-    this.fire({ name: 'removemod', opts: { username }})
+    this.fire({ name: 'removemod', opts: { username } })
     this.addToEventList({ name: 'removemod', data: { username } })
   }
 

@@ -1,12 +1,11 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
-import Command from '@bot/models/Command'
-import { Command as CommandType } from 'typings'
+import { Command } from '@bot/entities/Command'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
 import Commands from '@bot/systems/commands'
 import customcommands from '@bot/systems/customcommands'
-import CommandSound from '@bot/models/CommandSound'
 import cache from '@bot/libs/cache'
+import { RequestContext } from '@mikro-orm/core'
 
 const router = Router({
   mergeParams: true,
@@ -27,7 +26,7 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:id', isAdmin, async (req, res, next) => {
   try {
-    const command = Commands.getCommandById(req.params.id)
+    const command = await RequestContext.getEntityManager().getRepository(Command).findOne(Number(req.params.id))
 
     res.json(command)
   } catch (e) {
@@ -79,7 +78,18 @@ router.post('/', isAdmin, checkSchema({
     in: ['body'],
     optional: true,
   },
-  sound: {
+  sound_file: {
+    isNumeric: true,
+    in: ['body'],
+    optional: {
+      options: {
+        nullable: true,
+        checkFalsy: false,
+      },
+    },
+  },
+  sound_volume: {
+    isNumeric: true,
     in: ['body'],
     optional: true,
   },
@@ -87,7 +97,7 @@ router.post('/', isAdmin, checkSchema({
   try {
     validationResult(req).throw()
 
-    const body: CommandType = req.body
+    const body = req.body
     const names: string[] = Commands.getCommands()
       .filter(c => c.id !== body.id)
       .reduce((array, command) => ([
@@ -100,33 +110,13 @@ router.post('/', isAdmin, checkSchema({
     if (names.includes(body.name) || names.some(name => body.aliases?.includes(name))) {
       return res.status(400).send({ message: 'This aliase or name already exists.' })
     }
+    
+    const repository = RequestContext.getEntityManager().getRepository(Command)
 
-    let command: Command
-
-    if (body.id) {
-      command = await Command.findOne({ where: { id: body.id } })
-
-      await command.update({
-        name: body.name,
-        aliases: body.aliases,
-        cooldown: body.cooldown,
-        description: body.description,
-        visible: body.visible,
-        permission: body.permission,
-        response: body.response,
-        price: body.price,
-      })
-    } else command = await Command.create(body)
-
-    if (body.sound?.soundId && body.sound?.soundId as any !== '0') {
-      const [commandSound]: [CommandSound] = await CommandSound.findOrCreate({ 
-        where: { commandId: command.id },
-        defaults: { commandId: command.id, soundId: body.sound.soundId as any },
-      })
-      commandSound.soundId = body.sound.soundId as any
-      commandSound.volume = body.sound.volume as any
-      await commandSound.save()
-    } else await CommandSound.destroy({ where: { commandId: command.id }}).catch(() => null)
+    const command = body.id ? await repository.findOne({ id: body.id }) : repository.create(Command)
+ 
+    repository.assign(command, body)
+    await repository.persistAndFlush(command)
 
     await customcommands.init()
     cache.updateCommands()
@@ -144,9 +134,11 @@ router.delete('/', isAdmin, checkSchema({
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
-    await Command.destroy({ where: { id: req.body.id }})
+    const repository = RequestContext.getEntityManager().getRepository(Command)
+    const command = await repository.findOne({ id: req.body.id })
+    await repository.removeAndFlush(command)
+
     await customcommands.init()
-    
     cache.updateCommands()
     res.send('Ok')
   } catch (e) {

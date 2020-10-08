@@ -1,8 +1,9 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
-import Variable from '@bot/models/Variable'
+import { Variable } from '@bot/entities/Variable'
 import variables from '@bot/systems/variables'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
+import { RequestContext, wrap } from '@mikro-orm/core'
 
 const router = Router({
   mergeParams: true,
@@ -10,9 +11,9 @@ const router = Router({
 
 router.get('/', async (req, res, next) => {
   try {
-    const variables: Variable[] = await Variable.findAll()
+    const repository = RequestContext.getEntityManager().getRepository(Variable)
 
-    res.json(variables)
+    res.json(await repository.findAll())
   } catch (e) {
     next(e)
   }
@@ -28,8 +29,9 @@ router.get('/all', async (req, res, next) => {
 
 router.get('/:id', isAdmin, async (req, res, next) => {
   try {
-    const variable: Variable[] = await Variable.findOne({ where: { id: req.params.id }})
-    await variables.init()
+    const repository = RequestContext.getEntityManager().getRepository(Variable)
+    const variable = await repository.findOne({ id: Number(req.params.id) })
+
     res.json(variable)
   } catch (e) {
     next(e)
@@ -61,18 +63,16 @@ router.post('/', isAdmin, checkSchema({
     validationResult(req).throw()
     const body = req.body
 
-    let variable: Variable
+    const repository = RequestContext.getEntityManager().getRepository(Variable)
+    const variable = body.id ? await repository.findOne(body.id) : repository.create(body)
 
-    if (body.id) variable = await Variable.findOne({ where: { id: body.id } })
-    else variable = await Variable.create(body)
+    wrap(variable).assign({
+      name: body.name,
+      enabled: body.enabled,
+      response: body.response,
+    })
 
-    if (body.id) {
-      await variable.update({
-        name: body.name,
-        enabled: body.enabled,
-        response: body.response,
-      })
-    }
+    await repository.persistAndFlush(variable)
     await variables.init()
     res.json(variable)
   } catch (e) {
@@ -88,7 +88,10 @@ router.delete('/', isAdmin, checkSchema({
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
-    await Variable.destroy({ where: { id: req.body.id }})
+    const repository = RequestContext.getEntityManager().getRepository(Variable)
+    const variable = await repository.findOne(req.body.id)
+    await repository.removeAndFlush(variable)
+
     await variables.init()
     res.send('Ok')
   } catch (e) {

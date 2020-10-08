@@ -1,5 +1,5 @@
 import cache from '@bot/libs/cache'
-import { Command } from 'typings'
+import { Command } from '@src/typings'
 
 export default new class Commands {
   getCommands(): Command[] {

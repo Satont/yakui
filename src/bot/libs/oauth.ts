@@ -1,6 +1,7 @@
-import axios from 'axios'
-import Settings from '@bot/models/Settings'
+import axios, { AxiosError } from 'axios'
+import { Settings } from '@bot/entities/Settings'
 import { info, error } from './logger'
+import { orm } from './db'
 
 export default new class Oauth {
   async validate (token: string | null, type: 'bot' | 'broadcaster') {
@@ -11,7 +12,7 @@ export default new class Oauth {
     try {
       const { data } = await axios.get('https://id.twitch.tv/oauth2/validate', { headers: {
         'Authorization': `OAuth ${token}`,
-      }})
+      } })
 
       return {
         clientId: data.client_id,
@@ -20,28 +21,29 @@ export default new class Oauth {
         scopes: data.scopes,
       }
     } catch (e) {
-      error(e)
-      throw (`Can't validate access token of ${type}`)
+      error((e as AxiosError).response.data ? e.response.data : e)
+      throw `Can't validate access token of ${type}`
     }
   }
 
   async refresh(token: string, type: 'bot' | 'broadcaster') {
+    const repository = orm.em.getRepository(Settings)
     try {
       const { data } = await axios.get('http://bot.satont.ru/api/refresh?refresh_token=' + token)
+      let accessToken = await repository.findOne({ space: 'oauth', name: `${type}AccessToken` })
+      if (!accessToken) {
+        accessToken = repository.create({ space: 'oauth', name: `${type}AccessToken`, value: data.token })
+      }
+      
+      let refreshToken = await repository.findOne({ space: 'oauth', name: `${type}RefreshToken` })
+      if (!refreshToken) {
+        refreshToken = repository.create({ space: 'oauth', name: `${type}RefreshToken`, value: data.token })
+      }
+    
+      accessToken.value = data.token
+      refreshToken.value = data.refresh
 
-      const [accessToken, accessTokenCreated]: [Settings, boolean] = await Settings.findOrCreate({ 
-        where: { space: 'oauth', name: `${type}AccessToken` },
-        defaults: { space: 'oauth', name: `${type}AccessToken`, value: data.token },
-      })
-
-      const [refreshToken, refreshTokenCreated]: [Settings, boolean] = await Settings.findOrCreate({ 
-        where: { space: 'oauth', name: `${type}RefreshToken` },
-        defaults: { space: 'oauth', name: `${type}RefreshToken`, value: data.refresh },
-      })
-
-      if (!accessTokenCreated) await accessToken.update({ value: data.token })
-      if (!refreshTokenCreated) await refreshToken.update({ value: data.refresh })
-
+      await repository.persistAndFlush([accessToken, refreshToken])
       info(`Access token of ${type} was refreshed.`)
       return {
         access_token: data.token,
@@ -49,7 +51,7 @@ export default new class Oauth {
       }
     } catch (e) {
       error(e)
-      throw new Error(`Can't refresh access token of ${type}`)
+      throw `Can't refresh access token of ${type}`
     }
   }
 }
