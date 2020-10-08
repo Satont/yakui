@@ -29,6 +29,7 @@ router.get('/', async (req, res, next) => {
       .select('user.*')
       .join('user.tips', 'userTips', null, 'leftJoin')
       .join('user.bits', 'userBits', null, 'leftJoin')
+      .where(where)
       .addSelect('COALESCE(SUM("userTips"."inMainCurrencyAmount"), 0) as "tips"')
       .addSelect('COALESCE(SUM("userBits"."amount"), 0) as "bits"')
       .offset((Number(body.page) - 1) * Number(body.perPage))
