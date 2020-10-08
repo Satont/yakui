@@ -59,7 +59,7 @@ export default class Events extends Vue {
   }
 
   humanize(val) {
-    return humanizeDuration(Date.now() - val, { units: ['mo', 'd', 'h', 'm', 's'], round: true, language: (this.$root as any).metadata.lang })
+    return humanizeDuration(Date.now() - val, { units: ['mo', 'd', 'h', 'm', 's'], round: true, language: this.$store.state.metaData.lang })
   }
 
   mounted() {

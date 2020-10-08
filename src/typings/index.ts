@@ -51,6 +51,7 @@ export interface System {
   }>;
   commands?: Command[],
   socket?: SocketIO.Namespace,
+  clients?: SocketIO.Socket[],
   init?: () => void | Promise<void>,
   onStreamEnd?: () => void | Promise<void>,
   onStreamStart?: () => void | Promise<void>,

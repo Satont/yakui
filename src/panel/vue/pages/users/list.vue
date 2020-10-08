@@ -119,7 +119,7 @@ export default class UsersManagerList extends Mixins(EnvChecker) {
     return new Intl.NumberFormat(this.getLocale(), {
       currencyDisplay: 'symbol',
       style: 'currency',
-      currency: (this.$root as any).metadata.mainCurrency
+      currency: this.$store.state.metaData.mainCurrency
     }).format(value)
   }
 

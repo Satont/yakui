@@ -7,7 +7,6 @@ import users from './users'
 import settings from './settings'
 import events from './events'
 import eventlist from './eventlist'
-import metaData from './metaData'
 import keywords from './keywords'
 import variables from './variables'
 import greetings from './greetings'
@@ -26,7 +25,6 @@ router.use((req, res, next) => {
 router.get('/', (req, res) => {
   res.send('This is api v1')
 })
-router.use('/metaData', metaData)
 
 router.use('/commands', commands)
 router.use('/timers', timers)

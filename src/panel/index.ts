@@ -33,6 +33,12 @@ const start = async () => {
   const user = await isLogged(true, true)
   store.commit('setLoggedUser', user)
 
+  const metaDataSocket = getNameSpace({ name: 'systems/metaData' })
+  await new Promise((res) => metaDataSocket.emit('getData', data => {
+    store.commit('setMetaData', data)
+    res()
+  }))
+
   const filesSocket = getNameSpace({ name: 'systems/files' })
   filesSocket.emit('getAll', (_err, files) => store.commit('setFilesList', files))
 
@@ -92,22 +98,6 @@ const start = async () => {
   const app = new Vue({
     data: {
       loading: false,
-      metadata: {
-        stream: {
-          viewers: 0,
-          startedAt: null,
-        },
-        channel: {
-          views: 0,
-          game: 'No data',
-          title: 'No data',
-          name: null,
-        },
-        uptime: 'offline',
-      },
-      updateTimeout: null,
-      lang: 'RU',
-      title: 'Bot Panel',
     },
     router,
     template: `
@@ -130,33 +120,7 @@ const start = async () => {
     </div>
     `,
     async mounted() {
-      await this.fetchMetadata()
-    },
-    methods: {
-      async fetchMetadata() {
-        clearTimeout(this.updateTimeout)
-        this.updateTimeout = setTimeout(() => this.fetchMetadata(), 10000)
-
-        const { data } = await this.$axios.get('/metaData')
-
-        this.title = data.bot?.username?.toUpperCase() ?? this.title
-        document.title = this.title
-        this.metadata.stream = data.stream
-        this.metadata.channel = data.channel
-        this.metadata.mainCurrency = data.mainCurrency
-        this.metadata.lang = data.lang
-
-        this.updateUptime()
-      },
-      updateUptime() {
-        if (!this.metadata.stream.startedAt) this.metadata.uptime = 'offline'
-        else {
-          this.metadata.uptime = humanizeDuration(Date.now() - new Date(this.metadata.stream.startedAt).getTime(), { units: ['mo', 'd', 'h', 'm', 's'], round: true })
-        }
-      },
-    },
-    beforeDestroy() {
-      clearTimeout(this.updateTimeout)
+      metaDataSocket.on('data', data => store.commit('setMetaData', data))
     },
     store,
   }).$mount('#app')
