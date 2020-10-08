@@ -8,3 +8,4 @@ src/bot/customSystems/*
 logs
 public/*.html
 temp
+test.ts
