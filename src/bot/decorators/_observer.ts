@@ -17,6 +17,7 @@ export const setupObserver = ({ instance, propertyName }) => {
         cache[instanceName][propertyName].firstChange = cache[instanceName][propertyName].firstChange === undefined
         if (cache[instanceName][propertyName].value === value) return
 
+        cache[instanceName][propertyName].previousValue = cache[instanceName][propertyName].value
         cache[instanceName][propertyName].value = value
   
         if (!cache[instanceName][propertyName].firstChange && cache[instanceName][propertyName].onChange) {
