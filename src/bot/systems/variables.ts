@@ -67,10 +67,7 @@ export default new class Variables implements System {
     const variables = (await repository.findAll())
       .map((variable: Variable) => ({ name: `$_${variable.name}`, response: variable.response, custom: true }))
       
-
     this.variables.push(...variables)
-
-    this.getTop('tips')
   }
 
   async parseMessage(opts: { message: string, raw?: TwitchPrivateMessage, argument?: string, command?: Command }) {
@@ -187,7 +184,7 @@ export default new class Variables implements System {
     if (Number(page) <= 0) page = '1'
 
     const offset = (Number(page) - 1) * 10
-    console.log(users.ignoredUsers)
+
     const ignored = [...users.ignoredUsers, tmi.channel?.name.toLowerCase(), tmi.chatClients?.bot?.currentNick ].filter(Boolean)
     const limit = 10
 
