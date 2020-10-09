@@ -78,7 +78,7 @@ class Donationalerts {
   
       info('DONATIONALERTS: Token successfuly refreshed')
     } catch (e) {
-      error(e)
+      error('DONATIONALERTS: cannot refresh token')
     }
   }
 

@@ -149,7 +149,6 @@ export default new class Tmi {
       client.part(this.channel?.name)
       await client.quit()
 
-      info(`TMI: ${type} disconnecting from server`)
       this.clients[type] = null
       this.chatClients[type] = null
     }

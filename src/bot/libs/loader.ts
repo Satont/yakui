@@ -12,13 +12,16 @@ const loader = async () => {
     integrations: 'Integration',
     customSystems: 'Custom System',
     overlays: 'Overlay',
+    libs: 'Lib',
   }
   for (const folder of Object.keys(folders)) {
     try {
       for await (const file of getFiles(resolve(__dirname, '..', folder))) {
         if (!file.endsWith('.js') && !file.endsWith('.ts')) continue
-  
+        if (file.includes('loader') || file.includes('cache')) continue
+
         const loadedFile: System = (await import(resolve(__dirname, '..', folder, file))).default
+        if (!loadedFile) continue
         loadedSystems.push(loadedFile)
         if (typeof loadedFile.init !== 'undefined') await loadedFile.init()
         if (loadedFile.socket) {

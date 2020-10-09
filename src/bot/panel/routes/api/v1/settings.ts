@@ -32,10 +32,8 @@ router.post('/', isAdmin, async (req, res, next) => {
   try {
     for (const data of body) {
       const module = loadedSystems.find(s => s.constructor.name.toLowerCase() === data.space)
-      if (module) module[data.name] = data.value
-      else {
-        
-      }
+      if (!module) continue
+      module[data.name] = data.value
     }
     res.send('Ok')
   } catch (e) {

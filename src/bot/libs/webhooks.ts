@@ -8,10 +8,6 @@ export default new class WebHooks {
   private validityInSeconds = 864000
   private initTimeout: NodeJS.Timeout = null
 
-  constructor() {
-    this.init()
-  }
-
   async init() {
     clearTimeout(this.initTimeout)
     const url = await orm.em.getRepository(Settings).findOne({ space: 'general', name: 'siteUrl' })
