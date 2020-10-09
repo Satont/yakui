@@ -120,7 +120,10 @@ const start = async () => {
     </div>
     `,
     async mounted() {
-      metaDataSocket.on('data', data => store.commit('setMetaData', data))
+      metaDataSocket.on('data', data => {
+        store.commit('setMetaData', data)
+        document.title = data.bot?.username?.toUpperCase()
+      })
     },
     store,
   }).$mount('#app')

@@ -20,7 +20,7 @@ class OAuth {
   @settings()
   broadcasterRefreshToken: string = null
 
-  @onChange(['channel', 'botAccessToken', 'botRefreshToken', 'broadcasterAccessToken', 'broadcasterRefreshToken'])
+  @onChange(['channel', 'botRefreshToken', 'broadcasterRefreshToken'])
   callOtherSystems() {
     tmi.init()
   }
