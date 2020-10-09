@@ -187,8 +187,8 @@ export default new class Variables implements System {
     if (Number(page) <= 0) page = '1'
 
     const offset = (Number(page) - 1) * 10
-
-    const ignored = [...users.settings.ignoredUsers, tmi.channel?.name.toLowerCase(), tmi.chatClients?.bot?.currentNick ].filter(Boolean)
+    console.log(users.ignoredUsers)
+    const ignored = [...users.ignoredUsers, tmi.channel?.name.toLowerCase(), tmi.chatClients?.bot?.currentNick ].filter(Boolean)
     const limit = 10
 
     if (type === 'watched') {

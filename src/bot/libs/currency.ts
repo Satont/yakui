@@ -57,4 +57,10 @@ export default new class Currency {
       this.updateRatesTimeout = setTimeout(() => this.updateRates(), 12 * 60 * 60 * 1000)
     }
   }
+
+  onDbUpdate({ table, data }: { table: string, data: Settings}) {
+    if (table !== 'settings' || data.space !== 'currency') return
+    
+    this.getDbData()
+  }
 }

@@ -44,7 +44,13 @@ export interface ParserOptions {
   raw: TwitchPrivateMessage
 }
 
+type DbUpdate = {
+  table: string,
+  data?: any,
+}
+
 export interface System {
+  __moduleName?: string,
   parsers?: Array<{
     name?: string,
     fnc(opt: ParserOptions): any | Promise<any>
@@ -59,7 +65,7 @@ export interface System {
   onHosting?: (data: HostType) => void | Promise<void>,
   onHosted?: (data: HostType) => void | Promise<void>,
   onRaided?: (data: HostType) => void | Promise<void>,
-  listenDbUpdates?: () => void | Promise<void>,
+  onDbUpdate?(data: DbUpdate): void | Promise<void>,
   sockets?: (socket: SocketIO.Socket) => void | Promise<void>,
   onAddModerator?: (data: IWebHookModeratorAdd) => void | Promise<void>,
   onRemoveModerator?: (data: IWebHookModeratorRemove) => void | Promise<void>,

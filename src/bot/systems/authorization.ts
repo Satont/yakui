@@ -2,28 +2,19 @@ import { Request, Response } from 'express'
 import axios from 'axios'
 import jwt from 'jsonwebtoken'
 
-import { System } from '@src/typings'
 import tmi from '@bot/libs/tmi'
 import { error } from '@bot/libs/logger'
 import { Settings } from '@bot/entities/Settings'
 import { orm } from '@bot/libs/db'
+import { settings } from '../decorators'
 
 const accessTokenExpirationTime = 1 * 24 * 60 * 60 // 1 day
 const refreshTokenExpirationTime = 31 * 24 * 60 * 60 // 31 day
 
-export default new class Authorization implements System {
-  JWTKey: string
+class Authorization {
 
-  async init() {
-    let key = await orm.em.getRepository(Settings).findOne({ space: 'general', name: 'JWTKey' })
-    if (!key) {
-      const value = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-      key = orm.em.getRepository(Settings).create({ space: 'general', name: 'JWTKey', value })
-      await orm.em.persistAndFlush(key)
-    }
-
-    this.JWTKey = key.value
-  }
+  @settings()
+  JWTKey = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
 
   async validate(req: Request, res: Response) {
     const accessTokenHeader = req.headers['x-twitch-token'] as string | undefined
@@ -102,3 +93,5 @@ export default new class Authorization implements System {
     return jwt.verify(token, this.JWTKey)
   }
 }
+
+export default new Authorization()
