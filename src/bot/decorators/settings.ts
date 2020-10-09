@@ -12,14 +12,11 @@ export function SettingsDecorator() {
       if (!loadedSystems.length || !module) return setTimeout(() => load(), 1000)
 
       const repository = orm.em.getRepository(SettingsModel)
-      let item = await repository.findOne({ space, name })
+      const item = await repository.findOne({ space, name })
 
       if (!item) {
-        item = repository.assign(new SettingsModel(), { space, name, value: module[name] })
-        await repository.persistAndFlush(item)
-      }
-
-      module[name] = item.value
+        await repository.nativeInsert({ space, name, value: JSON.stringify(module[name]) })
+      } else module[name] = item.value
     }
     load()
   }

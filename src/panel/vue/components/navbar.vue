@@ -1,14 +1,14 @@
 <template>
   <div>
     <b-navbar toggleable="lg" type="light" variant="dark" sticky class="flex-md-nowrap p-0 shadow">
-      <b-navbar-brand class="navbar-brand col-md-1 col-lg-1 mr-0 px-3" router-link to="/">{{ $store.state.metaData.bot.username | truncate }}</b-navbar-brand>
+      <b-navbar-brand class="navbar-brand col-md-1 col-lg-1 mr-0 px-3" router-link to="/">{{ $store.state.metaData.bot.username || 'Yakui' | truncate  }}</b-navbar-brand>
 
       <b-nav align='center'>
-        <b-nav-item>Viewers: {{ $store.state.metaData.stream.viewers }}</b-nav-item>
-        <b-nav-item>Views: {{ $store.state.metaData.channel.views }}</b-nav-item>
-        <b-nav-item>Title: {{ $store.state.metaData.channel.title }}</b-nav-item>
-        <b-nav-item>Game: {{ $store.state.metaData.channel.game }}</b-nav-item>
-        <b-nav-item>Uptime: {{ $store.state.metaData.stream.startedAt }}</b-nav-item>
+        <b-nav-item>Viewers: {{ $store.state.metaData.stream.viewers || 0}}</b-nav-item>
+        <b-nav-item>Views: {{ $store.state.metaData.channel.views || 0}}</b-nav-item>
+        <b-nav-item>Title: {{ $store.state.metaData.channel.title || '' }}</b-nav-item>
+        <b-nav-item>Game: {{ $store.state.metaData.channel.game || 'game' }}</b-nav-item>
+        <b-nav-item>Uptime: {{ $store.state.metaData.stream.startedAt || 'offline' }}</b-nav-item>
       </b-nav>
 
       <div class="ml-auto ml-2 mr-2">

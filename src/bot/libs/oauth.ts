@@ -6,6 +6,9 @@ import tmi from './tmi'
 
 class OAuth {
   @settings()
+  channel: string = null
+
+  @settings()
   botAccessToken: string = null
 
   @settings()
@@ -17,7 +20,7 @@ class OAuth {
   @settings()
   broadcasterRefreshToken: string = null
 
-  @onChange(['botAccessToken', 'botRefreshToken', 'broadcasterAccessToken', 'broadcasterRefreshToken'])
+  @onChange(['channel', 'botAccessToken', 'botRefreshToken', 'broadcasterAccessToken', 'broadcasterRefreshToken'])
   callOtherSystems() {
     tmi.init()
   }

@@ -12,7 +12,6 @@ const accessTokenExpirationTime = 1 * 24 * 60 * 60 // 1 day
 const refreshTokenExpirationTime = 31 * 24 * 60 * 60 // 31 day
 
 class Authorization {
-
   @settings()
   JWTKey = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
 

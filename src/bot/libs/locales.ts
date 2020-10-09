@@ -15,10 +15,6 @@ const langsDir = resolve(process.cwd(), 'locales')
 export default new class Locales {
   lang: any
 
-  constructor() {
-    this.init()
-  }
-
   async init() {
     let locale = await orm.em.getRepository(Settings).findOne({ space: 'general', name: 'locale' })
     if (!locale) {

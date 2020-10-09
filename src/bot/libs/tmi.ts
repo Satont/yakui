@@ -71,13 +71,13 @@ export default new class Tmi {
       return
     }
 
-    if (refreshToken.value === '') {
+    if (!refreshToken.value) {
       this.isAlreadyUpdating[type] = false
       info(`TMI: refreshToken for ${type} not found, client will be not initiliazed.`)
       return
     }
 
-    if (channel.value === '') {
+    if (!channel.value) {
       this.isAlreadyUpdating[type] = false
       error(`TMI (${type}): Channel not setted.`)
       return

@@ -3,7 +3,7 @@ import { Settings } from '../entities/Settings'
 
 export const cache = {}
 
-export const setupObserver = ({ instance, propertyName }: { instance: any, propertyName: any }) => {
+export const setupObserver = ({ instance, propertyName }: { instance?: any, propertyName: any }) => {
   const instanceName = instance.constructor.name.toLowerCase()
   if (!cache[instanceName]) {
     cache[instanceName] = {}
@@ -44,9 +44,8 @@ const updateValue = async ({ space, name, value }) => {
   const repository = orm.em.getRepository(Settings)
   const item = await repository.findOne({ space, name })
   if (item) {
-    item.value = value
-    await repository.nativeUpdate({ name, space }, { value })
+    await repository.nativeUpdate({ space, name }, { value: JSON.stringify(value) })
   } else {
-    await repository.nativeInsert({ space, name, value })
+    await repository.nativeInsert({ space, name, value: JSON.stringify(value) })
   }
 }
