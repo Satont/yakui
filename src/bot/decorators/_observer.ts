@@ -3,7 +3,7 @@ import { Settings } from '../entities/Settings'
 
 export const cache = {}
 
-export const setupObserver = ({ instance, propertyName }: { instance?: any, propertyName: any }) => {
+export const setupObserver = ({ instance, propertyName }: { instance: any, propertyName: any }) => {
   const instanceName = instance.constructor.name.toLowerCase()
   if (!cache[instanceName]) {
     cache[instanceName] = {}
