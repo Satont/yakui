@@ -1,3 +1,6 @@
+import { orm } from '../libs/db'
+import { Settings } from '../entities/Settings'
+
 export const cache = {}
 
 export const setupObserver = ({ instance, propertyName }) => {
@@ -19,7 +22,11 @@ export const setupObserver = ({ instance, propertyName }) => {
 
         cache[instanceName][propertyName].previousValue = cache[instanceName][propertyName].value
         cache[instanceName][propertyName].value = value
-  
+
+        if (!cache[instanceName][propertyName].firstChange) {
+          updateValue({ space: instanceName, name: propertyName, value })
+        }
+
         if (!cache[instanceName][propertyName].firstChange && cache[instanceName][propertyName].onChange) {
           instance[cache[instanceName][propertyName].onChange].call(instance)
         }
@@ -30,6 +37,13 @@ export const setupObserver = ({ instance, propertyName }) => {
         return cache[instanceName][propertyName].value
       },
     })
-    
   }
+}
+
+const updateValue = async ({ space, name, value }) => {
+  const repository = orm.em.getRepository(Settings)
+  const item = await repository.findOne({ space, name }) || new Settings()
+  repository.assign(item, { value })
+
+  await repository.persistAndFlush(item)
 }

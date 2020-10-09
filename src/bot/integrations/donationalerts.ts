@@ -38,6 +38,7 @@ class Donationalerts {
 
   @onChange(['enabled', 'access_token', 'refresh_token'])
   async onChanges() {
+    this.disconnect()
     if (!this.enabled || !this.access_token || !this.refresh_token) return
     if (this.connecting) return
     await this.recheckToken()
@@ -64,8 +65,8 @@ class Donationalerts {
         headers: { 'Authorization': `Bearer ${this.access_token}` },
       })
     } catch (e) {
-      if (e.response.status === 401) await this.refreshToken()
-      else error(e.message)
+      if (e.response?.status === 401) await this.refreshToken()
+      else error(e)
     }
   }
 
@@ -77,13 +78,13 @@ class Donationalerts {
   
       info('DONATIONALERTS: Token successfuly refreshed')
     } catch (e) {
-      error(`'DONATIONALERTS: cannot refresh token: ${e.message}`)
+      error(e)
     }
   }
 
   async connect() {
     this.disconnect()
-    info('DONATIONALERTS: Starting onChanges')
+    info('DONATIONALERTS: Starting connect')
 
     this.centrifugeSocket = new Centrifuge('wss://centrifugo.donationalerts.com/connection/websocket', {
       websocket: WebSocket,
