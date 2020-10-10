@@ -8,21 +8,23 @@ import currency from '@bot/libs/currency'
 import { onDonation } from '@bot/libs/eventsCaller'
 import { info, error } from '@bot/libs/logger'
 import { orm } from '@bot/libs/db'
+import { onChange, settings } from '../decorators'
 
-export default new class Qiwi implements Integration {
+class Qiwi implements Integration {
   pollTimeout: NodeJS.Timeout = null
+
+  @settings()
+  enabled = false
+
+  @settings()
   token: string = null
 
+  @onChange(['enabled', 'token'])
   async init() {
     clearTimeout(this.pollTimeout)
-    const [enabled, token] = await Promise.all([
-      orm.em.getRepository(Settings).findOne({ space: 'qiwi', name: 'enabled' }),
-      orm.em.getRepository(Settings).findOne({ space: 'qiwi', name: 'token' }),
-    ])
 
-    if (!enabled || !token || !token?.value.trim().length) return
+    if (!this.enabled || !this.token) return
     info('QIWI: Successfuly initiliazed')
-    this.token = token.value
     this.poll()
   }
 
@@ -64,7 +66,9 @@ export default new class Qiwi implements Integration {
         })
       }
     } catch (e) {
-      error(e.message)
+      error(`QIWI: ` + e.message)
     }
   }
 }
+
+export default new Qiwi()

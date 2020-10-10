@@ -8,8 +8,9 @@ import { Settings } from '@bot/entities/Settings'
 import { error } from '@bot/libs/logger'
 import { orm } from '@bot/libs/db'
 import { CommandPermission } from '@bot/entities/Command'
+import { settings } from '../decorators'
 
-export default new class Twitch implements System {
+class Twitch implements System {
   private intervals = {
     streamData: null,
     channelData: null,
@@ -76,6 +77,12 @@ export default new class Twitch implements System {
       timestamp: undefined,
     },
   }
+  
+  @settings()
+  latestSubscriber: string = null
+
+  @settings()
+  latestReSubscriber: string = null
 
   async init() {
     const [latestSubscriber, latestReSubscriber] = await Promise.all([
@@ -204,3 +211,5 @@ export default new class Twitch implements System {
     await orm.em.persistAndFlush(instance)
   }
 }
+
+export default new Twitch()

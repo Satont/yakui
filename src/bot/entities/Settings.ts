@@ -16,5 +16,5 @@ export class Settings {
   name!: string;
 
   @Property({ type: JsonType })
-  value!: any
+  value?: any
 }

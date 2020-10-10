@@ -5,27 +5,31 @@ import { Integration } from '@src/typings'
 import { Settings } from '@bot/entities/Settings'
 import { info, error } from '@bot/libs/logger'
 import { orm } from '@bot/libs/db'
+import { onChange, settings } from '../decorators'
 
-
-export default new class Spotify implements Integration {
+class Spotify implements Integration {
   client: SpotifyApi | null = null
   private refreshTimeout: NodeJS.Timeout = null
 
+  @settings()
+  access_token: string = null
+
+  @settings()
+  refresh_token: string = null
+
+  @settings()
+  enabled = false
+  
+  @onChange(['enabled', 'access_token', 'refresh_token'])
   async init() {
     clearInterval(this.refreshTimeout)
-    const [access_token, refresh_token, enabled] = await Promise.all([
-      orm.em.getRepository(Settings).findOne({ space: 'spotify', name: 'access_token' }),
-      orm.em.getRepository(Settings).findOne({ space: 'spotify', name: 'refresh_token' }),
-      orm.em.getRepository(Settings).findOne({ space: 'spotify', name: 'enabled' }),
-    ])
 
-    if (!access_token || !refresh_token || !enabled) return
-    if (!access_token.value.trim().length || !access_token.value.trim().length) return
+    if (!this.access_token || !this.refresh_token || !this.enabled) return
 
     if (this.client) this.client = null
 
     this.client = new SpotifyApi({ 
-      accessToken: access_token.value,
+      accessToken: this.access_token,
     })
 
     info('SPOTIFY: Successfuly initiliazed.')
@@ -64,3 +68,5 @@ export default new class Spotify implements Integration {
     return `${data.body.item.artists.map(o => o.name).join(', ')} — ${data.body.item.name}`
   }
 }
+
+export default new Spotify()

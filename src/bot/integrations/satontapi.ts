@@ -1,54 +1,31 @@
-import { Integration } from '@src/typings'
-import { Settings } from '@bot/entities/Settings'
 import { error } from '@bot/libs/logger'
 import axios from 'axios'
-import { orm } from '@bot/libs/db'
+import { settings } from '../decorators'
 
-
-export default new class SatontRu implements Integration {
+class SatontApi {
   private base = axios.create({
     baseURL: 'http://api.satont.ru',
   })
 
-  private apis: {
-    faceit: {
-      enabled: boolean,
-      nickname: string,
-    },
-    songs: {
-      enabled: boolean,
-      vk: string,
-      lastfm: string,
-      twitchdj: number,
-    }
-  } = {
-    faceit: {
-      enabled: false,
-      nickname: null,
-    },
-    songs: {
-      enabled: false,
-      vk: null,
-      lastfm: null,
-      twitchdj: null,
-    },
+  @settings()
+  faceit = {
+    enabled: false,
+    nickname: null,
   }
 
-  async init() {
-    const [faceit, songs] = await Promise.all([
-      orm.em.getRepository(Settings).findOne({ space: 'satontapi', name: 'faceit' }),
-      orm.em.getRepository(Settings).findOne({ space: 'satontapi', name: 'songs' }),
-    ])
-    
-    if (faceit) this.apis.faceit = faceit.value as any
-    if (songs) this.apis.songs = songs.value as any
+  @settings()
+  songs = {
+    enabled: false,
+    vk: null,
+    lastfm: null,
+    twitchdj: null,
   }
 
   async getFaceitData(): Promise<{ elo: number, lvl: number } | false> {
-    if (!this.apis.faceit.enabled || !this.apis.faceit.nickname.trim().length) return false
+    if (!this.faceit.enabled || !this.faceit.nickname.trim().length) return false
 
     try {
-      const { data } = await this.base.get('/faceit?nick=' + this.apis.faceit.nickname.trim())
+      const { data } = await this.base.get('/faceit?nick=' + this.faceit.nickname.trim())
       
       return { elo: data.elo, lvl: data.lvl }
     } catch (e) {
@@ -58,10 +35,10 @@ export default new class SatontRu implements Integration {
   }
 
   async getSong(): Promise<string | false> {
-    if (!this.apis.songs.enabled) return false
+    if (!this.songs.enabled) return false
 
     try {
-      const params = Object.entries(this.apis.songs)
+      const params = Object.entries(this.songs)
         .filter(entry => Boolean(entry[1]))
         .map(entry => `${entry[0]}=${entry[1]}`)
 
@@ -74,3 +51,5 @@ export default new class SatontRu implements Integration {
     }
   }
 }
+
+export default new SatontApi()

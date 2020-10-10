@@ -2,35 +2,23 @@ import { Request, Response } from 'express'
 import axios from 'axios'
 import jwt from 'jsonwebtoken'
 
-import { System } from '@src/typings'
 import tmi from '@bot/libs/tmi'
 import { error } from '@bot/libs/logger'
-import { Settings } from '@bot/entities/Settings'
-import { orm } from '@bot/libs/db'
+import { settings } from '../decorators'
+import users from './users'
 
 const accessTokenExpirationTime = 1 * 24 * 60 * 60 // 1 day
 const refreshTokenExpirationTime = 31 * 24 * 60 * 60 // 31 day
 
-export default new class Authorization implements System {
-  JWTKey: string
-
-  async init() {
-    let key = await orm.em.getRepository(Settings).findOne({ space: 'general', name: 'JWTKey' })
-    if (!key) {
-      const value = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-      key = orm.em.getRepository(Settings).create({ space: 'general', name: 'JWTKey', value })
-      await orm.em.persistAndFlush(key)
-    }
-
-    this.JWTKey = key.value
-  }
+class Authorization {
+  @settings()
+  JWTKey = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
 
   async validate(req: Request, res: Response) {
     const accessTokenHeader = req.headers['x-twitch-token'] as string | undefined
     const userId = req.headers['x-twitch-userid'] as string | undefined
 
     try {
-
       if (!accessTokenHeader || !userId) {
         throw new Error('Insufficient data')
       }
@@ -46,8 +34,8 @@ export default new class Authorization implements System {
       }
       const username = twitchValidation.data.login
       const admins: string[] = [tmi?.channel?.name]
-      const botAdmins: Settings = await orm.em.getRepository(Settings).findOne({ space: 'users', name: 'botAdmins' } )
-      if (botAdmins) admins.push(...botAdmins.value)
+      const botAdmins = users.botAdmins
+      if (botAdmins) admins.push(...botAdmins)
 
       const userType = (!tmi.channel?.name || !admins.length ? true : admins.includes(username)) ? 'admin' : 'viewer'
 
@@ -76,8 +64,8 @@ export default new class Authorization implements System {
       const data = jwt.verify(refreshTokenFromHeader, this.JWTKey) as { userId: number, username: string }
 
       const admins: string[] = [tmi?.channel?.name]
-      const botAdmins: Settings = await orm.em.getRepository(Settings).findOne({ space: 'users', name: 'botAdmins' } )
-      if (botAdmins) admins.push(...botAdmins.value)
+      const botAdmins = users.botAdmins
+      if (botAdmins) admins.push(...botAdmins)
 
       const userType = (!tmi.channel?.name || !admins.length ? true : admins.includes(data.username)) ? 'admin' : 'viewer'
 
@@ -102,3 +90,5 @@ export default new class Authorization implements System {
     return jwt.verify(token, this.JWTKey)
   }
 }
+
+export default new Authorization()

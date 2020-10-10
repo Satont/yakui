@@ -11,7 +11,6 @@ const start = async () => {
   await dbConnect()
   if (!await orm.isConnected()) return setTimeout(() => start(), 1000)
 
-  await import('@bot/libs/locales')
   await import('@bot/libs/tmi')
   await import('@bot/panel')
   await import('@bot/libs/socket')
@@ -19,7 +18,10 @@ const start = async () => {
 
 start()
 
-process.on('unhandledRejection', (reason) => error(reason))
+process.on('unhandledRejection', (reason, promise) => {
+  error(reason)
+  error(promise)
+})
 process.on('uncaughtException', (err: Error) => {
   const date = new Date().toISOString()
 

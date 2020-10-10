@@ -9,40 +9,9 @@ import { Settings } from '@bot/entities/Settings'
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
 import { orm } from '@bot/libs/db'
 import { CommandPermission } from '@bot/entities/Command'
+import { settings } from '../decorators'
 
-export default new class Users implements System {
-  settings: {
-    enabled: boolean,
-    ignoredUsers: string[],
-    admins: string[],
-    points: {
-      enabled: boolean,
-      messages: {
-        interval: number,
-        amount: number,
-      },
-      watch: {
-        interval: number,
-        amount: number,
-      }
-    }
-  } = {
-    enabled: true,
-    ignoredUsers: [],
-    admins: [],
-    points: {
-      enabled: false,
-      messages: {
-        interval: 1,
-        amount: 1,
-      },
-      watch: {
-        interval: 1,
-        amount: 1,
-      },
-    },
-  }
-
+class Users implements System {
   private countWatchedTimeout: NodeJS.Timeout = null
   private getChattersTimeout: NodeJS.Timeout = null
 
@@ -57,32 +26,40 @@ export default new class Users implements System {
     { name: 'ignore remove', permission: CommandPermission.MODERATORS, fnc: this.ignoreRemove, visible: false, description: 'Remove some username from bot ignore list' },
   ]
 
+  @settings()
+  enabled = true
+
+  @settings()
+  ignoredUsers: string[] = []
+
+  @settings()
+  botAdmins: string[] = []
+
+  @settings()
+  points = {
+    enabled: true,
+    messages: {
+      interval: 1,
+      amount: 1,
+    },
+    watch:{
+      interval: 1,
+      amount: 1,
+    },
+  }
+
+
   async init() {
-    const repository = orm.em.getRepository(Settings)
-    const [enabled, ignoredUsers, points, admins] = await Promise.all([
-      repository.findOne({ space: 'users', name: 'enabled' }),
-      repository.findOne({ space: 'users', name: 'ignoredUsers' }),
-      repository.findOne({ space: 'users', name: 'points' }),
-      repository.findOne({ space: 'users', name: 'botAdmins' }),
-    ])
-
-    this.settings.ignoredUsers = ignoredUsers?.value as any ?? []
-    this.settings.enabled = enabled?.value as any ?? true
-    this.settings.admins = admins?.value as any ?? []
-
-    if (points) this.settings.points = points.value as any
-    if (!this.settings.enabled) return
-
     await this.getChatters()
     await this.countWatched()
   }
 
   async parseMessage(opts: ParserOptions) {
-    if (!this.settings.enabled || opts.message.startsWith('!')) return
-    if (this.settings.ignoredUsers.includes(opts.raw.userInfo.userName)) return
+    if (!this.enabled || opts.message.startsWith('!')) return
+    if (this.ignoredUsers?.includes(opts.raw.userInfo.userName)) return
     if (!twitch.streamMetaData.startedAt) return
   
-    const [pointsPerMessage, pointsInterval] = [this.settings.points.messages.amount, this.settings.points.messages.interval * 60 * 1000]
+    const [pointsPerMessage, pointsInterval] = [this.points.messages.amount, this.points.messages.interval * 60 * 1000]
 
     const [id, username] = [opts.raw.userInfo.userId, opts.raw.userInfo.userName]
 
@@ -92,7 +69,7 @@ export default new class Users implements System {
     user.username = opts.raw.userInfo.userName
     user.messages +=  1
 
-    const updatePoints = (Number(user.lastMessagePoints) + pointsInterval <= user.messages) && this.settings.points.enabled
+    const updatePoints = (Number(user.lastMessagePoints) + pointsInterval <= user.messages) && this.points.enabled
 
     if (updatePoints && twitch.streamMetaData?.startedAt && pointsPerMessage !== 0 && pointsInterval !== 0) {
       user.points = user.points + pointsPerMessage
@@ -136,19 +113,19 @@ export default new class Users implements System {
   private async countWatched() {
     clearTimeout(this.countWatchedTimeout)
     this.countWatchedTimeout = setTimeout(() => this.countWatched(), 1 * 60 * 1000)
-    const [pointsPerWatch, pointsInterval] = [this.settings.points.watch.amount, this.settings.points.watch.interval * 60 * 1000]
+    const [pointsPerWatch, pointsInterval] = [this.points.watch.amount, this.points.watch.interval * 60 * 1000]
     
-    if (!twitch.streamMetaData?.startedAt) return
+    if (!twitch.streamMetaData?.startedAt || !this.enabled) return
 
     const repository = orm.em.getRepository(User)
     const usersForUpdate: User[] = []
 
     for (const chatter of this.chatters) {
-      if (this.settings.ignoredUsers.includes(chatter.username.toLowerCase())) continue
+      if (this.ignoredUsers?.includes(chatter.username.toLowerCase())) continue
 
       const user = await repository.findOne(Number(chatter.id)) || repository.assign(new User(), { id: Number(chatter.id), username: chatter.username })
 
-      const updatePoints = (new Date().getTime() - new Date(user.lastWatchedPoints).getTime() >= pointsInterval) && this.settings.points.enabled
+      const updatePoints = (new Date().getTime() - new Date(user.lastWatchedPoints).getTime() >= pointsInterval) && this.points.enabled
 
       if (pointsPerWatch !== 0 && pointsInterval !== 0 && updatePoints) {
         user.lastWatchedPoints = new Date().getTime()
@@ -182,7 +159,7 @@ export default new class Users implements System {
 
   getUserPermissions(badges: Map<string, string>, raw?: TwitchPrivateMessage): UserPermissions {
     return {
-      broadcaster: badges.has('broadcaster') || this.settings?.admins?.includes(raw?.userInfo.userName),
+      broadcaster: badges.has('broadcaster') || this.botAdmins?.includes(raw?.userInfo.userName),
       moderators: badges.has('moderator'),
       vips: badges.has('vip'),
       subscribers: badges.has('subscriber') || badges.has('founder'),
@@ -228,4 +205,7 @@ export default new class Users implements System {
 
     return '$sender ✅'
   }
+
 }
+
+export default new Users()

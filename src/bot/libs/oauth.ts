@@ -1,17 +1,44 @@
 import axios, { AxiosError } from 'axios'
-import { Settings } from '@bot/entities/Settings'
 import { info, error } from './logger'
-import { orm } from './db'
+import { onChange, settings } from '../decorators'
+import tmi from './tmi'
 
-export default new class Oauth {
-  async validate (token: string | null, type: 'bot' | 'broadcaster') {
-    if (!token) {
-      throw `Token for ${type} was not provided, starting updating`
-    }
 
+class OAuth {
+  @settings()
+  channel: string = null
+
+  @settings()
+  botAccessToken: string = null
+
+  @settings()
+  botRefreshToken: string = null
+
+  @settings()
+  broadcasterAccessToken: string = null
+
+  @settings()
+  broadcasterRefreshToken: string = null
+
+  @onChange('channel')
+  callTmi() {
+    tmi.init()
+  }
+
+  @onChange(['botAccessToken', 'botRefreshToken'])
+  callBotConnect() {
+    tmi.connect('bot')
+  }
+
+  @onChange(['broadcasterAccessToken', 'broadcasterRefreshToken'])
+  callBroadcasterConnect() {
+    tmi.connect('broadcaster')
+  }
+
+  async validate(type: 'bot' | 'broadcaster') {
     try {
       const { data } = await axios.get('https://id.twitch.tv/oauth2/validate', { headers: {
-        'Authorization': `OAuth ${token}`,
+        'Authorization': `OAuth ${this[`${type}AccessToken`]}`,
       } })
 
       return {
@@ -26,24 +53,13 @@ export default new class Oauth {
     }
   }
 
-  async refresh(token: string, type: 'bot' | 'broadcaster') {
-    const repository = orm.em.getRepository(Settings)
+  async refresh(type: 'bot' | 'broadcaster') {
     try {
-      const { data } = await axios.get('http://bot.satont.ru/api/refresh?refresh_token=' + token)
-      let accessToken = await repository.findOne({ space: 'oauth', name: `${type}AccessToken` })
-      if (!accessToken) {
-        accessToken = repository.create({ space: 'oauth', name: `${type}AccessToken`, value: data.token })
-      }
-      
-      let refreshToken = await repository.findOne({ space: 'oauth', name: `${type}RefreshToken` })
-      if (!refreshToken) {
-        refreshToken = repository.create({ space: 'oauth', name: `${type}RefreshToken`, value: data.token })
-      }
-    
-      accessToken.value = data.token
-      refreshToken.value = data.refresh
+      const { data } = await axios.get('http://bot.satont.ru/api/refresh?refresh_token=' + this[`${type}RefreshToken`])
 
-      await repository.persistAndFlush([accessToken, refreshToken])
+      this[`${type}accessToken`] = data.token
+      this[`${type}RefreshToken`]  = data.refresh
+
       info(`Access token of ${type} was refreshed.`)
       return {
         access_token: data.token,
@@ -55,3 +71,5 @@ export default new class Oauth {
     }
   }
 }
+
+export default new OAuth()

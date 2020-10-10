@@ -12,15 +12,19 @@ const loader = async () => {
     integrations: 'Integration',
     customSystems: 'Custom System',
     overlays: 'Overlay',
+    libs: 'Lib',
+    settings: 'Setting',
   }
   for (const folder of Object.keys(folders)) {
     try {
       for await (const file of getFiles(resolve(__dirname, '..', folder))) {
         if (!file.endsWith('.js') && !file.endsWith('.ts')) continue
-  
+        if (file.includes('loader') || file.includes('cache')) continue
+
         const loadedFile: System = (await import(resolve(__dirname, '..', folder, file))).default
+        if (!loadedFile) continue
+        loadedSystems.push(loadedFile)
         if (typeof loadedFile.init !== 'undefined') await loadedFile.init()
-        if (typeof loadedFile.listenDbUpdates !== 'undefined') await loadedFile.listenDbUpdates()
         if (loadedFile.socket) {
           loadedFile.socket.on('connection', client => {
             if (loadedFile.sockets) loadedFile.sockets(client)
@@ -30,10 +34,9 @@ const loader = async () => {
         }
   
         info(`${folders[folder]} ${loadedFile.constructor.name.toUpperCase()} loaded`)
-        loadedSystems.push(loadedFile)
       }
     } catch (e) {
-      error('LOADER: ' + e)
+      error(e)
       continue
     } 
   }

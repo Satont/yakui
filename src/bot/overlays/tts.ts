@@ -1,21 +1,16 @@
 import { System } from '@src/typings'
 import { getNameSpace } from '@bot/libs/socket'
 import { debug } from '@bot/libs/logger'
-import { Settings } from '@bot/entities/Settings'
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
-import { orm } from '@bot/libs/db'
+import { onChange, settings as settingsDecorator } from '../decorators'
 
-export default new class TTS implements System {
+class TTS implements System {
   socket = getNameSpace('overlays/tts')
   clients: SocketIO.Socket[] = []
   token = 'Kn3BDKTm'
-  settings: {
-    voice: string | null,
-    volume: number,
-    rate: number,
-    pitch: number,
-    triggerByHighlight: boolean,
-  } = {
+
+  @settingsDecorator()
+  settings = {
     voice: null,
     volume: 30,
     rate: 1.0,
@@ -23,14 +18,11 @@ export default new class TTS implements System {
     triggerByHighlight: true,
   }
 
+  @onChange('settings')
   async init() {
-    const settings = await orm.em.getRepository(Settings).findOne({ space: 'tts', name: 'settings' })
+    if (!this.settings) return
 
-    if (!settings) return
-
-    this.settings = settings.value as any
-
-    this.clients.forEach(c => c.emit('settings', { ...this.settings, token: this.token }))
+    this.clients?.forEach(c => c.emit('settings', { ...this.settings, token: this.token }))
   }
 
   async sockets(client: SocketIO.Socket) {
@@ -53,3 +45,5 @@ export default new class TTS implements System {
     this.emitTTS(data.message.value)
   }
 }
+
+export default new TTS()

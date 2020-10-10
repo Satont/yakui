@@ -1,23 +1,17 @@
 import tmi from './tmi'
-import { Settings } from '@bot/entities/Settings'
 import { info, error } from './logger'
-import { orm } from './db'
+import general from '../settings/general'
 
 export default new class WebHooks {
   private callBackUrl: string = null
   private validityInSeconds = 864000
   private initTimeout: NodeJS.Timeout = null
 
-  constructor() {
-    this.init()
-  }
-
   async init() {
-    clearTimeout(this.initTimeout)
-    const url = await orm.em.getRepository(Settings).findOne({ space: 'general', name: 'siteUrl' })
-    if (!url) return
+    const url = general.siteUrl
+    if (url.includes('localhost')) return
 
-    this.callBackUrl = `${url.value}/twitch/webhooks/callback`
+    this.callBackUrl = `${url}/twitch/webhooks/callback`
     if (!tmi.channel?.id) return setTimeout(() => this.init(), 5000)
     this.unsubscribe('follows').then(() => this.subscribe('follows'))
     this.unsubscribe('streams').then(() => this.subscribe('streams'))

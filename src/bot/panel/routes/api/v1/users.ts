@@ -16,14 +16,46 @@ const router = Router({
 
 const qb: QueryBuilder<User> = (orm.em as any).createQueryBuilder(User, 'user')
 
-router.get('/', async (req, res, next) => {
+router.get('/', checkSchema({
+  page: {
+    isInt: {
+      options: {
+        gt: 0,
+      },
+    },
+  },
+  perPage: {
+    isInt: {
+      options: {
+        gt: 0,
+        max: 100,
+      },
+    },
+  },
+  sortBy: {
+    isString: true,
+    isIn: {
+      options: [
+        ['username', 'messages', 'watched', 'tips', 'bits', 'points'],
+      ],
+    },
+  },
+  byUsername: {
+    isString: true,
+    optional: true,
+  },
+  sortDesc: {
+    isBoolean: true,
+  },
+}), async (req, res, next) => {
   try {
+    validationResult(req).throw()
+    console.log(req.query)
     const body = req.query as any
     const repository = RequestContext.getEntityManager().getRepository(User)
     const where = body.byUsername ? {
       username: { $like: `%${body.byUsername}%` },
     } : {}
-
 
     const query = qb
       .select('user.*')
@@ -32,8 +64,8 @@ router.get('/', async (req, res, next) => {
       .where(where)
       .addSelect('COALESCE(SUM("userTips"."inMainCurrencyAmount"), 0) as "tips"')
       .addSelect('COALESCE(SUM("userBits"."amount"), 0) as "bits"')
-      .offset((Number(body.page) - 1) * Number(body.perPage))
-      .limit(Number(body.perPage))
+      .offset((body.page - 1) * body.perPage)
+      .limit(body.perPage)
       .groupBy('id')
       .getKnexQuery()
       .orderByRaw(`"${body.sortBy}" ${JSON.parse(body.sortDesc) ? 'DESC': 'ASC'} NULLS LAST`)
