@@ -3,7 +3,6 @@ import { info, error } from './logger'
 import { onChange, settings } from '../decorators'
 import tmi from './tmi'
 
-
 class OAuth {
   @settings()
   channel: string = null

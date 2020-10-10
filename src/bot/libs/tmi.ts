@@ -1,5 +1,5 @@
 import { ApiClient as Twitch, AccessToken } from 'twitch'
-import{ ChatClient as Chat } from 'twitch-chat-client'
+import { ChatClient as Chat } from 'twitch-chat-client'
 import { StaticAuthProvider } from 'twitch-auth'
 
 import OAuth from './oauth'
@@ -96,16 +96,14 @@ export default new class Tmi {
   private async intervaledUpdateAccessToken(type: 'bot' | 'broadcaster') {
     clearInterval(this.intervals.updateAccessToken[type])
 
+    this.intervals.updateAccessToken[type] = setTimeout(() => this.intervaledUpdateAccessToken(type), 60 * 60 * 1000)
     try {
       const { access_token, refresh_token } = await OAuth.refresh(type)
       const token = new AccessToken({ access_token, refresh_token })
     
       this.clients[type].setAccessToken(token)
-      this.intervals.updateAccessToken[type] = setTimeout(() => this.intervaledUpdateAccessToken(type), 10 * 60 * 1000)
     } catch (e) {
       error(e)
-    } finally {
-      this.intervals.updateAccessToken[type] = setTimeout(() => this.intervaledUpdateAccessToken(type), 10 * 60 * 1000)
     }
   }
 
