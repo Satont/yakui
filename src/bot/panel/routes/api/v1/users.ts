@@ -35,7 +35,9 @@ router.get('/', checkSchema({
   sortBy: {
     isString: true,
     isIn: {
-      options: [['username', 'messages', 'watched', 'tips', 'bits', 'points']],
+      options: [
+        ['username', 'messages', 'watched', 'tips', 'bits', 'points'],
+      ],
     },
   },
   byUsername: {
