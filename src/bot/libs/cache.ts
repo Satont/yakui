@@ -51,7 +51,7 @@ export default new class Cache {
 
   async updateOverlays() {
     this.overlays = new Map()
-    for (const overlay of await orm.em.getRepository(Overlay).findAll()) {
+    for (const overlay of await orm.em.fork().getRepository(Overlay).findAll()) {
       this.overlays.set(String(overlay.id), overlay)
     }
 
@@ -61,7 +61,7 @@ export default new class Cache {
   async updateEvents() {
     this.events = new Map()
 
-    for (const event of await orm.em.getRepository(Event).findAll()) {
+    for (const event of await orm.em.fork().getRepository(Event).findAll()) {
       this.events.set(event.name, event)
     }
 
@@ -71,7 +71,7 @@ export default new class Cache {
   async updateGreetings() {
     this.greetings = new Map()
 
-    for (const greeting of await orm.em.getRepository(Greeting).findAll()) {
+    for (const greeting of await orm.em.fork().getRepository(Greeting).findAll()) {
       this.greetings.set(String(greeting.id), greeting)
     }
 
@@ -81,7 +81,7 @@ export default new class Cache {
   async updateKeywords() {
     this.keywords = new Map()
 
-    for (const keyword of await orm.em.getRepository(Keyword).findAll()) {
+    for (const keyword of await orm.em.fork().getRepository(Keyword).findAll()) {
       this.keywords.set(String(keyword.id), keyword)
     }
 

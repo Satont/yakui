@@ -40,9 +40,9 @@ class Qiwi implements Integration {
         const inComingCurrency = event.attributes.DONATION_CURRENCY
         const message = event.attributes.DONATION_MESSAGE ?? ''
 
-        const user = await orm.em.getRepository(User).findOne({ username: sender.toLowerCase() })
+        const user = await orm.em.fork().getRepository(User).findOne({ username: sender.toLowerCase() })
         if (user) {
-          const tip = orm.em.getRepository(UserTip).create({
+          const tip = orm.em.fork().getRepository(UserTip).create({
             userId: user.id,
             amount: event.attributes.DONATION_AMOUNT,
             rates: currency.rates,
@@ -52,7 +52,7 @@ class Qiwi implements Integration {
             timestamp: Date.now(),
             user,
           })
-          await orm.em.getRepository(UserTip).persistAndFlush(tip)
+          await orm.em.fork().getRepository(UserTip).persistAndFlush(tip)
         }
 
         onDonation({

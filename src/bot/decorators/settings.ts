@@ -11,7 +11,7 @@ export function SettingsDecorator(spaceName?: string) {
       const module = loadedSystems.find(s => s.constructor.name.toLowerCase() === space)
       if (!loadedSystems.length || !module) return setTimeout(() => load(), 1000)
 
-      const repository = orm.em.getRepository(SettingsModel)
+      const repository = orm.em.fork().getRepository(SettingsModel)
       const item = await repository.findOne({ space, name })
 
       if (!item) {

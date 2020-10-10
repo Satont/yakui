@@ -10,14 +10,14 @@ export default new class Timers implements System {
   timeout: NodeJS.Timeout
 
   async init() {
-    const timers = await orm.em.getRepository(Timer).findAll()
+    const timers = await orm.em.fork().getRepository(Timer).findAll()
 
     for (const timer of timers) {
       timer.last = 0
       timer.triggerTimeStamp = Date.now()
     }
 
-    await orm.em.persistAndFlush(timers)
+    await orm.em.fork().persistAndFlush(timers)
 
     this.timers = timers
 
@@ -36,7 +36,7 @@ export default new class Timers implements System {
         tmi.say({ message })
         timer.last = ++timer.last % timer.responses.length
         timer.triggerTimeStamp = Date.now()
-        await orm.em.getRepository(Timer).persistAndFlush(timer)
+        await orm.em.fork().getRepository(Timer).persistAndFlush(timer)
       }
     }
   }

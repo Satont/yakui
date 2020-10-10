@@ -50,21 +50,21 @@ export default new class Parser {
     if (!users.hasPermission(raw.userInfo.badges, command.permission, raw)) return
 
     if (command.price && !this.cooldowns.includes(command.name)) {
-      let user = await orm.em.getRepository(User).findOne({ id: Number(raw.userInfo.userId) })
+      let user = await orm.em.fork().getRepository(User).findOne({ id: Number(raw.userInfo.userId) })
       if (!user) {
-        user = orm.em.getRepository(User).create({ id: Number(raw.userInfo.userId), username: raw.userInfo.userName })
+        user = orm.em.fork().getRepository(User).create({ id: Number(raw.userInfo.userId), username: raw.userInfo.userName })
       }
       if (user.points < command.price) {
         tmi.say({ message: locales.translate('price.notEnought', raw.userInfo.userName) })
         return
       } else user.points -= command.price
-      await orm.em.persistAndFlush(user)
+      await orm.em.fork().persistAndFlush(user)
     }
 
     if (command.type === 'custom') {
-      const cmd = await orm.em.getRepository(CommandModel).findOne({ id: command.id })
+      const cmd = await orm.em.fork().getRepository(CommandModel).findOne({ id: command.id })
       cmd.usage += 1
-      await orm.em.persistAndFlush(cmd)
+      await orm.em.fork().persistAndFlush(cmd)
     }
     
     if (command.sound_file && !this.cooldowns.includes(command.name)) {

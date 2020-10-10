@@ -149,7 +149,7 @@ class Donationalerts {
       this.onChanges()
     })
     this.channel.on('publish', async ({ data }: { data: DonationAlertsEvent }) => {
-      const user = await orm.em.getRepository(User).findOne({ username: data.username.toLowerCase() })
+      const user = await orm.em.fork().getRepository(User).findOne({ username: data.username.toLowerCase() })
 
       const message = data.message?.replace(this.audioRegular, '<audio>')
 
@@ -164,11 +164,11 @@ class Donationalerts {
       }
 
       if (data.billing_system !== 'fake' && user) {
-        const tip = orm.em.getRepository(UserTip).create({
+        const tip = orm.em.fork().getRepository(UserTip).create({
           ...donationData,
           user,
         })
-        await orm.em.getRepository(UserTip).persistAndFlush(tip)
+        await orm.em.fork().getRepository(UserTip).persistAndFlush(tip)
       }
 
       onDonation({

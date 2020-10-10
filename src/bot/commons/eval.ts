@@ -13,7 +13,7 @@ export default async ({ raw, message, param }: { raw: TwitchPrivateMessage, mess
     sender: raw.userInfo.userName,
     param,
     _,
-    user: await orm.em.getRepository(User).findOne({ id: Number(raw.userInfo.userId) }) || {},
+    user: await orm.em.fork().fork().getRepository(User).findOne({ id: Number(raw.userInfo.userId) }) || {},
     say: (message: string) => tmi.say({ message }),
     timeout: (username, duration) => tmi.timeout({ username, duration }),
   }

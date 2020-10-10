@@ -41,7 +41,7 @@ export const setupObserver = ({ instance, propertyName }: { instance?: any, prop
 }
 
 const updateValue = async ({ space, name, value }) => {
-  const repository = orm.em.getRepository(Settings)
+  const repository = orm.em.fork().getRepository(Settings)
   const item = await repository.findOne({ space, name })
   if (item) {
     await repository.nativeUpdate({ space, name }, { value: JSON.stringify(value) })

@@ -42,7 +42,7 @@ class Spotify implements Integration {
     this.refreshTimeout = setTimeout(() => this.refreshTokens(), 1 * 60 * 60 * 1000)
 
     try {
-      const refresh_token = await orm.em.getRepository(Settings).findOne({ space: 'spotify', name: 'refresh_token' })
+      const refresh_token = await orm.em.fork().getRepository(Settings).findOne({ space: 'spotify', name: 'refresh_token' })
       const request = await axios.get('https://bot.satont.ru/api/spotify-refresh-token?refresh_token=' + refresh_token.value)
       const data = request.data
 
@@ -50,8 +50,8 @@ class Spotify implements Integration {
       
       refresh_token.value = data.refresh_token
 
-      await orm.em.persistAndFlush(refresh_token)
-      await orm.em.getRepository(Settings).nativeUpdate({ space: 'spotify', name: 'access_token' }, { value: data.access_token })
+      await orm.em.fork().persistAndFlush(refresh_token)
+      await orm.em.fork().getRepository(Settings).nativeUpdate({ space: 'spotify', name: 'access_token' }, { value: data.access_token })
 
       info('SPOTIFY: refresh token and access_token updated.')
     } catch (e) {

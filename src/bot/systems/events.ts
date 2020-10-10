@@ -28,7 +28,7 @@ export default new class Events implements System {
         await tmi.say({ message })
       }
       if (operation.key === 'playAudio') {
-        const file = await orm.em.getRepository(File).findOne({ id: operation.audioId })
+        const file = await orm.em.fork().getRepository(File).findOne({ id: operation.audioId })
         alerts.emitAlert({ audio: { file: file, volume: operation.audioVolume }  })
       }
       if (operation.key === 'TTS') tts.emitTTS(await this.prepareMessage(operation.message, opts))
@@ -70,7 +70,7 @@ export default new class Events implements System {
   }
 
   async addToEventList({ name, data }: { name: string, data: Record<string, unknown> }) {
-    const repository = orm.em.getRepository(EventList)
+    const repository = orm.em.fork().getRepository(EventList)
     const event = repository.assign(new EventList(), { name, data, timestamp: Date.now() })
     await repository.persistAndFlush(event)
 

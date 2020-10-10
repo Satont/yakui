@@ -86,8 +86,8 @@ class Twitch implements System {
 
   async init() {
     const [latestSubscriber, latestReSubscriber] = await Promise.all([
-      orm.em.getRepository(Settings).findOne({ space: 'twitch', name: 'latestSubscriber' }),
-      orm.em.getRepository(Settings).findOne({ space: 'twitch', name: 'latestReSubscriber' }),
+      orm.em.fork().getRepository(Settings).findOne({ space: 'twitch', name: 'latestSubscriber' }),
+      orm.em.fork().getRepository(Settings).findOne({ space: 'twitch', name: 'latestReSubscriber' }),
     ])
 
     if (latestSubscriber) this.channelMetaData.latestSubscriber = latestSubscriber.value as any
@@ -191,24 +191,24 @@ class Twitch implements System {
     const value = { username: data.username, tier: data.tier, timestamp: Date.now() }
     this.channelMetaData.latestSubscriber = value
 
-    let instance = await orm.em.getRepository(Settings).findOne({ space: 'twitch', name: 'latestSubscriber' })
+    let instance = await orm.em.fork().getRepository(Settings).findOne({ space: 'twitch', name: 'latestSubscriber' })
     if (!instance) {
-      instance = orm.em.getRepository(Settings).create({ space: 'twitch', name: 'latestSubscriber' })
+      instance = orm.em.fork().getRepository(Settings).create({ space: 'twitch', name: 'latestSubscriber' })
     }
     instance.value = value as any
-    await orm.em.persistAndFlush(instance)
+    await orm.em.fork().persistAndFlush(instance)
   }
 
   async onReSubscribe(data: INewResubscriber) {
     const value = { username: data.username, tier: data.tier, timestamp: Date.now(), months: data.months, overallMonths: data.overallMonths }
     this.channelMetaData.latestReSubscriber = value
 
-    let instance = await orm.em.getRepository(Settings).findOne({ space: 'twitch', name: 'latestReSubscriber' })
+    let instance = await orm.em.fork().getRepository(Settings).findOne({ space: 'twitch', name: 'latestReSubscriber' })
     if (!instance) {
-      instance = orm.em.getRepository(Settings).create({ space: 'twitch', name: 'latestReSubscriber' })
+      instance = orm.em.fork().getRepository(Settings).create({ space: 'twitch', name: 'latestReSubscriber' })
     }
     instance.value = value as any
-    await orm.em.persistAndFlush(instance)
+    await orm.em.fork().persistAndFlush(instance)
   }
 }
 

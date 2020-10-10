@@ -62,7 +62,7 @@ class Users implements System {
 
     const [id, username] = [opts.raw.userInfo.userId, opts.raw.userInfo.userName]
 
-    const repository = orm.em.getRepository(User)
+    const repository = orm.em.fork().getRepository(User)
     const user = await repository.findOne(Number(id)) || repository.assign(new User(), { id: Number(id), username, messages: 0 })
 
     user.username = opts.raw.userInfo.userName
@@ -80,7 +80,7 @@ class Users implements System {
     const now = new Date()
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
-    const dailyRepository = orm.em.getRepository(UserDailyMessages)
+    const dailyRepository = orm.em.fork().getRepository(UserDailyMessages)
     const daily = await dailyRepository.findOne({ user: user.id, date: startOfDay.getTime() }) || dailyRepository.assign(new UserDailyMessages(), { 
       user, 
       date: startOfDay.getTime(),
@@ -99,7 +99,7 @@ class Users implements System {
       username = byName.name
     }
 
-    const repository = orm.em.getRepository(User)
+    const repository = orm.em.fork().getRepository(User)
     const user = await repository.findOne(Number(id), ['tips', 'bits', 'daily'])
 
     if (user) return user
@@ -116,7 +116,7 @@ class Users implements System {
     
     if (!twitch.streamMetaData?.startedAt || !this.enabled) return
 
-    const repository = orm.em.getRepository(User)
+    const repository = orm.em.fork().getRepository(User)
     const usersForUpdate: User[] = []
 
     for (const chatter of this.chatters) {

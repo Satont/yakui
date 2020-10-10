@@ -14,7 +14,7 @@ const router = Router({
   mergeParams: true,
 })
 
-const qb: QueryBuilder<User> = (orm.em as any).createQueryBuilder(User, 'user')
+const qb: QueryBuilder<User> = (orm.em.fork() as any).createQueryBuilder(User, 'user')
 
 router.get('/', checkSchema({
   page: {
@@ -71,7 +71,7 @@ router.get('/', checkSchema({
       .orderByRaw(`"${body.sortBy}" ${JSON.parse(body.sortDesc) ? 'DESC': 'ASC'} NULLS LAST`)
       .toQuery()
 
-    const users = await orm.em.getConnection().execute(query)
+    const users = await orm.em.fork().getConnection().execute(query)
     const total = await repository.count()
 
     res.json({ users, total })

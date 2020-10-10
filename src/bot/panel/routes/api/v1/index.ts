@@ -19,7 +19,7 @@ import { orm } from '@bot/libs/db'
 const router = Router()
 
 router.use((req, res, next) => {
-  RequestContext.create(orm.em, next)
+  RequestContext.create(orm.em.fork(), next)
 })
 
 router.get('/', (req, res) => {

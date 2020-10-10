@@ -63,7 +63,7 @@ export default new class Variables implements System {
   ]
 
   async init() {
-    const repository = orm.em.getRepository(Variable)
+    const repository = orm.em.fork().getRepository(Variable)
     const variables = (await repository.findAll())
       .map((variable: Variable) => ({ name: `$_${variable.name}`, response: variable.response, custom: true }))
       
@@ -189,7 +189,7 @@ export default new class Variables implements System {
     const limit = 10
 
     if (type === 'watched') {
-      result = (await orm.em.getRepository(UserModel).find({
+      result = (await orm.em.fork().getRepository(UserModel).find({
         username: { $nin: ignored },
       }, { 
         limit, 
@@ -199,7 +199,7 @@ export default new class Variables implements System {
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${((result.value / (1 * 60 * 1000)) / 60).toFixed(1)}h`).join(', ')
     } else if (type === 'messages') {
-      result = (await orm.em.getRepository(UserModel).find({
+      result = (await orm.em.fork().getRepository(UserModel).find({
         username: { $nin: ignored },
       }, { 
         limit, 
@@ -209,9 +209,9 @@ export default new class Variables implements System {
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ')
     } else if (type === 'tips') {
-      const qb: QueryBuilder<UserModel> = (orm.em as any).createQueryBuilder(UserModel, 'user')
+      const qb: QueryBuilder<UserModel> = (orm.em.fork() as any).createQueryBuilder(UserModel, 'user')
 
-      const result: Array<{ id: number, username: string, value: number }> = await orm.em.getConnection().execute(qb
+      const result: Array<{ id: number, username: string, value: number }> = await orm.em.fork().getConnection().execute(qb
         .select(['user.id', 'user.username'])
         .where({ username: { $nin: ignored } })
         .join('user.tips', 'tips')
@@ -225,9 +225,9 @@ export default new class Variables implements System {
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}${currency.botCurrency}`).join(', ')
     } else if (type === 'bits') {
-      const qb: QueryBuilder<UserModel> = (orm.em as any).createQueryBuilder(UserModel, 'user')
+      const qb: QueryBuilder<UserModel> = (orm.em.fork() as any).createQueryBuilder(UserModel, 'user')
 
-      const result: Array<{ id: number, username: string, value: number }> = await orm.em.getConnection().execute(qb
+      const result: Array<{ id: number, username: string, value: number }> = await orm.em.fork().getConnection().execute(qb
         .select(['user.id', 'user.username'])
         .where({ username: { $nin: ignored } })
         .join('user.bits', 'bits')
@@ -244,7 +244,7 @@ export default new class Variables implements System {
       const now = new Date()
       const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
-      result = (await orm.em.getRepository(UserDailyMessages).find({
+      result = (await orm.em.fork().getRepository(UserDailyMessages).find({
         date: startOfDay.getTime(),
       }, {
         limit,
@@ -255,7 +255,7 @@ export default new class Variables implements System {
 
       return (result as any).map((item: UserDailyMessages, index: number) => `${index + 1 + offset}. ${item.user.username} - ${item.count}`).join(', ')
     } if (type === 'points') {
-      result = (await orm.em.getRepository(UserModel).find({
+      result = (await orm.em.fork().getRepository(UserModel).find({
         username: { $nin: ignored },
       }, { 
         limit, 
@@ -330,9 +330,9 @@ export default new class Variables implements System {
     if (isAdmin && text.length) {
       const match = response.match(/\$_(\S*)/g)
       if (match) {
-        const variable = await orm.em.getRepository(Variable).findOne({ name: this.variables.find(v => v.name === match[0].replace('$_', '')).name }) 
+        const variable = await orm.em.fork().getRepository(Variable).findOne({ name: this.variables.find(v => v.name === match[0].replace('$_', '')).name }) 
         variable.response = text 
-        await orm.em.persistAndFlush(variable)
+        await orm.em.fork().persistAndFlush(variable)
         tmi.say({ message: `@${raw.userInfo.userName} ✅` })
         return true
       } else return false
