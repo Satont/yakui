@@ -50,7 +50,7 @@ router.get('/', checkSchema({
 }), async (req, res, next) => {
   try {
     validationResult(req).throw()
-    console.log(req.query)
+ 
     const body = req.query as any
     const repository = RequestContext.getEntityManager().getRepository(User)
     const where = body.byUsername ? {

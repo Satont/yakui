@@ -31,7 +31,7 @@
         {{ data.value }}
       </template>
 
-      <template v-slot:cell(actions)="data" v-if="$store.state.loggedUser.userType === 'admin' && !isPublic()">
+      <template v-slot:cell(actions)="data" v-if="canEditUser()">
       <b-button-group size="sm">
         <b-button @click="editUser(data.item)" variant="info"><i class="fas fa-pen"></i></b-button>
         <b-button @click="del(data.item.index, data.item.id)" variant="danger"><i class="fas fa-trash"></i></b-button>
@@ -77,6 +77,10 @@ export default class UsersManagerList extends Mixins(EnvChecker) {
     if (!this.isPublic()) {
       this.fields.push({ key: 'actions', sortable: false, label: 'Actions' })
     }
+  }
+
+  canEditUser() {
+    return this.$store.state.loggedUser?.userType === 'admin' && !this.isPublic()
   }
 
   async editUser(params) {

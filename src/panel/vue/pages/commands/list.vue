@@ -80,7 +80,7 @@ export default class CommandsManagerList extends EnvChecker {
   }
 
   buttonShouldBeVissible(type) {
-    return this.$store.state.loggedUser.userType === 'admin' && type === 'custom' && !this.isPublic()
+    return this.$store.state.loggedUser?.userType === 'admin' && type === 'custom' && !this.isPublic()
   }
 
   async edit(params) {
