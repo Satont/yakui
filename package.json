@@ -1,7 +1,8 @@
 {
   "name": "yakui",
   "version": "4.0.0",
-  "description": "",
+  "description": "Yet another Twitch bot written on typescript",
+  "author": "Satont <satontworldwide@gmail.com>",
   "scripts": {
     "prestart": "npm run migration:up",
     "start": "cross-env NODE_ENV=production node --experimental-report --report-on-fatalerror --report-directory=./logs/ --always_compact --optimize_for_size --gc_interval=100 dest/index.js",
