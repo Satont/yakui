@@ -178,30 +178,19 @@ class Users implements System {
 
   async ignoreAdd(opts: CommandOptions) {
     if (!opts.argument.length) return
-    const repository = orm.em.getRepository(Settings)
-    const data = { space: 'users', name: 'ignoredUsers' }
-    const ignoredUsers = await repository.findOne(data) || repository.create({ ...data, value: [] })
 
-    ignoredUsers.value = [...ignoredUsers.value, opts.argument.toLowerCase()] as any
-    await orm.em.persistAndFlush(ignoredUsers)
+    this.ignoredUsers = [...this.ignoredUsers, opts.argument.toLowerCase()]
 
     return '$sender ✅'
   }
 
   async ignoreRemove(opts: CommandOptions) {
     if (!opts.argument.length) return
-    const repository = orm.em.getRepository(Settings)
-    const ignoredUsers = await repository.findOne({ space: 'users', name: 'ignoredUsers' })
 
-    if (!ignoredUsers || !ignoredUsers?.value.length) return
-    if (!ignoredUsers.value.includes(opts.argument.toLowerCase())) return
+    if (!this.ignoredUsers?.length) return
+    if (!this.ignoredUsers.includes(opts.argument.toLowerCase())) return
 
-    const users: string[] = ignoredUsers.value
-
-    users.splice(ignoredUsers.value.indexOf(opts.argument.toLowerCase()), 1) 
-
-    ignoredUsers.value = users
-    await orm.em.persistAndFlush(ignoredUsers)
+    this.ignoredUsers.splice(this.ignoredUsers.indexOf(opts.argument.toLowerCase()), 1) 
 
     return '$sender ✅'
   }
