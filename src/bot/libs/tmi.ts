@@ -2,14 +2,13 @@ import { ApiClient as Twitch, AccessToken } from 'twitch'
 import{ ChatClient as Chat } from 'twitch-chat-client'
 import { StaticAuthProvider } from 'twitch-auth'
 
-import { Settings } from '@bot/entities/Settings'
 import OAuth from './oauth'
 import Parser from './parser'
 import events from '@bot/systems/events'
 import { info, error, chatOut, chatIn, timeout, whisperOut } from './logger'
 import { onHosting, onHosted, onRaided, onSubscribe, onReSubscribe, onMessageHighlight } from './eventsCaller'
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
-import { orm } from './db'
+import oauth from './oauth'
 
 export default new class Tmi {
   private intervals = {
@@ -47,10 +46,6 @@ export default new class Tmi {
 
   channel: { name: string, id: string }
 
-  constructor() {
-    this.init()
-  }
-
   async init() {
     await this.connect('bot')
     await this.connect('broadcaster')
@@ -60,26 +55,8 @@ export default new class Tmi {
     if (this.isAlreadyUpdating[type]) return
     this.isAlreadyUpdating[type] = true
 
-    const [accessToken, refreshToken, channel] = await Promise.all([
-      orm.em.getRepository(Settings).findOne({ space: 'oauth', name: `${type}AccessToken` }),
-      orm.em.getRepository(Settings).findOne({ space: 'oauth', name: `${type}RefreshToken` }),
-      orm.em.getRepository(Settings).findOne({ space: 'oauth', name: 'channel' }),
-    ])
-
-    if (!accessToken || !refreshToken || !channel) {
+    if (!oauth.channel || !oauth[`${type}AccessToken`] || !oauth[`${type}RefreshToken`]) {
       this.isAlreadyUpdating[type] = false
-      return
-    }
-
-    if (!refreshToken.value) {
-      this.isAlreadyUpdating[type] = false
-      info(`TMI: refreshToken for ${type} not found, client will be not initiliazed.`)
-      return
-    }
-
-    if (!channel.value) {
-      this.isAlreadyUpdating[type] = false
-      error(`TMI (${type}): Channel not setted.`)
       return
     }
 
@@ -88,15 +65,15 @@ export default new class Tmi {
     try {
       await this.disconnect(type)
 
-      const { clientId, scopes } = await OAuth.validate(accessToken?.value, type)
+      const { clientId, scopes } = await OAuth.validate(type)
 
-      this.clients[type] = new Twitch({ authProvider: new StaticAuthProvider(clientId, accessToken?.value, scopes) })
+      this.clients[type] = new Twitch({ authProvider: new StaticAuthProvider(clientId, oauth[`${type}AccessToken`], scopes) })
 
       this.chatClients[type] = new Chat(this.clients[type])
 
       this.listeners(type)
       if (type === 'bot') {
-        await this.getChannel(channel.value)
+        await this.getChannel(oauth.channel)
         await import('./webhooks')
         await this.loadLibs()
       }
@@ -109,8 +86,8 @@ export default new class Tmi {
       }
     } catch (e) {
       error(e)
-      await OAuth.refresh(refreshToken.value, type).catch(error)
-      await this.connect(type)
+      this.isAlreadyUpdating[type] = false
+      await OAuth.refresh(type)
     } finally {
       this.isAlreadyUpdating[type] = false
     }
@@ -119,10 +96,8 @@ export default new class Tmi {
   private async intervaledUpdateAccessToken(type: 'bot' | 'broadcaster') {
     clearInterval(this.intervals.updateAccessToken[type])
 
-    const refreshToken = await orm.em.getRepository(Settings).findOne({ space: 'oauth', name: `${type}RefreshToken` })
-
     try {
-      const { access_token, refresh_token } = await OAuth.refresh(refreshToken.value, type)
+      const { access_token, refresh_token } = await OAuth.refresh(type)
       const token = new AccessToken({ access_token, refresh_token })
     
       this.clients[type].setAccessToken(token)

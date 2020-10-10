@@ -25,8 +25,12 @@ export default {
     max: 10,
   },
   driverOptions: {
-    idleTimeoutMillis: 0,
-    connectionTimeoutMillis: 0,    
+    createTimeoutMillis: 8000,
+    acquireTimeoutMillis: 8000,
+    idleTimeoutMillis: 8000,
+    reapIntervalMillis: 1000,
+    createRetryIntervalMillis: 100,
+    propagateCreateError: false,
   },
   migrations: {
     tableName: 'mikro_orm_migrations',

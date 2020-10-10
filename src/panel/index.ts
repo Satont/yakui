@@ -19,8 +19,6 @@ Vue.use(VueRouter)
 Vue.use(VueClipboard)
 Vue.use(BootstrapVue)
 Vue.use(Toast)
-Vue.use(Axios)
-Vue.use(VueSocketIO, Socket)
 Vue.use(LoadScript)
 Vue.component('loading', () => import('./vue/components/loadingAnimation.vue'))
 Vue.component('side-bar', () => import('./vue/components/sidebar.vue'))
@@ -31,6 +29,9 @@ Vue.component('dashboard', () => import('./vue/pages/dashboard/index.vue'))
 const start = async () => {
   const user = await isLogged(true, true)
   store.commit('setLoggedUser', user)
+  
+  Vue.use(VueSocketIO, Socket)
+  Vue.use(Axios)
 
   const metaDataSocket = getNameSpace({ name: 'systems/metaData' })
   await new Promise((res) => metaDataSocket.emit('getData', data => {

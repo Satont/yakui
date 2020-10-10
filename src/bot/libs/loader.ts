@@ -13,6 +13,7 @@ const loader = async () => {
     customSystems: 'Custom System',
     overlays: 'Overlay',
     libs: 'Lib',
+    settings: 'Setting',
   }
   for (const folder of Object.keys(folders)) {
     try {

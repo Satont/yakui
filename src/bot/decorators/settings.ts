@@ -3,10 +3,10 @@ import { loadedSystems } from '../libs/loader'
 import { Settings as SettingsModel } from '../entities/Settings'
 import { setupObserver } from './_observer'
 
-export function SettingsDecorator() {
+export function SettingsDecorator(spaceName?: string) {
   return (clazz: any, name: string) => {
     setupObserver({ instance: clazz, propertyName: name })
-    const space = clazz.constructor.name.toLowerCase()
+    const space = spaceName || clazz.constructor.name.toLowerCase()
     const load = async() => {
       const module = loadedSystems.find(s => s.constructor.name.toLowerCase() === space)
       if (!loadedSystems.length || !module) return setTimeout(() => load(), 1000)

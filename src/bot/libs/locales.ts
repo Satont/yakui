@@ -1,9 +1,8 @@
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
 import { get } from 'lodash'
-import { Settings } from '@bot/entities/Settings'
 import { info } from './logger'
-import { orm } from './db'
+import General from '../settings/general'
 
 const parameterizedString = (...args) => {
   const params = args.slice(1)
@@ -16,16 +15,10 @@ export default new class Locales {
   lang: any
 
   async init() {
-    let locale = await orm.em.getRepository(Settings).findOne({ space: 'general', name: 'locale' })
-    if (!locale) {
-      locale = orm.em.getRepository(Settings).create({ space: 'general', name: 'locale', value: 'ru' })
-      await orm.em.persistAndFlush(locale)
-    }
-
-    const lang = resolve(langsDir, `${locale.value}.json`)
+    const lang = resolve(langsDir, `${General.locale}.json`)
     this.lang = JSON.parse(readFileSync(lang, 'utf-8'))
 
-    info(`LOCALES: ${this.lang.lang?.name || locale.value} lang loaded`)
+    info(`LOCALES: ${this.lang.lang?.name || General.locale} lang loaded`)
   }
 
   translate(...args: any[]) {

@@ -4,9 +4,8 @@ import jwt from 'jsonwebtoken'
 
 import tmi from '@bot/libs/tmi'
 import { error } from '@bot/libs/logger'
-import { Settings } from '@bot/entities/Settings'
-import { orm } from '@bot/libs/db'
 import { settings } from '../decorators'
+import users from './users'
 
 const accessTokenExpirationTime = 1 * 24 * 60 * 60 // 1 day
 const refreshTokenExpirationTime = 31 * 24 * 60 * 60 // 31 day
@@ -20,7 +19,6 @@ class Authorization {
     const userId = req.headers['x-twitch-userid'] as string | undefined
 
     try {
-
       if (!accessTokenHeader || !userId) {
         throw new Error('Insufficient data')
       }
@@ -36,8 +34,8 @@ class Authorization {
       }
       const username = twitchValidation.data.login
       const admins: string[] = [tmi?.channel?.name]
-      const botAdmins: Settings = await orm.em.getRepository(Settings).findOne({ space: 'users', name: 'botAdmins' } )
-      if (botAdmins) admins.push(...botAdmins.value)
+      const botAdmins = users.botAdmins
+      if (botAdmins) admins.push(...botAdmins)
 
       const userType = (!tmi.channel?.name || !admins.length ? true : admins.includes(username)) ? 'admin' : 'viewer'
 
@@ -66,8 +64,8 @@ class Authorization {
       const data = jwt.verify(refreshTokenFromHeader, this.JWTKey) as { userId: number, username: string }
 
       const admins: string[] = [tmi?.channel?.name]
-      const botAdmins: Settings = await orm.em.getRepository(Settings).findOne({ space: 'users', name: 'botAdmins' } )
-      if (botAdmins) admins.push(...botAdmins.value)
+      const botAdmins = users.botAdmins
+      if (botAdmins) admins.push(...botAdmins)
 
       const userType = (!tmi.channel?.name || !admins.length ? true : admins.includes(data.username)) ? 'admin' : 'viewer'
 

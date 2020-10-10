@@ -20,19 +20,25 @@ class OAuth {
   @settings()
   broadcasterRefreshToken: string = null
 
-  @onChange(['channel', 'botRefreshToken', 'broadcasterRefreshToken'])
-  callOtherSystems() {
+  @onChange('channel')
+  callTmi() {
     tmi.init()
   }
 
-  async validate (token: string | null, type: 'bot' | 'broadcaster') {
-    if (!token) {
-      throw `Token for ${type} was not provided, starting updating`
-    }
+  @onChange(['botAccessToken', 'botRefreshToken'])
+  callBotConnect() {
+    tmi.connect('bot')
+  }
 
+  @onChange(['broadcasterAccessToken', 'broadcasterRefreshToken'])
+  callBroadcasterConnect() {
+    tmi.connect('broadcaster')
+  }
+
+  async validate(type: 'bot' | 'broadcaster') {
     try {
       const { data } = await axios.get('https://id.twitch.tv/oauth2/validate', { headers: {
-        'Authorization': `OAuth ${token}`,
+        'Authorization': `OAuth ${this[`${type}AccessToken`]}`,
       } })
 
       return {
@@ -47,9 +53,9 @@ class OAuth {
     }
   }
 
-  async refresh(token: string, type: 'bot' | 'broadcaster') {
+  async refresh(type: 'bot' | 'broadcaster') {
     try {
-      const { data } = await axios.get('http://bot.satont.ru/api/refresh?refresh_token=' + token)
+      const { data } = await axios.get('http://bot.satont.ru/api/refresh?refresh_token=' + this[`${type}RefreshToken`])
 
       this[`${type}accessToken`] = data.token
       this[`${type}RefreshToken`]  = data.refresh
