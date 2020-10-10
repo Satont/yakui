@@ -2,11 +2,21 @@ import { Type } from '@mikro-orm/core'
 
 export default class JsonType extends Type<string, string> {
   convertToDatabaseValue(value: any): string {
-    return JSON.stringify(value)
+    try {
+      return JSON.stringify(value)
+    } catch (e) {
+      console.log(value)
+      console.error(e)
+    }
   }
 
   convertToJSValue(value: string): any {
-    return JSON.parse(value)
+    try {
+      return JSON.parse(value)
+    } catch (e) {
+      console.log(value)
+      console.error(e)
+    }
   }
 
   getColumnType() {
