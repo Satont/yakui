@@ -86,8 +86,8 @@ export default new class Tmi {
       }
     } catch (e) {
       error(e)
-      this.isAlreadyUpdating[type] = false
       await OAuth.refresh(type)
+      this.isAlreadyUpdating[type] = false
     } finally {
       this.isAlreadyUpdating[type] = false
     }

@@ -57,7 +57,7 @@ class OAuth {
     try {
       const { data } = await axios.get('http://bot.satont.ru/api/refresh?refresh_token=' + this[`${type}RefreshToken`])
 
-      this[`${type}accessToken`] = data.token
+      this[`${type}AccessToken`] = data.token
       this[`${type}RefreshToken`]  = data.refresh
 
       info(`Access token of ${type} was refreshed.`)
