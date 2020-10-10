@@ -104,7 +104,7 @@ class Users implements System {
 
     if (user) return user
 
-    const create = repository.create({ id: Number(id), username })
+    const create = repository.assign(new User(), { id: Number(id), username })
     await repository.persistAndFlush(create)
     return create
   }
@@ -170,7 +170,7 @@ class Users implements System {
     if (!searchForPermission) return true
     
     const userPerms = Object.entries(this.getUserPermissions(badges, raw))
-    const commandPermissionIndex = userPerms.indexOf(userPerms.find(v => Object.keys(searchForPermission).indexOf(v[0])))
+    const commandPermissionIndex = userPerms.indexOf(userPerms.find(v => v[0] === searchForPermission))
 
     return userPerms.some((p, index) => p[1] && index <= commandPermissionIndex)
   }

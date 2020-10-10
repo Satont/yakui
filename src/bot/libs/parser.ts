@@ -64,7 +64,7 @@ export default new class Parser {
     if (command.type === 'custom') {
       const cmd = await orm.em.fork().getRepository(CommandModel).findOne({ id: command.id })
       cmd.usage += 1
-      await orm.em.fork().persistAndFlush(cmd)
+      orm.em.fork().persistAndFlush(cmd)
     }
     
     if (command.sound_file && !this.cooldowns.includes(command.name)) {
