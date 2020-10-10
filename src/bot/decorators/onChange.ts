@@ -10,6 +10,7 @@ const defaultConfig = {
   history: false,
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function ChangeDecorator(props: string | string[], config: OnPropertyChangeConfig = defaultConfig): MethodDecorator {
   const propertyNames = normaliseProps(props)
 
