@@ -1,7 +1,6 @@
 import axios from 'axios'
 
-import { Integration } from '@src/typings'
-import { Settings } from '@bot/entities/Settings'
+import { Integration } from 'typings'
 import { User }  from '@bot/entities/User'
 import { UserTip } from '@bot/entities/UserTip'
 import currency from '@bot/libs/currency'

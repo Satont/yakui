@@ -64,7 +64,7 @@
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import { Route } from 'vue-router'
-import { Command } from '@src/typings'
+import { Command } from 'typings'
 import { getNameSpace } from '@panel/vue/plugins/socket'
 
 @Component

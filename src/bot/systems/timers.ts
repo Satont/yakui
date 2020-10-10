@@ -1,4 +1,4 @@
-import { System } from '@src/typings'
+import { System } from 'typings'
 import tmi from '@bot/libs/tmi'
 import { Timer } from '@bot/entities/Timer'
 import twitch from './twitch'

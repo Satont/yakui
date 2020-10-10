@@ -6,10 +6,10 @@
   },
   "include": [
     "./**/*.js",
-    "./**/*.ts",
-    "../../typings", "../../mikro-orm.config.ts",
+    "./**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "../typings"
   ]
 }

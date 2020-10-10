@@ -7,7 +7,7 @@ import isAdmin from '@bot/panel/middlewares/isAdmin'
 import { RequestContext, wrap } from '@mikro-orm/core'
 import { UserBit } from '@bot/entities/UserBit'
 import { UserTip } from '@bot/entities/UserTip'
-import { orm } from '@/src/bot/libs/db'
+import { orm } from '@bot/libs/db'
 import { QueryBuilder } from '@mikro-orm/postgresql'
 
 const router = Router({

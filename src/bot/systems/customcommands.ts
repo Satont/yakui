@@ -1,4 +1,4 @@
-import { System, Command as CommandType, CommandOptions } from '@src/typings'
+import { System, Command as CommandType, CommandOptions } from 'typings'
 import { Command } from '@bot/entities/Command'
 import { orm } from '@bot/libs/db'
 

@@ -1,7 +1,7 @@
 import SpotifyApi from 'spotify-web-api-node'
 import axios from 'axios'
 
-import { Integration } from '@src/typings'
+import { Integration } from 'typings'
 import { Settings } from '@bot/entities/Settings'
 import { info, error } from '@bot/libs/logger'
 import { orm } from '@bot/libs/db'

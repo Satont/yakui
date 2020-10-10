@@ -1,4 +1,4 @@
-import { System, Command, CommandOptions, ParserOptions, UserPermissions } from '@src/typings'
+import { System, Command, CommandOptions, ParserOptions, UserPermissions } from 'typings'
 import tmi from '@bot/libs/tmi'
 import tlds from 'tlds'
 import { CommandPermission } from '@bot/entities/Command'

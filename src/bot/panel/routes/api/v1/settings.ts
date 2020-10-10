@@ -3,7 +3,7 @@ import { checkSchema, validationResult } from 'express-validator'
 import { Settings } from '@bot/entities/Settings'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
 import { RequestContext } from '@mikro-orm/core'
-import { loadedSystems } from '@/src/bot/libs/loader'
+import { loadedSystems } from '@bot/libs/loader'
 
 const router = Router({
   mergeParams: true,

@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { IWebHookModeratorRemove, IWebHookModeratorAdd, IWebHookUserFollow, IWebHookStreamChanged } from '@src/typings/events'
+import { IWebHookModeratorRemove, IWebHookModeratorAdd, IWebHookUserFollow, IWebHookStreamChanged } from 'typings/events'
 import { onAddModerator, onRemoveModerator, onUserFollow, onStreamChange } from '@bot/libs/eventsCaller'
 import { error } from '@bot/libs/logger'
 import { inspect } from 'util'

@@ -1,7 +1,7 @@
 import { loadedSystems } from './loader'
-import { DonationData, HostType } from '@src/typings'
+import { DonationData, HostType } from 'typings'
 import { info, donate, hosted, hosting, raided, moded, unmoded, follow, sub, resub, redemption, highlight } from './logger'
-import { IWebHookModeratorAdd, IWebHookModeratorRemove, IWebHookUserFollow, IWebHookStreamChanged, INewSubscriber, INewResubscriber } from '@src/typings/events'
+import { IWebHookModeratorAdd, IWebHookModeratorRemove, IWebHookUserFollow, IWebHookStreamChanged, INewSubscriber, INewResubscriber } from 'typings/events'
 import { PubSubRedemptionMessage } from 'twitch-pubsub-client/lib'
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
 

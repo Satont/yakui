@@ -1,6 +1,6 @@
 import { resolve } from 'path'
 import getFiles from '@bot/commons/getFiles'
-import { System } from '@src/typings'
+import { System } from 'typings'
 import { error, info } from './logger'
 import cache from './cache'
 
@@ -19,6 +19,7 @@ const loader = async () => {
     try {
       for await (const file of getFiles(resolve(__dirname, '..', folder))) {
         if (!file.endsWith('.js') && !file.endsWith('.ts')) continue
+        if (file.endsWith('.d.ts')) continue
         if (file.includes('loader') || file.includes('cache')) continue
 
         const loadedFile: System = (await import(resolve(__dirname, '..', folder, file))).default

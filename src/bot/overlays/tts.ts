@@ -1,4 +1,4 @@
-import { System } from '@src/typings'
+import { System } from 'typings'
 import { getNameSpace } from '@bot/libs/socket'
 import { debug } from '@bot/libs/logger'
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'

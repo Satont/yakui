@@ -1,4 +1,4 @@
-import { System, ParserOptions } from '@src/typings'
+import { System, ParserOptions } from 'typings'
 import tmi from '@bot/libs/tmi'
 import variables from './variables'
 import { isRegExp } from 'lodash'

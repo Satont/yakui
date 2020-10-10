@@ -1,5 +1,5 @@
 import { getNameSpace } from '@bot/libs/socket'
-import { System } from '@src/typings'
+import { System } from 'typings'
 import humanizeDuration from 'humanize-duration'
 import currency from '../libs/currency'
 import locales from '../libs/locales'
