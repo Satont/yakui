@@ -5,11 +5,11 @@ import { onRedemption } from './eventsCaller'
 
 export default new class PubSub {
   basicPubSubClient: BasicPubSubClient = null
-  inited = false
 
   async init() {
     if (!tmi.clients.broadcaster) return
-    
+    this.disconnect()
+
     const hasNeededScope = (await tmi.clients.broadcaster.getTokenInfo()).scopes.includes('channel:read:redemptions')
     if (!hasNeededScope) {
       info(`PUBSUB: Broadcaster hasn't channel:read:redemptions scope for listening redemptions`)
@@ -22,7 +22,6 @@ export default new class PubSub {
     try {
       await pubSubClient.registerUserListener(tmi.clients.broadcaster)
       await pubSubClient.onRedemption(tmi.channel.id, onRedemption)
-      this.inited = true
 
       info('PUBSUB: SUCCESSFULY SUBSCRIBED TO REDEMPTION EVENTS')
     } catch (e) {
