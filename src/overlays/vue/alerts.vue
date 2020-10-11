@@ -17,10 +17,12 @@ export default class Alerts extends Vue {
   playing = false
   alerts: Array<IEmitAlert> = []
   currentAlert: IEmitAlert = null
+  interval = null
 
   mounted() {
     console.debug('alerts overlay loaded')
     console.debug('socket:', this.socket)
+    this.alerts = []
     this.socket.on('alert', async (data: IEmitAlert) => {
       console.debug('new event', data)
       this.alerts.push(data)
@@ -29,7 +31,8 @@ export default class Alerts extends Vue {
   }
 
   setupInterval() {
-    setInterval(() => {
+    clearInterval(this.interval)
+    this.interval = setInterval(() => {
       if (this.playing || !this.alerts.length) return;
       console.debug('started', this.alerts)
       this.alerts.forEach(async alert => {

@@ -12,20 +12,24 @@ export default class TTS extends Vue {
   playing = false
   queue = []
   settings = null
+  interval = null
 
   async mounted() {
     console.debug('tts overlay loaded')
     console.debug('socket:', this.socket)
+    this.queue = []
 
     this.socket.on('tts', (text) => {
       console.debug('tts event recieved with text:' + text)
       this.queue.push(text)
     })
+    
     this.socket.on('settings', (settings) => {
       console.debug('settings event recieved:', settings)
       this.settings = settings
       this.mountResponsiveVoice()
     })
+
     this.setupInterval()
   }
 
@@ -39,7 +43,8 @@ export default class TTS extends Vue {
   }
 
   setupInterval() {
-    setInterval(() => {
+    clearInterval(this.interval)
+    this.interval = setInterval(() => {
       if (this.playing || !this.queue.length) return;
       this.playing = true
       const text = this.queue[0]

@@ -7,13 +7,8 @@ export default new class Alerts implements System {
   socket = getNameSpace('overlays/alerts')
   clients: SocketIO.Socket[] = []
 
-  async sockets(client: SocketIO.Socket) {
+  async sockets() {
     debug('socket', 'Overlays::Alerts: some client connected to socket')
-    this.clients.push(client)
-    client.on('disconnect', () => {
-      const index = this.clients.indexOf(client)
-      this.clients.splice(index, 1)
-    })
   }
 
   async emitAlert(data: IEmitAlert) {
