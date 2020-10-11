@@ -2,9 +2,7 @@ import SpotifyApi from 'spotify-web-api-node'
 import axios from 'axios'
 
 import { Integration } from 'typings'
-import { Settings } from '@bot/entities/Settings'
 import { info, error } from '@bot/libs/logger'
-import { orm } from '@bot/libs/db'
 import { onChange, settings } from '../decorators'
 
 class Spotify implements Integration {
@@ -21,9 +19,11 @@ class Spotify implements Integration {
   enabled = false
   
   @onChange(['enabled', 'access_token', 'refresh_token'])
-  async init() {
-    clearInterval(this.refreshTimeout)
+  setup() {
+    this.refreshTokens()
+  }
 
+  async init() {
     if (!this.access_token || !this.refresh_token || !this.enabled) return
 
     if (this.client) this.client = null
@@ -33,25 +33,17 @@ class Spotify implements Integration {
     })
 
     info('SPOTIFY: Successfuly initiliazed.')
-
-    this.refreshTokens()
   }
 
   private async refreshTokens() {
-    clearInterval(this.refreshTimeout)
+    clearTimeout(this.refreshTimeout)
     this.refreshTimeout = setTimeout(() => this.refreshTokens(), 1 * 60 * 60 * 1000)
-
+    if (!this.refresh_token) return
     try {
-      const refresh_token = await orm.em.fork().getRepository(Settings).findOne({ space: 'spotify', name: 'refresh_token' })
-      const request = await axios.get('https://bot.satont.ru/api/spotify-refresh-token?refresh_token=' + refresh_token.value)
+      const request = await axios.get('https://bot.satont.ru/api/spotify-refresh-token?refresh_token=' + this.refresh_token)
       const data = request.data
 
       this.client?.setAccessToken(data.access_token)
-      
-      refresh_token.value = data.refresh_token
-
-      await orm.em.fork().persistAndFlush(refresh_token)
-      await orm.em.fork().getRepository(Settings).nativeUpdate({ space: 'spotify', name: 'access_token' }, { value: data.access_token })
 
       info('SPOTIFY: refresh token and access_token updated.')
     } catch (e) {
