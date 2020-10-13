@@ -40,7 +40,7 @@ export const setupObserver = ({ instance, propertyName, fromSettings = false } =
         const shouldCall = shouldCallOnChange({
           firstChange: cache[instanceName][propertyName].firstChange,
           setuped: cache[instanceName][propertyName].onChange,
-          settings: cache[instanceName][propertyName].settings
+          settings: cache[instanceName][propertyName].settings,
         })
 
         if (shouldCall) {
