@@ -3,7 +3,13 @@ import { Settings } from '../entities/Settings'
 
 export const cache = {}
 
-export const setupObserver = ({ instance, propertyName }: { instance?: any, propertyName: any }) => {
+type Opts = { 
+  instance?: any, 
+  propertyName: any, 
+  fromSettings?: boolean 
+}
+
+export const setupObserver = ({ instance, propertyName, fromSettings = false } = {} as Opts) => {
   const instanceName = instance.constructor.name.toLowerCase()
   if (!cache[instanceName]) {
     cache[instanceName] = {}
@@ -14,6 +20,10 @@ export const setupObserver = ({ instance, propertyName }: { instance?: any, prop
       previousValue: undefined,
       firstChange: undefined,
       onChange: undefined,
+      settings: {
+        shouldLoad: fromSettings,
+        loaded: false,
+      },
     }
     Object.defineProperty(instance, propertyName, {
       set: function (value) {
@@ -27,7 +37,14 @@ export const setupObserver = ({ instance, propertyName }: { instance?: any, prop
           updateValue({ space: instanceName, name: propertyName, value })
         }
 
-        if (!cache[instanceName][propertyName].firstChange && cache[instanceName][propertyName].onChange) {
+        const shouldCall = shouldCallOnChange({
+          firstChange: cache[instanceName][propertyName].firstChange,
+          setuped: cache[instanceName][propertyName].onChange,
+          fromSettings,
+          settingsLoaded: cache[instanceName][propertyName].settings.loaded,
+        })
+
+        if (shouldCall) {
           instance[cache[instanceName][propertyName].onChange].call(instance)
         }
 
@@ -48,4 +65,8 @@ const updateValue = async ({ space, name, value }) => {
   } else {
     await repository.nativeInsert({ space, name, value: JSON.stringify(value) })
   }
+}
+
+const shouldCallOnChange = ({ firstChange, setuped, fromSettings, settingsLoaded }) => {
+  return !firstChange && setuped && (fromSettings ? settingsLoaded : true)
 }

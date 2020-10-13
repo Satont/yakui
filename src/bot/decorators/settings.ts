@@ -1,11 +1,11 @@
 import { orm } from '../libs/db'
 import { loadedSystems } from '../libs/loader'
 import { Settings as SettingsModel } from '../entities/Settings'
-import { setupObserver } from './_observer'
+import { cache, setupObserver } from './_observer'
 
 export function SettingsDecorator(spaceName?: string) {
   return (clazz: any, name: string) => {
-    setupObserver({ instance: clazz, propertyName: name })
+    setupObserver({ instance: clazz, propertyName: name, fromSettings: true })
     const space = spaceName || clazz.constructor.name.toLowerCase()
     const load = async() => {
       const module = loadedSystems.find(s => s.constructor.name.toLowerCase() === space)
@@ -17,6 +17,8 @@ export function SettingsDecorator(spaceName?: string) {
       if (!item) {
         await repository.nativeInsert({ space, name, value: JSON.stringify(module[name]) })
       } else module[name] = item.value
+
+      cache[clazz.constructor.name.toLowerCase()][name].settings.loaded = true
     }
     load()
   }
