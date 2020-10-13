@@ -128,7 +128,6 @@ class Donationalerts {
   async listeners(opts: { token: string, id: number }) {
     this.centrifugeSocket.on('disconnect', (reason: unknown) => {
       info(`DONATIONALERTS: disconnected from socket: ${reason}`)
-      this.onChanges()
     })
 
     this.centrifugeSocket.on('connect', () => {
@@ -142,11 +141,9 @@ class Donationalerts {
     })
     this.channel.on('leaved', (reason) => {
       info(`DONATIONALERTS: disconnected from donations channel: ${reason}`)
-      this.onChanges()
     })
     this.channel.on('unsubscribe', (reason) => {
       info(`DONATIONALERTS: unsibscribed from donations channel: ${reason}`)
-      this.onChanges()
     })
     this.channel.on('publish', async ({ data }: { data: DonationAlertsEvent }) => {
       const user = await orm.em.fork().getRepository(User).findOne({ username: data.username.toLowerCase() })
