@@ -55,8 +55,11 @@ class Donationalerts {
   async disconnect() {
     if (!this.centrifugeSocket || !this.channel) return
     this.channel.unsubscribe()
+    this.channel.removeAllListeners()
+    this.centrifugeSocket.removeAllListeners()
     this.centrifugeSocket.disconnect()
     this.centrifugeSocket = null
+    this.channel = null
   }
 
   async recheckToken() {
