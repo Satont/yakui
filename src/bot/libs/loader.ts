@@ -40,11 +40,10 @@ const loader = async () => {
       continue
     } 
   }
-
-  setTimeout(() => loadedSystems.forEach(s => s.init ? s.init() : null), 10 * 1000)
 }
 
 loader().then(async () => {
-  await cache.init()
+  setTimeout(() => loadedSystems.forEach(s => s.init ? s.init() : null), 10 * 1000)
+  setTimeout(() => cache.init(), 15 * 1000)
 })
 
