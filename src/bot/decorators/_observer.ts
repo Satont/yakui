@@ -3,17 +3,19 @@ import { Settings } from '../entities/Settings'
 
 export const cache: ICache = {}
 
+type TVariable = {
+  value: any,
+  previousValue: any,
+  firstChange: boolean,
+  onChange: string,
+  settings: {
+    shouldLoad: boolean,
+    loaded: boolean,
+  }
+}
+
 interface ICache {
-  [x: string]: Record<string, {
-    value: any,
-    previousValue: any,
-    firstChange: boolean,
-    onChange: string,
-    settings: {
-      shouldLoad: boolean,
-      loaded: boolean,
-    }
-  }>
+  [x: string]: Record<string, TVariable>
 }
 
 type Opts = { 
@@ -72,6 +74,6 @@ const updateValue = async ({ space, name, value }) => {
   await repository.persistAndFlush(item)
 }
 
-const shouldCallOnChange = (varCache) => {
+const shouldCallOnChange = (varCache: TVariable) => {
   return !varCache.firstChange && (varCache.settings.shouldLoad ? varCache.settings.loaded : true) && varCache.onChange
 }
