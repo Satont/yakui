@@ -67,12 +67,9 @@ export const setupObserver = ({ instance, propertyName, fromSettings = false } =
 
 const updateValue = async ({ space, name, value }) => {
   const repository = orm.em.fork().getRepository(Settings)
-  const item = await repository.findOne({ space, name })
-  if (item) {
-    await repository.nativeUpdate({ space, name }, { value: JSON.stringify(value) })
-  } else {
-    await repository.nativeInsert({ space, name, value: JSON.stringify(value) })
-  }
+  const item = await repository.findOne({ space, name }) || repository.create({ space, name })
+  item.value = value
+  await repository.persistAndFlush(item)
 }
 
 const shouldCallOnChange = (varCache) => {

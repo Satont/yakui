@@ -15,7 +15,7 @@ export function SettingsDecorator(spaceName?: string) {
       const item = await repository.findOne({ space, name })
 
       if (!item) {
-        await repository.nativeInsert({ space, name, value: JSON.stringify(module[name]) })
+        await repository.persistAndFlush(repository.create({ space, name, value: module[name] }))
       } else module[name] = item.value
     }
     load().then(() => {
