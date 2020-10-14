@@ -46,11 +46,6 @@ export default new class Tmi {
 
   channel: { name: string, id: string }
 
-  async init() {
-    await this.connect('bot')
-    await this.connect('broadcaster')
-  }
-
   async connect(type: 'bot' | 'broadcaster') {
     if (this.isAlreadyUpdating[type]) return
     this.isAlreadyUpdating[type] = true

@@ -25,7 +25,6 @@ const loader = async () => {
         const loadedFile: System = (await import(resolve(__dirname, '..', folder, file))).default
         if (!loadedFile) continue
         loadedSystems.push(loadedFile)
-        if (typeof loadedFile.init !== 'undefined') await loadedFile.init()
         if (loadedFile.socket) {
           loadedFile.socket.on('connection', client => {
             if (loadedFile.sockets) loadedFile.sockets(client)
@@ -41,8 +40,11 @@ const loader = async () => {
       continue
     } 
   }
+
+  setTimeout(() => loadedSystems.forEach(s => s.init ? s.init() : null), 10 * 1000)
 }
 
 loader().then(async () => {
   await cache.init()
 })
+

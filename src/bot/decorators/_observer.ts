@@ -1,9 +1,30 @@
 import { orm } from '../libs/db'
 import { Settings } from '../entities/Settings'
 
-export const cache = {}
+export const cache: ICache = {}
 
-export const setupObserver = ({ instance, propertyName }: { instance?: any, propertyName: any }) => {
+type TVariable = {
+  value: any,
+  previousValue: any,
+  firstChange: boolean,
+  onChange: string,
+  settings: {
+    shouldLoad: boolean,
+    loaded: boolean,
+  }
+}
+
+interface ICache {
+  [x: string]: Record<string, TVariable>
+}
+
+type Opts = { 
+  instance?: any, 
+  propertyName: any, 
+  fromSettings?: boolean 
+}
+
+export const setupObserver = ({ instance, propertyName, fromSettings = false } = {} as Opts) => {
   const instanceName = instance.constructor.name.toLowerCase()
   if (!cache[instanceName]) {
     cache[instanceName] = {}
@@ -14,6 +35,10 @@ export const setupObserver = ({ instance, propertyName }: { instance?: any, prop
       previousValue: undefined,
       firstChange: undefined,
       onChange: undefined,
+      settings: {
+        shouldLoad: fromSettings,
+        loaded: false,
+      },
     }
     Object.defineProperty(instance, propertyName, {
       set: function (value) {
@@ -27,7 +52,9 @@ export const setupObserver = ({ instance, propertyName }: { instance?: any, prop
           updateValue({ space: instanceName, name: propertyName, value })
         }
 
-        if (!cache[instanceName][propertyName].firstChange && cache[instanceName][propertyName].onChange) {
+        const shouldCallChange = shouldCallOnChange(cache[instanceName][propertyName])
+
+        if (shouldCallChange) {
           instance[cache[instanceName][propertyName].onChange].call(instance)
         }
 
@@ -42,10 +69,11 @@ export const setupObserver = ({ instance, propertyName }: { instance?: any, prop
 
 const updateValue = async ({ space, name, value }) => {
   const repository = orm.em.fork().getRepository(Settings)
-  const item = await repository.findOne({ space, name })
-  if (item) {
-    await repository.nativeUpdate({ space, name }, { value: JSON.stringify(value) })
-  } else {
-    await repository.nativeInsert({ space, name, value: JSON.stringify(value) })
-  }
+  const item = await repository.findOne({ space, name }) || repository.create({ space, name })
+  item.value = value
+  await repository.persistAndFlush(item)
+}
+
+const shouldCallOnChange = (varCache: TVariable) => {
+  return !varCache.firstChange && (varCache.settings.shouldLoad ? varCache.settings.loaded : true) && varCache.onChange
 }
