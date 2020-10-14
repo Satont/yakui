@@ -18,8 +18,9 @@ export function ChangeDecorator(props: string | string[], config: OnPropertyChan
     const instanceName = instance.constructor.name.toLowerCase()
 
     for (const propertyName of propertyNames) {
-      setupObserver({ instance, propertyName })
-      cache[instanceName][propertyName].onChange = methodName
+      setupObserver({ instance, propertyName });
+
+      (cache[instanceName][propertyName as any].onChange as any) = methodName
     }
   }
 }

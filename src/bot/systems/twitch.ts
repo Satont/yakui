@@ -122,7 +122,7 @@ class Twitch implements System {
     const channel = await tmi?.clients?.bot?.kraken.users.getUser(tmi.channel?.id)
     if (!channel) return
 
-    const data = await (await tmi?.clients?.bot?.kraken.users.getUser(tmi.channel?.id)).getChannel()
+    const data = await (await tmi?.clients?.bot?.kraken.users.getUser(tmi.channel?.id))?.getChannel()
 
     this.channelMetaData.views = data?.views ?? 0,
     this.channelMetaData.game = data?.game ?? 'No data',

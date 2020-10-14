@@ -1,7 +1,20 @@
 import { orm } from '../libs/db'
 import { Settings } from '../entities/Settings'
 
-export const cache = {}
+export const cache: ICache = {}
+
+interface ICache {
+  [x: string]: Record<string, {
+    value: any,
+    previousValue: any,
+    firstChange: boolean,
+    onChange: string,
+    settings: {
+      shouldLoad: boolean,
+      loaded: boolean,
+    }
+  }>
+}
 
 type Opts = { 
   instance?: any, 
@@ -37,11 +50,7 @@ export const setupObserver = ({ instance, propertyName, fromSettings = false } =
           updateValue({ space: instanceName, name: propertyName, value })
         }
 
-        const shouldCallChange = shouldCallOnChange({
-          firstChange: cache[instanceName][propertyName].firstChange,
-          setuped: cache[instanceName][propertyName].onChange,
-          settings: cache[instanceName][propertyName].settings,
-        })
+        const shouldCallChange = shouldCallOnChange(cache[instanceName][propertyName])
 
         if (shouldCallChange) {
           instance[cache[instanceName][propertyName].onChange].call(instance)
@@ -66,6 +75,6 @@ const updateValue = async ({ space, name, value }) => {
   }
 }
 
-const shouldCallOnChange = ({ firstChange, setuped, settings }) => {
-  return !firstChange && setuped && (settings.shouldLoad ? settings.loaded : true)
+const shouldCallOnChange = (varCache) => {
+  return !varCache.firstChange && (varCache.settings.shouldLoad ? varCache.settings.loaded : true) && varCache.onChange
 }

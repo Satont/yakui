@@ -17,9 +17,9 @@ export function SettingsDecorator(spaceName?: string) {
       if (!item) {
         await repository.nativeInsert({ space, name, value: JSON.stringify(module[name]) })
       } else module[name] = item.value
-
-      cache[clazz.constructor.name.toLowerCase()][name].settings.loaded = true
     }
-    load()
+    load().then(() => {
+      cache[space][name].settings.loaded = true
+    })
   }
 }

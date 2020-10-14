@@ -21,7 +21,8 @@ class OAuth {
 
   @onChange('channel')
   callTmi() {
-    tmi.init()
+    tmi.connect('bot')
+    tmi.connect('broadcaster')
   }
 
   @onChange(['botAccessToken', 'botRefreshToken'])
