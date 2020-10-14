@@ -12,7 +12,7 @@ const defaultConfig = {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function ChangeDecorator(props: string | string[], config: OnPropertyChangeConfig = defaultConfig): MethodDecorator {
-  const propertyNames = [...props]
+  const propertyNames = Array.isArray(props) ? [...props] : [props]
 
   return (instance: any, methodName: PropertyKey): void => {
     const instanceName = instance.constructor.name.toLowerCase()
