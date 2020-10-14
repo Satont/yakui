@@ -17,6 +17,7 @@ app.use(bodyparser.urlencoded({ extended: false }))
 app.use(bodyparser.json())
 app.use('/twitch', twitch)
 app.use('/static', express.static(resolve(process.cwd(), 'public', 'dest')))
+app.use('/icons', express.static(resolve(process.cwd(), 'public', 'icons')))
 
 app.get('/login', (req, res) => {
   res.sendFile(resolve(process.cwd(), 'public', 'login.html'))
