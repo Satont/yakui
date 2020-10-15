@@ -91,7 +91,12 @@ router.post('/', isAdmin, checkSchema({
   sound_volume: {
     isNumeric: true,
     in: ['body'],
-    optional: true,
+    optional: {
+      options: {
+        nullable: true,
+        checkFalsy: false,
+      },
+    },
   },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
