@@ -22,18 +22,15 @@ class Spotify implements Integration {
   async init() {
     if (!this.access_token || !this.refresh_token || !this.enabled) return
 
-    if (this.client) this.client = null
-
-    this.client = new SpotifyApi({ 
-      accessToken: this.access_token,
-    })
+    this.client = new SpotifyApi()
+    await this.refreshTokens()
 
     info('SPOTIFY: Successfuly initiliazed.')
   }
 
   private async refreshTokens() {
     clearTimeout(this.refreshTimeout)
-    this.refreshTimeout = setTimeout(() => this.refreshTokens(), 1 * 60 * 60 * 1000)
+    this.refreshTimeout = setTimeout(() => this.refreshTokens(), 15 * 60 * 1000)
     if (!this.refresh_token) return
     try {
       const request = await axios.get('https://bot.satont.ru/api/spotify-refresh-token?refresh_token=' + this.refresh_token)
