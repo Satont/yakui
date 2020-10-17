@@ -33,7 +33,7 @@ export default new class Timers implements System {
       if (timer.messages > 0 && (timer.triggerMessage - tmi.parsedLinesPerStream + timer.messages) > 0) {
         continue
       }
-      if (timer.interval > 0 && (Date.now() - timer.triggerTimeStamp) > timer.interval * 1000) {
+      if (timer.interval > 0 && (Date.now() - timer.triggerTimeStamp) < timer.interval * 1000) {
         continue
       }
 
