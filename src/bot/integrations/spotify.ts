@@ -19,10 +19,6 @@ class Spotify implements Integration {
   enabled = false
   
   @onChange(['enabled', 'access_token', 'refresh_token'])
-  setup() {
-    this.refreshTokens()
-  }
-
   async init() {
     if (!this.access_token || !this.refresh_token || !this.enabled) return
 
