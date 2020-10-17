@@ -45,6 +45,7 @@ export default new class Tmi {
   }
 
   channel: { name: string, id: string }
+  parsedLinesPerStream = 0
 
   async connect(type: 'bot' | 'broadcaster') {
     if (this.isAlreadyUpdating[type]) return
@@ -149,6 +150,7 @@ export default new class Tmi {
 
     if (type === 'bot') {
       client.onAnyMessage(msg => {
+        this.parsedLinesPerStream++
         if (msg.tags.get('msg-id') !== 'highlighted-message') return
         onMessageHighlight(msg as TwitchPrivateMessage)
       })

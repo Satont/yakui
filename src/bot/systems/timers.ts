@@ -15,6 +15,7 @@ export default new class Timers implements System {
     for (const timer of timers) {
       timer.last = 0
       timer.triggerTimeStamp = Date.now()
+      timer.triggerMessage = 0
     }
 
     await orm.em.fork().persistAndFlush(timers)
@@ -27,17 +28,21 @@ export default new class Timers implements System {
   async process() {
     clearTimeout(this.timeout)
     this.timeout = setTimeout(() => this.process(), 10000)
-
-    for (const timer of this.timers) {
-      if (!timer.enabled || !twitch.streamMetaData?.startedAt) continue
-
-      if ((Date.now() - timer.triggerTimeStamp) > timer.interval * 1000) {
-        const message = await variables.parseMessage({ message: timer.responses[timer.last] })
-        tmi.say({ message })
-        timer.last = ++timer.last % timer.responses.length
-        timer.triggerTimeStamp = Date.now()
-        await orm.em.fork().getRepository(Timer).persistAndFlush(timer)
+    if (!twitch.streamMetaData?.startedAt) return
+    for (const timer of this.timers.filter(t => t.enabled)) {
+      if (timer.messages > 0 && (timer.triggerMessage - tmi.parsedLinesPerStream + timer.messages) > 0) {
+        continue
       }
+      if (timer.interval > 0 && (Date.now() - timer.triggerTimeStamp) > timer.interval * 1000) {
+        continue
+      }
+
+      const message = await variables.parseMessage({ message: timer.responses[timer.last] })
+      tmi.say({ message })
+      timer.last = ++timer.last % timer.responses.length
+      timer.triggerTimeStamp = Date.now()
+      timer.triggerMessage = tmi.parsedLinesPerStream
+      await orm.em.fork().getRepository(Timer).persistAndFlush(timer)
     }
   }
 }

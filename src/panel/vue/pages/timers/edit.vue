@@ -6,7 +6,11 @@
       </b-form-group>
 
       <b-form-group label="Timer interval" label-for="interval">
-        <b-form-input id="interval" v-model.number="timer.interval" type="number" required placeholder="Enter timer interval"></b-form-input>
+        <b-form-input id="interval" v-model.number="timer.interval" type="number" placeholder="Enter timer interval"></b-form-input>
+      </b-form-group>
+
+      <b-form-group label="Timer messages interval" label-for="interval_messages">
+        <b-form-input id="interval_messages" v-model.number="timer.messages" type="number" placeholder="Enter timer messages interval"></b-form-input>
       </b-form-group>
 
        <b-form-group>
@@ -41,6 +45,7 @@ export default class TimersManagerEdit extends Vue {
     enabled: true,
     responses: [],
     interval: 60,
+    messages: 0,
   }
 
   async onSubmit(event) {

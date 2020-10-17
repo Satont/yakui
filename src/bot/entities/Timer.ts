@@ -5,25 +5,30 @@ import MyBigInt from '../customTypes/BigInt'
   tableName: 'timers',
 })
 export class Timer {
-
   @PrimaryKey()
-  id!: number;
+  id!: number
 
   @Property({ length: 255 })
-  name!: string;
+  name!: string
 
   @Property({ nullable: true, default: true })
-  enabled?: boolean = true;
+  enabled?: boolean = true
 
-  @Property()
-  interval!: number;
+  @Property({ default: 0 })
+  interval?: number = 0
+
+  @Property({ default: 0 })
+  messages?: number = 0
 
   @Property({ columnType: 'json', nullable: true, default: '[]' })
-  responses?: string[];
+  responses?: string[]
 
   @Property({ nullable: true })
-  last?: number;
+  last?: number
 
   @Property({ nullable: true, default: '0', type: MyBigInt })
-  triggerTimeStamp?: number;
+  triggerTimeStamp?: number
+
+  @Property({ default: 0 })
+  triggerMessage?: number = 0
 }

@@ -54,6 +54,11 @@ router.post('/', isAdmin, checkSchema({
     in: ['body'],
     optional: true,
   },
+  messages: {
+    isNumeric: true,
+    in: ['body'],
+    optional: true,
+  },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
@@ -67,6 +72,7 @@ router.post('/', isAdmin, checkSchema({
       name: body.name,
       enabled: body.enabled,
       interval: body.interval,
+      messages: body.messages,
       responses: body.responses,
     })
 
