@@ -16,6 +16,10 @@ const cache = {
   followers: [],
 }
 
+setInterval(() => {
+  cache.followers = []
+}, 30 * 60 * 1000)
+
 router.post('/webhooks/callback', (req, res) => {
   try {
     for (const item of req.body.data) {
