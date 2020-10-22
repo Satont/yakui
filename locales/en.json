@@ -8,5 +8,27 @@
   },
   "price": {
     "notEnought": "$0 not enought points for using this command."
+  },
+  "commands": {
+    "permit": {
+      "description": "Give user permission to post 1 link."
+    },
+    "sayb": {
+      "description": "Say something from broadcaster."
+    },
+    "ignore": {
+      "add": {
+        "description": "Add user to ignore-list."
+      },
+      "remove": {
+        "description": "Remove user from ignore-list."
+      }
+    },
+    "title": {
+      "description": "Set title of stream."
+    },
+    "category": {
+      "description": "Set category of stream."
+    }
   }
 }

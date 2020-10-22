@@ -11,6 +11,7 @@ import { CommandPermission } from '@bot/entities/Command'
 import { settings } from '../decorators'
 import { parser } from '../decorators/parser'
 import { command } from '../decorators/command'
+import locales from '../libs/locales'
 
 class Users implements System {
   private countWatchedTimeout: NodeJS.Timeout = null
@@ -149,7 +150,7 @@ class Users implements System {
     name: 'sayb',
     permission: CommandPermission.BROADCASTER,
     visible: false,
-    description: 'Say something as broadcaster.',
+    description: locales.translate('commands.sayb.description'),
   })
   sayb(opts: CommandOptions) {
     tmi.chatClients?.broadcaster?.say(tmi.channel?.name, opts.argument)
@@ -178,7 +179,7 @@ class Users implements System {
     name: 'ignore add',
     permission: CommandPermission.MODERATORS,
     visible: false,
-    description: 'Add some username to bot ignore list', 
+    description: locales.translate('commands.ignore.add.description'), 
   })
   async ignoreAdd(opts: CommandOptions) {
     if (!opts.argument.length) return
@@ -192,7 +193,7 @@ class Users implements System {
     name: 'ignore remove',
     permission: CommandPermission.MODERATORS,
     visible: false,
-    description: 'Remove some username from bot ignore list',
+    description: locales.translate('commands.ignore.remove.description'),
   })
   async ignoreRemove(opts: CommandOptions) {
     if (!opts.argument.length) return
