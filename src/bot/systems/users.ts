@@ -10,18 +10,13 @@ import { orm } from '@bot/libs/db'
 import { CommandPermission } from '@bot/entities/Command'
 import { settings } from '../decorators'
 import { parser } from '../decorators/parser'
+import { command } from '../decorators/command'
 
 class Users implements System {
   private countWatchedTimeout: NodeJS.Timeout = null
   private getChattersTimeout: NodeJS.Timeout = null
 
   private chatters: Array<{ username: string, id: string }> = []
-
-  commands: Command[] = [
-    { name: 'sayb', permission: CommandPermission.BROADCASTER, fnc: this.sayb, visible: false, description: 'Say something as broadcaster.' },
-    { name: 'ignore add', permission: CommandPermission.MODERATORS, fnc: this.ignoreAdd, visible: false, description: 'Add some username to bot ignore list' },
-    { name: 'ignore remove', permission: CommandPermission.MODERATORS, fnc: this.ignoreRemove, visible: false, description: 'Remove some username from bot ignore list' },
-  ]
 
   @settings()
   enabled = true
@@ -151,6 +146,12 @@ class Users implements System {
     }
   }
 
+  @command({ 
+    name: 'sayb',
+    permission: CommandPermission.BROADCASTER,
+    visible: false,
+    description: 'Say something as broadcaster.',
+  })
   sayb(opts: CommandOptions) {
     tmi.chatClients?.broadcaster?.say(tmi.channel?.name, opts.argument)
   }
@@ -174,6 +175,12 @@ class Users implements System {
     return userPerms.some((p, index) => p[1] && index <= commandPermissionIndex)
   }
 
+  @command({
+    name: 'ignore add',
+    permission: CommandPermission.MODERATORS,
+    visible: false,
+    description: 'Add some username to bot ignore list', 
+  })
   async ignoreAdd(opts: CommandOptions) {
     if (!opts.argument.length) return
 
@@ -182,6 +189,12 @@ class Users implements System {
     return '$sender ✅'
   }
 
+  @command({
+    name: 'ignore remove',
+    permission: CommandPermission.MODERATORS,
+    visible: false,
+    description: 'Remove some username from bot ignore list',
+  })
   async ignoreRemove(opts: CommandOptions) {
     if (!opts.argument.length) return
 

@@ -79,7 +79,7 @@ export default new class Parser {
     
     const argument = message.replace(new RegExp(`^${findedBy}`), '').trim()
     
-    let commandResult: string = await command.fnc.call(command.system, { message, raw, command, argument })
+    let commandResult: string = await command.system[command.fnc].call(command.system, { message, raw, command, argument })
     
     if (!commandResult) return
     

@@ -22,7 +22,7 @@ export interface Command {
   aliases?: string[],
   cooldown?: number,
   permission?: CommandPermission,
-  fnc?(opt: CommandOptions): any | Promise<any>,
+  fnc?: string,
   enabled?: boolean,
   price?: number,
   type?: 'custom' | 'default',

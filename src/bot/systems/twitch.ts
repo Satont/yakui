@@ -2,13 +2,14 @@ import tmi from '@bot/libs/tmi'
 import humanizeDuration from 'humanize-duration'
 import { onStreamStart, onStreamEnd } from '@bot/libs/eventsCaller'
 import locales from '@bot/libs/locales'
-import { System, Command, CommandOptions } from 'typings'
+import { System, CommandOptions } from 'typings'
 import { INewSubscriber, INewResubscriber } from 'typings/events'
 import { Settings } from '@bot/entities/Settings'
 import { error } from '@bot/libs/logger'
 import { orm } from '@bot/libs/db'
 import { CommandPermission } from '@bot/entities/Command'
 import { settings } from '../decorators'
+import { command } from '../decorators/command'
 
 class Twitch implements System {
   private intervals = {
@@ -16,23 +17,6 @@ class Twitch implements System {
     channelData: null,
     subscribers: null,
   }
-  commands: Command[] = [
-    {
-      name: 'title',
-      fnc: this.setTitle,
-      permission: CommandPermission.MODERATORS,
-      visible: false,
-      description: 'Set title of channel.',
-    },
-    {
-      name: 'category',
-      fnc: this.setGame,
-      aliases: ['game'],
-      permission: CommandPermission.MODERATORS,
-      visible: false,
-      description: 'Set category of channel',
-    },
-  ]
 
   streamMetaData: {
     viewers: number,
@@ -163,6 +147,12 @@ class Twitch implements System {
     })
   }
 
+  @command({
+    name: 'title',
+    permission: CommandPermission.MODERATORS,
+    visible: false,
+    description: 'Set title of channel.',
+  })
   async setTitle(opts: CommandOptions) {
     if (!opts.argument.trim().length) return
 
@@ -173,6 +163,13 @@ class Twitch implements System {
     return '$sender ✅'
   }
 
+  @command({
+    name: 'category',
+    aliases: ['game'],
+    permission: CommandPermission.MODERATORS,
+    visible: false,
+    description: 'Set category of channel',
+  })
   async setGame(opts: CommandOptions) {
     if (!opts.argument.trim().length) return
 
