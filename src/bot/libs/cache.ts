@@ -6,6 +6,7 @@ import { Command, System } from 'typings'
 import { loadedSystems } from './loader'
 import { info } from './logger'
 import { orm } from './db'
+import locales from './locales'
 
 export default new class Cache {
   parsers: Map<string, { system: System, fnc: any }> = new Map()
@@ -29,6 +30,7 @@ export default new class Cache {
     this.commands = new Map()
     for (const system of loadedSystems.filter(system => system.commands)) {
       system.commands.map(c => ({ ...c, system })).forEach(c => {
+        c.description = c.description ? locales.translate(c.description) : null
         this.commands.set(c.name as string, c)
         c.aliases?.forEach(a => this.commandsAliases.set(a, c))
       })

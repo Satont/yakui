@@ -24,7 +24,7 @@ export default new class Locales {
   translate(...args: any[]) {
     const path = args[0]
     const result = get(this.lang, path, null)
-
+    console.log(result)
     if (!result) return get(this.lang, 'errors.langStringNotFound')
     return parameterizedString(result, ...args.slice(1))
   }
