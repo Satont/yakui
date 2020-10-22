@@ -9,6 +9,7 @@ import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/Tw
 import { orm } from '@bot/libs/db'
 import { CommandPermission } from '@bot/entities/Command'
 import { settings } from '../decorators'
+import { parser } from '../decorators/parser'
 
 class Users implements System {
   private countWatchedTimeout: NodeJS.Timeout = null
@@ -16,9 +17,6 @@ class Users implements System {
 
   private chatters: Array<{ username: string, id: string }> = []
 
-  parsers = [
-    { fnc: this.parseMessage },
-  ]
   commands: Command[] = [
     { name: 'sayb', permission: CommandPermission.BROADCASTER, fnc: this.sayb, visible: false, description: 'Say something as broadcaster.' },
     { name: 'ignore add', permission: CommandPermission.MODERATORS, fnc: this.ignoreAdd, visible: false, description: 'Add some username to bot ignore list' },
@@ -53,6 +51,7 @@ class Users implements System {
     await this.countWatched()
   }
 
+  @parser()
   async parseMessage(opts: ParserOptions) {
     if (!this.enabled || opts.message.startsWith('!')) return
     if (this.ignoredUsers?.includes(opts.raw.userInfo.userName)) return
