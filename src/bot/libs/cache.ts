@@ -35,7 +35,7 @@ export default new class Cache {
         c.aliases?.forEach(a => this.commandsAliases.set(a, c))
       })
     }
-    console.log(this.commands)
+
     info(`CACHE: Commands size: ${this.commands.size}, aliases size: ${this.commandsAliases.size}`)
   }
 
