@@ -53,7 +53,7 @@ export interface System {
   __moduleName?: string,
   parsers?: Array<{
     name?: string,
-    fnc(opt: ParserOptions): any | Promise<any>
+    fnc: string
   }>;
   commands?: Command[],
   socket?: SocketIO.Namespace,
