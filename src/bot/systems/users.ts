@@ -15,7 +15,6 @@ import { command } from '../decorators/command'
 class Users implements System {
   private countWatchedTimeout: NodeJS.Timeout = null
   private getChattersTimeout: NodeJS.Timeout = null
-
   private chatters: Array<{ username: string, id: string }> = []
 
   @settings()
