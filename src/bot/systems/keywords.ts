@@ -1,17 +1,15 @@
-import { System, ParserOptions } from 'typings'
+import { ParserOptions } from 'typings'
 import tmi from '@bot/libs/tmi'
 import variables from './variables'
 import { isRegExp } from 'lodash'
 import cache from '@bot/libs/cache'
+import { parser } from '../decorators/parser'
 
-export default new class Keywords implements System {
-  parsers = [
-    { fnc: this.parser },
-  ]
+class Keyword {
   cooldowns: string[] = []
 
-
-  async parser(opts: ParserOptions) {
+  @parser()
+  async parse(opts: ParserOptions) {
     opts.message = opts.message.toLowerCase()
     const keywords = [...cache.keywords.values()]
 
@@ -37,3 +35,5 @@ export default new class Keywords implements System {
     }
   }
 }
+
+export default new Keyword()

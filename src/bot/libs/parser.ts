@@ -26,7 +26,7 @@ export default new class Parser {
     }
 
     for (const parser of [...cache.parsers.values()]) {
-      await parser.fnc.call(parser.system, { message, raw })
+      await parser.system[parser.fnc].call(parser.system, { message, raw })
     }
   }
 
@@ -79,7 +79,7 @@ export default new class Parser {
     
     const argument = message.replace(new RegExp(`^${findedBy}`), '').trim()
     
-    let commandResult: string = await command.fnc.call(command.system, { message, raw, command, argument })
+    let commandResult: string = await command.system[command.fnc].call(command.system, { message, raw, command, argument })
     
     if (!commandResult) return
     
