@@ -149,7 +149,7 @@ class Users implements System {
     name: 'sayb',
     permission: CommandPermission.BROADCASTER,
     visible: false,
-    description: 'Say something as broadcaster.',
+    description: 'commands.sayb.description',
   })
   sayb(opts: CommandOptions) {
     tmi.chatClients?.broadcaster?.say(tmi.channel?.name, opts.argument)
@@ -178,7 +178,7 @@ class Users implements System {
     name: 'ignore add',
     permission: CommandPermission.MODERATORS,
     visible: false,
-    description: 'Add some username to bot ignore list', 
+    description: 'commands.ignore.add.description', 
   })
   async ignoreAdd(opts: CommandOptions) {
     if (!opts.argument.length) return
@@ -192,7 +192,7 @@ class Users implements System {
     name: 'ignore remove',
     permission: CommandPermission.MODERATORS,
     visible: false,
-    description: 'Remove some username from bot ignore list',
+    description: 'commands.ignore.remove.description',
   })
   async ignoreRemove(opts: CommandOptions) {
     if (!opts.argument.length) return

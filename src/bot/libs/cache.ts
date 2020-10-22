@@ -25,15 +25,17 @@ export default new class Cache {
     await this.updateKeywords()
   }
 
-  updateCommands() {
+  async updateCommands() {
+    const locales = (await import('./locales')).default
     this.commands = new Map()
     for (const system of loadedSystems.filter(system => system.commands)) {
       system.commands.map(c => ({ ...c, system })).forEach(c => {
+        c.description = c.description ? locales.translate(c.description) : null
         this.commands.set(c.name as string, c)
         c.aliases?.forEach(a => this.commandsAliases.set(a, c))
       })
     }
-
+    console.log(this.commands)
     info(`CACHE: Commands size: ${this.commands.size}, aliases size: ${this.commandsAliases.size}`)
   }
 

@@ -151,7 +151,7 @@ class Twitch implements System {
     name: 'title',
     permission: CommandPermission.MODERATORS,
     visible: false,
-    description: 'Set title of channel.',
+    description: 'commands.title.description',
   })
   async setTitle(opts: CommandOptions) {
     if (!opts.argument.trim().length) return
@@ -168,7 +168,7 @@ class Twitch implements System {
     aliases: ['game'],
     permission: CommandPermission.MODERATORS,
     visible: false,
-    description: 'Set category of channel',
+    description: 'commands.category.description',
   })
   async setGame(opts: CommandOptions) {
     if (!opts.argument.trim().length) return

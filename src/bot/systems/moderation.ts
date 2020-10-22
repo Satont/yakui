@@ -166,7 +166,7 @@ class Moderation implements System {
     name: 'permit',
     permission: CommandPermission.MODERATORS,
     visible: false,
-    description: 'Give target user 1 permit.',
+    description: 'commands.permit.description',
   })
   async permit(opts: CommandOptions) {
     this.permits.push(opts.argument.trim())
