@@ -12,9 +12,9 @@
   "commands": {
     "help": {
       "description": "Showing description of command.",
-      "commandNotFound": "$sender command $0 not found",
-      "hasNoDescription": "$sender command $0 has no description",
-      "response": "$sender description of command $0: $1"
+      "commandNotFound": "$sender command \"$0\" not found",
+      "hasNoDescription": "$sender command \"$0\" has no description",
+      "response": "$sender description of command \"$0\": $1"
     },
     "permit": {
       "description": "Give user permission to post 1 link."

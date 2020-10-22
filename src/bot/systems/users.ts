@@ -11,7 +11,6 @@ import { CommandPermission } from '@bot/entities/Command'
 import { settings } from '../decorators'
 import { parser } from '../decorators/parser'
 import { command } from '../decorators/command'
-import locales from '../libs/locales'
 
 class Users implements System {
   private countWatchedTimeout: NodeJS.Timeout = null

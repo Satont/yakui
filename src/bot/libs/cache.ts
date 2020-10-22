@@ -6,7 +6,6 @@ import { Command, System } from 'typings'
 import { loadedSystems } from './loader'
 import { info } from './logger'
 import { orm } from './db'
-import locales from './locales'
 
 export default new class Cache {
   parsers: Map<string, { system: System, fnc: any }> = new Map()
@@ -26,7 +25,8 @@ export default new class Cache {
     await this.updateKeywords()
   }
 
-  updateCommands() {
+  async updateCommands() {
+    const locales = (await import('./locales')).default
     this.commands = new Map()
     for (const system of loadedSystems.filter(system => system.commands)) {
       system.commands.map(c => ({ ...c, system })).forEach(c => {
@@ -35,7 +35,7 @@ export default new class Cache {
         c.aliases?.forEach(a => this.commandsAliases.set(a, c))
       })
     }
-
+    console.log(this.commands)
     info(`CACHE: Commands size: ${this.commands.size}, aliases size: ${this.commandsAliases.size}`)
   }
 
