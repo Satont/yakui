@@ -1,6 +1,6 @@
 import { chunk as makeChunk } from 'lodash'
 
-import { System, ParserOptions, Command, CommandOptions, UserPermissions } from 'typings'
+import { System, ParserOptions, CommandOptions, UserPermissions } from 'typings'
 import { User } from '@bot/entities/User'
 import tmi from '@bot/libs/tmi'
 import { UserDailyMessages } from '@bot/entities/UserDailyMessages'
