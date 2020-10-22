@@ -179,6 +179,7 @@ class Moderation implements System {
 
   @parser()
   async parse(opts: ParserOptions) {
+    console.log('in moderation')
     if (!this.enabled) return false
     const userPermissions = users.getUserPermissions(opts.raw.userInfo.badges, opts.raw)
     if (userPermissions.broadcaster || userPermissions.moderators) return false

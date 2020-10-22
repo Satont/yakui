@@ -26,7 +26,7 @@ export default new class Parser {
     }
 
     for (const parser of [...cache.parsers.values()]) {
-      await parser['fnc'].call(parser.system, { message, raw })
+      await parser.system[parser.fnc].call(parser.system, { message, raw })
     }
   }
 

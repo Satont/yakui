@@ -45,7 +45,6 @@ export default new class Cache {
         this.parsers.set(system.constructor.name, p)
       })
     }
-
     info(`CACHE: Parsers size: ${this.commands.size}`)
   }
 
