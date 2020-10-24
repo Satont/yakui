@@ -76,7 +76,7 @@ export default new class Cache {
       this.greetings.set(String(greeting.id), greeting)
     }
 
-    info(`CACHE: Greetings size: ${this.events.size}`)
+    info(`CACHE: Greetings size: ${this.greetings.size}`)
   }
 
   async updateKeywords() {
@@ -86,6 +86,6 @@ export default new class Cache {
       this.keywords.set(String(keyword.id), keyword)
     }
 
-    info(`CACHE: Keywords size: ${this.events.size}`)
+    info(`CACHE: Keywords size: ${this.keywords.size}`)
   }
 }
