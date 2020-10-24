@@ -30,7 +30,7 @@ export default new class Cache {
     this.commands = new Map()
     for (const system of loadedSystems.filter(system => system.commands)) {
       system.commands.map(c => ({ ...c, system })).forEach(c => {
-        c.description = c.description ? locales.translate(c.description) : null
+        c.description = c.description ? locales.translateWithNulled(c.description) ?? c.description : null
         this.commands.set(c.name as string, c)
         c.aliases?.forEach(a => this.commandsAliases.set(a, c))
       })
