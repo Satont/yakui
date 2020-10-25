@@ -31,6 +31,7 @@ class Twitch implements System {
     game: string,
     title: string,
     subs?: number,
+    followers: number,
     latestSubscriber?: {
       username: string,
       tier: string,
@@ -48,6 +49,7 @@ class Twitch implements System {
     game: 'No data',
     title: 'No data',
     subs: 0,
+    followers: 0,
     latestSubscriber: {
       username: 'No data',
       tier: 'No data',
@@ -111,6 +113,7 @@ class Twitch implements System {
     this.channelMetaData.views = data?.views ?? 0,
     this.channelMetaData.game = data?.game ?? 'No data',
     this.channelMetaData.title = data?.status ?? 'No data'
+    this.channelMetaData.followers = data?.followers ?? 0
   }
 
   private async getChannelSubscribers() {
