@@ -12,7 +12,7 @@
   "commands": {
     "help": {
       "description": "Показывает описание команды.",
-      "commandNotFound": "$0 команда \"$1\" не найдена.",
+      "commandNotFound": "$sender команда \"$0\" не найдена.",
       "hasNoDescription": "$sender команда \"$0\" не имеет описания.",
       "response": "$sender описание команды \"$0\": $1"
     },
