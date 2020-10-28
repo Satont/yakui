@@ -1,0 +1,41 @@
+{
+    "lang": {
+      "name": "Ukrainian",
+      "code": "ua"
+    },
+    "song": {
+      "notPlaying": "зараз нічого не грає"
+    },
+    "price": {
+      "notEnought": "$0 у вас недостатньо поінтів для використання цієї команди."
+    },
+    "commands": {
+      "help": {
+        "description": "Показує опис команди.",
+        "commandNotFound": "$sender команда \"$0\" не знайдена.",
+        "hasNoDescription": "$sender команда \"$0\" не має опису.",
+        "response": "$sender опис команди \"$0\": $1"
+      },
+      "permit": {
+        "description": "Видати користувачу право на 1 посилання."
+      },
+      "sayb": {
+        "description": "Сказати щось від лиця стримера."
+      },
+      "ignore": {
+        "add": {
+          "description": "Додати користувача в ігнор-лист."
+        },
+        "remove": {
+          "description": "Прибрати користувача з ігнор-листа."
+        }
+      },
+      "title": {
+        "description": "Встановити назву трансляції."
+      },
+      "category": {
+        "description": "Встановити категорію трансляції."
+      }
+    }
+  }
+  
