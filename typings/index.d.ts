@@ -1,9 +1,16 @@
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
-import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove, INewResubscriber } from './events'
+import {
+  IWebHookUserFollow,
+  IWebHookModeratorAdd,
+  IWebHookModeratorRemove,
+  INewSubscriber,
+  INewResubscriber,
+  IWebHookStreamChanged,
+} from './events'
 import { PubSubRedemptionMessage } from 'twitch-pubsub-client/lib'
-import CommandSound from '@bot/models/CommandSound'
+import { File } from '../src/bot/entities/File'
+import { CommandPermission } from '../src/bot/entities/Command'
 
-export type CommandPermission = 'viewers' | 'followers' | 'vips' | 'subscribers' | 'moderators' | 'broadcaster'
 export type HostType = { viewers: number, username: string }
 
 export interface Command {
@@ -15,11 +22,12 @@ export interface Command {
   aliases?: string[],
   cooldown?: number,
   permission?: CommandPermission,
-  fnc?: function,
+  fnc?: string,
   enabled?: boolean,
   price?: number,
   type?: 'custom' | 'default',
-  sound?: CommandSound,
+  sound_volume?: number,
+  sound_file?: File | number,
   system?: System,
   usage?: number
 }
@@ -36,14 +44,20 @@ export interface ParserOptions {
   raw: TwitchPrivateMessage
 }
 
+type DbUpdate = {
+  table: string,
+  data?: any,
+}
+
 export interface System {
+  __moduleName?: string,
   parsers?: Array<{
     name?: string,
-    fnc: function
+    fnc: string
   }>;
   commands?: Command[],
   socket?: SocketIO.Namespace,
-  clients?: SocketIO.Socket[]
+  clients?: SocketIO.Socket[],
   init?: () => void | Promise<void>,
   onStreamEnd?: () => void | Promise<void>,
   onStreamStart?: () => void | Promise<void>,
@@ -51,13 +65,13 @@ export interface System {
   onHosting?: (data: HostType) => void | Promise<void>,
   onHosted?: (data: HostType) => void | Promise<void>,
   onRaided?: (data: HostType) => void | Promise<void>,
-  listenDbUpdates?: () => void | Promise<void>,
+  onDbUpdate?(data: DbUpdate): void | Promise<void>,
   sockets?: (socket: SocketIO.Socket) => void | Promise<void>,
   onAddModerator?: (data: IWebHookModeratorAdd) => void | Promise<void>,
   onRemoveModerator?: (data: IWebHookModeratorRemove) => void | Promise<void>,
   onUserFollow?: (data: IWebHookUserFollow) => void | Promise<void>,
   onStreamChange?: (data: IWebHookStreamChanged) => void | Promise<void>,
-  onSubscribe?: (data: INewSubscribe) => void | Promise<void>,
+  onSubscribe?: (data: INewSubscriber) => void | Promise<void>,
   onReSubscribe?: (data: INewResubscriber) => void | Promise<void>
   onRedemption?: (data: PubSubRedemptionMessage) => void | Promise<void>
   onMessageHighlight?: (data: TwitchPrivateMessage) => void | Promise<void>

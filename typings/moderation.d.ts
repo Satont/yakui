@@ -7,7 +7,7 @@ export interface ITimeoutWarning {
   message: string
 }
 
-interface IDefaultSettings {
+export interface IDefaultSettings {
   enabled: boolean,
   subscribers: boolean,
   vips: boolean,
@@ -15,37 +15,37 @@ interface IDefaultSettings {
   warning: ITimeoutWarning,
 }
 
-interface ILinks extends IDefaultSettings {
+export interface ILinks extends IDefaultSettings {
   clips: boolean,
 }
 
-interface ISymbols extends IDefaultSettings {
+export interface ISymbols extends IDefaultSettings {
   trigger: {
     length: number,
     percent: number,
   }
 }
 
-interface ILongMessage extends IDefaultSettings {
+export interface ILongMessage extends IDefaultSettings {
   trigger: {
     length: number,
   }
 }
 
-interface ICaps extends IDefaultSettings {
+export interface ICaps extends IDefaultSettings {
   trigger: {
     length: number,
     percent: number,
   }
 }
 
-interface IEmotes extends IDefaultSettings {
+export interface IEmotes extends IDefaultSettings {
   trigger: {
     length: number,
   }
 }
 
-interface IBlackList extends IDefaultSettings {
+export interface IBlackList extends IDefaultSettings {
   values: string[]
 }
 

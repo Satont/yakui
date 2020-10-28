@@ -12,16 +12,19 @@ const loader = async () => {
     integrations: 'Integration',
     customSystems: 'Custom System',
     overlays: 'Overlay',
-    widgets: 'Widget',
+    libs: 'Lib',
+    settings: 'Setting',
   }
   for (const folder of Object.keys(folders)) {
     try {
       for await (const file of getFiles(resolve(__dirname, '..', folder))) {
         if (!file.endsWith('.js') && !file.endsWith('.ts')) continue
-  
+        if (file.endsWith('.d.ts')) continue
+        if (file.includes('loader') || file.includes('cache')) continue
+
         const loadedFile: System = (await import(resolve(__dirname, '..', folder, file))).default
-        if (typeof loadedFile.init !== 'undefined') await loadedFile.init()
-        if (typeof loadedFile.listenDbUpdates !== 'undefined') await loadedFile.listenDbUpdates()
+        if (!loadedFile) continue
+        loadedSystems.push(loadedFile)
         if (loadedFile.socket) {
           loadedFile.socket.on('connection', client => {
             if (loadedFile.sockets) loadedFile.sockets(client)
@@ -29,17 +32,18 @@ const loader = async () => {
             client.on('disconnect', () => loadedFile.clients?.splice(loadedFile.clients?.indexOf(client), 1))
           })
         }
-  
+
         info(`${folders[folder]} ${loadedFile.constructor.name.toUpperCase()} loaded`)
-        loadedSystems.push(loadedFile)
       }
     } catch (e) {
-      error('LOADER: ' + e)
+      error(e)
       continue
-    } 
+    }
   }
 }
 
 loader().then(async () => {
-  await cache.init()
+  setTimeout(() => loadedSystems.forEach(s => s.init ? s.init() : null), 10 * 1000)
+  setTimeout(() => cache.init(), 15 * 1000)
 })
+

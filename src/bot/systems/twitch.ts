@@ -2,34 +2,21 @@ import tmi from '@bot/libs/tmi'
 import humanizeDuration from 'humanize-duration'
 import { onStreamStart, onStreamEnd } from '@bot/libs/eventsCaller'
 import locales from '@bot/libs/locales'
-import { System, Command, CommandOptions } from 'typings'
+import { System, CommandOptions } from 'typings'
 import { INewSubscriber, INewResubscriber } from 'typings/events'
-import Settings from '@bot/models/Settings'
+import { Settings } from '@bot/entities/Settings'
 import { error } from '@bot/libs/logger'
+import { orm } from '@bot/libs/db'
+import { CommandPermission } from '@bot/entities/Command'
+import { settings } from '../decorators'
+import { command } from '../decorators/command'
 
-export default new class Twitch implements System {
+class Twitch implements System {
   private intervals = {
     streamData: null,
     channelData: null,
     subscribers: null,
   }
-  commands: Command[] = [
-    {
-      name: 'title',
-      fnc: this.setTitle,
-      permission: 'moderators',
-      visible: false,
-      description: 'Set title of channel.',
-    },
-    {
-      name: 'category',
-      fnc: this.setGame,
-      aliases: ['game'],
-      permission: 'moderators',
-      visible: false,
-      description: 'Set category of channel',
-    },
-  ]
 
   streamMetaData: {
     viewers: number,
@@ -74,15 +61,21 @@ export default new class Twitch implements System {
       timestamp: undefined,
     },
   }
+  
+  @settings()
+  latestSubscriber: string = null
+
+  @settings()
+  latestReSubscriber: string = null
 
   async init() {
     const [latestSubscriber, latestReSubscriber] = await Promise.all([
-      Settings.findOne({ where: { space: 'twitch', name: 'latestSubscriber' } }),
-      Settings.findOne({ where: { space: 'twitch', name: 'latestReSubscriber' } }),
+      orm.em.fork().getRepository(Settings).findOne({ space: 'twitch', name: 'latestSubscriber' }),
+      orm.em.fork().getRepository(Settings).findOne({ space: 'twitch', name: 'latestReSubscriber' }),
     ])
 
-    if (latestSubscriber) this.channelMetaData.latestSubscriber = latestSubscriber.value
-    if (latestReSubscriber) this.channelMetaData.latestReSubscriber = latestReSubscriber.value
+    if (latestSubscriber) this.channelMetaData.latestSubscriber = latestSubscriber.value as any
+    if (latestReSubscriber) this.channelMetaData.latestReSubscriber = latestReSubscriber.value as any
 
     this.getStreamData()
     this.getChannelData()
@@ -113,7 +106,7 @@ export default new class Twitch implements System {
     const channel = await tmi?.clients?.bot?.kraken.users.getUser(tmi.channel?.id)
     if (!channel) return
 
-    const data = await (await tmi?.clients?.bot?.kraken.users.getUser(tmi.channel?.id)).getChannel()
+    const data = await (await tmi?.clients?.bot?.kraken.users.getUser(tmi.channel?.id))?.getChannel()
 
     this.channelMetaData.views = data?.views ?? 0,
     this.channelMetaData.game = data?.game ?? 'No data',
@@ -154,6 +147,12 @@ export default new class Twitch implements System {
     })
   }
 
+  @command({
+    name: 'title',
+    permission: CommandPermission.MODERATORS,
+    visible: false,
+    description: 'commands.title.description',
+  })
   async setTitle(opts: CommandOptions) {
     if (!opts.argument.trim().length) return
 
@@ -164,6 +163,13 @@ export default new class Twitch implements System {
     return '$sender ✅'
   }
 
+  @command({
+    name: 'category',
+    aliases: ['game'],
+    permission: CommandPermission.MODERATORS,
+    visible: false,
+    description: 'commands.category.description',
+  })
   async setGame(opts: CommandOptions) {
     if (!opts.argument.trim().length) return
 
@@ -182,27 +188,25 @@ export default new class Twitch implements System {
     const value = { username: data.username, tier: data.tier, timestamp: Date.now() }
     this.channelMetaData.latestSubscriber = value
 
-    const [instance, created]: [Settings, boolean] = await Settings.findOrCreate({
-      where: { space: 'twitch', name: 'latestSubscriber' },
-      defaults: { value },
-    })
-
-    if (!created) {
-      await instance.update({ value })
+    let instance = await orm.em.fork().getRepository(Settings).findOne({ space: 'twitch', name: 'latestSubscriber' })
+    if (!instance) {
+      instance = orm.em.fork().getRepository(Settings).create({ space: 'twitch', name: 'latestSubscriber' })
     }
+    instance.value = value as any
+    await orm.em.fork().persistAndFlush(instance)
   }
 
   async onReSubscribe(data: INewResubscriber) {
     const value = { username: data.username, tier: data.tier, timestamp: Date.now(), months: data.months, overallMonths: data.overallMonths }
     this.channelMetaData.latestReSubscriber = value
 
-    const [instance, created]: [Settings, boolean] = await Settings.findOrCreate({
-      where: { space: 'twitch', name: 'latestReSubscriber' },
-      defaults: { value },
-    })
-
-    if (!created) {
-      await instance.update({ value })
+    let instance = await orm.em.fork().getRepository(Settings).findOne({ space: 'twitch', name: 'latestReSubscriber' })
+    if (!instance) {
+      instance = orm.em.fork().getRepository(Settings).create({ space: 'twitch', name: 'latestReSubscriber' })
     }
+    instance.value = value as any
+    await orm.em.fork().persistAndFlush(instance)
   }
 }
+
+export default new Twitch()

@@ -2,8 +2,9 @@ import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/Tw
 import safeEval from 'safe-eval'
 import axios from 'axios'
 import _ from 'lodash'
-import User from '@bot/models/User'
+import { User } from '@bot/entities/User'
 import tmi from '@bot/libs/tmi'
+import { orm } from '../libs/db'
 
 export default async ({ raw, message, param }: { raw: TwitchPrivateMessage, message: string, param: string }) => {
   const toEval = `(async function evaluation () { ${message} })()`
@@ -12,7 +13,7 @@ export default async ({ raw, message, param }: { raw: TwitchPrivateMessage, mess
     sender: raw.userInfo.userName,
     param,
     _,
-    user: await User.findOne({ where: { id: raw.userInfo.userId }}) || {},
+    user: await orm.em.fork().fork().getRepository(User).findOne({ id: Number(raw.userInfo.userId) }) || {},
     say: (message: string) => tmi.say({ message }),
     timeout: (username, duration) => tmi.timeout({ username, duration }),
   }

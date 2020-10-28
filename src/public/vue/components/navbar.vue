@@ -74,13 +74,13 @@ export default class NavBar extends Vue {
   }
 
   get tipsFormatted() {
-    if (!(this.$root as any).loggedUser.tips) return 0
+    if (!this.$store.state.loggedUser.tips) return 0
 
     const result = new Intl.NumberFormat(this.getLocale(), {
       currencyDisplay: 'symbol',
       style: 'currency',
       currency: this.mainCurrency
-      }).format(Number((this.$root as any).loggedUser.tips))
+      }).format(Number(this.$store.state.loggedUser.tips))
 
     return result.replace(/\s/, '')
   }

@@ -10,20 +10,32 @@
   "price": {
     "notEnought": "$0 not enought points for using this command."
   },
-  "ui": {
-    "navbar": {
-      "viewers": "Viewers",
-      "views": "Views",
-      "uptime": "Uptime",
-      "category": "Category",
-      "title": "Title"
+  "commands": {
+    "help": {
+      "description": "Showing description of command.",
+      "commandNotFound": "$sender command \"$0\" not found",
+      "hasNoDescription": "$sender command \"$0\" has no description",
+      "response": "$sender description of command \"$0\": $1"
     },
-    "users": {
-      "points": "Points",
-      "messages": "Messages",
-      "watched": "Watched",
-      "bits": "Bits",
-      "tips": "Tips"
+    "permit": {
+      "description": "Give user permission to post 1 link."
+    },
+    "sayb": {
+      "description": "Say something from broadcaster."
+    },
+    "ignore": {
+      "add": {
+        "description": "Add user to ignore-list."
+      },
+      "remove": {
+        "description": "Remove user from ignore-list."
+      }
+    },
+    "title": {
+      "description": "Set title of stream."
+    },
+    "category": {
+      "description": "Set category of stream."
     }
   }
 }

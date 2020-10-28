@@ -1,27 +1,29 @@
 import axios from 'axios'
 
 import { Integration } from 'typings'
-import Settings from '@bot/models/Settings'
-import User  from '@bot/models/User'
-import UserTips from '@bot/models/UserTips'
+import { User }  from '@bot/entities/User'
+import { UserTip } from '@bot/entities/UserTip'
 import currency from '@bot/libs/currency'
 import { onDonation } from '@bot/libs/eventsCaller'
 import { info, error } from '@bot/libs/logger'
+import { orm } from '@bot/libs/db'
+import { onChange, settings } from '../decorators'
 
-export default new class Qiwi implements Integration {
+class Qiwi implements Integration {
   pollTimeout: NodeJS.Timeout = null
+
+  @settings()
+  enabled = false
+
+  @settings()
   token: string = null
 
+  @onChange(['enabled', 'token'])
   async init() {
     clearTimeout(this.pollTimeout)
-    const [enabled, token]: [Settings, Settings] = await Promise.all([
-      Settings.findOne({ where: { space: 'qiwi', name: 'enabled' } }),
-      Settings.findOne({ where: { space: 'qiwi', name: 'token' } }),
-    ])
 
-    if (!enabled || !token || !token?.value.trim().length) return
+    if (!this.enabled || !this.token) return
     info('QIWI: Successfuly initiliazed')
-    this.token = token.value
     this.poll()
   }
 
@@ -38,17 +40,19 @@ export default new class Qiwi implements Integration {
         const inComingCurrency = event.attributes.DONATION_CURRENCY
         const message = event.attributes.DONATION_MESSAGE ?? ''
 
-        const user: User = await User.findOne({ where: { username: sender.toLowerCase() }})
+        const user = await orm.em.fork().getRepository(User).findOne({ username: sender.toLowerCase() })
         if (user) {
-          UserTips.create({
+          const tip = orm.em.fork().getRepository(UserTip).create({
             userId: user.id,
-            amount,
+            amount: event.attributes.DONATION_AMOUNT,
             rates: currency.rates,
             currency: inComingCurrency,
             inMainCurrencyAmount: currency.exchange({ from: inComingCurrency, amount }),
             message,
             timestamp: Date.now(),
-          }).catch(error)
+            user,
+          })
+          await orm.em.fork().getRepository(UserTip).persistAndFlush(tip)
         }
 
         onDonation({
@@ -62,13 +66,9 @@ export default new class Qiwi implements Integration {
         })
       }
     } catch (e) {
-      error(e)
+      error(`QIWI: ` + e.message)
     }
   }
-
-  listenDbUpdates() {
-    Settings.afterUpdate(instance => {
-      if (instance.space === 'qiwi') this.init()
-    })
-  }
 }
+
+export default new Qiwi()

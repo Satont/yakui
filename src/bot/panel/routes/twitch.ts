@@ -12,6 +12,14 @@ router.get('/webhooks/callback', (req, res) => {
   res.send(req.query['hub.challenge'])
 })
 
+const cache = {
+  followers: [],
+}
+
+setInterval(() => {
+  cache.followers = []
+}, 30 * 60 * 1000)
+
 router.post('/webhooks/callback', (req, res) => {
   try {
     for (const item of req.body.data) {
@@ -21,8 +29,9 @@ router.post('/webhooks/callback', (req, res) => {
       } else if (item.event_type === 'moderation.moderator.remove') {
         onRemoveModerator(item as IWebHookModeratorRemove)
         continue
-      } else if (item.from_id && item.to_id) {
+      } else if (item.from_id && item.to_id && !cache.followers.includes(item.from_id)) {
         onUserFollow(item as IWebHookUserFollow)
+        cache.followers.push(item.from_id)
         continue
       } else if (item.thumbnail_url) {
         onStreamChange(item as IWebHookStreamChanged)

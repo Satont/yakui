@@ -31,7 +31,7 @@
         {{ data.value }}
       </template>
 
-      <template v-slot:cell(actions)="data" v-if="$store.state.loggedUser.userType === 'admin' && !isPublic()">
+      <template v-slot:cell(actions)="data" v-if="canEditUser()">
       <b-button-group size="sm">
         <b-button @click="editUser(data.item)" variant="info"><i class="fas fa-pen"></i></b-button>
         <b-button @click="del(data.item.index, data.item.id)" variant="danger"><i class="fas fa-trash"></i></b-button>
@@ -47,7 +47,7 @@ import { Vue, Component, Mixins } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import { EnvChecker } from '../helpers/mixins'
 
-import User from '@bot/models/User'
+import { User } from '@bot/entities/User'
 
 @Component({
   mixins: [EnvChecker]
@@ -65,9 +65,9 @@ export default class UsersManagerList extends Mixins(EnvChecker) {
     { key: 'index', label: '#', tdClass: 'indexes' },
     { key: 'username', sortable: true },
     { key: 'messages', sortable: true },
-    { key: 'watched', sortable: true, label: 'Watched (hours)', formatter: value => this.watchedHours(value) },
-    { key: 'totalTips', sortable: false, label: 'tips' },
-    { key: 'totalBits', sortable: false, label: 'bits' },
+    { key: 'watched', sortable: true, label: 'Watched', formatter: value => this.watchedHours(value) },
+    { key: 'tips', sortable: true, label: 'Tips', formatter: value => this.tipsFormat(value) },
+    { key: 'bits', sortable: true, label: 'Bits' },
     { key: 'points', sortable: true },
   ]
 
@@ -77,6 +77,10 @@ export default class UsersManagerList extends Mixins(EnvChecker) {
     if (!this.isPublic()) {
       this.fields.push({ key: 'actions', sortable: false, label: 'Actions' })
     }
+  }
+
+  canEditUser() {
+    return this.$store.state.loggedUser?.userType === 'admin' && !this.isPublic()
   }
 
   async editUser(params) {
@@ -113,6 +117,18 @@ export default class UsersManagerList extends Mixins(EnvChecker) {
     const minutes = Number(time) / (1 * 60 * 1000)
     const hours = (minutes / 60).toFixed(1)
     return `${hours}h`
+  }
+
+  tipsFormat(value) {
+    return new Intl.NumberFormat(this.getLocale(), {
+      currencyDisplay: 'symbol',
+      style: 'currency',
+      currency: this.$store.state.metaData.mainCurrency
+    }).format(value)
+  }
+
+  getLocale() {
+    return (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.language
   }
 
 }

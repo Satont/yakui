@@ -1,17 +1,45 @@
-import axios from 'axios'
-import Settings from '@bot/models/Settings'
+import axios, { AxiosError } from 'axios'
 import { info, error } from './logger'
+import { onChange, settings } from '../decorators'
+import tmi from './tmi'
 
-export default new class Oauth {
-  async validate (token: string | null, type: 'bot' | 'broadcaster') {
-    if (!token) {
-      throw `Token for ${type} was not provided, starting updating`
-    }
+class OAuth {
+  @settings()
+  channel: string = null
 
+  @settings()
+  botAccessToken: string = null
+
+  @settings()
+  botRefreshToken: string = null
+
+  @settings()
+  broadcasterAccessToken: string = null
+
+  @settings()
+  broadcasterRefreshToken: string = null
+
+  @onChange('channel')
+  callTmi() {
+    tmi.connect('bot')
+    tmi.connect('broadcaster')
+  }
+
+  @onChange(['botAccessToken', 'botRefreshToken'])
+  callBotConnect() {
+    tmi.connect('bot')
+  }
+
+  @onChange(['broadcasterAccessToken', 'broadcasterRefreshToken'])
+  callBroadcasterConnect() {
+    tmi.connect('broadcaster')
+  }
+
+  async validate(type: 'bot' | 'broadcaster') {
     try {
       const { data } = await axios.get('https://id.twitch.tv/oauth2/validate', { headers: {
-        'Authorization': `OAuth ${token}`,
-      }})
+        'Authorization': `OAuth ${this[`${type}AccessToken`]}`,
+      } })
 
       return {
         clientId: data.client_id,
@@ -20,27 +48,17 @@ export default new class Oauth {
         scopes: data.scopes,
       }
     } catch (e) {
-      error(e)
-      throw (`Can't validate access token of ${type}`)
+      error((e as AxiosError).response.data ? e.response.data : e)
+      throw `Can't validate access token of ${type}`
     }
   }
 
-  async refresh(token: string, type: 'bot' | 'broadcaster') {
+  async refresh(type: 'bot' | 'broadcaster') {
     try {
-      const { data } = await axios.get('http://bot.satont.ru/api/refresh?refresh_token=' + token)
+      const { data } = await axios.get('http://bot.satont.ru/api/refresh?refresh_token=' + this[`${type}RefreshToken`])
 
-      const [accessToken, accessTokenCreated]: [Settings, boolean] = await Settings.findOrCreate({ 
-        where: { space: 'oauth', name: `${type}AccessToken` },
-        defaults: { space: 'oauth', name: `${type}AccessToken`, value: data.token },
-      })
-
-      const [refreshToken, refreshTokenCreated]: [Settings, boolean] = await Settings.findOrCreate({ 
-        where: { space: 'oauth', name: `${type}RefreshToken` },
-        defaults: { space: 'oauth', name: `${type}RefreshToken`, value: data.refresh },
-      })
-
-      if (!accessTokenCreated) await accessToken.update({ value: data.token })
-      if (!refreshTokenCreated) await refreshToken.update({ value: data.refresh })
+      this[`${type}AccessToken`] = data.token
+      this[`${type}RefreshToken`]  = data.refresh
 
       info(`Access token of ${type} was refreshed.`)
       return {
@@ -49,7 +67,9 @@ export default new class Oauth {
       }
     } catch (e) {
       error(e)
-      throw new Error(`Can't refresh access token of ${type}`)
+      throw `Can't refresh access token of ${type}`
     }
   }
 }
+
+export default new OAuth()

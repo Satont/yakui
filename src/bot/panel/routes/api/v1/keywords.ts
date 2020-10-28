@@ -1,8 +1,9 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
-import Keyword from '@bot/models/Keyword'
+import { Keyword } from '@bot/entities/Keyword'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
 import cache from '@bot/libs/cache'
+import { RequestContext, wrap } from '@mikro-orm/core'
 
 const router = Router({
   mergeParams: true,
@@ -56,20 +57,17 @@ router.post('/', isAdmin, checkSchema({
     validationResult(req).throw()
     const body = req.body
 
-    let keyword: Keyword
+    const repository = RequestContext.getEntityManager().getRepository(Keyword)
+    const keyword = body.id ? await repository.findOne({ id: body.id }) : repository.create(body)
 
-    if (body.id) keyword = await Keyword.findOne({ where: { id: body.id } })
-    else keyword = await Keyword.create(body)
-
-    if (body.id) {
-      await keyword.update({
-        name: body.name,
-        enabled: body.enabled,
-        response: body.response,
-        cooldown: body.cooldown,
-      })
-    }
+    wrap(keyword).assign({
+      name: body.name,
+      enabled: body.enabled,
+      response: body.response,
+      cooldown: body.cooldown,
+    })
     
+    await repository.persistAndFlush(keyword)
     await cache.updateKeywords()
     res.json(keyword)
   } catch (e) {
@@ -85,8 +83,9 @@ router.delete('/', isAdmin, checkSchema({
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
-    await Keyword.destroy({ where: { id: req.body.id }})
-    
+    const repository = RequestContext.getEntityManager().getRepository(Keyword)
+
+    await repository.removeAndFlush(await repository.findOne({ id: req.body.id }))
     await cache.updateKeywords()
     res.send('Ok')
   } catch (e) {

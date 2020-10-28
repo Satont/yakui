@@ -2,12 +2,14 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dest",
+    "declaration": true
   },
   "include": [
     "./**/*.js",
-    "./**/*.ts",
+    "./**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "../typings"
   ]
 }

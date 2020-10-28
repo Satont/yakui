@@ -1,25 +1,17 @@
-import { System, Command, CommandOptions, ParserOptions, UserPermissions } from 'typings'
-import { Warnings, ISettings } from 'typings/moderation'
+import { System, CommandOptions, ParserOptions, UserPermissions } from 'typings'
 import tmi from '@bot/libs/tmi'
-import Settings from '@bot/models/Settings'
+import tlds from 'tlds'
+import { CommandPermission } from '@bot/entities/Command'
+import users from './users'
+import { settings } from '../decorators'
+import { parser } from '../decorators/parser'
+import { command } from '../decorators/command'
 
-const urlRegexp = /(www)? ??\.? ?[a-zA-Z0-9]+([a-zA-Z0-9-]+) ??\. ?(aero|bet|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|money|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|sk|sl|sm|sn|so|sr|st|su|sv|sy|sz|tc|td|tf|tg|th|tj|tk|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|um|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zr|zw)\b/gi
+/* const urlRegexp = /(www)? ??\.? ?[a-zA-Z0-9]+([a-zA-Z0-9-]+) ??\. ?(aero|bet|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|money|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|sk|sl|sm|sn|so|sr|st|su|sv|sy|sz|tc|td|tf|tg|th|tj|tk|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|um|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zr|zw)\b/gi */
+const urlRegexp = new RegExp(`(www)? ??\\.? ?[a-zA-Z0-9]+([a-zA-Z0-9-]+) ??\\. ?(${tlds.join('|')})`, 'giu')
 const symbolsRegexp = /([^\s\u0500-\u052F\u0400-\u04FF\w]+)/g
 
-export default new class Moderation implements System {
-  parsers = [
-    { fnc: this.parse },
-  ]
-  commands: Command[] = [
-    {
-      name: 'permit',
-      fnc: this.permit,
-      permission: 'moderators',
-      visible: false,
-      description: 'Give target user 1 permit.',
-    },
-  ]
-
+class Moderation implements System {
   permits: string[] = []
   warnings: Warnings = {
     links: [],
@@ -31,16 +23,128 @@ export default new class Moderation implements System {
     emotes: [],
   }
 
-  settings: ISettings | null = null
+  @settings()
+  enabled = false
 
-  async init() {
-    const settings: Settings[] = await Settings.findAll({ where: { space: 'moderation' } })
-    if (!settings.length) return
-    this.settings = {} as any
+  @settings()
+  links: ILinks = {
+    enabled: false,
+    subscribers: false,
+    vips: false,
+    clips: false,
+    timeout: {
+      time: 600,
+      message: 'links disallowed',
+    },
+    warning: {
+      time: 1,
+      message: 'links disallowed [warn]',
+    },
+  }
 
-    for (const item of settings) {
-      this.settings[item.name] = item.value
-    }
+  @settings()
+  blacklist: IBlackList = {
+    enabled: false,
+    subscribers: false,
+    vips: false,
+    values: [],
+    timeout: {
+      time: 600,
+      message: 'some word in blacklist',
+    },
+    warning: {
+      time: 1,
+      message: 'some word in blacklist [warn]',
+    },
+  }
+
+  @settings()
+  symbols: ISymbols = {
+    enabled: false,
+    subscribers: false,
+    vips: false,
+    trigger: {
+      length: 15,
+      percent: 50,
+    },
+    timeout: {
+      time: 600,
+      message: 'so much symbols',
+    },
+    warning: {
+      time: 1,
+      message: 'so much symbols [warn]',
+    },
+  }
+
+  @settings()
+  longMessage: ILongMessage = {
+    enabled: false,
+    subscribers: false,
+    vips: false,
+    trigger: {
+      length: 15,
+    },
+    timeout: {
+      time: 600,
+      message: 'so long message',
+    },
+    warning: {
+      time: 1,
+      message: 'so long message [warn]',
+    },
+  }
+
+  @settings()
+  caps: ICaps = {
+    enabled: false,
+    subscribers: false,
+    vips: false,
+    trigger: {
+      length: 15,
+      percent: 50,
+    },
+    timeout: {
+      time: 600,
+      message: 'caps disallowed',
+    },
+    warning: {
+      time: 1,
+      message: 'caps disallowed [warn]',
+    },
+  }
+
+  @settings()
+  emotes: IEmotes = {
+    enabled: false,
+    subscribers: false,
+    vips: false,
+    trigger: {
+      length: 10,
+    },
+    timeout: {
+      time: 600,
+      message: 'so much emotes',
+    },
+    warning: {
+      time: 1,
+      message: 'so much emotes [warn]',
+    },
+  }
+
+  @settings()
+  color = {
+    enabled: false,
+    subscribers: false,
+    vips: false,
+    timeout: {
+      time: 600,
+      message: 'colored messages disallowed',
+    },
+    warning: {
+      time: 1,
+      message: 'colored messages disallowed [warn]',
+    },
   }
 
   onStreamEnd() {
@@ -58,27 +162,34 @@ export default new class Moderation implements System {
     this.warnings[type].splice(this.warnings[type].indexOf(username.toLowerCase()), 1)
   }
 
+  @command({
+    name: 'permit',
+    permission: CommandPermission.MODERATORS,
+    visible: false,
+    description: 'commands.permit.description',
+  })
   async permit(opts: CommandOptions) {
     this.permits.push(opts.argument.trim())
 
     return `$sender permit added for ${opts.argument}`
   }
 
+  @parser()
   async parse(opts: ParserOptions) {
-    if (!this.settings || !this.settings.enabled) return false
-    const userPermissions = tmi.getUserPermissions(opts.raw.userInfo.badges, opts.raw)
+    if (!this.enabled) return false
+    const userPermissions = users.getUserPermissions(opts.raw.userInfo.badges, opts.raw)
     if (userPermissions.broadcaster || userPermissions.moderators) return false
-    if (await this.blacklist(opts, userPermissions)) return true
-    if (await this.links(opts, userPermissions)) return true
-    if (await this.symbols(opts, userPermissions)) return true
-    if (await this.longMessage(opts, userPermissions)) return true
-    if (await this.caps(opts, userPermissions)) return true
+    if (await this.blacklistParser(opts, userPermissions)) return true
+    if (await this.linksParser(opts, userPermissions)) return true
+    if (await this.symbolsParser(opts, userPermissions)) return true
+    if (await this.longMessageParser(opts, userPermissions)) return true
+    if (await this.capsParser(opts, userPermissions)) return true
     //if (await this.color(opts, userPermissions)) return true
-    if (await this.emotes(opts, userPermissions)) return true
+    if (await this.emotesParser(opts, userPermissions)) return true
   }
 
-  async links(opts: ParserOptions, permissions: UserPermissions) {
-    const settings = this.settings.links
+  async linksParser(opts: ParserOptions, permissions: UserPermissions) {
+    const settings = this.links
 
     if (!settings?.enabled) return false
     if (!settings?.subscribers && permissions.subscribers) return false
@@ -98,7 +209,7 @@ export default new class Moderation implements System {
     if (this.doesWarned({ type, username })) {
       tmi.timeout({ username, duration: settings.timeout.time, reason: settings.timeout.message })
 
-      this.removeFromWarned({ type, username})
+      this.removeFromWarned({ type, username })
       return true
     } else {
       tmi.timeout({ username, duration: settings.warning.time, reason: settings.warning.message })
@@ -106,8 +217,8 @@ export default new class Moderation implements System {
       return true
     }
   }
-  async symbols(opts: ParserOptions, permissions: UserPermissions) {
-    const settings = this.settings.symbols
+  async symbolsParser(opts: ParserOptions, permissions: UserPermissions) {
+    const settings = this.symbols
 
     if (!settings?.enabled) return false
     if (!settings?.subscribers && permissions.subscribers) return false
@@ -135,7 +246,7 @@ export default new class Moderation implements System {
     if (this.doesWarned({ type, username })) {
       tmi.timeout({ username, duration: settings.timeout.time, reason: settings.timeout.message })
 
-      this.removeFromWarned({ type, username})
+      this.removeFromWarned({ type, username })
       return true
     } else {
       tmi.timeout({ username, duration: settings.warning.time, reason: settings.warning.message })
@@ -144,8 +255,8 @@ export default new class Moderation implements System {
     }
   }
 
-  async longMessage(opts: ParserOptions, permissions: UserPermissions) {
-    const settings = this.settings.longMessage
+  async longMessageParser(opts: ParserOptions, permissions: UserPermissions) {
+    const settings = this.longMessage
 
     if (!settings?.enabled) return false
     if (!settings?.subscribers && permissions.subscribers) return false
@@ -159,7 +270,7 @@ export default new class Moderation implements System {
     if (this.doesWarned({ type, username })) {
       tmi.timeout({ username, duration: settings.timeout.time, reason: settings.timeout.message })
 
-      this.removeFromWarned({ type, username})
+      this.removeFromWarned({ type, username })
       return true
     } else {
       tmi.timeout({ username, duration: settings.warning.time, reason: settings.warning.message })
@@ -168,8 +279,8 @@ export default new class Moderation implements System {
     }
   }
 
-  async caps(opts: ParserOptions, permissions: UserPermissions) {
-    const settings = this.settings.caps
+  async capsParser(opts: ParserOptions, permissions: UserPermissions) {
+    const settings = this.caps
 
     if (!settings?.enabled) return false
     if (!settings?.subscribers && permissions.subscribers) return false
@@ -201,7 +312,7 @@ export default new class Moderation implements System {
     if (this.doesWarned({ type, username })) {
       tmi.timeout({ username, duration: settings.timeout.time, reason: settings.timeout.message })
 
-      this.removeFromWarned({ type, username})
+      this.removeFromWarned({ type, username })
       return true
     } else {
       tmi.timeout({ username, duration: settings.warning.time, reason: settings.warning.message })
@@ -210,8 +321,8 @@ export default new class Moderation implements System {
     }
   }
 
-  async emotes(opts: ParserOptions, permissions: UserPermissions) {
-    const settings = this.settings.emotes
+  async emotesParser(opts: ParserOptions, permissions: UserPermissions) {
+    const settings = this.emotes
 
     if (!settings?.enabled) return false
     if (!settings?.subscribers && permissions.subscribers) return false
@@ -226,7 +337,7 @@ export default new class Moderation implements System {
     if (this.doesWarned({ type, username })) {
       tmi.timeout({ username, duration: settings.timeout.time, reason: settings.timeout.message })
 
-      this.removeFromWarned({ type, username})
+      this.removeFromWarned({ type, username })
       return true
     } else {
       tmi.timeout({ username, duration: settings.warning.time, reason: settings.warning.message })
@@ -235,8 +346,8 @@ export default new class Moderation implements System {
     }
   }
 
-  async color(opts: ParserOptions, permissions: UserPermissions) {
-    const settings = this.settings.color
+  async colorParser(opts: ParserOptions, permissions: UserPermissions) {
+    const settings = this.color
 
     if (!settings?.enabled) return false
     if (!settings?.subscribers && permissions.subscribers) return false
@@ -250,7 +361,7 @@ export default new class Moderation implements System {
     if (this.doesWarned({ type, username })) {
       tmi.timeout({ username, duration: settings.timeout.time, reason: settings.timeout.message })
 
-      this.removeFromWarned({ type, username})
+      this.removeFromWarned({ type, username })
       return true
     } else {
       tmi.timeout({ username, duration: settings.warning.time, reason: settings.warning.message })
@@ -259,8 +370,8 @@ export default new class Moderation implements System {
     }
   }
 
-  async blacklist(opts: ParserOptions, permissions: UserPermissions) {
-    const settings = this.settings.blacklist
+  async blacklistParser(opts: ParserOptions, permissions: UserPermissions) {
+    const settings = this.blacklist
 
     if (!settings?.enabled) return false
     if (!settings?.subscribers && permissions.subscribers) return false
@@ -276,7 +387,7 @@ export default new class Moderation implements System {
 
       if (this.doesWarned({ type, username })) {
         tmi.timeout({ username, duration: settings.timeout.time, reason: settings.timeout.message })
-        this.removeFromWarned({ type, username})
+        this.removeFromWarned({ type, username })
       } else {
         tmi.timeout({ username, duration: settings.warning.time, reason: settings.warning.message })
         this.warnings[type].push(username)
@@ -288,8 +399,57 @@ export default new class Moderation implements System {
 
     return result
   }
+}
 
-  listenDbUpdates() {
-    Settings.afterSave(value => value.space === 'moderation' ? this.init() : undefined)
+export default new Moderation()
+
+export interface Warnings {
+  [x: string]: string[],
+}
+
+export interface ITimeoutWarning {
+  time: number,
+  message: string
+}
+
+export interface IDefaultSettings {
+  enabled: boolean,
+  subscribers: boolean,
+  vips: boolean,
+  timeout: ITimeoutWarning,
+  warning: ITimeoutWarning,
+}
+
+export interface ILinks extends IDefaultSettings {
+  clips: boolean,
+}
+
+export interface ISymbols extends IDefaultSettings {
+  trigger: {
+    length: number,
+    percent: number,
   }
+}
+
+export interface ILongMessage extends IDefaultSettings {
+  trigger: {
+    length: number,
+  }
+}
+
+export interface ICaps extends IDefaultSettings {
+  trigger: {
+    length: number,
+    percent: number,
+  }
+}
+
+export interface IEmotes extends IDefaultSettings {
+  trigger: {
+    length: number,
+  }
+}
+
+export interface IBlackList extends IDefaultSettings {
+  values: string[]
 }

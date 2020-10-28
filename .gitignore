@@ -7,3 +7,5 @@ src/bot/customSystems/*
 !src/bot/customSystems/.gitkeep
 logs
 public/*.html
+temp
+test.ts

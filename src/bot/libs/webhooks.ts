@@ -1,23 +1,17 @@
 import tmi from './tmi'
-import Settings from '@bot/models/Settings'
 import { info, error } from './logger'
+import general from '../settings/general'
 
 export default new class WebHooks {
   private callBackUrl: string = null
   private validityInSeconds = 864000
   private initTimeout: NodeJS.Timeout = null
 
-  constructor() {
-    this.listenDbUpdates()
-    this.init()
-  }
-
   async init() {
-    clearTimeout(this.initTimeout)
-    const url: Settings = await Settings.findOne({ where: { space: 'general', name: 'siteUrl' } })
-    if (!url) return
+    const url = general.siteUrl
+    if (url.includes('localhost')) return
 
-    this.callBackUrl = `${url.value}/twitch/webhooks/callback`
+    this.callBackUrl = `${url}/twitch/webhooks/callback`
     if (!tmi.channel?.id) return setTimeout(() => this.init(), 5000)
     this.unsubscribe('follows').then(() => this.subscribe('follows'))
     this.unsubscribe('streams').then(() => this.subscribe('streams'))
@@ -84,13 +78,5 @@ export default new class WebHooks {
     }
 
     return true
-  }
-
-  listenDbUpdates() {
-    Settings.afterUpdate(instance => {
-      if (instance.space === 'general' && instance.name === 'siteUrl') {
-        this.init()
-      }
-    })
   }
 }

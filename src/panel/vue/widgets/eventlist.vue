@@ -1,7 +1,7 @@
 <template>
   <b-list-group>
     <div v-if="events.length === 0" aria-atomic="true" class="alert alert-danger m-2 p-2">Eventlist is currently empty</div>
-    <b-list-group-item v-for="event of events" v-bind:key="event.id">
+    <b-list-group-item v-for="event of events.filter(e => avaliableEvents.includes(e.name))" v-bind:key="event.id">
       <div class="d-flex w-100 justify-content-between">
         <h5 class="mb-1">
           <i
@@ -36,7 +36,7 @@
 
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator'
-import EventList from '../../../bot/models/EventList'
+import { EventList } from '@src/bot/entities/EventList'
 import humanizeDuration from 'humanize-duration'
 import { Socket } from 'vue-socket.io-extended'
 import { getNameSpace } from '../plugins/socket'
@@ -50,8 +50,8 @@ import { sortBy } from 'lodash'
 export default class Events extends Vue {
   title = 'EventList'
   events: EventList[] = []
-  sortedEvents = []
   socket = getNameSpace({ name: 'widgets/eventlist' })
+  avaliableEvents = ['tip', 'sub', 'resub', 'newmod', 'removemod', 'hosted', 'raided', 'follow']
 
   async created() {
     const { data } = await this.$axios.get('/eventlist')
@@ -59,7 +59,7 @@ export default class Events extends Vue {
   }
 
   humanize(val) {
-    return humanizeDuration(Date.now() - val, { units: ['mo', 'd', 'h', 'm', 's'], round: true, language: (this.$root as any).metadata.lang })
+    return humanizeDuration(Date.now() - val, { units: ['mo', 'd', 'h', 'm', 's'], round: true, language: this.$store.state.metaData.lang })
   }
 
   mounted() {

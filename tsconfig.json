@@ -2,9 +2,13 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
+      "@/*": ["./*"],
+      "@src/*": ["src/*"],
       "@bot/*": ["src/bot/*"],
       "@panel/*": ["src/panel/*"],
-      "@login/*": ["src/login/*"]
+      "@login/*": ["src/login/*"],
+      "typings": ["typings"],
+      "@typings": ["src/typings/*"]
     },
     "target": "es6",
     "module": "commonjs",
@@ -15,16 +19,18 @@
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
     "typeRoots" : [
-      "typings",
-      "node_modules/@types"
+      "node_modules/@types",
+      "typings"
     ]
   },
   "include": [
     "./",
     "./src",
     "src/**/*.ts",
-    "src/**/*.vue",
-    "src/**/*.svg",
+    "src/**/*.vue"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "src/typings"
+  ]
 }

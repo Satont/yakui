@@ -2,49 +2,42 @@ import SpotifyApi from 'spotify-web-api-node'
 import axios from 'axios'
 
 import { Integration } from 'typings'
-import Settings from '@bot/models/Settings'
 import { info, error } from '@bot/libs/logger'
+import { onChange, settings } from '../decorators'
 
-
-export default new class Spotify implements Integration {
+class Spotify implements Integration {
   client: SpotifyApi | null = null
   private refreshTimeout: NodeJS.Timeout = null
 
+  @settings()
+  access_token: string = null
+
+  @settings()
+  refresh_token: string = null
+
+  @settings()
+  enabled = false
+  
+  @onChange(['enabled', 'access_token', 'refresh_token'])
   async init() {
-    clearInterval(this.refreshTimeout)
-    const [access_token, refresh_token, enabled]: [Settings, Settings, Settings] = await Promise.all([
-      Settings.findOne({ where: { space: 'spotify', name: 'access_token' }}),
-      Settings.findOne({ where: { space: 'spotify', name: 'refresh_token' }}),
-      Settings.findOne({ where: { space: 'spotify', name: 'enabled' }}),
-    ])
+    if (!this.access_token || !this.refresh_token || !this.enabled) return
 
-    if (!access_token || !refresh_token || !enabled) return
-    if (!access_token.value.trim().length || !access_token.value.trim().length) return
-
-    if (this.client) this.client = null
-
-    this.client = new SpotifyApi({ 
-      accessToken: access_token.value,
-    })
+    this.client = new SpotifyApi()
+    await this.refreshTokens()
 
     info('SPOTIFY: Successfuly initiliazed.')
-
-    this.refreshTokens()
   }
 
   private async refreshTokens() {
-    clearInterval(this.refreshTimeout)
-    this.refreshTimeout = setTimeout(() => this.refreshTokens(), 1 * 60 * 60 * 1000)
-
+    clearTimeout(this.refreshTimeout)
+    this.refreshTimeout = setTimeout(() => this.refreshTokens(), 15 * 60 * 1000)
+    if (!this.refresh_token) return
     try {
-      const refresh_token: Settings = await Settings.findOne({ where: { space: 'spotify', name: 'refresh_token' }})
-      const request = await axios.get('https://bot.satont.ru/api/spotify-refresh-token?refresh_token=' + refresh_token.value)
+      const request = await axios.get('https://bot.satont.ru/api/spotify-refresh-token?refresh_token=' + this.refresh_token)
       const data = request.data
 
       this.client?.setAccessToken(data.access_token)
-      
-      refresh_token.update({ value: data.refresh_token })
-      Settings.update({ value: data.access_token }, { where: { space: 'spotify', name: 'access_token' } })
+
       info('SPOTIFY: refresh token and access_token updated.')
     } catch (e) {
       error(e)
@@ -59,12 +52,6 @@ export default new class Spotify implements Integration {
 
     return `${data.body.item.artists.map(o => o.name).join(', ')} — ${data.body.item.name}`
   }
-
-  listenDbUpdates() {
-    Settings.afterSave((instance) => {
-      if (instance.space !== 'spotify') return
-
-      this.init()
-    })
-  }
 }
+
+export default new Spotify()

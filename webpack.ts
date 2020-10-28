@@ -31,9 +31,9 @@ export default {
   optimization: {
     minimize: !isDev(),
     minimizer: [
-      !isDev() ? new TerserPlugin() : undefined,
-      !isDev() ? new CssMinimizerPlugin() : undefined,
-    ].filter(Boolean),
+      new TerserPlugin(),
+      new CssMinimizerPlugin(),
+    ],
   },
   module: {
     rules: [
@@ -41,12 +41,12 @@ export default {
         test: /\.svg$/,
         loader: 'vue-svg-loader',
       },
-      { 
+      {
         test: /\.vue$/i,
         loader: 'vue-loader',
       },
-      { 
-        test: /\.css$/i, 
+      {
+        test: /\.css$/i,
         use: [
           isDev() ? 'vue-style-loader' : {
             loader: MiniCssExtractPlugin.loader,
@@ -58,11 +58,11 @@ export default {
           'css-loader',
         ],
       },
-      { 
+      {
         test: /\.ts$/i,
-        use: { 
-          loader: 'ts-loader', 
-          options: { experimentalFileCaching: true, appendTsSuffixTo: [/\.vue$/] } ,
+        use: {
+          loader: 'ts-loader',
+          options: { experimentalFileCaching: true, appendTsSuffixTo: [/\.vue$/] },
         },
       },
     ],
@@ -75,7 +75,7 @@ export default {
       chunkFilename: '[id].[contenthash].css',
     }) : undefined,
     new HtmlPlugin({
-      title: 'Yakui Dashboard', filename: '../panel.html', template: 'src/panel/index.html', chunks: ['panel'],
+      filename: '../panel.html', template: 'src/panel/index.html', chunks: ['panel'],
     }),
     new HtmlPlugin({
       filename: '../login.html', template: 'src/login/index.html', chunks: ['login'],

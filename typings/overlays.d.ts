@@ -1,4 +1,4 @@
-import File from '../src/bot/models/File'
+import { File } from '@bot/entities/File'
 
 export interface IEmitAlert {
   audio?: {

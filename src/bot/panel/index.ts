@@ -5,7 +5,7 @@ import { resolve } from 'path'
 import http from 'http'
 
 import v1 from './routes/api/v1'
-import { info } from '@bot/libs/logger'
+import { error, info } from '@bot/libs/logger'
 import twitch from './routes/twitch'
 import Authorization from '@bot/systems/authorization'
 
@@ -17,6 +17,7 @@ app.use(bodyparser.urlencoded({ extended: false }))
 app.use(bodyparser.json())
 app.use('/twitch', twitch)
 app.use('/static', express.static(resolve(process.cwd(), 'public', 'dest')))
+app.use('/icons', express.static(resolve(process.cwd(), 'public', 'icons')))
 
 app.get('/login', (req, res) => {
   res.sendFile(resolve(process.cwd(), 'public', 'login.html'))
@@ -51,7 +52,7 @@ app.get('/', (req, res) => {
 })
 
 app.use((err, req: Request, res: Response, next) => {
-  console.log(err)
+  error(err)
   if (err['errors'] && !res.headersSent) {
     return res.status(400).send({ code: 'validation_error', message: 'Error on validation.', data: err['errors'] })
   } else if (!res.headersSent) {

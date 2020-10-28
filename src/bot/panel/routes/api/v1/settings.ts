@@ -1,7 +1,9 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
-import Settings from '@bot/models/Settings'
+import { Settings } from '@bot/entities/Settings'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
+import { RequestContext } from '@mikro-orm/core'
+import { loadedSystems } from '@bot/libs/loader'
 
 const router = Router({
   mergeParams: true,
@@ -16,10 +18,8 @@ router.get('/', isAdmin, checkSchema({
   try {
     validationResult(req).throw()
     const space = req.query.space as string
-
-    const settings = await Settings.findAll({
-      where: { space },
-    })
+    const repository = RequestContext.getEntityManager().getRepository(Settings)
+    const settings = await repository.find({ space })
 
     res.send(settings)
   } catch (e) {
@@ -31,16 +31,10 @@ router.post('/', isAdmin, async (req, res, next) => {
   const body: { space: string, name: string, value: any }[] = req.body
   try {
     for (const data of body) {
-      const [item, created]: [Settings, boolean] = await Settings.findOrCreate({
-        where: { space: data.space, name: data.name },
-        defaults: data,
-      })
-
-      if (!created) {
-        await item.update({ value: data.value })
-      }
+      const module = loadedSystems.find(s => s.constructor.name.toLowerCase() === data.space)
+      if (!module) continue
+      module[data.name] = data.value
     }
-
     res.send('Ok')
   } catch (e) {
     next(e)

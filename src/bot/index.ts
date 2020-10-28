@@ -1,15 +1,16 @@
 import './moduleAlias'
 import 'reflect-metadata'
 import 'source-map-support/register'
+import dotenv from 'dotenv'
+dotenv.config()
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-require('dotenv').config()
-import { connected } from '@bot/libs/db'
+import { start as dbConnect, orm } from '@bot/libs/db'
 import { error } from '@bot/libs/logger'
 
 const start = async () => {
-  if (!connected) return setTimeout(() => start(), 1000)
-  await import('@bot/libs/locales')
+  await dbConnect()
+  if (!await orm.isConnected()) return setTimeout(() => start(), 1000)
+
   await import('@bot/libs/tmi')
   await import('@bot/panel')
   await import('@bot/libs/socket')
@@ -17,7 +18,10 @@ const start = async () => {
 
 start()
 
-process.on('unhandledRejection', (reason) => error(reason))
+process.on('unhandledRejection', (reason, promise) => {
+  error(reason)
+  error(promise)
+})
 process.on('uncaughtException', (err: Error) => {
   const date = new Date().toISOString()
 

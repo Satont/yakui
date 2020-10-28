@@ -1,6 +1,6 @@
 # Yakui twitch bot
 
-![](https://img.shields.io/github/workflow/status/satont/yakui/Publish%20Docker/master?label=docker&style=for-the-badge) ![](https://img.shields.io/github/workflow/status/Satont/yakui/Build%20Web%20and%20Bot/master?style=for-the-badge) ![](https://img.shields.io/david/satont/yakui?style=for-the-badge) ![](https://discord.gg/dPm6eYb)
+![](https://img.shields.io/github/workflow/status/satont/yakui/Publish%20Docker/master?label=docker&style=for-the-badge) ![](https://img.shields.io/github/workflow/status/Satont/yakui/Build%20Web%20and%20Bot/master?style=for-the-badge) ![](https://img.shields.io/david/satont/yakui?style=for-the-badge) ![](https://discord.gg/a5XFNKq)
 
 ## Features
 
@@ -65,7 +65,7 @@ services:
 
 ## Help
 
-- [Discord server](https://discord.gg/5TFJmnr)
+- [Discord server](https://discord.gg/a5XFNKq)
 
 ## Credits
 

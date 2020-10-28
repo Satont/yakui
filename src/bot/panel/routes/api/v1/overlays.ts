@@ -2,8 +2,9 @@ import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
 import Overlays from '@bot/systems/overlays'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
-import Overlay from '@bot/models/Overlay'
+import { Overlay } from '@bot/entities/Overlay'
 import cache from '@bot/libs/cache'
+import { RequestContext, wrap } from '@mikro-orm/core'
 
 const router = Router({ mergeParams: true })
 
@@ -66,19 +67,17 @@ router.post('/', isAdmin, checkSchema({
   try {
     validationResult(req).throw()
 
-    let overlay: Overlay
-    if (req.body.id) overlay = await Overlay.findOne({ where: { id: req.body.id }})
-    else overlay = await Overlay.create(req.body)
+    const repository = RequestContext.getEntityManager().getRepository(Overlay)
+    const overlay = req.body.id ? await repository.findOne({ id: req.body.id }) : repository.create(req.body)
 
-    if (req.body.id) {
-      overlay.update({
-        name: req.body.name,
-        data: req.body.data,
-        css: req.body.css,
-        js: req.body.js,
-      })
-    }
-    
+    wrap(overlay).assign({
+      name: req.body.name,
+      data: req.body.data,
+      css: req.body.css,
+      js: req.body.js,
+    })
+
+    await repository.persistAndFlush(overlay)
     await cache.updateOverlays()
     res.json(overlay)
   } catch (e) {
@@ -94,8 +93,9 @@ router.delete('/', isAdmin, checkSchema({
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
+    const repository = RequestContext.getEntityManager().getRepository(Overlay)
+    await repository.persistAndFlush(await repository.findOne({ id: req.body.id }))
 
-    await Overlay.destroy({ where: { id: req.body.id }})
     await cache.updateOverlays()
     res.send('Ok')
   } catch (e) {

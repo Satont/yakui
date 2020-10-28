@@ -1,8 +1,8 @@
 import { readFileSync } from 'fs'
-import { resolve} from 'path'
+import { resolve } from 'path'
 import { get } from 'lodash'
-import Settings from '@bot/models/Settings'
 import { info } from './logger'
+import General from '../settings/general'
 
 const parameterizedString = (...args) => {
   const params = args.slice(1)
@@ -14,41 +14,26 @@ const langsDir = resolve(process.cwd(), 'locales')
 export default new class Locales {
   lang: Record<string, any>
 
-  constructor() {
-    this.init()
-    this.listenDbChanges()
-  }
-
   async init() {
-    const [locale]: [Settings] = await Settings.findOrCreate({
-      where: { space: 'general', name: 'locale' },
-      defaults: { value: 'ru' },
-    })
-    
-    const lang = resolve(langsDir, `${locale.value}.json`)
+    const lang = resolve(langsDir, `${General.locale}.json`)
     this.lang = JSON.parse(readFileSync(lang, 'utf-8'))
 
-    info(`LOCALES: ${this.lang.lang?.name || locale.value} lang loaded`)
+    info(`LOCALES: ${this.lang.lang?.name || General.locale} lang loaded`)
   }
 
-  translate(...args: any[]) {
+  translate(...args: any[]): string {
     const path = args[0]
     const result = get(this.lang, path, null)
-
     if (!result) return get(this.lang, 'errors.langStringNotFound')
+
     return parameterizedString(result, ...args.slice(1))
   }
 
-  listenDbChanges() {
-    Settings.afterCreate((instance) => {
-      if (instance.name !== 'locale') return
-      
-      this.init()
-    })
-    Settings.afterUpdate((instance) => {
-      if (instance.name !== 'locale') return
-      
-      this.init()
-    })
+  translateWithNulled(...args: any[]): string | null {
+    const path = args[0]
+    const result = get(this.lang, path, null)
+    if (!result) return result
+
+    return parameterizedString(result, ...args.slice(1))
   }
 }

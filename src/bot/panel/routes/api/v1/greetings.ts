@@ -1,8 +1,9 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
-import Greeting from '@bot/models/Greeting'
+import { Greeting } from '@bot/entities/Greeting'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
 import cache from '@bot/libs/cache'
+import { RequestContext, wrap } from '@mikro-orm/core'
 
 const router = Router({
   mergeParams: true,
@@ -51,20 +52,17 @@ router.post('/', isAdmin, checkSchema({
     validationResult(req).throw()
     const body = req.body
 
-    let greeting: Greeting
+    const repository = RequestContext.getEntityManager().getRepository(Greeting)
+    const greeting = body.id ? await repository.findOne({ id: Number(body.id) }) : repository.create(body)
 
-    if (body.id) greeting = await Greeting.findOne({ where: { id: body.id } })
-    else greeting = await Greeting.create(body)
-
-    if (body.id) {
-      await greeting.update({
-        username: body.username,
-        userId: body.userId ? Number(body.userId) : null,
-        message: body.message,
-        enabled: body.enabled,
-      })
-    }
-    
+    wrap(greeting).assign({
+      username: body.username,
+      userId: body.userId ? Number(body.userId) : null,
+      message: body.message,
+      enabled: body.enabled,
+    })
+ 
+    await repository.persistAndFlush(greeting)
     await cache.updateGreetings()
     res.json(greeting)
   } catch (e) {
@@ -80,7 +78,10 @@ router.delete('/', isAdmin, checkSchema({
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
-    await Greeting.destroy({ where: { id: req.body.id }})
+    const repository = RequestContext.getEntityManager().getRepository(Greeting)
+    const greeting = await repository.findOne({ id: Number(req.body.id) })
+
+    await repository.removeAndFlush(greeting)
     await cache.updateGreetings()
     res.send('Ok')
   } catch (e) {

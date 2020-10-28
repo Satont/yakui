@@ -1,119 +1,86 @@
 import { chunk as makeChunk } from 'lodash'
 
-import { System, ParserOptions, Command, CommandOptions, CommandPermission } from '../../../typings'
-import User from '@bot/models/User'
+import { System, ParserOptions, CommandOptions, UserPermissions } from 'typings'
+import { User } from '@bot/entities/User'
 import tmi from '@bot/libs/tmi'
-import UserTips from '@bot/models/UserTips'
-import UserBits from '@bot/models/UserBits'
-import UserDailyMessages from '@bot/models/UserDailyMessages'
+import { UserDailyMessages } from '@bot/entities/UserDailyMessages'
 import twitch from './twitch'
-import Settings from '@bot/models/Settings'
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
+import { orm } from '@bot/libs/db'
+import { CommandPermission } from '@bot/entities/Command'
+import { settings } from '../decorators'
+import { parser } from '../decorators/parser'
+import { command } from '../decorators/command'
 
-export default new class Users implements System {
-  settings: {
-    enabled: boolean,
-    ignoredUsers: string[],
-    admins: string[],
-    points: {
-      enabled: boolean,
-      messages: {
-        interval: number,
-        amount: number,
-      },
-      watch: {
-        interval: number,
-        amount: number,
-      }
-    }
-  } = {
+class Users implements System {
+  private countWatchedTimeout: NodeJS.Timeout = null
+  private getChattersTimeout: NodeJS.Timeout = null
+  private chatters: Array<{ username: string, id: string }> = []
+
+  @settings()
+  enabled = true
+
+  @settings()
+  ignoredUsers: string[] = []
+
+  @settings()
+  botAdmins: string[] = []
+
+  @settings()
+  points = {
     enabled: true,
-    ignoredUsers: [],
-    admins: [],
-    points: {
-      enabled: false,
-      messages: {
-        interval: 1,
-        amount: 1,
-      },
-      watch: {
-        interval: 1,
-        amount: 1,
-      },
+    messages: {
+      interval: 1,
+      amount: 1,
+    },
+    watch:{
+      interval: 1,
+      amount: 1,
     },
   }
 
-  private countWatchedTimeout: NodeJS.Timeout = null
-  private getChattersTimeout: NodeJS.Timeout = null
-
-  chatters: Array<{ username: string, id: string }> = []
-
-  parsers = [
-    { fnc: this.parseMessage },
-  ]
-  commands: Command[] = [
-    { name: 'sayb', permission: 'broadcaster', fnc: this.sayb, visible: false, description: 'Say something as broadcaster.' },
-    { name: 'ignore add', permission: 'moderators', fnc: this.ignoreAdd, visible: false, description: 'Add some username to bot ignore list' },
-    { name: 'ignore remove', permission: 'moderators', fnc: this.ignoreRemove, visible: false, description: 'Remove some username from bot ignore list' },
-  ]
 
   async init() {
-    const [enabled, ignoredUsers, points, admins]: [Settings, Settings, Settings, Settings] = await Promise.all([
-      Settings.findOne({ where: { space: 'users', name: 'enabled' } }),
-      Settings.findOne({ where: { space: 'users', name: 'ignoredUsers' } }),
-      Settings.findOne({ where: { space: 'users', name: 'points' } }),
-      Settings.findOne({ where: { space: 'users', name: 'botAdmins' } }),
-    ])
-
-    this.settings.ignoredUsers = ignoredUsers?.value?.filter(Boolean) ?? []
-    this.settings.enabled = enabled?.value ?? true
-    this.settings.admins = admins?.value ?? []
-
-    if (points) this.settings.points = points.value
-    if (!this.settings.enabled) return
-
     await this.getChatters()
     await this.countWatched()
   }
 
+  @parser()
   async parseMessage(opts: ParserOptions) {
-    if (!this.settings.enabled || opts.message.startsWith('!')) return
-    if (this.settings.ignoredUsers.includes(opts.raw.userInfo.userName)) return
-    const [pointsPerMessage, pointsInterval] = [this.settings.points.messages.amount, this.settings.points.messages.interval * 60 * 1000]
+    if (!this.enabled || opts.message.startsWith('!')) return
+    if (this.ignoredUsers?.includes(opts.raw.userInfo.userName)) return
+    if (!twitch.streamMetaData.startedAt) return
+
+    const [pointsPerMessage, pointsInterval] = [this.points.messages.amount, this.points.messages.interval * 60 * 1000]
 
     const [id, username] = [opts.raw.userInfo.userId, opts.raw.userInfo.userName]
 
-    const [user, created]: [User, boolean] = await User.findOrCreate({
-      where: { id },
-      defaults: { id, username, messages: 1 },
-    })
+    const repository = orm.em.fork().getRepository(User)
+    const user = await repository.findOne(Number(id)) || repository.assign(new User(), { id: Number(id), username, messages: 0 })
 
     user.username = opts.raw.userInfo.userName
+    user.messages +=  1
 
-    if (!created && twitch.streamMetaData?.startedAt) {
-      user.messages = user.messages + 1
-    }
-
-    const updatePoints = (Number(user.lastMessagePoints) + pointsInterval <= user.messages) && this.settings.points.enabled
+    const updatePoints = (Number(user.lastMessagePoints) + pointsInterval <= user.messages) && this.points.enabled
 
     if (updatePoints && twitch.streamMetaData?.startedAt && pointsPerMessage !== 0 && pointsInterval !== 0) {
       user.points = user.points + pointsPerMessage
       user.lastMessagePoints = new Date().getTime()
     }
 
-    user.save()
-
-    if (!twitch.streamMetaData?.startedAt) return
+    await repository.persistAndFlush(user)
 
     const now = new Date()
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
-    const [daily, isNewDailyRow]: [UserDailyMessages, boolean] = await UserDailyMessages.findOrCreate({
-      where: { userId: user.id, date: startOfDay.getTime() },
-      defaults: { count: 1 },
+    const dailyRepository = orm.em.fork().getRepository(UserDailyMessages)
+    const daily = await dailyRepository.findOne({ user: user.id, date: startOfDay.getTime() }) || dailyRepository.assign(new UserDailyMessages(), {
+      user,
+      date: startOfDay.getTime(),
     })
 
-    if (!isNewDailyRow) daily.increment({ count: 1 })
+    daily.count += 1
+    await dailyRepository.persistAndFlush(daily)
   }
 
   async getUserStats({ id, username }: { id?: string, username?: string }): Promise<User> {
@@ -122,49 +89,46 @@ export default new class Users implements System {
     if (!id) {
       const byName = await tmi?.clients?.bot?.helix.users.getUserByName(username)
       id = byName.id
+      username = byName.name
     }
 
-    let user = await User.findOne({
-      where: { id },
-      include: [UserTips, UserBits, UserDailyMessages],
-      attributes: { include: ['totalTips', 'totalTips', 'todayMessages' ]},
-    })
+    const repository = orm.em.fork().getRepository(User)
+    const user = await repository.findOne(Number(id), ['tips', 'bits', 'daily'])
 
-    if (!user) user = await User.create({
-      id,
-      username,
-    }, { include: [UserTips, UserBits, UserDailyMessages] })
+    if (user) return user
 
-    return user
+    const create = repository.assign(new User(), { id: Number(id), username })
+    await repository.persistAndFlush(create)
+    return create
   }
 
   private async countWatched() {
     clearTimeout(this.countWatchedTimeout)
     this.countWatchedTimeout = setTimeout(() => this.countWatched(), 1 * 60 * 1000)
-    const [pointsPerWatch, pointsInterval] = [this.settings.points.watch.amount, this.settings.points.watch.interval * 60 * 1000]
+    const [pointsPerWatch, pointsInterval] = [this.points.watch.amount, this.points.watch.interval * 60 * 1000]
 
-    if (!twitch.streamMetaData?.startedAt) return
+    if (!twitch.streamMetaData?.startedAt || !this.enabled) return
+
+    const repository = orm.em.fork().getRepository(User)
+    const usersForUpdate: User[] = []
 
     for (const chatter of this.chatters) {
-      if (this.settings.ignoredUsers.includes(chatter.username.toLowerCase())) continue
+      if (this.ignoredUsers?.includes(chatter.username.toLowerCase())) continue
 
-      const [user, isNewUser]: [User, boolean] = await User.findOrCreate({
-        where: { id: chatter.id },
-        defaults: { id: chatter.id, username: chatter.username, watched: 1 * 60 * 1000 },
-      })
+      const user = await repository.findOne(Number(chatter.id)) || repository.assign(new User(), { id: Number(chatter.id), username: chatter.username })
 
-      const updatePoints = (new Date().getTime() - new Date(user.lastWatchedPoints).getTime() >= pointsInterval) && this.settings.points.enabled
+      const updatePoints = (new Date().getTime() - new Date(user.lastWatchedPoints).getTime() >= pointsInterval) && this.points.enabled
 
       if (pointsPerWatch !== 0 && pointsInterval !== 0 && updatePoints) {
         user.lastWatchedPoints = new Date().getTime()
-        user.points = user.points + pointsPerWatch
+        user.points += pointsPerWatch
       }
 
-      if (!isNewUser) user.watched = user.watched + 1 * 60 * 1000
-
-      user.save()
+      user.watched += 1 * 60 * 1000
+      usersForUpdate.push(user)
     }
 
+    await repository.persistAndFlush(usersForUpdate)
   }
 
   private async getChatters() {
@@ -181,51 +145,66 @@ export default new class Users implements System {
     }
   }
 
+  @command({
+    name: 'sayb',
+    permission: CommandPermission.BROADCASTER,
+    visible: false,
+    description: 'commands.sayb.description',
+  })
   sayb(opts: CommandOptions) {
     tmi.chatClients?.broadcaster?.say(tmi.channel?.name, opts.argument)
   }
 
+  getUserPermissions(badges: Map<string, string>, raw?: TwitchPrivateMessage): UserPermissions {
+    return {
+      broadcaster: badges.has('broadcaster') || this.botAdmins?.includes(raw?.userInfo.userName),
+      moderators: badges.has('moderator'),
+      vips: badges.has('vip'),
+      subscribers: badges.has('subscriber') || badges.has('founder'),
+      viewers: true,
+    }
+  }
+
   hasPermission(badges: Map<string, string>, searchForPermission: CommandPermission, raw?: TwitchPrivateMessage) {
     if (!searchForPermission) return true
-    
-    const userPerms = Object.entries(tmi.getUserPermissions(badges, raw))
+
+    const userPerms = Object.entries(this.getUserPermissions(badges, raw))
     const commandPermissionIndex = userPerms.indexOf(userPerms.find(v => v[0] === searchForPermission))
 
     return userPerms.some((p, index) => p[1] && index <= commandPermissionIndex)
   }
 
+  @command({
+    name: 'ignore add',
+    permission: CommandPermission.MODERATORS,
+    visible: false,
+    description: 'commands.ignore.add.description',
+  })
   async ignoreAdd(opts: CommandOptions) {
     if (!opts.argument.length) return
-    const [ignoredUsers]: [Settings] = await Settings.findOrCreate({ where: { space: 'users', name: 'ignoredUsers' }, defaults: { value: [] } })
 
-    await ignoredUsers.update({ value: [...ignoredUsers.value, opts.argument.toLowerCase() ].filter(Boolean) })
+    this.ignoredUsers = [...this.ignoredUsers, opts.argument.toLowerCase()]
 
     return '$sender ✅'
   }
 
+  @command({
+    name: 'ignore remove',
+    permission: CommandPermission.MODERATORS,
+    visible: false,
+    description: 'commands.ignore.remove.description',
+  })
   async ignoreRemove(opts: CommandOptions) {
     if (!opts.argument.length) return
-    const ignoredUsers: Settings = await Settings.findOne({ where: { space: 'users', name: 'ignoredUsers' } })
 
-    if (!ignoredUsers || !ignoredUsers?.value.length) return
-    if (!ignoredUsers.value.includes(opts.argument.toLowerCase())) return
+    if (!this.ignoredUsers?.length) return
+    if (!this.ignoredUsers.includes(opts.argument.toLowerCase())) return
 
-    const users = ignoredUsers.value
-    users.splice(ignoredUsers.value.indexOf(opts.argument.toLowerCase()), 1)
-
-    await ignoredUsers.update({
-      value: users,
-    })
+    this.ignoredUsers.splice(this.ignoredUsers.indexOf(opts.argument.toLowerCase()), 1)
 
     return '$sender ✅'
   }
 
-
-  listenDbUpdates() {
-    Settings.afterSave(instance => {
-      if (instance.space !== 'users') return
-
-      this.init()
-    })
-  }
 }
+
+export default new Users()

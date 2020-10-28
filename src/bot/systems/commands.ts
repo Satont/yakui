@@ -19,4 +19,12 @@ export default new class Commands {
 
     return commands
   }
+
+  getCommandById(id: string | number) {
+    return this.getCommands().find(c => String(c.id) === String(id))
+  }
+
+  getCommandByName(name: string) {
+    return cache.commands.get(name) || cache.commandsAliases.get(name)
+  }
 }

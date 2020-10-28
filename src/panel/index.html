@@ -2,9 +2,83 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=bOXPxdmWNj">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png?v=bOXPxdmWNj">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png?v=bOXPxdmWNj">
+    <link rel="manifest" href="/icons/site.webmanifest?v=bOXPxdmWNj">
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg?v=bOXPxdmWNj" color="#333333">
+    <link rel="shortcut icon" href="/icons/favicon.ico?v=bOXPxdmWNj">
+    <meta name="msapplication-TileColor" content="#333333">
+    <meta name="msapplication-config" content="/icons/browserconfig.xml?v=bOXPxdmWNj">
+    <meta name="theme-color" content="#333333">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title><%= htmlWebpackPlugin.options.title %></title>
+    <title>Yakui</title>
+    <script src="https://kit.fontawesome.com/dc486f0102.js"></script>
+    <style>
+      body {
+        background-color: #343a40;
+      }
+      .lds-ellipsis {
+        display: inline-block;
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+      .lds-ellipsis div {
+        position: absolute;
+        top: 33px;
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: #fff;
+        animation-timing-function: cubic-bezier(0, 1, 1, 0);
+      }
+
+      .lds-ellipsis div:nth-child(1) {
+        left: 8px;
+        animation: lds-ellipsis1 0.6s infinite;
+      }
+      .lds-ellipsis div:nth-child(2) {
+        left: 8px;
+        animation: lds-ellipsis2 0.6s infinite;
+      }
+      .lds-ellipsis div:nth-child(3) {
+        left: 32px;
+        animation: lds-ellipsis2 0.6s infinite;
+      }
+      .lds-ellipsis div:nth-child(4) {
+        left: 56px;
+        animation: lds-ellipsis3 0.6s infinite;
+      }
+      @keyframes lds-ellipsis1 {
+        0% {
+          transform: scale(0);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      @keyframes lds-ellipsis3 {
+        0% {
+          transform: scale(1);
+        }
+        100% {
+          transform: scale(0);
+        }
+      }
+      @keyframes lds-ellipsis2 {
+        0% {
+          transform: translate(0, 0);
+        }
+        100% {
+          transform: translate(24px, 0);
+        }
+      }
+    </style>
   </head>
   <body>
     <noscript>
