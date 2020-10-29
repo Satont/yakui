@@ -1,9 +1,9 @@
 <template>
-  <h1>EVents</h1>
+  <h1>Events</h1>
 </template>
 
 <script>
 export default {
-  
+
 }
 </script>

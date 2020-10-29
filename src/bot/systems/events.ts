@@ -78,13 +78,10 @@ export default new class Events implements System {
   }
 
   sockets(client: SocketIO.Socket) {
-    this.clients.push(client)
-    client.on('disconnect', () => {
-      const index = this.clients.indexOf(client)
-      this.clients.splice(index, 1)
-    })
+
     client.on('getAll', async (cb) => {
-      cb(await EventList.findAll({ limit: 100, order: [['timestamp', 'desc']] }))
+      const repository = orm.em.fork().getRepository(EventList)
+      cb(await repository.findAll())
     })
   }
 

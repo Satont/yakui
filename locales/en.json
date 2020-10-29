@@ -10,6 +10,22 @@
   "price": {
     "notEnought": "$0 not enought points for using this command."
   },
+  "ui": {
+    "navbar": {
+      "viewers": "Viewers",
+      "views": "Views",
+      "uptime": "Uptime",
+      "category": "Category",
+      "title": "Title"
+    },
+    "users": {
+      "points": "Points",
+      "messages": "Messages",
+      "watched": "Watched",
+      "bits": "Bits",
+      "tips": "Tips"
+    }
+  },
   "commands": {
     "help": {
       "description": "Showing description of command.",

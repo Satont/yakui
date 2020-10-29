@@ -16,8 +16,8 @@ export default new class MetaData implements System {
   }
 
   get uptime() {
-    return !twitch.streamMetaData.startedAt 
-      ? 'offline' 
+    return !twitch.streamMetaData.startedAt
+      ? 'offline'
       : humanizeDuration(Date.now() - new Date(twitch.streamMetaData.startedAt).getTime(), { units: ['mo', 'd', 'h', 'm', 's'], round: true })
   }
 
@@ -30,7 +30,7 @@ export default new class MetaData implements System {
         startedAt: this.uptime,
       },
       mainCurrency: currency.botCurrency,
-      lang: locales.translate('lang.code'),
+      lang: locales.lang,
     }
   }
 

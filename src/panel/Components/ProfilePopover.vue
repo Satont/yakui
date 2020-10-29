@@ -1,29 +1,29 @@
 <template>
-  <b-popover 
-    target="profile-popover" 
-    triggers="click" 
-    placement="righttop" 
+  <b-popover
+    target="profile-popover"
+    triggers="click"
+    placement="righttop"
     custom-class="profile-popover"
     boundary-padding="50"
   >
     <div class="item d-flex justify-content-between">
-      <span>{{ translate('ui.users.points') }}</span> 
+      <span>{{ translate('ui.users.points') }}</span>
       <span>{{ $store.state.loggedUser.points | formatNumbersWithSpaces }}</span>
     </div>
     <div class="item d-flex justify-content-between">
-      <span>{{ translate('ui.users.messages') }}</span> 
+      <span>{{ translate('ui.users.messages') }}</span>
       <span>{{ $store.state.loggedUser.messages | formatNumbersWithSpaces }}</span>
     </div>
     <div class="item d-flex justify-content-between">
-      <span>{{ translate('ui.users.watched') }}</span> 
+      <span>{{ translate('ui.users.watched') }}</span>
       <span>{{ $store.state.loggedUser.watched }}</span>
     </div>
     <div class="item d-flex justify-content-between">
-      <span>{{ translate('ui.users.bits') }}</span> 
+      <span>{{ translate('ui.users.bits') }}</span>
       <span>{{ $store.state.loggedUser.bits | formatNumbersWithSpaces }}</span>
     </div>
     <div class="item d-flex justify-content-between">
-      <span>{{ translate('ui.users.tips') }}</span> 
+      <span>{{ translate('ui.users.tips') }}</span>
       <span>{{ $store.state.loggedUser.tips | formatNumbersWithSpaces }} {{ $store.state.metaData.mainCurrency }}</span>
     </div>
 
@@ -36,7 +36,7 @@ import { Vue, Component } from 'vue-property-decorator'
 
 @Component
 export default class ProfilePopover extends Vue {
-  
+
 }
 </script>
 
