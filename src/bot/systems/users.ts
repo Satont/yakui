@@ -15,7 +15,7 @@ import { command } from '../decorators/command'
 class Users implements System {
   private countWatchedTimeout: NodeJS.Timeout = null
   private getChattersTimeout: NodeJS.Timeout = null
-  private chatters: Array<{ username: string, id: string }> = []
+  chatters: Array<{ username: string, id: string }> = []
 
   @settings()
   enabled = true
@@ -50,7 +50,7 @@ class Users implements System {
     if (!this.enabled || opts.message.startsWith('!')) return
     if (this.ignoredUsers?.includes(opts.raw.userInfo.userName)) return
     if (!twitch.streamMetaData.startedAt) return
-  
+
     const [pointsPerMessage, pointsInterval] = [this.points.messages.amount, this.points.messages.interval * 60 * 1000]
 
     const [id, username] = [opts.raw.userInfo.userId, opts.raw.userInfo.userName]
@@ -74,10 +74,10 @@ class Users implements System {
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
     const dailyRepository = orm.em.fork().getRepository(UserDailyMessages)
-    const daily = await dailyRepository.findOne({ user: user.id, date: startOfDay.getTime() }) || dailyRepository.assign(new UserDailyMessages(), { 
-      user, 
+    const daily = await dailyRepository.findOne({ user: user.id, date: startOfDay.getTime() }) || dailyRepository.assign(new UserDailyMessages(), {
+      user,
       date: startOfDay.getTime(),
-    }) 
+    })
 
     daily.count += 1
     await dailyRepository.persistAndFlush(daily)
@@ -106,7 +106,7 @@ class Users implements System {
     clearTimeout(this.countWatchedTimeout)
     this.countWatchedTimeout = setTimeout(() => this.countWatched(), 1 * 60 * 1000)
     const [pointsPerWatch, pointsInterval] = [this.points.watch.amount, this.points.watch.interval * 60 * 1000]
-    
+
     if (!twitch.streamMetaData?.startedAt || !this.enabled) return
 
     const repository = orm.em.fork().getRepository(User)
@@ -145,7 +145,7 @@ class Users implements System {
     }
   }
 
-  @command({ 
+  @command({
     name: 'sayb',
     permission: CommandPermission.BROADCASTER,
     visible: false,
@@ -167,7 +167,7 @@ class Users implements System {
 
   hasPermission(badges: Map<string, string>, searchForPermission: CommandPermission, raw?: TwitchPrivateMessage) {
     if (!searchForPermission) return true
-    
+
     const userPerms = Object.entries(this.getUserPermissions(badges, raw))
     const commandPermissionIndex = userPerms.indexOf(userPerms.find(v => v[0] === searchForPermission))
 
@@ -178,7 +178,7 @@ class Users implements System {
     name: 'ignore add',
     permission: CommandPermission.MODERATORS,
     visible: false,
-    description: 'commands.ignore.add.description', 
+    description: 'commands.ignore.add.description',
   })
   async ignoreAdd(opts: CommandOptions) {
     if (!opts.argument.length) return
@@ -200,7 +200,7 @@ class Users implements System {
     if (!this.ignoredUsers?.length) return
     if (!this.ignoredUsers.includes(opts.argument.toLowerCase())) return
 
-    this.ignoredUsers.splice(this.ignoredUsers.indexOf(opts.argument.toLowerCase()), 1) 
+    this.ignoredUsers.splice(this.ignoredUsers.indexOf(opts.argument.toLowerCase()), 1)
 
     return '$sender ✅'
   }

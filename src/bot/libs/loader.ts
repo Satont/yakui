@@ -32,13 +32,13 @@ const loader = async () => {
             client.on('disconnect', () => loadedFile.clients?.splice(loadedFile.clients?.indexOf(client), 1))
           })
         }
-  
+
         info(`${folders[folder]} ${loadedFile.constructor.name.toUpperCase()} loaded`)
       }
     } catch (e) {
       error(e)
       continue
-    } 
+    }
   }
 }
 

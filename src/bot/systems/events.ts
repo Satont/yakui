@@ -78,18 +78,18 @@ export default new class Events implements System {
   }
 
   sockets(client: SocketIO.Socket) {
-    this.clients.push(client)
-    client.on('disconnect', () => {
-      const index = this.clients.indexOf(client)
-      this.clients.splice(index, 1)
+
+    client.on('getAll', async (cb) => {
+      const repository = orm.em.fork().getRepository(EventList)
+      cb(await repository.findAll())
     })
   }
 
   onDonation(data: DonationData) {
-    this.fire( { name: 'tip', opts: data })
+    this.fire({ name: 'tip', opts: data })
     this.addToEventList({
       name: 'tip',
-      data: { username: data.username, currency: data.currency, amount: data.inMainCurrencyAmount, message: data.message },
+      data: { username: data.username, currency: data.currency, amount: data.inMainCurrencyAmount, message: data.message, service: data.service },
     })
   }
 

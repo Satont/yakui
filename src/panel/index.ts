@@ -1,7 +1,6 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router'
-import VueClipboard from 'vue-clipboard2'
-import Axios from './vue/plugins/axios'
+import router from './Router/index'
+import App from './App.vue'
 import VueSocketIO from 'vue-socket.io-extended'
 import LoadScript from 'vue-plugin-load-script'
 import Socket, { getNameSpace } from './vue/plugins/socket'
@@ -10,10 +9,26 @@ import Toast from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-import './css/main.css'
-import { store } from './vue/plugins/vuex'
+import translate from './Helpers/translate'
+import './Helpers/vueFilters'
 
-import isLogged from './helpers/isLogged'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+dayjs.extend(relativeTime)
+
+import './assets/css/sanitize.css'
+import './assets/css/main.css'
+import './assets/css/fonts.css'
+//import getMetadata from './Helpers/getMetadata'
+import VueRouter from 'vue-router'
+import VueClipboard from 'vue-clipboard2'
+import isLogged from './Helpers/isLogged'
+import Store from './Plugins/vuex'
+import Axios from './Plugins/axios'
+
+Vue.config.productionTip = false
+Vue.prototype.$dayjs = dayjs
+Vue.prototype.translate = translate
 
 Vue.use(VueRouter)
 Vue.use(VueClipboard)
@@ -28,22 +43,22 @@ Vue.component('dashboard', () => import('./vue/pages/dashboard/index.vue'))
 
 const start = async () => {
   const user = await isLogged(true, true)
-  store.commit('setLoggedUser', user)
-  
+  Store.commit('setLoggedUser', user)
+
   Vue.use(VueSocketIO, Socket)
   Vue.use(Axios)
 
   const metaDataSocket = getNameSpace({ name: 'systems/metaData' })
   await new Promise((res) => metaDataSocket.emit('getData', data => {
-    store.commit('setMetaData', data)
+    Store.commit('setMetaData', data)
     document.title = data.bot?.username?.toUpperCase()
     res()
   }))
 
   const filesSocket = getNameSpace({ name: 'systems/files' })
-  filesSocket.emit('getAll', (_err, files) => store.commit('setFilesList', files))
+  filesSocket.emit('getAll', (_err, files) => Store.commit('setFilesList', files))
 
-  const router = new VueRouter({
+  /* const router = new VueRouter({
     mode: 'history',
     routes: [
       { path: '/', name: 'Home', component: { template: `<div></div>` }, alias: '/home' },
@@ -92,52 +107,30 @@ const start = async () => {
       { path: '/overlays/edit/:id?', name: 'OverlaysManagerEdit', component: () => import('./vue/pages/overlays/edit.vue') },
       { path: '/files', name: 'Files', component: () => import('./vue/pages/files/index.vue') },
     ],
-  })
+  }) */
 
   const app = new Vue({
-    data: {
+    data: () => ({
       loading: false,
-    },
+    }),
+    render: (h) => h(App),
     router,
-    template: `
-    <div>
-      <nav-bar></nav-bar>
-      <div class="container-fluid">
-        <side-bar></side-bar>
-        <loading v-if="$root.loading"></loading>
-        <div class="col-md-11 ml-sm-auto col-lg-11 px-md-4 pt-md-3">
-          <dashboard 
-            v-if="!$root.loading"  
-            :class="{ hidden: $route.path !== '/' }"
-          />
-          <router-view 
-            v-if="!$root.loading" 
-            :class="{ hidden: $route.path === '/' }"
-          />
-        </div>
-      </div>
-    </div>
-    `,
-    async mounted() {
-      metaDataSocket.on('data', data => {
-        store.commit('setMetaData', data)
-        document.title = data.bot?.username?.toUpperCase()
-      })
+    store: Store,
+    async created() {
+      const code = this.$store.state.metaData.lang.lang.code
+      await import(`dayjs/locale/${code}`)
+      this.$dayjs.locale(code)
     },
-    store,
-  }).$mount('#app')
+  }).$mount('#wrapper')
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   router.beforeEach((to, from, next) => {
     app.loading = true
     next()
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  router.afterEach((to, from) => {
+  router.afterEach(() => {
     app.loading = false
   })
-
 }
 
 start()

@@ -78,7 +78,7 @@ class Donationalerts {
       const { data } = await axios.get(`http://bot.satont.ru/api/donationalerts-refresh?refresh_token=${this.refresh_token}`)
       this.access_token = data.access_token
       this.refresh_token = data.refresh_token
-  
+
       info('DONATIONALERTS: Token successfuly refreshed')
     } catch (e) {
       error('DONATIONALERTS: cannot refresh token')
@@ -179,6 +179,7 @@ class Donationalerts {
         inMainCurrencyAmount: currencyLib.exchange({ from: data.currency, amount: data.amount }),
         message,
         timestamp: Date.now(),
+        service: 'DA',
       })
     })
   }

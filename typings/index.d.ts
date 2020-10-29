@@ -1,5 +1,5 @@
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
-import { 
+import {
   IWebHookUserFollow,
   IWebHookModeratorAdd,
   IWebHookModeratorRemove,
@@ -86,6 +86,7 @@ export interface UserPermissions {
   subscribers: boolean,
   viewers: boolean,
 }
+
 export type DonationData = {
   userId?: number,
   username: string,
@@ -94,6 +95,7 @@ export type DonationData = {
   currency: string,
   inMainCurrencyAmount: number,
   timestamp?: number,
+  service: string,
 }
 
 export type MarkerInList = {

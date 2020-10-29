@@ -15,10 +15,10 @@ export default {
   mode: 'development',
   entry: {
     panel: './src/panel/index.ts',
-    login: './src/login/index.ts',
-    oauth: './src/login/index.ts',
-    public: './src/public/index.ts',
-    overlays: './src/overlays/index.ts',
+    //login: './src/login/index.ts',
+    //oauth: './src/login/index.ts',
+    //public: './src/public/index.ts',
+    //overlays: './src/overlays/index.ts',
   },
   output: {
     path: resolve(__dirname, 'public', 'dest'),
@@ -29,7 +29,7 @@ export default {
   },
   performance: { hints: false },
   optimization: {
-    minimize: true,
+    minimize: !isDev(),
     minimizer: [
       new TerserPlugin(),
       new CssMinimizerPlugin(),
@@ -37,12 +37,16 @@ export default {
   },
   module: {
     rules: [
-      { 
+      {
+        test: /\.svg$/,
+        loader: 'vue-svg-loader',
+      },
+      {
         test: /\.vue$/i,
         loader: 'vue-loader',
       },
-      { 
-        test: /\.css$/i, 
+      {
+        test: /\.css$/i,
         use: [
           isDev() ? 'vue-style-loader' : {
             loader: MiniCssExtractPlugin.loader,
@@ -54,10 +58,10 @@ export default {
           'css-loader',
         ],
       },
-      { 
+      {
         test: /\.ts$/i,
-        use: { 
-          loader: 'ts-loader', 
+        use: {
+          loader: 'ts-loader',
           options: { experimentalFileCaching: true, appendTsSuffixTo: [/\.vue$/] },
         },
       },
@@ -66,10 +70,10 @@ export default {
   plugins: [
     new CleanWebpackPlugin(),
     new VueLoaderPlugin(),
-    new MiniCssExtractPlugin({
+    !isDev() ? new MiniCssExtractPlugin({
       filename: '[name].[contenthash].css',
       chunkFilename: '[id].[contenthash].css',
-    }),
+    }) : undefined,
     new HtmlPlugin({
       filename: '../panel.html', template: 'src/panel/index.html', chunks: ['panel'],
     }),
@@ -85,7 +89,7 @@ export default {
     new HtmlPlugin({
       filename: '../overlays.html', template: 'src/overlays/index.html', chunks: ['overlays'],
     }),
-  ],
+  ].filter(Boolean),
   resolve: {
     extensions: ['.ts', '.js', '.vue'],
     alias: {
