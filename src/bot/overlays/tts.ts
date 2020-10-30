@@ -20,7 +20,6 @@ class TTS implements System {
 
   @onChange('settings')
   async init() {
-    console.log(this)
     this.clients.forEach(c => c.emit('settings', { ...this.settings, token: this.token }))
   }
 
