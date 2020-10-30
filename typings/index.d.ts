@@ -1,5 +1,5 @@
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
-import { 
+import {
   IWebHookUserFollow,
   IWebHookModeratorAdd,
   IWebHookModeratorRemove,

@@ -1,5 +1,6 @@
 import { orm } from '../libs/db'
 import { Settings } from '../entities/Settings'
+import { loadedSystems } from '../libs/loader'
 
 export const cache: ICache = {}
 
@@ -18,10 +19,10 @@ interface ICache {
   [x: string]: Record<string, TVariable>
 }
 
-type Opts = { 
-  instance?: any, 
-  propertyName: any, 
-  fromSettings?: boolean 
+type Opts = {
+  instance?: any,
+  propertyName: any,
+  fromSettings?: boolean
 }
 
 export const setupObserver = ({ instance, propertyName, fromSettings = false } = {} as Opts) => {
@@ -55,7 +56,8 @@ export const setupObserver = ({ instance, propertyName, fromSettings = false } =
         const shouldCallChange = shouldCallOnChange(cache[instanceName][propertyName])
 
         if (shouldCallChange) {
-          instance[cache[instanceName][propertyName].onChange].call(instance)
+          const clazz = loadedSystems.find(c => c.constructor.name.toLowerCase() === instanceName)
+          instance[cache[instanceName][propertyName].onChange].call(clazz)
         }
 
         return true
