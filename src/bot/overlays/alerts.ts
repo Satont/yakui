@@ -13,7 +13,6 @@ export default new class Alerts implements System {
   }
 
   async emitAlert(data: IEmitAlert) {
-    console.log(this.clients.length)
     this.clients.forEach(c => c.emit('alert', data))
   }
 }
