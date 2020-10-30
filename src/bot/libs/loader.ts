@@ -29,6 +29,7 @@ const loader = async () => {
           loadedFile.socket.on('connection', client => {
             if (loadedFile.sockets) loadedFile.sockets(client)
             if (!loadedFile.clients) loadedFile.clients = []
+            loadedFile.clients.push(client)
             client.on('disconnect', () => loadedFile.clients?.splice(loadedFile.clients?.indexOf(client), 1))
           })
         }
