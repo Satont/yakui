@@ -104,7 +104,7 @@ class Twitch implements System {
       this.channelMetaData.game = game.name
     }
     this.channelMetaData.title = opts.title
-    this.channelMetaData.views = opts.viewer_count
+    this.streamMetaData.viewers = opts.viewer_count
   }
 
   private async getChannelData() {
