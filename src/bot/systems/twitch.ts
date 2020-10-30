@@ -61,7 +61,7 @@ class Twitch implements System {
       timestamp: undefined,
     },
   }
-  
+
   @settings()
   latestSubscriber: string = null
 
@@ -154,7 +154,7 @@ class Twitch implements System {
     description: 'commands.title.description',
   })
   async setTitle(opts: CommandOptions) {
-    if (!opts.argument.trim().length) return
+    if (!opts.argument.trim().length) return `$sender ${this.channelMetaData.title}`
 
     await tmi.clients?.bot?.kraken.channels.updateChannel(tmi.channel?.id, {
       status: opts.argument,
@@ -171,7 +171,7 @@ class Twitch implements System {
     description: 'commands.category.description',
   })
   async setGame(opts: CommandOptions) {
-    if (!opts.argument.trim().length) return
+    if (!opts.argument.trim().length) return `$sender ${this.channelMetaData.game}`
 
     const suggestedGame = await tmi.clients?.bot?.helix.games.getGameByName(opts.argument)
 
