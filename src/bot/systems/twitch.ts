@@ -3,7 +3,7 @@ import humanizeDuration from 'humanize-duration'
 import { onStreamStart, onStreamEnd } from '@bot/libs/eventsCaller'
 import locales from '@bot/libs/locales'
 import { System, CommandOptions } from 'typings'
-import { INewSubscriber, INewResubscriber } from 'typings/events'
+import { INewSubscriber, INewResubscriber, IWebHookStreamChanged } from 'typings/events'
 import { Settings } from '@bot/entities/Settings'
 import { error } from '@bot/libs/logger'
 import { orm } from '@bot/libs/db'
@@ -96,6 +96,15 @@ class Twitch implements System {
       viewers: data?.viewers ?? 0,
       startedAt: data?.startDate ?? null,
     }
+  }
+
+  async onStreamChange(opts: IWebHookStreamChanged) {
+    if (opts.game_id) {
+      const game = await tmi.clients?.bot?.helix.games.getGameById(opts.game_id)
+      this.channelMetaData.game = game.name
+    }
+    this.channelMetaData.title = opts.title
+    this.channelMetaData.views = opts.viewer_count
   }
 
   private async getChannelData() {
