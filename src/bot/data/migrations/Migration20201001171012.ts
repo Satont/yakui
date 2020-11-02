@@ -65,9 +65,9 @@ export class Migration20201001171012 extends Migration {
     //this.addSql('alter table "songs_likes" add constraint "songs_likes_user_foreign" foreign key ("user") references "users" ("id") on update cascade on delete set null;');
 
     this.addSql('alter table "songs_likes" add constraint "songs_likes_userid_name_unique" unique ("userId", "name");')
-    this.addSql('drop table commands_sound')
-    this.addSql('drop table migrations')
-    this.addSql('drop table migrations_lock')
+    this.addSql('drop table commands_sound IF EXISTS')
+    this.addSql('drop table migrations IF EXISTS')
+    this.addSql('drop table migrations_lock IF EXISTS')
   }
 
 }
