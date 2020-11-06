@@ -60,7 +60,7 @@
     "@mikro-orm/cli": "^4.0.7",
     "@mikro-orm/core": "^4.0.7",
     "@mikro-orm/postgresql": "^4.0.7",
-    "@mikro-orm/reflection": "^4.0.7",
+    "@mikro-orm/reflection": "^4.2.3",
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
     "bootstrap": "^4.5.2",
