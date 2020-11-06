@@ -3,7 +3,7 @@ import humanizeDuration from 'humanize-duration'
 import { onStreamStart, onStreamEnd } from '@bot/libs/eventsCaller'
 import locales from '@bot/libs/locales'
 import { System, CommandOptions } from 'typings'
-import { INewSubscriber, INewResubscriber } from 'typings/events'
+import { INewSubscriber, INewResubscriber, IWebHookStreamChanged } from 'typings/events'
 import { Settings } from '@bot/entities/Settings'
 import { error } from '@bot/libs/logger'
 import { orm } from '@bot/libs/db'
@@ -63,7 +63,7 @@ class Twitch implements System {
       timestamp: undefined,
     },
   }
-  
+
   @settings()
   latestSubscriber: string = null
 
@@ -98,6 +98,15 @@ class Twitch implements System {
       viewers: data?.viewers ?? 0,
       startedAt: data?.startDate ?? null,
     }
+  }
+
+  async onStreamChange(opts: IWebHookStreamChanged) {
+    if (opts.game_id) {
+      const game = await tmi.clients?.bot?.helix.games.getGameById(opts.game_id)
+      this.channelMetaData.game = game.name
+    }
+    this.channelMetaData.title = opts.title
+    this.streamMetaData.viewers = opts.viewer_count
   }
 
   private async getChannelData() {
@@ -157,7 +166,7 @@ class Twitch implements System {
     description: 'commands.title.description',
   })
   async setTitle(opts: CommandOptions) {
-    if (!opts.argument.trim().length) return
+    if (!opts.argument.trim().length) return `$sender ${this.channelMetaData.title}`
 
     await tmi.clients?.bot?.kraken.channels.updateChannel(tmi.channel?.id, {
       status: opts.argument,
@@ -174,7 +183,7 @@ class Twitch implements System {
     description: 'commands.category.description',
   })
   async setGame(opts: CommandOptions) {
-    if (!opts.argument.trim().length) return
+    if (!opts.argument.trim().length) return `$sender ${this.channelMetaData.game}`
 
     const suggestedGame = await tmi.clients?.bot?.helix.games.getGameByName(opts.argument)
 

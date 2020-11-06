@@ -2,7 +2,7 @@
   <div>
     <b-form @submit.prevent="save">
       <b-form-group label="Lang" label-for="lang">
-        <b-form-select id="lang" v-model="settings.locale" :options="['ru', 'en']" size="sm"></b-form-select>
+        <b-form-select id="lang" v-model="settings.locale" :options="['ru', 'en', 'ua']" size="sm"></b-form-select>
       </b-form-group>
 
       <b-form-group label="Site url" label-for="siteUrl">

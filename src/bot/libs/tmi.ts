@@ -1,4 +1,4 @@
-import { ApiClient as Twitch, AccessToken } from 'twitch'
+import { ApiClient, AccessToken } from 'twitch'
 import { ChatClient as Chat } from 'twitch-chat-client'
 import { StaticAuthProvider } from 'twitch-auth'
 
@@ -23,8 +23,8 @@ export default new class Tmi {
   }
 
   clients: {
-    broadcaster: Twitch | null,
-    bot: Twitch | null,
+    broadcaster: ApiClient | null,
+    bot: ApiClient | null,
   } = {
     broadcaster: null,
     bot: null,
@@ -62,10 +62,10 @@ export default new class Tmi {
       await this.disconnect(type)
 
       const { clientId, scopes } = await OAuth.validate(type)
+      const authProvider = new StaticAuthProvider(clientId, oauth[`${type}AccessToken`], scopes) as any
 
-      this.clients[type] = new Twitch({ authProvider: new StaticAuthProvider(clientId, oauth[`${type}AccessToken`], scopes) })
-
-      this.chatClients[type] = new Chat(this.clients[type])
+      this.clients[type] = new ApiClient({ authProvider })
+      this.chatClients[type] = new Chat(authProvider)
 
       this.listeners(type)
       if (type === 'bot') {
@@ -96,7 +96,7 @@ export default new class Tmi {
     try {
       const { access_token, refresh_token } = await OAuth.refresh(type)
       const token = new AccessToken({ access_token, refresh_token })
-    
+
       this.clients[type].setAccessToken(token)
     } catch (e) {
       error(e)
@@ -114,8 +114,8 @@ export default new class Tmi {
   async disconnect(type: 'bot' | 'broadcaster') {
     const client = this.chatClients[type]
 
-    if (client) {
-      client.part(this.channel?.name)
+    if (client && this.channel) {
+      client.part(this.channel.name)
       await client.quit()
 
       this.clients[type] = null

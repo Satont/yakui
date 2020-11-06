@@ -11,9 +11,9 @@ const loader = async () => {
     systems: 'System',
     integrations: 'Integration',
     customSystems: 'Custom System',
-    overlays: 'Overlay',
     libs: 'Lib',
     settings: 'Setting',
+    overlays: 'Overlay',
   }
   for (const folder of Object.keys(folders)) {
     try {
@@ -28,17 +28,18 @@ const loader = async () => {
         if (loadedFile.socket) {
           loadedFile.socket.on('connection', client => {
             if (loadedFile.sockets) loadedFile.sockets(client)
-            loadedFile.clients?.push(client)
+            if (!loadedFile.clients) loadedFile.clients = []
+            loadedFile.clients.push(client)
             client.on('disconnect', () => loadedFile.clients?.splice(loadedFile.clients?.indexOf(client), 1))
           })
         }
-  
+
         info(`${folders[folder]} ${loadedFile.constructor.name.toUpperCase()} loaded`)
       }
     } catch (e) {
       error(e)
       continue
-    } 
+    }
   }
 }
 

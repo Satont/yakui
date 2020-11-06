@@ -207,7 +207,8 @@ export default new class Variables implements System {
         offset,
       })).map(user => ({ username: user.username, value: user[type] }))
 
-      return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ')
+      return result
+        .map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ')
     } else if (type === 'tips') {
       const qb: QueryBuilder<UserModel> = (orm.em.fork() as any).createQueryBuilder(UserModel, 'user')
 
@@ -223,7 +224,8 @@ export default new class Variables implements System {
         .orderBy('value', 'desc')
         .toQuery())
 
-      return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}${currency.botCurrency}`).join(', ')
+      return result
+        .map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}${currency.botCurrency}`).join(', ')
     } else if (type === 'bits') {
       const qb: QueryBuilder<UserModel> = (orm.em.fork() as any).createQueryBuilder(UserModel, 'user')
 
@@ -239,7 +241,8 @@ export default new class Variables implements System {
         .orderBy('value', 'desc')
         .toQuery())
 
-      return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ')
+      return result
+        .map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ')
     } else if (type === 'messages.today') {
       const now = new Date()
       const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
@@ -253,7 +256,8 @@ export default new class Variables implements System {
         populate: ['user'],
       })).map(daily => ({ username: daily.user.username, value: daily.count }))
 
-      return (result as any).map((item: UserDailyMessages, index: number) => `${index + 1 + offset}. ${item.user.username} - ${item.count}`).join(', ')
+      return result
+        .map((item, index: number) => `${index + 1 + offset}. ${item.username} - ${item.value}`).join(', ')
     } if (type === 'points') {
       result = (await orm.em.fork().getRepository(UserModel).find({
         username: { $nin: ignored },
@@ -263,7 +267,8 @@ export default new class Variables implements System {
         offset,
       })).map(user => ({ username: user.username, value: user[type] }))
 
-      return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ')
+      return result
+        .map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ')
     } else {
       return 'unknown type of top'
     }
