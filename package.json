@@ -93,7 +93,7 @@
     "source-map-support": "^0.5.19",
     "spotify-web-api-node": "^4.0.0",
     "strip-ansi": "^6.0.0",
-    "tlds": "^1.210.0",
+    "tlds": "^1.212.0",
     "ts-morph": "^8.1.1",
     "ts-node": "^9.0.0",
     "twitch": "^4.2.7",
