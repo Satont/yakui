@@ -21,11 +21,19 @@ export default new class Locales {
     info(`LOCALES: ${this.lang.lang?.name || General.locale} lang loaded`)
   }
 
-  translate(...args: any[]) {
+  translate(...args: any[]): string {
     const path = args[0]
     const result = get(this.lang, path, null)
-
     if (!result) return get(this.lang, 'errors.langStringNotFound')
+
+    return parameterizedString(result, ...args.slice(1))
+  }
+
+  translateWithNulled(...args: any[]): string | null {
+    const path = args[0]
+    const result = get(this.lang, path, null)
+    if (!result) return result
+
     return parameterizedString(result, ...args.slice(1))
   }
 }

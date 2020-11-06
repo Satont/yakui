@@ -96,7 +96,7 @@ export default new class Tmi {
     try {
       const { access_token, refresh_token } = await OAuth.refresh(type)
       const token = new AccessToken({ access_token, refresh_token })
-    
+
       this.clients[type].setAccessToken(token)
     } catch (e) {
       error(e)
@@ -114,8 +114,8 @@ export default new class Tmi {
   async disconnect(type: 'bot' | 'broadcaster') {
     const client = this.chatClients[type]
 
-    if (client) {
-      client.part(this.channel?.name)
+    if (client && this.channel) {
+      client.part(this.channel.name)
       await client.quit()
 
       this.clients[type] = null

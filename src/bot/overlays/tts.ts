@@ -6,8 +6,8 @@ import { onChange, settings as settingsDecorator } from '../decorators'
 
 class TTS implements System {
   socket = getNameSpace('overlays/tts')
-  clients: SocketIO.Socket[] = []
   token = 'Kn3BDKTm'
+  clients: SocketIO.Socket[] = []
 
   @settingsDecorator()
   settings = {
@@ -20,9 +20,7 @@ class TTS implements System {
 
   @onChange('settings')
   async init() {
-    if (!this.settings) return
-
-    this.clients?.forEach(c => c.emit('settings', { ...this.settings, token: this.token }))
+    this.clients.forEach(c => c.emit('settings', { ...this.settings, token: this.token }))
   }
 
   async sockets(client: SocketIO.Socket) {

@@ -25,10 +25,12 @@ export default new class Cache {
     await this.updateKeywords()
   }
 
-  updateCommands() {
+  async updateCommands() {
+    const locales = (await import('./locales')).default
     this.commands = new Map()
     for (const system of loadedSystems.filter(system => system.commands)) {
       system.commands.map(c => ({ ...c, system })).forEach(c => {
+        c.description = c.description ? locales.translateWithNulled(c.description) ?? c.description : null
         this.commands.set(c.name as string, c)
         c.aliases?.forEach(a => this.commandsAliases.set(a, c))
       })
@@ -45,8 +47,7 @@ export default new class Cache {
         this.parsers.set(system.constructor.name, p)
       })
     }
-
-    info(`CACHE: Parsers size: ${this.commands.size}`)
+    info(`CACHE: Parsers size: ${this.parsers.size}`)
   }
 
   async updateOverlays() {
@@ -75,7 +76,7 @@ export default new class Cache {
       this.greetings.set(String(greeting.id), greeting)
     }
 
-    info(`CACHE: Greetings size: ${this.events.size}`)
+    info(`CACHE: Greetings size: ${this.greetings.size}`)
   }
 
   async updateKeywords() {
@@ -85,6 +86,6 @@ export default new class Cache {
       this.keywords.set(String(keyword.id), keyword)
     }
 
-    info(`CACHE: Keywords size: ${this.events.size}`)
+    info(`CACHE: Keywords size: ${this.keywords.size}`)
   }
 }

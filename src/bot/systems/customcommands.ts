@@ -19,8 +19,9 @@ export default new class CustomCommands implements System {
       price: command.price,
       visible: command.visible,
       enabled: command.enabled,
-      fnc: this.fnc,
+      fnc: 'fnc',
       sound_file: command.sound_file,
+      sound_volume: command.sound_volume,
       type: 'custom',
       usage: command.usage,
     }))

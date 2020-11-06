@@ -6,6 +6,7 @@ import Commands from '@bot/systems/commands'
 import customcommands from '@bot/systems/customcommands'
 import cache from '@bot/libs/cache'
 import { RequestContext } from '@mikro-orm/core'
+import { cloneDeep } from 'lodash'
 
 const router = Router({
   mergeParams: true,
@@ -13,9 +14,9 @@ const router = Router({
 
 router.get('/', async (req, res, next) => {
   try {
-    const commands = Commands.getCommands().map(c => {
-      delete c.system
-      return c
+    const commands = cloneDeep(Commands.getCommands()).map(command => {
+      delete command.system
+      return command
     })
 
     res.json(commands)

@@ -1,5 +1,5 @@
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
-import { 
+import {
   IWebHookUserFollow,
   IWebHookModeratorAdd,
   IWebHookModeratorRemove,
@@ -22,7 +22,7 @@ export interface Command {
   aliases?: string[],
   cooldown?: number,
   permission?: CommandPermission,
-  fnc?(opt: CommandOptions): any | Promise<any>,
+  fnc?: string,
   enabled?: boolean,
   price?: number,
   type?: 'custom' | 'default',
@@ -53,7 +53,7 @@ export interface System {
   __moduleName?: string,
   parsers?: Array<{
     name?: string,
-    fnc(opt: ParserOptions): any | Promise<any>
+    fnc: string
   }>;
   commands?: Command[],
   socket?: SocketIO.Namespace,
