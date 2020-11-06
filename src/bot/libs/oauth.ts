@@ -35,7 +35,12 @@ class OAuth {
     tmi.connect('broadcaster')
   }
 
-  async validate(type: 'bot' | 'broadcaster') {
+  async validate(type: 'bot' | 'broadcaster'): Promise<{
+    clientId: string,
+    login: string,
+    userId: string,
+    scopes: string[]
+  }> {
     try {
       const { data } = await axios.get('https://id.twitch.tv/oauth2/validate', { headers: {
         'Authorization': `OAuth ${this[`${type}AccessToken`]}`,
@@ -53,7 +58,10 @@ class OAuth {
     }
   }
 
-  async refresh(type: 'bot' | 'broadcaster') {
+  async refresh(type: 'bot' | 'broadcaster'): Promise<{
+    access_token: string,
+    refresh_token: string,
+  }> {
     try {
       const { data } = await axios.get('http://bot.satont.ru/api/refresh?refresh_token=' + this[`${type}RefreshToken`])
 

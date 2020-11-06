@@ -1,4 +1,4 @@
-import { ApiClient as Twitch, AccessToken } from 'twitch'
+import { ApiClient, AccessToken } from 'twitch'
 import { ChatClient as Chat } from 'twitch-chat-client'
 import { StaticAuthProvider } from 'twitch-auth'
 
@@ -23,8 +23,8 @@ export default new class Tmi {
   }
 
   clients: {
-    broadcaster: Twitch | null,
-    bot: Twitch | null,
+    broadcaster: ApiClient | null,
+    bot: ApiClient | null,
   } = {
     broadcaster: null,
     bot: null,
@@ -62,10 +62,10 @@ export default new class Tmi {
       await this.disconnect(type)
 
       const { clientId, scopes } = await OAuth.validate(type)
+      const authProvider = new StaticAuthProvider(clientId, oauth[`${type}AccessToken`], scopes) as any
 
-      this.clients[type] = new Twitch({ authProvider: new StaticAuthProvider(clientId, oauth[`${type}AccessToken`], scopes) })
-
-      this.chatClients[type] = new Chat(this.clients[type])
+      this.clients[type] = new ApiClient({ authProvider })
+      this.chatClients[type] = new Chat(authProvider)
 
       this.listeners(type)
       if (type === 'bot') {
