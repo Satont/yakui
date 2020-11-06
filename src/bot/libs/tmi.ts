@@ -65,14 +65,14 @@ export default new class Tmi {
       const authProvider = new StaticAuthProvider(clientId, oauth[`${type}AccessToken`], scopes) as any
 
       this.clients[type] = new ApiClient({ authProvider })
-      this.chatClients[type] = new Chat(authProvider)
 
-      this.listeners(type)
       if (type === 'bot') {
         await this.getChannel(oauth.channel)
         await import('./webhooks')
         await this.loadLibs()
       }
+      this.chatClients[type] = new Chat(authProvider, { channels: [this.channel.name] })
+      this.listeners(type)
       await this.chatClients[type].connect()
 
       await this.intervaledUpdateAccessToken(type)
@@ -131,13 +131,13 @@ export default new class Tmi {
       this.connect(type)
     })
 
-    client.onConnect(() => {
+    client.onConnect(async () => {
       info(`TMI: ${type.charAt(0).toUpperCase() + type.substring(1)} client connected`)
       this.connected[type] = true
-      client.join(this.channel?.name).catch((e) => {
+      /* client.join(this.channel?.name).catch((e) => {
         if (e.message.includes('Did not receive a reply to join')) return
         else error(e)
-      })
+      }) */
     })
 
     client.onJoin((channel) => {
