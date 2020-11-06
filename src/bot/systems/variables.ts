@@ -30,16 +30,19 @@ export default new class Variables implements System {
     { name: '$channel.views', response: 'Channel views' },
     { name: '$channel.game', response: 'Channel game' },
     { name: '$channel.title', response: 'Channel title' },
+    { name: '$channel.followers', response: 'Number of channel followers' },
     { name: '$random.N-N', response: 'Random beetwen 2 numbers' },
     { name: '$subs', response: 'Count of channel subscribers' },
     { name: '$subs.last.sub.username', response: 'Username of latest subscriber' },
     { name: '$subs.last.sub.ago', response: 'Time passed from latest subscribe' },
     { name: '$subs.last.sub.tier', response: 'Tier of latest subscribe' },
     { name: '$subs.last.resub.username', response: 'Username of latest resubscriber' },
-    { name: '$subs.last.resub.ago', response: 'Time passed from latestre subscribe' },
+    { name: '$subs.last.resub.ago', response: 'Time passed from latest subscribe' },
     { name: '$subs.last.resub.tier', response: 'Tier of latest resubscribe' },
     { name: '$subs.last.resub.months', response: 'User subscribe months length' },
     { name: '$subs.last.resub.months', response: 'Overall user subscribe months length' },
+    { name: '$followers.last.username', response: 'Username of latest follower' },
+    { name: '$followers.last.ago', response: 'Time passed from latest follow' },
     { name: '$song', response: 'Current playing song' },
     { name: '$commands', response: 'Commands list' },
     { name: '$prices', response: 'Commands prices list' },
@@ -66,13 +69,19 @@ export default new class Variables implements System {
     const repository = orm.em.fork().getRepository(Variable)
     const variables = (await repository.findAll())
       .map((variable: Variable) => ({ name: `$_${variable.name}`, response: variable.response, custom: true }))
-      
+
     this.variables.push(...variables)
   }
 
   async parseMessage(opts: { message: string, raw?: TwitchPrivateMessage, argument?: string, command?: Command }) {
     let result = opts.message
     const userInfo = opts.raw?.userInfo
+    const getLatestAgoString = (timestamp: number) => hd(Date.now() - timestamp, {
+      units: ['mo', 'd', 'h', 'm'],
+      round: true,
+      language: locales.translate('lang.code'),
+    })
+
     result = result
       .replace(/\$sender/gimu, '@' + userInfo?.userName ?? tmi.chatClients?.bot?.currentNick)
       .replace(/\$stream\.viewers/gimu, String(twitch.streamMetaData.viewers))
@@ -81,23 +90,17 @@ export default new class Variables implements System {
       .replace(/\$channel\.title/gimu, twitch.channelMetaData.title)
       .replace(/\$stream\.uptime/gimu, twitch.uptime)
       .replace(/\$random\.(\d+)-(\d+)/gimu, (match, first, second) => String(_.random(first, second)))
-      .replace(/\$subs\.last\.sub\.username/gimu, twitch.channelMetaData.latestSubscriber?.username + ' ')
-      .replace(/\$subs\.last\.sub\.ago/gimu, hd(Date.now() - twitch.channelMetaData.latestSubscriber?.timestamp, {
-        units: ['mo', 'd', 'h', 'm'],
-        round: true,
-        language: locales.translate('lang.code'),
-      }) + ' ')
-      .replace(/\$subs\.last\.sub\.tier/gimu, twitch.channelMetaData.latestSubscriber?.tier + ' ')
-      .replace(/\$subs\.last\.resub\.username/gimu, twitch.channelMetaData.latestReSubscriber?.username + ' ')
-      .replace(/\$subs\.last\.resub\.ago/gimu, hd(Date.now() - twitch.channelMetaData.latestReSubscriber?.timestamp, {
-        units: ['mo', 'd', 'h', 'm'],
-        round: true,
-        language: locales.translate('lang.code'),
-      }) + ' ')
-      .replace(/\$subs\.last\.resub\.tier/gimu, twitch.channelMetaData.latestReSubscriber?.tier + ' ')
-      .replace(/\$subs\.last\.resub\.months/gimu, String(twitch.channelMetaData.latestReSubscriber?.months) + ' ')
-      .replace(/\$subs\.last\.resub\.overallMonths/gimu, String(twitch.channelMetaData.latestReSubscriber?.overallMonths) + ' ')
-      .replace(/\$subs/gimu, String(twitch.channelMetaData.subs) + ' ')
+      .replace(/\$subs\.last\.sub\.username/gimu, twitch.channelMetaData.latestSubscriber?.username)
+      .replace(/\$subs\.last\.sub\.ago/gimu, getLatestAgoString(twitch.channelMetaData.latestSubscriber?.timestamp))
+      .replace(/\$subs\.last\.sub\.tier/gimu, twitch.channelMetaData.latestSubscriber?.tier)
+      .replace(/\$subs\.last\.resub\.username/gimu, twitch.channelMetaData.latestReSubscriber?.username)
+      .replace(/\$subs\.last\.resub\.ago/gimu, getLatestAgoString(twitch.channelMetaData.latestReSubscriber?.timestamp))
+      .replace(/\$subs\.last\.resub\.tier/gimu, twitch.channelMetaData.latestReSubscriber?.tier)
+      .replace(/\$subs\.last\.resub\.months/gimu, String(twitch.channelMetaData.latestReSubscriber?.months))
+      .replace(/\$subs\.last\.resub\.overallMonths/gimu, String(twitch.channelMetaData.latestReSubscriber?.overallMonths))
+      .replace(/\$subs/gimu, String(twitch.channelMetaData.subs))
+      .replace(/\$followers\.last\.username/gimu, twitch.channelMetaData.latestFollower.username)
+      .replace(/\$followers\.last\.ago/gimu, getLatestAgoString(twitch.channelMetaData.latestFollower.timestamp))
 
     if (/\$followage/gimu.test(result)) {
       result = result.replace(/\$followage/gimu, userInfo ? await twitch.getFollowAge(userInfo.userId) : 'invalid')
@@ -191,8 +194,8 @@ export default new class Variables implements System {
     if (type === 'watched') {
       result = (await orm.em.fork().getRepository(UserModel).find({
         username: { $nin: ignored },
-      }, { 
-        limit, 
+      }, {
+        limit,
         orderBy: { [type]: 'DESC' },
         offset,
       })).map(user => ({ username: user.username, value: user[type] }))
@@ -201,8 +204,8 @@ export default new class Variables implements System {
     } else if (type === 'messages') {
       result = (await orm.em.fork().getRepository(UserModel).find({
         username: { $nin: ignored },
-      }, { 
-        limit, 
+      }, {
+        limit,
         orderBy: { [type]: 'DESC' },
         offset,
       })).map(user => ({ username: user.username, value: user[type] }))
@@ -261,8 +264,8 @@ export default new class Variables implements System {
     } if (type === 'points') {
       result = (await orm.em.fork().getRepository(UserModel).find({
         username: { $nin: ignored },
-      }, { 
-        limit, 
+      }, {
+        limit,
         orderBy: { [type]: 'DESC' },
         offset,
       })).map(user => ({ username: user.username, value: user[type] }))
@@ -291,11 +294,11 @@ export default new class Variables implements System {
             // Stringify object
             result = result.replace('(api._response)', JSON.stringify(data))
           } else {
-            result = result.replace('(api._response)', data.toString().replace(/^"(.*)"/, '$1')) 
+            result = result.replace('(api._response)', data.toString().replace(/^"(.*)"/, '$1'))
           }
         } else {
           if (_.isBuffer(data)) {
-            data = JSON.parse(data.toString()) 
+            data = JSON.parse(data.toString())
           }
           for (const tag of rData) {
             let path = data
@@ -335,8 +338,8 @@ export default new class Variables implements System {
     if (isAdmin && text.length) {
       const match = response.match(/\$_(\S*)/g)
       if (match) {
-        const variable = await orm.em.fork().getRepository(Variable).findOne({ name: this.variables.find(v => v.name === match[0].replace('$_', '')).name }) 
-        variable.response = text 
+        const variable = await orm.em.fork().getRepository(Variable).findOne({ name: this.variables.find(v => v.name === match[0].replace('$_', '')).name })
+        variable.response = text
         await orm.em.fork().persistAndFlush(variable)
         tmi.say({ message: `@${raw.userInfo.userName} ✅` })
         return true
@@ -349,7 +352,7 @@ export default new class Variables implements System {
       spotify.getSong(),
       satontapi.getSong(),
     ])
-    
+
     return spotifySong || satontApiSong || locales.translate('song.notPlaying')
   }
 }

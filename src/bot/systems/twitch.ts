@@ -16,6 +16,7 @@ class Twitch implements System {
     streamData: null,
     channelData: null,
     subscribers: null,
+    latestFollower: null,
   }
 
   streamMetaData: {
@@ -31,12 +32,17 @@ class Twitch implements System {
     game: string,
     title: string,
     subs?: number,
-    latestSubscriber?: {
+    followers: number,
+    latestSubscriber: {
       username: string,
       tier: string,
       timestamp: number,
     },
-    latestReSubscriber?: {
+    latestFollower: {
+      username: string,
+      timestamp: number,
+    },
+    latestReSubscriber: {
       username: string,
       tier: string,
       months: number,
@@ -48,6 +54,7 @@ class Twitch implements System {
     game: 'No data',
     title: 'No data',
     subs: 0,
+    followers: 0,
     latestSubscriber: {
       username: 'No data',
       tier: 'No data',
@@ -58,6 +65,10 @@ class Twitch implements System {
       tier: 'No data',
       months: 0,
       overallMonths: 0,
+      timestamp: undefined,
+    },
+    latestFollower: {
+      username: 'No data',
       timestamp: undefined,
     },
   }
@@ -80,6 +91,7 @@ class Twitch implements System {
     this.getStreamData()
     this.getChannelData()
     this.getChannelSubscribers()
+    this.getChannelLatestFollower()
   }
 
   private async getStreamData() {
@@ -108,7 +120,7 @@ class Twitch implements System {
   }
 
   private async getChannelData() {
-    clearInterval(this.intervals.channelData)
+    clearTimeout(this.intervals.channelData)
     this.intervals.channelData = setTimeout(() => this.getChannelData(), 1 * 60 * 1000)
     if (!tmi.channel?.id) return
 
@@ -120,10 +132,11 @@ class Twitch implements System {
     this.channelMetaData.views = data?.views ?? 0,
     this.channelMetaData.game = data?.game ?? 'No data',
     this.channelMetaData.title = data?.status ?? 'No data'
+    this.channelMetaData.followers = data?.followers ?? 0
   }
 
   private async getChannelSubscribers() {
-    clearInterval(this.intervals.subscribers)
+    clearTimeout(this.intervals.subscribers)
     this.intervals.subscribers = setTimeout(() => this.getChannelSubscribers(), 1 * 60 * 1000)
     try {
       if (!tmi.clients.broadcaster || !tmi.channel?.id) return
@@ -131,6 +144,23 @@ class Twitch implements System {
       this.channelMetaData.subs = data.length - 1 || 0
     } catch (e) {
       if (e.message.includes('This token does not have the requested scopes')) return
+      error(e.message)
+    }
+  }
+
+  private async getChannelLatestFollower() {
+    clearTimeout(this.intervals.latestFollower)
+    this.intervals.latestFollower = setTimeout(() => this.getChannelLatestFollower(), 1 * 60 * 1000)
+
+    try {
+      const { data } = await tmi.clients.bot.helix.users.getFollows({ followedUser: tmi.channel.id })
+      const follower = data[0]
+
+      this.channelMetaData.latestFollower = {
+        username: follower.userDisplayName,
+        timestamp: new Date(follower.followDate).getTime(),
+      }
+    } catch (e) {
       error(e.message)
     }
   }
