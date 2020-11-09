@@ -57,7 +57,7 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "@mikro-orm/cli": "^4.0.7",
+    "@mikro-orm/cli": "^4.2.3",
     "@mikro-orm/core": "^4.0.7",
     "@mikro-orm/postgresql": "^4.2.3",
     "@mikro-orm/reflection": "^4.2.3",
