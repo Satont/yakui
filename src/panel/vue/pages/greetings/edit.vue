@@ -16,6 +16,15 @@
         <b-form-input id="message" v-model.trim="greeting.message" required type="text" placeholder="Enter message for user"></b-form-input>
       </b-form-group>
 
+       <b-form-group label="Greeting sound" label-for="sound">
+        <b-form-select id="sound" v-model="greeting.sound_file" :options="selectOptions"></b-form-select>
+      </b-form-group>
+
+      <div v-if="greeting.sound_file">
+        <label for='pitch'>Sound volume: {{ greeting.sound_volume }}</label>
+        <b-form-input id='pitch' v-model='greeting.sound_volume' type='range' min='1' max='100' step="1"></b-form-input>
+      </div>
+
       <b-button class="btn-block" variant="success" v-if="greeting.enabled" v-on:click="greeting.enabled = !greeting.enabled">Enabled</b-button>
       <b-button class="btn-block" variant="warning" v-if="!greeting.enabled" v-on:click="greeting.enabled = !greeting.enabled">Disabled</b-button>
 
@@ -29,13 +38,26 @@
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 
-@Component({})
+@Component
 export default class GreetingsManagerEdit extends Vue {
   greeting = {
     username: null,
     userId: null,
     enabled: true,
     message: null,
+    sound_file: null,
+    sound_volume: 50,
+  }
+
+  get audiosList(): any[] {
+    return this.$store.state.filesList?.filter(s => s.type.startsWith('audio'))?.map(file => ({ value: file.id, text: file.name })) || []
+  }
+
+  get selectOptions() {
+    return [
+      { value: null, text: 'No sound' },
+      ...this.audiosList
+    ]
   }
 
   async onSubmit(event) {
@@ -50,7 +72,6 @@ export default class GreetingsManagerEdit extends Vue {
     this.$toast.success('Success')
   }
 
-
   async created() {
     const id = this.$route.params.id as any
 
@@ -61,6 +82,7 @@ export default class GreetingsManagerEdit extends Vue {
 
       this.greeting = data
     }
+    console.log(this.greeting)
   }
 
   async del() {

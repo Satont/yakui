@@ -153,7 +153,8 @@ class Twitch implements System {
     this.intervals.latestFollower = setTimeout(() => this.getChannelLatestFollower(), 1 * 60 * 1000)
 
     try {
-      const { data } = await tmi.clients.bot.helix.users.getFollows({ followedUser: tmi.channel.id })
+      const { data } = await tmi.clients.bot?.helix.users.getFollows({ followedUser: tmi.channel.id }) || {}
+      if (!data) return
       const follower = data[0]
 
       this.channelMetaData.latestFollower = {
@@ -161,7 +162,7 @@ class Twitch implements System {
         timestamp: new Date(follower.followDate).getTime(),
       }
     } catch (e) {
-      error(e.message)
+      error(e)
     }
   }
 

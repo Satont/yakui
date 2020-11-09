@@ -3,6 +3,9 @@ import variables from './variables'
 import tmi from '@bot/libs/tmi'
 import cache from '@bot/libs/cache'
 import { parser } from '../decorators/parser'
+import alerts from '../overlays/alerts'
+import { orm } from '../libs/db'
+import { File } from '../entities/File'
 
 class Greetings implements System {
   sended: string[] = []
@@ -20,6 +23,16 @@ class Greetings implements System {
     const message = await variables.parseMessage({ message: user.message, raw: opts.raw })
 
     tmi.say({ message })
+
+    if (user.sound_file) {
+      const file = await orm.em.fork().getRepository(File).findOne(user.sound_file.id)
+      alerts.emitAlert({
+        audio: {
+          file,
+          volume: user.sound_volume,
+        },
+      })
+    }
   }
 
   onStreamEnd() {

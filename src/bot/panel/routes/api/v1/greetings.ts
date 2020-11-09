@@ -3,7 +3,7 @@ import { checkSchema, validationResult } from 'express-validator'
 import { Greeting } from '@bot/entities/Greeting'
 import isAdmin from '@bot/panel/middlewares/isAdmin'
 import cache from '@bot/libs/cache'
-import { RequestContext, wrap } from '@mikro-orm/core'
+import { RequestContext } from '@mikro-orm/core'
 
 const router = Router({
   mergeParams: true,
@@ -18,8 +18,11 @@ router.get('/', async (req, res, next) => {
 })
 
 router.get('/:id', isAdmin, async (req, res, next) => {
+  const greeting = [...cache.greetings.values()].find(g => g.id === Number(req.params.id))
+  greeting.sound_file = greeting.sound_file.id as any
+
   try {
-    res.json(cache.greetings.get(req.params.id))
+    res.json(greeting)
   } catch (e) {
     next(e)
   }
@@ -47,6 +50,26 @@ router.post('/', isAdmin, checkSchema({
     isBoolean: true,
     in: ['body'],
   },
+  sound_file: {
+    isNumeric: true,
+    in: ['body'],
+    optional: {
+      options: {
+        nullable: true,
+        checkFalsy: false,
+      },
+    },
+  },
+  sound_volume: {
+    isNumeric: true,
+    in: ['body'],
+    optional: {
+      options: {
+        nullable: true,
+        checkFalsy: false,
+      },
+    },
+  },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     validationResult(req).throw()
@@ -55,13 +78,11 @@ router.post('/', isAdmin, checkSchema({
     const repository = RequestContext.getEntityManager().getRepository(Greeting)
     const greeting = body.id ? await repository.findOne({ id: Number(body.id) }) : repository.create(body)
 
-    wrap(greeting).assign({
-      username: body.username,
+    repository.assign(greeting, {
       userId: body.userId ? Number(body.userId) : null,
-      message: body.message,
-      enabled: body.enabled,
+      ...body,
     })
- 
+
     await repository.persistAndFlush(greeting)
     await cache.updateGreetings()
     res.json(greeting)
