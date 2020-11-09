@@ -11,7 +11,7 @@ const router = Router({
 
 router.get('/', async (req, res, next) => {
   try {
-    res.json(cache.keywords.values())
+    res.json([...cache.keywords.values()])
   } catch (e) {
     next(e)
   }
