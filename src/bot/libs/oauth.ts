@@ -20,9 +20,9 @@ class OAuth {
   broadcasterRefreshToken: string = null
 
   @onChange('channel')
-  callTmi() {
-    tmi.connect('bot')
-    tmi.connect('broadcaster')
+  async callTmi() {
+    await tmi.connect('bot')
+    await tmi.connect('broadcaster')
   }
 
   @onChange(['botAccessToken', 'botRefreshToken'])
@@ -66,7 +66,7 @@ class OAuth {
       const { data } = await axios.get('http://bot.satont.ru/api/refresh?refresh_token=' + this[`${type}RefreshToken`])
 
       this[`${type}AccessToken`] = data.token
-      this[`${type}RefreshToken`]  = data.refresh
+      this[`${type}RefreshToken`] = data.refresh
 
       info(`Access token of ${type} was refreshed.`)
       return {
