@@ -11,7 +11,7 @@ const router = Router({
 
 router.get('/', async (req, res, next) => {
   try {
-    res.json([...cache.keywords.values()])
+    res.json(cache.keywords.values())
   } catch (e) {
     next(e)
   }
@@ -66,7 +66,7 @@ router.post('/', isAdmin, checkSchema({
       response: body.response,
       cooldown: body.cooldown,
     })
-    
+
     await repository.persistAndFlush(keyword)
     await cache.updateKeywords()
     res.json(keyword)

@@ -25,7 +25,7 @@ export default new class Parser {
       await this.parseCommand(message, raw)
     }
 
-    for (const parser of [...cache.parsers.values()]) {
+    for (const parser of cache.parsers.values()) {
       await parser.system[parser.fnc].call(parser.system, { message, raw })
     }
   }
@@ -66,37 +66,37 @@ export default new class Parser {
       cmd.usage += 1
       orm.em.fork().persistAndFlush(cmd)
     }
-    
+
     if (command.sound_file && !this.cooldowns.includes(command.name)) {
       const alerts = await import('@bot/overlays/alerts')
       alerts.default.emitAlert({
-        audio: { 
+        audio: {
           file: command.sound_file as File,
           volume: command.sound_volume,
         },
       })
     }
-    
+
     const argument = message.replace(new RegExp(`^${findedBy}`), '').trim()
-    
+
     let commandResult: string = await command.system[command.fnc].call(command.system, { message, raw, command, argument })
-    
+
     if (!commandResult) return
-    
+
     // set custom variable
     if (await variables.changeCustomVariable({ raw, response: commandResult, text: argument })) {
       return
     }
     //
-    
+
     commandResult = await Variables.parseMessage({ message: commandResult, raw, argument, command })
-    
+
     if (!commandResult.length) return
     const userPerms = users.getUserPermissions(raw.userInfo.badges, raw)
     this.cooldowns.includes(command.name) && (!userPerms.broadcaster && !userPerms.moderators)
       ? tmi.whispers({ target: raw.userInfo.userName, message: commandResult })
       : tmi.say({ message: commandResult })
-    
+
     if (command.cooldown !== 0 && !this.cooldowns.includes(command.name)) {
       this.cooldowns.push(command.name)
       setTimeout(() => this.cooldowns.splice(this.cooldowns.indexOf(command.name)), command.cooldown * 1000)

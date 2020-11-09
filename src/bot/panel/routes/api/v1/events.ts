@@ -8,7 +8,7 @@ const router = Router()
 
 router.get('/', isAdmin, async (req, res, next) => {
   try {
-    const events = [...cache.events.values()]
+    const events = cache.events.values()
 
     res.send(events)
   } catch (e) {
@@ -25,7 +25,7 @@ router.post('/', isAdmin, async (req, res, next) => {
 
     event.operations = data.operations
     await repository.persistAndFlush(event)
-  
+
     await cache.updateEvents()
     res.send(event)
   } catch (e) {

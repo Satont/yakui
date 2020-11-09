@@ -90,7 +90,7 @@ export default new class Tmi {
   }
 
   private async intervaledUpdateAccessToken(type: 'bot' | 'broadcaster') {
-    clearInterval(this.intervals.updateAccessToken[type])
+    clearTimeout(this.intervals.updateAccessToken[type])
 
     this.intervals.updateAccessToken[type] = setTimeout(() => this.intervaledUpdateAccessToken(type), 60 * 60 * 1000)
     try {

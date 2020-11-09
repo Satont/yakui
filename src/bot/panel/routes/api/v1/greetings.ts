@@ -11,14 +11,14 @@ const router = Router({
 
 router.get('/', async (req, res, next) => {
   try {
-    res.json([...cache.greetings.values()])
+    res.json(cache.greetings.values())
   } catch (e) {
     next(e)
   }
 })
 
 router.get('/:id', isAdmin, async (req, res, next) => {
-  const greeting = [...cache.greetings.values()].find(g => g.id === Number(req.params.id))
+  const greeting = cache.greetings.get(req.params.id)
   greeting.sound_file = greeting.sound_file.id as any
 
   try {

@@ -1,6 +1,5 @@
 import { getNameSpace } from '@bot/libs/socket'
 import { System } from 'typings'
-import humanizeDuration from 'humanize-duration'
 import currency from '../libs/currency'
 import locales from '../libs/locales'
 import tmi from '../libs/tmi'
@@ -15,19 +14,13 @@ export default new class MetaData implements System {
     this.sendMetaData()
   }
 
-  get uptime() {
-    return !twitch.streamMetaData.startedAt 
-      ? 'offline' 
-      : humanizeDuration(Date.now() - new Date(twitch.streamMetaData.startedAt).getTime(), { units: ['mo', 'd', 'h', 'm', 's'], round: true })
-  }
-
   getData() {
     return {
       bot: { username: tmi.chatClients?.bot?.currentNick },
       channel: { ...twitch.channelMetaData, name: tmi.channel?.name },
       stream: {
         ...twitch.streamMetaData,
-        startedAt: this.uptime,
+        startedAt: twitch.uptime,
       },
       mainCurrency: currency.botCurrency,
       lang: locales.translate('lang.code'),

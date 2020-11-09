@@ -11,7 +11,7 @@ const router = Router({ mergeParams: true })
 
 router.get('/', async (req, res, next) => {
   try {
-    res.json([...cache.overlays.values()])
+    res.json(cache.overlays.values())
   } catch (e) {
     next(e)
   }

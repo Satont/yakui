@@ -11,7 +11,7 @@ class Keyword {
   @parser()
   async parse(opts: ParserOptions) {
     opts.message = opts.message.toLowerCase()
-    const keywords = [...cache.keywords.values()]
+    const keywords = cache.keywords.values()
 
     for (const item of keywords) {
       if (!item.enabled || this.cooldowns.includes(item.name)) continue
