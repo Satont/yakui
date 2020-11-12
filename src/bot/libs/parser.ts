@@ -12,7 +12,6 @@ import cache from './cache'
 import { Command as CommandModel } from '@bot/entities/Command'
 import { orm } from './db'
 import { File } from '@bot/entities/File'
-import twitch from '../systems/twitch'
 
 export default new class Parser {
   systems: { [x: string]: System } = {}
