@@ -11,7 +11,7 @@ import { CommandPermission } from '@bot/entities/Command'
 import { settings } from '../decorators'
 import { command } from '../decorators/command'
 import { User } from '../entities/User'
-import { HelixSubscription } from 'twitch/lib'
+import { HelixSubscription } from 'twitch'
 
 class Twitch implements System {
   private intervals = {
