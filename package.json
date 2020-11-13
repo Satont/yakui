@@ -64,7 +64,7 @@
     "@satont/text-utils": "^1.0.5",
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
-    "bootstrap": "^4.5.2",
+    "bootstrap": "^4.5.3",
     "bootstrap-vue": "^2.18.1",
     "centrifuge": "^2.6.4",
     "chalk": "^4.1.0",
