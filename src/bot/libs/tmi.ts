@@ -68,9 +68,9 @@ export default new class Tmi {
 
       if (type === 'bot') {
         await this.getChannel(oauth.channel)
-        await import('./webhooks')
         await this.loadLibs()
       }
+      if (!this.channel) return
       this.chatClients[type] = new Chat(authProvider, { channels: [this.channel.name] })
       this.listeners(type)
       await this.chatClients[type].connect()
