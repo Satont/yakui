@@ -97,7 +97,7 @@ class Twitch implements System {
   }
 
   private async getStreamData() {
-    clearInterval(this.intervals.streamData)
+    clearTimeout(this.intervals.streamData)
     this.intervals.streamData = setTimeout(() => this.getStreamData(), 1 * 60 * 1000)
     if (!tmi.channel?.id) return
 
