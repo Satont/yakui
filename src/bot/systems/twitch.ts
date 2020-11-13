@@ -10,6 +10,8 @@ import { orm } from '@bot/libs/db'
 import { CommandPermission } from '@bot/entities/Command'
 import { settings } from '../decorators'
 import { command } from '../decorators/command'
+import { User } from '../entities/User'
+import { HelixSubscription } from 'twitch/lib'
 
 class Twitch implements System {
   private intervals = {
@@ -141,11 +143,50 @@ class Twitch implements System {
     try {
       if (!tmi.clients.broadcaster || !tmi.channel?.id) return
       const data = await (tmi.clients.broadcaster.helix.subscriptions.getSubscriptionsPaginated(tmi.channel?.id)).getAll()
+      this.updateDbSubscribers(data)
       this.channelMetaData.subs = data.length - 1 || 0
     } catch (e) {
       if (e.message.includes('This token does not have the requested scopes')) return
       error(e.message)
     }
+  }
+
+  private async updateDbSubscribers(data: HelixSubscription[]) {
+    const repository = orm.em.fork().getRepository(User)
+    const idsArray = data.map(u => Number(u.userId))
+
+    const notSubscribers = await repository.find({
+      id: { $in: idsArray },
+      isSubscriber: false,
+    })
+    notSubscribers.forEach(user => user.isSubscriber = true)
+
+    const subscribers = await repository.find({
+      id: { $nin: idsArray },
+      isSubscriber: true,
+    })
+    subscribers.forEach(user => user.isSubscriber = false)
+
+    const existedUsersById = [
+      ...notSubscribers.map(user => user.id),
+      ...subscribers.map(user => user.id),
+    ]
+    const notExistedUsers = data
+      .filter(u => !existedUsersById.includes(Number(u.userId)))
+      .reduce((array, current) => {
+        const user = repository.assign(new User(), {
+          id: String(current.userId),
+          isSubscriber: true,
+          username: current.userDisplayName,
+        })
+        return [...array, user]
+      }, [] as User[])
+
+    await repository.persistAndFlush([
+      ...subscribers,
+      ...notSubscribers,
+      ...notExistedUsers,
+    ])
   }
 
   private async getChannelLatestFollower() {

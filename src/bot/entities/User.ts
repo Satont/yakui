@@ -36,6 +36,15 @@ export class User {
   @OneToOne({ persist: false })
   dailyMessages?: UserDailyMessages
 
+  @Property()
+  isSubscriber = false
+
+  @Property()
+  isModerator = false
+
+  @Property()
+  isVip = false
+
   @OneToMany(() => UserBit, bit => bit.user, { persist: false })
   bits? = new Collection<UserBit>(this)
 
