@@ -147,7 +147,7 @@ class Twitch implements System {
       this.channelMetaData.subs = data.length - 1 || 0
     } catch (e) {
       if (e.message.includes('This token does not have the requested scopes')) return
-      error(e.message)
+      error(e)
     }
   }
 

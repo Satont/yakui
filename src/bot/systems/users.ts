@@ -62,7 +62,7 @@ class Users implements System {
     user.messages += 1
 
     const badges = opts.raw.userInfo.badges
-    user.isSubscriber = badges.has('subscriber') || badges.has('founder')
+    user.isSubscriber = (badges.has('subscriber') || badges.has('founder'))
     user.isModerator = badges.has('moderator')
     user.isVip = badges.has('vip')
 
@@ -212,7 +212,6 @@ class Users implements System {
   isIgnored(user: string | number) {
     return this.ignoredUsers?.includes(String(user))
   }
-
 }
 
 export default new Users()
