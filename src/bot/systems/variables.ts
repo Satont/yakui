@@ -1,5 +1,5 @@
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
-import _ from 'lodash'
+import _, { sample } from 'lodash'
 import hd from 'humanize-duration'
 
 import twitch from './twitch'
@@ -31,6 +31,7 @@ export default new class Variables implements System {
     { name: '$channel.game', response: 'Channel game' },
     { name: '$channel.title', response: 'Channel title' },
     { name: '$channel.followers', response: 'Number of channel followers' },
+    { name: '$random.online.user', response: 'Pick\'s random online user' },
     { name: '$random.N-N', response: 'Random beetwen 2 numbers' },
     { name: '$subs', response: 'Count of channel subscribers' },
     { name: '$subs.last.sub.username', response: 'Username of latest subscriber' },
@@ -89,6 +90,7 @@ export default new class Variables implements System {
       .replace(/\$channel\.game/gimu, twitch.channelMetaData.game)
       .replace(/\$channel\.title/gimu, twitch.channelMetaData.title)
       .replace(/\$stream\.uptime/gimu, twitch.uptime)
+      .replace(/\$random\.online\.user/gimu, sample(users.chatters).username)
       .replace(/\$random\.(\d+)-(\d+)/gimu, (match, first, second) => String(_.random(first, second)))
       .replace(/\$subs\.last\.sub\.username/gimu, twitch.channelMetaData.latestSubscriber?.username)
       .replace(/\$subs\.last\.sub\.ago/gimu, getLatestAgoString(twitch.channelMetaData.latestSubscriber?.timestamp))
