@@ -17,7 +17,7 @@ class Spotify implements Integration {
 
   @settings()
   enabled = false
-  
+
   @onChange(['enabled', 'access_token', 'refresh_token'])
   async init() {
     if (!this.access_token || !this.refresh_token || !this.enabled) return
@@ -33,7 +33,7 @@ class Spotify implements Integration {
     this.refreshTimeout = setTimeout(() => this.refreshTokens(), 15 * 60 * 1000)
     if (!this.refresh_token) return
     try {
-      const request = await axios.get('https://bot.satont.ru/api/spotify-refresh-token?refresh_token=' + this.refresh_token)
+      const request = await axios.get<{ access_token: string }>('https://bot.satont.ru/api/spotify-refresh-token?refresh_token=' + this.refresh_token)
       const data = request.data
 
       this.client?.setAccessToken(data.access_token)

@@ -59,7 +59,12 @@ class Users implements System {
     const user = await repository.findOne(Number(id)) || repository.assign(new User(), { id: Number(id), username, messages: 0 })
 
     user.username = opts.raw.userInfo.userName
-    user.messages +=  1
+    user.messages += 1
+
+    const badges = opts.raw.userInfo.badges
+    user.isSubscriber = (badges.has('subscriber') || badges.has('founder'))
+    user.isModerator = badges.has('moderator')
+    user.isVip = badges.has('vip')
 
     const updatePoints = (Number(user.lastMessagePoints) + pointsInterval <= user.messages) && this.points.enabled
 
@@ -207,7 +212,6 @@ class Users implements System {
   isIgnored(user: string | number) {
     return this.ignoredUsers?.includes(String(user))
   }
-
 }
 
 export default new Users()

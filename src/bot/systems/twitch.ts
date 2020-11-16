@@ -10,6 +10,8 @@ import { orm } from '@bot/libs/db'
 import { CommandPermission } from '@bot/entities/Command'
 import { settings } from '../decorators'
 import { command } from '../decorators/command'
+import { User } from '../entities/User'
+import { HelixSubscription } from 'twitch'
 
 class Twitch implements System {
   private intervals = {
@@ -95,7 +97,7 @@ class Twitch implements System {
   }
 
   private async getStreamData() {
-    clearInterval(this.intervals.streamData)
+    clearTimeout(this.intervals.streamData)
     this.intervals.streamData = setTimeout(() => this.getStreamData(), 1 * 60 * 1000)
     if (!tmi.channel?.id) return
 
@@ -137,15 +139,51 @@ class Twitch implements System {
 
   private async getChannelSubscribers() {
     clearTimeout(this.intervals.subscribers)
-    this.intervals.subscribers = setTimeout(() => this.getChannelSubscribers(), 1 * 60 * 1000)
+    this.intervals.subscribers = setTimeout(() => this.getChannelSubscribers(), 5 * 60 * 1000)
     try {
       if (!tmi.clients.broadcaster || !tmi.channel?.id) return
       const data = await (tmi.clients.broadcaster.helix.subscriptions.getSubscriptionsPaginated(tmi.channel?.id)).getAll()
+      this.updateDbSubscribers(data)
       this.channelMetaData.subs = data.length - 1 || 0
     } catch (e) {
       if (e.message.includes('This token does not have the requested scopes')) return
-      error(e.message)
+      error(e)
     }
+  }
+
+  private async updateDbSubscribers(data: HelixSubscription[]) {
+    const repository = orm.em.fork().getRepository(User)
+    const idsArray = data.map(u => Number(u.userId))
+
+    const subscribers = await repository.find({
+      isSubscriber: true,
+    })
+
+    for (const user of subscribers) {
+      if (!idsArray.includes(user.id)) {
+        // not sub anymore
+        user.isSubscriber = false
+      }
+    }
+
+    const markAsSubs: User[] = []
+    for (
+      const subscriber
+      of
+      data.filter(o => !subscribers.map(s => s.id).includes(Number(o.userId)))
+    ) {
+      const user = await repository.findOne({ id: Number(subscriber.userId) }) || repository.assign(new User(), {
+        id: Number(subscriber.userId),
+        username: subscriber.userDisplayName,
+      })
+      user.isSubscriber = true
+      markAsSubs.push(user)
+    }
+
+    await repository.persistAndFlush([
+      ...subscribers,
+      ...markAsSubs,
+    ])
   }
 
   private async getChannelLatestFollower() {

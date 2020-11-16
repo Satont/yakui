@@ -23,16 +23,21 @@ class Authorization {
         throw new Error('Insufficient data')
       }
 
-      const twitchValidation = await axios.get(`https://id.twitch.tv/oauth2/validate`, {
+      const { data: twitchValidation } = await axios.get<{
+        client_id: string,
+        login: string,
+        scopes: string[]
+        user_id: string,
+      }>(`https://id.twitch.tv/oauth2/validate`, {
         headers: {
           'Authorization': 'OAuth ' + accessTokenHeader,
         },
       })
 
-      if (userId !== twitchValidation.data.user_id) {
+      if (userId !== twitchValidation.user_id) {
         throw new Error('Not matching userId')
       }
-      const username = twitchValidation.data.login
+      const username = twitchValidation.login
       const admins: string[] = [tmi?.channel?.name]
       const botAdmins = users.botAdmins
       if (botAdmins) admins.push(...botAdmins)

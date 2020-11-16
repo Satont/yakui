@@ -141,11 +141,11 @@ export default new class Tmi {
     })
 
     client.onJoin((channel) => {
-      info(`TMI: Bot joined ${channel.replace('#', '')}`)
+      info(`TMI: ${type} joined ${channel.replace('#', '')}`)
     })
 
     client.onPart((channel) => {
-      info(`TMI: Bot parted ${channel.replace('#', '')}`)
+      info(`TMI: ${type} parted ${channel.replace('#', '')}`)
     })
 
     if (type === 'bot') {
