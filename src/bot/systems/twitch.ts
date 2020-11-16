@@ -139,7 +139,7 @@ class Twitch implements System {
 
   private async getChannelSubscribers() {
     clearTimeout(this.intervals.subscribers)
-    this.intervals.subscribers = setTimeout(() => this.getChannelSubscribers(), 1 * 60 * 1000)
+    this.intervals.subscribers = setTimeout(() => this.getChannelSubscribers(), 5 * 60 * 1000)
     try {
       if (!tmi.clients.broadcaster || !tmi.channel?.id) return
       const data = await (tmi.clients.broadcaster.helix.subscriptions.getSubscriptionsPaginated(tmi.channel?.id)).getAll()
@@ -155,37 +155,34 @@ class Twitch implements System {
     const repository = orm.em.fork().getRepository(User)
     const idsArray = data.map(u => Number(u.userId))
 
-    const notSubscribers = await repository.find({
-      id: { $in: idsArray },
-      isSubscriber: false,
-    })
-    notSubscribers.forEach(user => user.isSubscriber = true)
-
     const subscribers = await repository.find({
-      id: { $nin: idsArray },
       isSubscriber: true,
     })
-    subscribers.forEach(user => user.isSubscriber = false)
 
-    const existedUsersById = [
-      ...notSubscribers.map(user => user.id),
-      ...subscribers.map(user => user.id),
-    ]
-    const notExistedUsers = data
-      .filter(u => !existedUsersById.includes(Number(u.userId)))
-      .reduce((array, current) => {
-        const user = repository.assign(new User(), {
-          id: String(current.userId),
-          isSubscriber: true,
-          username: current.userDisplayName,
-        })
-        return [...array, user]
-      }, [] as User[])
+    for (const user of subscribers) {
+      if (!idsArray.includes(user.id)) {
+        // not sub anymore
+        user.isSubscriber = false
+      }
+    }
+
+    const markAsSubs: User[] = []
+    for (
+      const subscriber
+      of
+      data.filter(o => !subscribers.map(s => s.id).includes(Number(o.userId)))
+    ) {
+      const user = await repository.findOne({ id: Number(subscriber.userId) }) || repository.assign(new User(), {
+        id: Number(subscriber.userId),
+        username: subscriber.userDisplayName,
+      })
+      user.isSubscriber = true
+      markAsSubs.push(user)
+    }
 
     await repository.persistAndFlush([
       ...subscribers,
-      ...notSubscribers,
-      ...notExistedUsers,
+      ...markAsSubs,
     ])
   }
 
