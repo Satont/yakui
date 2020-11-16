@@ -35,22 +35,21 @@ class OAuth {
     tmi.connect('broadcaster')
   }
 
-  async validate(type: 'bot' | 'broadcaster'): Promise<{
-    clientId: string,
-    login: string,
-    userId: string,
-    scopes: string[]
-  }> {
+  async validate(type: 'bot' | 'broadcaster') {
     try {
-      const { data } = await axios.get('https://id.twitch.tv/oauth2/validate', { headers: {
+      const { data } = await axios.get<{
+        client_id: string,
+        login: string,
+        user_id: string,
+        scopes: string[]
+      }>('https://id.twitch.tv/oauth2/validate', { headers: {
         'Authorization': `OAuth ${this[`${type}AccessToken`]}`,
       } })
 
       return {
+        ...data,
         clientId: data.client_id,
-        login: data.login,
         userId: data.user_id,
-        scopes: data.scopes,
       }
     } catch (e) {
       error((e as AxiosError).response.data ? e.response.data : e)
@@ -58,12 +57,9 @@ class OAuth {
     }
   }
 
-  async refresh(type: 'bot' | 'broadcaster'): Promise<{
-    access_token: string,
-    refresh_token: string,
-  }> {
+  async refresh(type: 'bot' | 'broadcaster') {
     try {
-      const { data } = await axios.get('http://bot.satont.ru/api/refresh?refresh_token=' + this[`${type}RefreshToken`])
+      const { data } = await axios.get<{ token: string, refresh: string }>('http://bot.satont.ru/api/refresh?refresh_token=' + this[`${type}RefreshToken`])
 
       this[`${type}AccessToken`] = data.token
       this[`${type}RefreshToken`] = data.refresh

@@ -25,8 +25,8 @@ class SatontApi {
     if (!this.faceit.enabled || !this.faceit.nickname.trim().length) return false
 
     try {
-      const { data } = await this.base.get('/faceit?nick=' + this.faceit.nickname.trim())
-      
+      const { data } = await this.base.get<{ elo: number, lvl: number }>('/faceit?nick=' + this.faceit.nickname.trim())
+
       return { elo: data.elo, lvl: data.lvl }
     } catch (e) {
       error(e)
@@ -42,8 +42,8 @@ class SatontApi {
         .filter(entry => Boolean(entry[1]))
         .map(entry => `${entry[0]}=${entry[1]}`)
 
-      const { data } = await this.base.get('/song?' + params.join('&'))
-      
+      const { data } = await this.base.get<string>('/song?' + params.join('&'))
+
       return data.length ? data : false
     } catch (e) {
       error(e)

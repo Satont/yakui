@@ -32,7 +32,11 @@ class Currency {
   private async updateRates() {
     clearTimeout(this.updateRatesTimeout)
     try {
-      const { data } = await axios.get(`https://api.exchangeratesapi.io/latest?base=${this.base}`)
+      const { data } = await axios.get<{
+        rates: { [key in currency]: number },
+        date: string,
+        base: string,
+      }>(`https://api.exchangeratesapi.io/latest?base=${this.base}`)
 
       const rates: { [key in currency]: number } = data.rates
 
