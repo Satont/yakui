@@ -1,0 +1,34 @@
+name: Publish Docker
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    if: "! contains(toJSON(github.event.commits.*.message), '[skip-docker]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Docker Build & Push to Docker Hub
+        if: "!contains(steps.log.outputs.MESSAGE, '[skip-docker]')"
+        uses: opspresso/action-docker@v0.2.8
+        with:
+          args: --docker
+        env:
+          USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+          DOCKERFILE: "Dockerfile"
+          IMAGE_NAME: "satont/yakui"
+          TAG_NAME: ${{ github.sha }}
+          LATEST: "true"
+      - name: Build & Push to GitLab Package as latest
+        uses: opspresso/action-docker@v0.2.8
+        env:
+          USERNAME: ${{ secrets.GITLAB_DOCKER_USERNAME }}
+          PASSWORD: ${{ secrets.GITLAB_DOCKER_PASSWORD }}
+          REGISTRY: registry.gitlab.com
+          IMAGE_NAME: "satont/yakui"
+          TAG_NAME: ${{ github.sha }}
+          LATEST: "true"
