@@ -63,6 +63,8 @@ services:
       - 3000:3000
 ```
 
+As option there is mirror registry based on gitlab: `registry.gitlab.com/satont/yakui:latest`
+
 ## Help
 
 - [Discord server](https://discord.gg/a5XFNKq)
