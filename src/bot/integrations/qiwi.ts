@@ -1,15 +1,14 @@
 import axios from 'axios'
 
-import { Integration } from 'typings'
 import { User }  from '@bot/entities/User'
 import { UserTip } from '@bot/entities/UserTip'
 import currency from '@bot/libs/currency'
 import { onDonation } from '@bot/libs/eventsCaller'
 import { info, error } from '@bot/libs/logger'
 import { orm } from '@bot/libs/db'
-import { onChange, settings } from '../decorators'
+import { onChange, onLoad, settings } from '../decorators'
 
-class Qiwi implements Integration {
+class Qiwi {
   pollTimeout: NodeJS.Timeout = null
 
   @settings()
@@ -19,9 +18,8 @@ class Qiwi implements Integration {
   token: string = null
 
   @onChange(['enabled', 'token'])
-  async init() {
-    clearTimeout(this.pollTimeout)
-
+  @onLoad()
+  async start() {
     if (!this.enabled || !this.token) return
     info('QIWI: Successfuly initiliazed')
     this.poll()
