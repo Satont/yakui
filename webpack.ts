@@ -58,7 +58,9 @@ export default {
     ],
   },
   plugins: [
-    new CleanWebpackPlugin(),
+    new CleanWebpackPlugin({
+      dangerouslyAllowCleanPatternsOutsideProject: true,
+    }),
     new VueLoaderPlugin(),
     new MiniCssExtractPlugin({
       filename: '[name].[contenthash].css',
@@ -90,6 +92,6 @@ export default {
       '@panel': resolve(__dirname, 'src', 'panel'),
       '@login': resolve(__dirname, 'src', 'login'),
     },
-    fallback: { 'querystring': false },
+    fallback: { 'querystring': require.resolve('querystring-es3') },
   },
 }

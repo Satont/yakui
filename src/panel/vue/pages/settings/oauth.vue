@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts">
-import { stringify } from 'querystring'
+import querystring from 'querystring'
 import { Vue, Component } from 'vue-property-decorator'
 import { Settings } from '../helpers/mixins'
 
@@ -45,7 +45,7 @@ export default class Oauth extends Vue {
   }
 
   private generateAuthLink(type: 'bot' | 'broadcaster') {
-    const query = stringify({
+    const query = querystring.stringify({
       client_id: this.settings.clientId,
       redirect_uri: `${window.location.origin}/twitch/auth/callback`,
       state: type,
