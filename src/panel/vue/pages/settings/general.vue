@@ -27,10 +27,5 @@ export default class General extends Settings {
     locale: 'ru',
     siteUrl: window.location.origin
   }
-
-  async created() {
-    await super.created()
-    await this.save()
-  }
 }
 </script>
