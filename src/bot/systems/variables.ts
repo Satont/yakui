@@ -90,7 +90,7 @@ export default new class Variables implements System {
       .replace(/\$channel\.game/gimu, twitch.channelMetaData.game)
       .replace(/\$channel\.title/gimu, twitch.channelMetaData.title)
       .replace(/\$stream\.uptime/gimu, twitch.uptime)
-      .replace(/\$random\.online\.user/gimu, sample(users.chatters).username)
+      .replace(/\$random\.online\.user/gimu, sample(users.chatters)?.username)
       .replace(/\$random\.(\d+)-(\d+)/gimu, (match, first, second) => String(_.random(first, second)))
       .replace(/\$subs\.last\.sub\.username/gimu, twitch.channelMetaData.latestSubscriber?.username)
       .replace(/\$subs\.last\.sub\.ago/gimu, getLatestAgoString(twitch.channelMetaData.latestSubscriber?.timestamp))
