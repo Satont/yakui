@@ -1,6 +1,6 @@
 import { orm } from '../libs/db'
 import { Settings } from '../entities/Settings'
-import { loadedSystems } from '../libs/loader'
+import { loaded, loadedSystems } from '../libs/loader'
 
 export const cache: ICache = {}
 
@@ -57,7 +57,13 @@ export const setupObserver = ({ instance, propertyName, fromSettings = false } =
 
         if (shouldCallChange) {
           const clazz = loadedSystems.find(c => c.constructor.name.toLowerCase() === instanceName)
-          instance[cache[instanceName][propertyName].onChange].call(clazz)
+          const data = {
+            property: propertyName,
+            oldValuie: cache[instanceName][propertyName].previousValue,
+            newValue: value,
+          }
+
+          instance[cache[instanceName][propertyName].onChange].call(clazz, data)
         }
 
         return true
@@ -77,5 +83,5 @@ const updateValue = async ({ space, name, value }) => {
 }
 
 const shouldCallOnChange = (varCache: TVariable) => {
-  return !varCache.firstChange && (varCache.settings.shouldLoad ? varCache.settings.loaded : true) && varCache.onChange
+  return !varCache.firstChange && (varCache.settings.shouldLoad ? varCache.settings.loaded : true) && varCache.onChange && loaded
 }

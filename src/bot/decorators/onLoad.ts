@@ -2,9 +2,9 @@ import { loaded } from '../libs/loader'
 
 export function OnLoadedDecorator(): MethodDecorator {
   return (instance: any, methodName: PropertyKey): void => {
-    const bootstrap = () => {
+    const bootstrap = async () => {
       if (!loaded) return setTimeout(() => bootstrap(), 1000)
-      instance[methodName]()
+      await instance[methodName]()
     }
 
     bootstrap()
