@@ -29,7 +29,7 @@ Vue.component('dashboard', () => import('./vue/pages/dashboard/index.vue'))
 const start = async () => {
   const user = await isLogged(true, true)
   store.commit('setLoggedUser', user)
-  
+
   Vue.use(VueSocketIO, Socket)
   Vue.use(Axios)
 
@@ -37,7 +37,7 @@ const start = async () => {
   await new Promise((res) => metaDataSocket.emit('getData', data => {
     store.commit('setMetaData', data)
     document.title = data.bot?.username?.toUpperCase()
-    res()
+    res(null)
   }))
 
   const filesSocket = getNameSpace({ name: 'systems/files' })
@@ -106,12 +106,12 @@ const start = async () => {
         <side-bar></side-bar>
         <loading v-if="$root.loading"></loading>
         <div class="col-md-11 ml-sm-auto col-lg-11 px-md-4 pt-md-3">
-          <dashboard 
-            v-if="!$root.loading"  
+          <dashboard
+            v-if="!$root.loading"
             :class="{ hidden: $route.path !== '/' }"
           />
-          <router-view 
-            v-if="!$root.loading" 
+          <router-view
+            v-if="!$root.loading"
             :class="{ hidden: $route.path === '/' }"
           />
         </div>

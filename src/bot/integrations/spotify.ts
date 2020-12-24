@@ -3,7 +3,7 @@ import axios from 'axios'
 
 import { Integration } from 'typings'
 import { info, error } from '@bot/libs/logger'
-import { onChange, settings } from '../decorators'
+import { onChange, onLoad, settings } from '../decorators'
 
 class Spotify implements Integration {
   client: SpotifyApi | null = null
@@ -19,6 +19,7 @@ class Spotify implements Integration {
   enabled = false
   
   @onChange(['enabled', 'access_token', 'refresh_token'])
+  @onLoad()
   async init() {
     if (!this.access_token || !this.refresh_token || !this.enabled) return
 

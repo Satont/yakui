@@ -8,7 +8,7 @@ import { User } from '@bot/entities/User'
 import { UserTip } from '@bot/entities/UserTip'
 import { error, info } from '@bot/libs/logger'
 import { orm } from '@bot/libs/db'
-import { onChange, settings } from '../decorators'
+import { onChange, onLoad, settings } from '../decorators'
 
 type DonationAlertsEvent = {
   id: string;
@@ -37,6 +37,7 @@ class Donationalerts {
   enabled = false
 
   @onChange(['enabled', 'access_token', 'refresh_token'])
+  @onLoad()
   async onChanges() {
     this.disconnect()
     if (!this.enabled || !this.access_token || !this.refresh_token) return
@@ -78,7 +79,7 @@ class Donationalerts {
       const { data } = await axios.get(`http://bot.satont.ru/api/donationalerts-refresh?refresh_token=${this.refresh_token}`)
       this.access_token = data.access_token
       this.refresh_token = data.refresh_token
-  
+
       info('DONATIONALERTS: Token successfuly refreshed')
     } catch (e) {
       error('DONATIONALERTS: cannot refresh token')

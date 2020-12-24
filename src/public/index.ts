@@ -24,9 +24,9 @@ const start = async () => {
   await new Promise((res) => metaDataSocket.emit('getData', data => {
     store.commit('setMetaData', data)
     document.title = data.bot?.username?.toUpperCase()
-    res()
+    res(null)
   }))
-  
+
   const router = new VueRouter({
     routes: [
       { path: '/', name: 'Home', component: () => import('./vue/index.vue'), alias: '/home' },

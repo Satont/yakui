@@ -10,6 +10,7 @@ import {
 import { PubSubRedemptionMessage } from 'twitch-pubsub-client/lib'
 import { File } from '../src/bot/entities/File'
 import { CommandPermission } from '../src/bot/entities/Command'
+import { Namespace } from 'socket.io'
 
 export type HostType = { viewers: number, username: string }
 
@@ -56,7 +57,7 @@ export interface System {
     fnc: string
   }>;
   commands?: Command[],
-  socket?: SocketIO.Namespace,
+  socket?: Namespace,
   clients?: SocketIO.Socket[],
   init?: () => void | Promise<void>,
   onStreamEnd?: () => void | Promise<void>,

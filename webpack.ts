@@ -37,27 +37,21 @@ export default {
   },
   module: {
     rules: [
-      { 
+      {
         test: /\.vue$/i,
         loader: 'vue-loader',
       },
-      { 
-        test: /\.css$/i, 
+      {
+        test: /\.css$/i,
         use: [
-          isDev() ? 'vue-style-loader' : {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              hmr: isDev(),
-              esModule: true,
-            },
-          },
+          isDev() ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
           'css-loader',
         ],
       },
-      { 
+      {
         test: /\.ts$/i,
-        use: { 
-          loader: 'ts-loader', 
+        use: {
+          loader: 'ts-loader',
           options: { experimentalFileCaching: true, appendTsSuffixTo: [/\.vue$/] },
         },
       },
@@ -96,5 +90,6 @@ export default {
       '@panel': resolve(__dirname, 'src', 'panel'),
       '@login': resolve(__dirname, 'src', 'login'),
     },
+    fallback: { 'querystring': false },
   },
 }

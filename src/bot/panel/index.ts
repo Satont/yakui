@@ -60,7 +60,9 @@ app.use((err, req: Request, res: Response, next) => {
   } else next()
 })
 
-export const server = http.createServer(app).listen(PORT, '0.0.0.0', () => {
+export const server = http.createServer(app)
+
+server.listen(PORT, '0.0.0.0', () => {
   info(`PANEL: Server initiliazed on ${PORT}`)
 })
 
