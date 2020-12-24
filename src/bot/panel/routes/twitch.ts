@@ -5,6 +5,7 @@ import { onAddModerator, onRemoveModerator, onUserFollow, onStreamChange } from 
 import { error } from '@bot/libs/logger'
 import { inspect } from 'util'
 import oauth from '../../libs/oauth'
+import general from '../../settings/general'
 
 const router = Router()
 
@@ -20,7 +21,7 @@ router.get('/auth/callback', async (req, res) => {
     state: type,
     code,
     grant_type: 'authorization_code',
-    redirect_uri: `${req.headers.referer}twitch/auth/callback`,
+    redirect_uri: `${general.siteUrl}/twitch/auth/callback`,
   }
 
   try {

@@ -21,11 +21,16 @@ import { Settings } from '../helpers/mixins'
 @Component({
   mixins: [Settings]
 })
-export default class General extends Vue {
+export default class General extends Settings {
   settings = {
     space: 'general',
     locale: 'ru',
     siteUrl: window.location.origin
+  }
+
+  async created() {
+    await super.created()
+    await this.save()
   }
 }
 </script>
