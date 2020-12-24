@@ -5,6 +5,12 @@ interface OnPropertyChangeConfig {
   bulk?: boolean;
 }
 
+export interface IOnChangeOpts {
+  oldValue: any,
+  newValue: any,
+  property: string
+}
+
 const defaultConfig = {
   bulk: false,
   history: false,
