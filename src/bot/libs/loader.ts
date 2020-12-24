@@ -3,7 +3,6 @@ import getFiles from '@bot/commons/getFiles'
 import { System } from 'typings'
 import { error, info } from './logger'
 import cache from './cache'
-import oauth from './oauth'
 
 export const loadedSystems: System[] = []
 export let loaded = false
