@@ -5,29 +5,28 @@ import { onAddModerator, onRemoveModerator, onUserFollow, onStreamChange } from 
 import { error } from '@bot/libs/logger'
 import { inspect } from 'util'
 import oauth from '../../libs/oauth'
-import general from '../../settings/general'
 
 const router = Router()
 
 router.get('/', (req, res) => res.send('ok'))
 
 router.get('/auth/callback', async (req, res) => {
-  const type = req.query.state
+  const state = JSON.parse(Buffer.from(req.query.state as string, 'base64').toString('utf-8'))
   const code = req.query.code
 
   const query = {
     client_id: oauth.clientId,
     client_secret: oauth.clientSecret,
-    state: type,
     code,
     grant_type: 'authorization_code',
-    redirect_uri: `${general.siteUrl}/twitch/auth/callback`,
+    redirect_uri: `https://yakui.tk/misc/twitch/auth/flows/code/`,
   }
 
   try {
     const { data } = await axios.post(`https://id.twitch.tv/oauth2/token`, null, { params: query })
-    oauth[`${type}AccessToken`] = data.access_token
-    oauth[`${type}RefreshToken`] = data.refresh_token
+
+    oauth[`${state.type}AccessToken`] = data.access_token
+    oauth[`${state.type}RefreshToken`] = data.refresh_token
   } catch (e) {
     error(e)
   }

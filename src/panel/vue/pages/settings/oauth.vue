@@ -45,10 +45,15 @@ export default class Oauth extends Vue {
   }
 
   private generateAuthLink(type: 'bot' | 'broadcaster') {
+    const state = {
+      type,
+      origin: window.location.origin
+    }
+
     const query = querystring.stringify({
       client_id: this.settings.clientId,
-      redirect_uri: `${window.location.origin}/twitch/auth/callback`,
-      state: type,
+      redirect_uri: `https://yakui.tk/misc/twitch/auth/flows/code/`,
+      state: window.btoa(JSON.stringify(state)),
       response_type: 'code',
       scope: this.requestScopes.join(' '),
     })
