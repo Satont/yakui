@@ -9,6 +9,7 @@ import { UserTip } from '@bot/entities/UserTip'
 import { error, info } from '@bot/libs/logger'
 import { orm } from '@bot/libs/db'
 import { onChange, onLoad, settings } from '../decorators'
+import { IOnChangeOpts } from '../decorators/onChange'
 
 type DonationAlertsEvent = {
   id: string;
@@ -24,8 +25,8 @@ type DonationAlertsEvent = {
 class Donationalerts {
   private centrifugeSocket: Centrifuge = null
   private channel: Centrifuge.Subscription = null
-  private connecting = false
   private readonly audioRegular = /https:\/\/static\.donationalerts\.ru\/audiodonations[./\w]+/gm
+  private readonly donationsCache = new Set()
 
   @settings()
   access_token: string = null
@@ -36,42 +37,50 @@ class Donationalerts {
   @settings()
   enabled = false
 
-  @onChange(['enabled', 'access_token', 'refresh_token'])
+  @onChange('enabled')
+  onEnabledChange(opts: IOnChangeOpts) {
+    if (opts.newValue) {
+      this.onChanges()
+    } else {
+      this.disconnect()
+    }
+  }
+
+  @onChange('refresh_token')
+  onRefreshChange(opts: IOnChangeOpts) {
+    if (opts.newValue === opts.oldValue) return
+
+    this.onChanges()
+  }
+
   @onLoad()
   async onChanges() {
-    this.disconnect()
     if (!this.enabled || !this.access_token || !this.refresh_token) return
-    if (this.connecting) return
-    await this.recheckToken()
-    this.connecting = true
 
-    if (!this.access_token || !this.refresh_token || !this.enabled) {
-      this.connecting = false
-      return
-    }
-
-    await this.connect()
-  }
-
-  async disconnect() {
-    if (!this.centrifugeSocket || !this.channel) return
-    this.channel.unsubscribe()
-    this.channel.removeAllListeners()
-    this.centrifugeSocket.removeAllListeners()
-    this.centrifugeSocket.disconnect()
-    this.centrifugeSocket = null
-    this.channel = null
-  }
-
-  async recheckToken() {
     try {
-      await axios.get('https://www.donationalerts.com/api/v1/user/oauth', {
-        headers: { 'Authorization': `Bearer ${this.access_token}` },
-      })
+      await this.recheckToken()
+      await this.connect()
     } catch (e) {
       if (e.response?.status === 401) await this.refreshToken()
-      else error(e)
     }
+  }
+
+  disconnect() {
+    this.channel?.unsubscribe()
+    this.channel?.removeAllListeners()
+    this.centrifugeSocket?.removeAllListeners()
+    this.centrifugeSocket?.disconnect()
+
+    this.centrifugeSocket = null
+    this.channel = null
+
+    return new Promise((res) => setTimeout(() => res(''), 2000))
+  }
+
+  recheckToken() {
+    return axios.get('https://www.donationalerts.com/api/v1/user/oauth', {
+      headers: { 'Authorization': `Bearer ${this.access_token}` },
+    })
   }
 
   async refreshToken() {
@@ -87,9 +96,9 @@ class Donationalerts {
   }
 
   async connect() {
-    this.disconnect()
-    info('DONATIONALERTS: Starting connect')
+    await this.disconnect()
 
+    info('DONATIONALERTS: Starting connect')
     this.centrifugeSocket = new Centrifuge('wss://centrifugo.donationalerts.com/connection/websocket', {
       websocket: WebSocket,
       onPrivateSubscribe: async ({ data }, cb) => {
@@ -107,7 +116,6 @@ class Donationalerts {
     this.centrifugeSocket.setToken(opts.token)
     this.centrifugeSocket.connect()
     this.listeners(opts)
-    this.connecting = false
   }
 
   private async getOpts(token: string) {
@@ -131,7 +139,8 @@ class Donationalerts {
 
   async listeners(opts: { token: string, id: number }) {
     this.centrifugeSocket.on('disconnect', (reason: unknown) => {
-      info(`DONATIONALERTS: disconnected from socket: ${reason}`)
+      info(`DONATIONALERTS: disconnected from socket`)
+      info(reason)
     })
 
     this.centrifugeSocket.on('connect', () => {
@@ -143,13 +152,20 @@ class Donationalerts {
     this.channel.on('join', () => {
       info('DONATIONALERTS: successfuly joined in donations channel')
     })
+
     this.channel.on('leaved', (reason) => {
       info(`DONATIONALERTS: disconnected from donations channel: ${reason}`)
     })
+
     this.channel.on('unsubscribe', (reason) => {
       info(`DONATIONALERTS: unsibscribed from donations channel: ${reason}`)
     })
+
     this.channel.on('publish', async ({ data }: { data: DonationAlertsEvent }) => {
+      if (this.donationsCache?.has(data.id)) {
+        return this.donationsCache?.add(data.id)
+      }
+
       const user = await orm.em.fork().getRepository(User).findOne({ username: data.username.toLowerCase() })
 
       const message = data.message?.replace(this.audioRegular, '<audio>')
