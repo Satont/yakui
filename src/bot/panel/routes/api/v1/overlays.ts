@@ -41,7 +41,9 @@ router.post('/', isAdmin, checkSchema({
   id: {
     isNumeric: true,
     in: ['body'],
-    optional: true,
+    optional: {
+      options: { nullable: true },
+    },
   },
   name: {
     isString: true,
@@ -61,7 +63,9 @@ router.post('/', isAdmin, checkSchema({
   js: {
     isArray: true,
     in: ['body'],
-    optional: true,
+    optional: {
+      options: { nullable: true },
+    },
   },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
