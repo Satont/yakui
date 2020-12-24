@@ -40,7 +40,7 @@ export default new class Tmi {
       await this.disconnect(type)
 
       const staticProvider = new StaticAuthProvider(oauth.clientId)
-      const authProvider = new RefreshableAuthProvider(staticProvider, {
+      const authProvider = new RefreshableAuthProvider(staticProvider as any, {
         clientSecret: oauth.clientSecret,
         refreshToken: oauth[`${type}RefreshToken`],
         onRefresh: async ({ refreshToken }) => {
