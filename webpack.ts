@@ -13,7 +13,7 @@ const removePluginOptions = {
   test: [
     {
       folder: './dest',
-      method: () => true,
+      method: (absoluteItemPath) => new RegExp(/\.js$/, 'm').test(absoluteItemPath),
       recursive: true,
     },
     {
@@ -60,7 +60,7 @@ export default {
       {
         test: /\.css$/i,
         use: [
-          isDev() ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
+          MiniCssExtractPlugin.loader,
           'css-loader',
         ],
       },
