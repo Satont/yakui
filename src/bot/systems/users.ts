@@ -87,7 +87,7 @@ class Users implements System {
     if (!id && !username) throw new Error('Id or username should be used.')
 
     if (!id) {
-      const byName = await tmi?.clients?.bot?.helix.users.getUserByName(username)
+      const byName = await tmi.bot.api?.helix.users.getUserByName(username)
       id = byName.id
       username = byName.name
     }
@@ -137,9 +137,9 @@ class Users implements System {
 
     this.chatters = []
 
-    for (const chunk of makeChunk((await tmi.clients?.bot?.unsupported.getChatters(tmi.channel?.name))?.allChatters, 100)) {
+    for (const chunk of makeChunk((await tmi.bot.api?.unsupported.getChatters(tmi.channel?.name))?.allChatters, 100)) {
 
-      const users = (await tmi.clients?.bot?.helix.users.getUsersByNames(chunk)).map(user => ({ username: user.name, id: user.id }))
+      const users = (await tmi.bot.api?.helix.users.getUsersByNames(chunk)).map(user => ({ username: user.name, id: user.id }))
 
       this.chatters.push(...users)
     }
@@ -152,7 +152,7 @@ class Users implements System {
     description: 'commands.sayb.description',
   })
   sayb(opts: CommandOptions) {
-    tmi.chatClients?.broadcaster?.say(tmi.channel?.name, opts.argument)
+    tmi.broadcaster.chat?.say(tmi.channel?.name, opts.argument)
   }
 
   getUserPermissions(badges: Map<string, string>, raw?: TwitchPrivateMessage): UserPermissions {

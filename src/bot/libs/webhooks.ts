@@ -33,13 +33,13 @@ export default new class WebHooks {
     try {
       switch (type) {
         case 'follows':
-          await tmi.clients.bot.helix.webHooks.unsubscribeFromUserFollowsTo(channelId, options)
+          await tmi.bot.api.helix.webHooks.unsubscribeFromUserFollowsTo(channelId, options)
           break
         case 'streams':
-          await tmi.clients.bot.helix.webHooks.unsubscribeFromStreamChanges(channelId, options)
+          await tmi.bot.api.helix.webHooks.unsubscribeFromStreamChanges(channelId, options)
           break
         case 'moderator':
-          await tmi.clients.bot.helix.webHooks.unsubscribeFromModeratorEvents(channelId, options)
+          await tmi.bot.api.helix.webHooks.unsubscribeFromModeratorEvents(channelId, options)
           break
       }
       info(`WEBHOOKS: Unsibscribed from ${type} topic, ${tmi.channel.name} [${tmi.channel.id}]`)
@@ -63,13 +63,13 @@ export default new class WebHooks {
     try {
       switch (type) {
         case 'follows':
-          await tmi.clients.bot.helix.webHooks.subscribeToUserFollowsTo(channelId, options)
+          await tmi.bot.api.helix.webHooks.subscribeToUserFollowsTo(channelId, options)
           break
         case 'streams':
-          await tmi.clients.bot.helix.webHooks.subscribeToStreamChanges(channelId, options)
+          await tmi.bot.api.helix.webHooks.subscribeToStreamChanges(channelId, options)
           break
         case 'moderator':
-          await tmi.clients.bot.helix.webHooks.subscribeToModeratorEvents(channelId, options)
+          await tmi.bot.api.helix.webHooks.subscribeToModeratorEvents(channelId, options)
           break
       }
       info(`WEBHOOKS: Subscribed to ${type} topic, ${tmi.channel.name} [${tmi.channel.id}]`)

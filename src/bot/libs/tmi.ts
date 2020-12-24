@@ -1,8 +1,7 @@
-import { ApiClient, AccessToken } from 'twitch'
+import { ApiClient, RefreshableAuthProvider } from 'twitch'
 import { ChatClient as Chat } from 'twitch-chat-client'
 import { StaticAuthProvider } from 'twitch-auth'
 
-import OAuth from './oauth'
 import Parser from './parser'
 import events from '@bot/systems/events'
 import { info, error, chatOut, chatIn, timeout, whisperOut } from './logger'
@@ -11,48 +10,27 @@ import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/Tw
 import oauth from './oauth'
 
 export default new class Tmi {
-  private intervals = {
-    updateAccessToken: {
-      bot: null,
-      broadcaster: null,
-    },
-  }
-  private isAlreadyUpdating = {
-    bot: false,
-    broadcaster: false,
+  bot: {
+    api: ApiClient | null,
+    chat: Chat | null
+  } = {
+    chat: null,
+    api: null,
   }
 
-  clients: {
-    broadcaster: ApiClient | null,
-    bot: ApiClient | null,
+  broadcaster: {
+    api: ApiClient | null,
+    chat: Chat | null
   } = {
-    broadcaster: null,
-    bot: null,
-  }
-  chatClients: {
-    broadcaster: Chat | null,
-    bot: Chat | null,
-  } = {
-    broadcaster: null,
-    bot: null,
-  }
-  connected: {
-    bot: boolean,
-    broadcaster: boolean,
-  } = {
-    bot: false,
-    broadcaster: false,
+    chat: null,
+    api: null,
   }
 
   channel: { name: string, id: string }
   parsedLinesPerStream = 0
 
   async connect(type: 'bot' | 'broadcaster') {
-    if (this.isAlreadyUpdating[type]) return
-    this.isAlreadyUpdating[type] = true
-
-    if (!oauth.channel || !oauth[`${type}AccessToken`] || !oauth[`${type}RefreshToken`]) {
-      this.isAlreadyUpdating[type] = false
+    if (!oauth.clientId || !oauth.clientSecret || !oauth[`${type}RefreshToken`]) {
       return
     }
 
@@ -61,50 +39,35 @@ export default new class Tmi {
     try {
       await this.disconnect(type)
 
-      const { clientId, scopes } = await OAuth.validate(type)
-      const authProvider = new StaticAuthProvider(clientId, oauth[`${type}AccessToken`], scopes) as any
+      const staticProvider = new StaticAuthProvider(oauth.clientId)
+      const authProvider = new RefreshableAuthProvider(staticProvider, {
+        clientSecret: oauth.clientSecret,
+        refreshToken: oauth[`${type}RefreshToken`],
+        onRefresh: async ({ refreshToken }) => {
+          oauth[`${type}RefreshToken`] = refreshToken
+        },
+      })
 
-      this.clients[type] = new ApiClient({ authProvider })
+      this[type].api = new ApiClient({ authProvider })
 
       if (type === 'bot') {
         await this.getChannel(oauth.channel)
         await this.loadLibs()
+      } else {
+        await (await import('./pubsub')).default.init()
       }
+
       if (!this.channel) return
-      this.chatClients[type] = new Chat(authProvider, { channels: [this.channel.name] })
+      this[type].chat = new Chat(authProvider as any, { channels: [this.channel.name] })
       this.listeners(type)
-      await this.chatClients[type].connect()
-
-      await this.intervaledUpdateAccessToken(type)
-      if (type === 'broadcaster') {
-        const pubsub = await import('./pubsub')
-        await pubsub.default.init()
-      }
-    } catch (e) {
-      error(e)
-      await OAuth.refresh(type)
-      this.isAlreadyUpdating[type] = false
-    } finally {
-      this.isAlreadyUpdating[type] = false
-    }
-  }
-
-  private async intervaledUpdateAccessToken(type: 'bot' | 'broadcaster') {
-    clearTimeout(this.intervals.updateAccessToken[type])
-
-    this.intervals.updateAccessToken[type] = setTimeout(() => this.intervaledUpdateAccessToken(type), 60 * 60 * 1000)
-    try {
-      const { access_token, refresh_token } = await OAuth.refresh(type)
-      const token = new AccessToken({ access_token, refresh_token })
-
-      this.clients[type].setAccessToken(token)
+      await this[type].chat.connect()
     } catch (e) {
       error(e)
     }
   }
 
   private async getChannel(name: string) {
-    const user = await this.clients.bot?.helix.users.getUserByName(name)
+    const user = await this.bot?.api.helix.users.getUserByName(name)
     if (!user) return
     this.channel = { name: user.name, id: user.id }
 
@@ -112,40 +75,36 @@ export default new class Tmi {
   }
 
   async disconnect(type: 'bot' | 'broadcaster') {
-    const client = this.chatClients[type]
+    const client = this[type].chat
 
     if (client && this.channel) {
       client.part(this.channel.name)
       await client.quit()
 
-      this.clients[type] = null
-      this.chatClients[type] = null
+      this[type].chat = null
+      this[type].api = null
     }
   }
 
   async listeners(type: 'bot' | 'broadcaster') {
-    const client = this.chatClients[type]
+    const client = this[type].chat
 
     client.onDisconnect((manually, reason) => {
-      info(`TMI: ${type} disconnected from server ${reason}`)
-      this.connect(type)
+      if (!manually) {
+        info(`TMI: ${type} disconnected from server ${reason}`)
+      }
     })
 
     client.onConnect(async () => {
       info(`TMI: ${type.charAt(0).toUpperCase() + type.substring(1)} client connected`)
-      this.connected[type] = true
-      /* client.join(this.channel?.name).catch((e) => {
-        if (e.message.includes('Did not receive a reply to join')) return
-        else error(e)
-      }) */
     })
 
     client.onJoin((channel) => {
-      info(`TMI: Bot joined ${channel.replace('#', '')}`)
+      info(`TMI: ${type} joined ${channel.replace('#', '')}`)
     })
 
     client.onPart((channel) => {
-      info(`TMI: Bot parted ${channel.replace('#', '')}`)
+      info(`TMI: ${type} parted ${channel.replace('#', '')}`)
     })
 
     if (type === 'bot') {
@@ -192,17 +151,17 @@ export default new class Tmi {
   }
 
   async say({ type = 'bot', message }: { type?: 'bot' | 'broadcaster', message: string }) {
-    if (process.env.NODE_ENV === 'production') this.chatClients[type]?.say(this.channel.name, message)
+    if (process.env.NODE_ENV === 'production') this[type].chat?.say(this.channel.name, message)
     chatOut(message)
   }
 
   async timeout({ username, duration, reason }: { username: string, duration: number, reason?: string }) {
-    if (process.env.NODE_ENV === 'production') await this.chatClients.bot?.timeout(this.channel.name, username, duration, reason)
+    if (process.env.NODE_ENV === 'production') await this.bot.chat?.timeout(this.channel.name, username, duration, reason)
     timeout(`${username} | ${duration}s | ${reason ?? ''}`)
   }
 
   async whispers({ type = 'bot', message, target }: { type?: 'bot' | 'broadcaster', message: string, target: string }) {
-    if (process.env.NODE_ENV === 'production') this.chatClients[type]?.whisper(target, message)
+    if (process.env.NODE_ENV === 'production') this[type].chat?.whisper(target, message)
     whisperOut(`${target}: ${message}`)
   }
 

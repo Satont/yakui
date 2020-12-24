@@ -84,7 +84,7 @@ export default new class Variables implements System {
     })
 
     result = result
-      .replace(/\$sender/gimu, '@' + userInfo?.userName ?? tmi.chatClients?.bot?.currentNick)
+      .replace(/\$sender/gimu, '@' + userInfo?.userName ?? tmi.bot.chat?.currentNick)
       .replace(/\$stream\.viewers/gimu, String(twitch.streamMetaData.viewers))
       .replace(/\$channel\.views/gimu, String(twitch.channelMetaData.views))
       .replace(/\$channel\.game/gimu, twitch.channelMetaData.game)
@@ -190,7 +190,7 @@ export default new class Variables implements System {
 
     const offset = (Number(page) - 1) * 10
 
-    const ignored = [...users.ignoredUsers, tmi.channel?.name.toLowerCase(), tmi.chatClients?.bot?.currentNick].filter(Boolean)
+    const ignored = [...users.ignoredUsers, tmi.channel?.name.toLowerCase(), tmi.bot.chat?.currentNick].filter(Boolean)
     const limit = 10
 
     if (type === 'watched') {

@@ -82,7 +82,6 @@ export default class GreetingsManagerEdit extends Vue {
 
       this.greeting = data
     }
-    console.log(this.greeting)
   }
 
   async del() {

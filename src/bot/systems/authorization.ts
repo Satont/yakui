@@ -37,7 +37,7 @@ class Authorization {
       const botAdmins = users.botAdmins
       if (botAdmins) admins.push(...botAdmins)
 
-      const userType = (!tmi.channel?.name || !admins.length ? true : admins.includes(username)) ? 'admin' : 'viewer'
+      const userType = (!tmi?.channel?.name || !admins.length ? true : admins.includes(username)) ? 'admin' : 'viewer'
 
       const accessToken = jwt.sign({
         userId,

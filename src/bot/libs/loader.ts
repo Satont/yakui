@@ -5,6 +5,7 @@ import { error, info } from './logger'
 import cache from './cache'
 
 export const loadedSystems: System[] = []
+export let loaded = false
 
 const loader = async () => {
   const folders = {
@@ -44,7 +45,12 @@ const loader = async () => {
 }
 
 loader().then(async () => {
-  setTimeout(() => loadedSystems.forEach(s => s.init ? s.init() : null), 10 * 1000)
-  setTimeout(() => cache.init(), 15 * 1000)
+  for (const system of loadedSystems) {
+    if (system.init) {
+      await system.init()
+    }
+  }
+  await cache.init()
+  loaded = true
 })
 

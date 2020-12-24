@@ -99,7 +99,7 @@ class Twitch implements System {
     this.intervals.streamData = setTimeout(() => this.getStreamData(), 1 * 60 * 1000)
     if (!tmi.channel?.id) return
 
-    const data = await tmi?.clients?.bot?.helix.streams.getStreamByUserId(tmi.channel?.id)
+    const data = await tmi.bot.api?.helix.streams.getStreamByUserId(tmi.channel?.id)
 
     if (data && !this.streamMetaData.startedAt) onStreamStart()
     else if (!data && this.streamMetaData.startedAt) onStreamEnd()
@@ -112,7 +112,7 @@ class Twitch implements System {
 
   async onStreamChange(opts: IWebHookStreamChanged) {
     if (opts.game_id) {
-      const game = await tmi.clients?.bot?.helix.games.getGameById(opts.game_id)
+      const game = await tmi.bot.api?.helix.games.getGameById(opts.game_id)
       this.channelMetaData.game = game.name
     }
     this.channelMetaData.title = opts.title
@@ -124,10 +124,10 @@ class Twitch implements System {
     this.intervals.channelData = setTimeout(() => this.getChannelData(), 1 * 60 * 1000)
     if (!tmi.channel?.id) return
 
-    const channel = await tmi?.clients?.bot?.kraken.users.getUser(tmi.channel?.id)
+    const channel = await tmi.bot.api?.kraken.users.getUser(tmi.channel?.id)
     if (!channel) return
 
-    const data = await (await tmi?.clients?.bot?.kraken.users.getUser(tmi.channel?.id))?.getChannel()
+    const data = await (await tmi.bot.api?.kraken.users.getUser(tmi.channel?.id))?.getChannel()
 
     this.channelMetaData.views = data?.views ?? 0,
     this.channelMetaData.game = data?.game ?? 'No data',
@@ -139,8 +139,8 @@ class Twitch implements System {
     clearTimeout(this.intervals.subscribers)
     this.intervals.subscribers = setTimeout(() => this.getChannelSubscribers(), 1 * 60 * 1000)
     try {
-      if (!tmi.clients.broadcaster || !tmi.channel?.id) return
-      const data = await (tmi.clients.broadcaster.helix.subscriptions.getSubscriptionsPaginated(tmi.channel?.id)).getAll()
+      if (!tmi.broadcaster.api || !tmi.channel?.id) return
+      const data = await (tmi.broadcaster.api?.helix.subscriptions.getSubscriptionsPaginated(tmi.channel?.id)).getAll()
       this.channelMetaData.subs = data.length - 1 || 0
     } catch (e) {
       if (e.message.includes('This token does not have the requested scopes')) return
@@ -153,7 +153,7 @@ class Twitch implements System {
     this.intervals.latestFollower = setTimeout(() => this.getChannelLatestFollower(), 1 * 60 * 1000)
 
     try {
-      const { data } = await tmi.clients.bot?.helix.users.getFollows({ followedUser: tmi.channel.id }) || {}
+      const { data } = await tmi.bot.api?.helix.users.getFollows({ followedUser: tmi.channel?.id }) || {}
       if (!data) return
       const follower = data[0]
 
@@ -167,7 +167,7 @@ class Twitch implements System {
   }
 
   async getFollowAge(userId: string) {
-    const follow = await tmi.clients.bot?.helix.users.getFollows({ followedUser: tmi.channel?.id, user: userId })
+    const follow = await tmi.bot.api?.helix.users.getFollows({ followedUser: tmi.channel?.id, user: userId })
     if (!follow.total) return 'not follower'
 
     return humanizeDuration(Date.now() - new Date(follow.data[0].followDate).getTime(), {
@@ -196,7 +196,7 @@ class Twitch implements System {
   async setTitle(opts: CommandOptions) {
     if (!opts.argument.trim().length) return `$sender ${this.channelMetaData.title}`
 
-    await tmi.clients?.bot?.kraken.channels.updateChannel(tmi.channel?.id, {
+    await tmi.bot.api?.kraken.channels.updateChannel(tmi.channel?.id, {
       status: opts.argument,
     })
 
@@ -213,11 +213,11 @@ class Twitch implements System {
   async setGame(opts: CommandOptions) {
     if (!opts.argument.trim().length) return `$sender ${this.channelMetaData.game}`
 
-    const suggestedGame = await tmi.clients?.bot?.helix.games.getGameByName(opts.argument)
+    const suggestedGame = await tmi.bot.api?.helix.games.getGameByName(opts.argument)
 
     if (!suggestedGame) return
 
-    await tmi.clients?.bot?.kraken.channels.updateChannel(tmi.channel?.id, {
+    await tmi.bot.api?.kraken.channels.updateChannel(tmi.channel?.id, {
       game: suggestedGame.name,
     })
 

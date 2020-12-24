@@ -16,7 +16,7 @@ export default new class MetaData implements System {
 
   getData() {
     return {
-      bot: { username: tmi.chatClients?.bot?.currentNick },
+      bot: { username: tmi.bot.chat?.currentNick },
       channel: { ...twitch.channelMetaData, name: tmi.channel?.name },
       stream: {
         ...twitch.streamMetaData,
