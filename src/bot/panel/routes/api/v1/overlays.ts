@@ -98,7 +98,8 @@ router.delete('/', isAdmin, checkSchema({
   try {
     validationResult(req).throw()
     const repository = RequestContext.getEntityManager().getRepository(Overlay)
-    await repository.persistAndFlush(await repository.findOne({ id: req.body.id }))
+    const overlay = await repository.findOne({ id: req.body.id })
+    await repository.removeAndFlush(overlay)
 
     await cache.updateOverlays()
     res.send('Ok')
