@@ -101,7 +101,7 @@
     "ts-morph": "^9.1.0",
     "ts-node": "^9.1.1",
     "twitch": "^4.3.6",
-    "twitch-auth": "^4.3.6",
+    "twitch-auth": "^4.5.0",
     "twitch-chat-client": "^4.3.6",
     "twitch-pubsub-client": "^4.3.6",
     "vue": "^2.6.12",
