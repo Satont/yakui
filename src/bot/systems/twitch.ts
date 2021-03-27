@@ -108,6 +108,9 @@ class Twitch implements System {
       viewers: data?.viewers ?? 0,
       startedAt: data?.startDate ?? null,
     }
+
+    this.channelMetaData.game = (await data.getGame())?.name ?? ''
+    this.channelMetaData.title = data.title
   }
 
   async onStreamChange(opts: IWebHookStreamChanged) {
