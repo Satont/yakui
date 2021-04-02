@@ -109,6 +109,10 @@ class Twitch implements System {
       startedAt: data?.startDate ?? null,
     }
 
+    if (!data) {
+      return
+    }
+
     this.channelMetaData.game = (await data.getGame())?.name ?? ''
     this.channelMetaData.title = data.title
   }
