@@ -13,7 +13,7 @@ import { Command as CommandModel } from '@bot/entities/Command'
 import { orm } from './db'
 import { File } from '@bot/entities/File'
 
-export default new class Parser {
+class Parser {
   systems: { [x: string]: System } = {}
   inited = false;
   cooldowns: string[] = []
@@ -64,19 +64,11 @@ export default new class Parser {
     }
 
     if (command.type === 'custom') {
-      const cmd = await orm.em.fork().getRepository(CommandModel).findOne({ id: command.id })
-      cmd.usage += 1
-      orm.em.fork().persistAndFlush(cmd)
+      this.increaseCommandUsage({ id: command.id })
     }
 
     if (command.sound_file && !this.cooldowns.includes(command.name)) {
-      const alerts = await import('@bot/overlays/alerts')
-      alerts.default.emitAlert({
-        audio: {
-          file: command.sound_file as File,
-          volume: command.sound_volume,
-        },
-      })
+      this.emitAlert(command)
     }
 
     const argument = message.replace(new RegExp(`^${findedBy}`), '').trim()
@@ -86,8 +78,11 @@ export default new class Parser {
     if (!commandResult) return
 
     // set custom variable
-    if (await variables.changeCustomVariable({ raw, response: commandResult, text: argument })) {
-      return
+    if (commandResult.match(/\$_(\S*)/g)) {
+      const isVariableChanged = await variables.changeCustomVariable({ raw, response: commandResult, text: argument })
+      if (isVariableChanged) {
+        return
+      }
     }
     //
 
@@ -104,4 +99,22 @@ export default new class Parser {
       setTimeout(() => this.cooldowns.splice(this.cooldowns.indexOf(command.name)), command.cooldown * 1000)
     }
   }
+
+  private async increaseCommandUsage({ id }: { id: Command['id'] }) {
+    const cmd = await orm.em.fork().getRepository(CommandModel).findOne({ id })
+    cmd.usage += 1
+    orm.em.fork().persistAndFlush(cmd)
+  }
+
+  private async emitAlert(command: Command) {
+    const { default: alerts } = await import('@bot/overlays/alerts')
+    alerts.emitAlert({
+      audio: {
+        file: command.sound_file as File,
+        volume: command.sound_volume,
+      },
+    })
+  }
 }
+
+export default new Parser()
