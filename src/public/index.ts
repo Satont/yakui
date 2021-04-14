@@ -1,31 +1,31 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import BootstrapVue from 'bootstrap-vue'
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
-import '../panel/css/main.css'
-import isLogged from '../panel/helpers/isLogged'
-import Axios from '../panel/vue/plugins/axios'
-import { store } from '../panel/vue/plugins/vuex'
-import { getNameSpace } from '../panel/vue/plugins/socket'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import BootstrapVue from 'bootstrap-vue';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+import '../panel/css/main.css';
+import isLogged from '../panel/helpers/isLogged';
+import Axios from '../panel/vue/plugins/axios';
+import { store } from '../panel/vue/plugins/vuex';
+import { getNameSpace } from '../panel/vue/plugins/socket';
 
-Vue.use(VueRouter)
-Vue.use(BootstrapVue)
-Vue.use(Axios)
-Vue.component('loading', () => import('./vue/components/loadingAnimation.vue'))
-Vue.component('nav-bar', () => import('../panel/vue/components/navbar.vue'))
-Vue.component('side-bar', () => import('./vue/components/sidebar.vue'))
+Vue.use(VueRouter);
+Vue.use(BootstrapVue);
+Vue.use(Axios);
+Vue.component('loading', () => import('./vue/components/loadingAnimation.vue'));
+Vue.component('nav-bar', () => import('../panel/vue/components/navbar.vue'));
+Vue.component('side-bar', () => import('./vue/components/sidebar.vue'));
 
 const start = async () => {
-  const user = await isLogged(false, false)
-  store.commit('setLoggedUser', user)
+  const user = await isLogged(false, false);
+  store.commit('setLoggedUser', user);
 
-  const metaDataSocket = getNameSpace({ name: 'systems/metaData', opts: { query: { isPublic: true } } })
+  const metaDataSocket = getNameSpace({ name: 'systems/metaData', opts: { query: { isPublic: true } } });
   await new Promise((res) => metaDataSocket.emit('getData', data => {
-    store.commit('setMetaData', data)
-    document.title = data.bot?.username?.toUpperCase()
-    res(null)
-  }))
+    store.commit('setMetaData', data);
+    document.title = data.bot?.username?.toUpperCase();
+    res(null);
+  }));
 
   const router = new VueRouter({
     routes: [
@@ -33,7 +33,7 @@ const start = async () => {
       { path: '/commands', name: 'Commands', component: () => import('../panel/vue/pages/commands/list.vue') },
       { path: '/users', name: 'users', component: () => import('../panel/vue/pages/users/list.vue') },
     ],
-  })
+  });
 
   const app = new Vue({
     data: {
@@ -53,21 +53,21 @@ const start = async () => {
     `,
     async mounted() {
       metaDataSocket.on('data', data => {
-        store.commit('setMetaData', data)
-        document.title = data.bot?.username?.toUpperCase()
-      })
+        store.commit('setMetaData', data);
+        document.title = data.bot?.username?.toUpperCase();
+      });
     },
-  }).$mount('#app')
+  }).$mount('#app');
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   router.beforeEach((to, from, next) => {
-    app.loading = true
-    next()
-  })
+    app.loading = true;
+    next();
+  });
 
   router.afterEach(() => {
-    app.loading = false
-  })
-}
+    app.loading = false;
+  });
+};
 
-start()
+start();

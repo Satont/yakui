@@ -1,8 +1,8 @@
-import { MikroORM } from '@mikro-orm/core'
+import { MikroORM } from '@mikro-orm/core';
 
-export let orm: MikroORM
+export let orm: MikroORM;
 export const start = async () => {
-  orm = await MikroORM.init()
-}
+  orm = await MikroORM.init();
+};
 
-start()
+start();

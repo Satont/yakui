@@ -1,8 +1,8 @@
-import _Vue from 'vue'
-import { TYPE, POSITION } from 'vue-toastification'
-import axios, { AxiosError } from 'axios'
-import { ValidationError } from 'express-validator'
-import { refresh } from '../../helpers/isLogged'
+import _Vue from 'vue';
+import { TYPE, POSITION } from 'vue-toastification';
+import axios, { AxiosError } from 'axios';
+import { ValidationError } from 'express-validator';
+import { refresh } from '../../helpers/isLogged';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function AxiosPlugin<AxiosPluginOptions>(Vue: typeof _Vue, options?: AxiosPluginOptions): void {
@@ -12,22 +12,22 @@ export default function AxiosPlugin<AxiosPluginOptions>(Vue: typeof _Vue, option
       'x-twitch-token': localStorage.getItem('accessToken'),
       'Content-Type': 'application/json',
     },
-  })
+  });
 
   instance.interceptors.response.use(config => config, (error: AxiosError) => {
     if (error.response.data) {
-      let message: string = error.response.data.message ?? 'Unexpected error happend.'
+      let message: string = error.response.data.message ?? 'Unexpected error happend.';
 
       switch (error.response.data.code) {
         case 'validation_error':
-          message = (error.response.data.data as ValidationError[]).map(e => `${e.msg} ${e.param}=${e.value}`).join('\n')
-          break
+          message = (error.response.data.data as ValidationError[]).map(e => `${e.msg} ${e.param}=${e.value}`).join('\n');
+          break;
         case 'jwt expired':
-          refresh().then(() => location.reload())
-          break
+          refresh().then(() => location.reload());
+          break;
         case 'jwt malformed':
-          refresh().then(() => location.reload())
-          break
+          refresh().then(() => location.reload());
+          break;
       }
 
       Vue.$toast(message, {
@@ -41,13 +41,13 @@ export default function AxiosPlugin<AxiosPluginOptions>(Vue: typeof _Vue, option
         draggablePercent: 0.6,
         showCloseButtonOnHover: false,
         icon: true,
-      })
+      });
     }
 
-    return Promise.reject(error)
-  })
+    return Promise.reject(error);
+  });
 
-  Vue.prototype.$axios = instance
+  Vue.prototype.$axios = instance;
 }
 
 export class AxiosPluginOptions {

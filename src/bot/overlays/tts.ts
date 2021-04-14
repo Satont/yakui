@@ -1,8 +1,8 @@
-import { System } from 'typings'
-import { getNameSpace } from '@bot/libs/socket'
-import { debug } from '@bot/libs/logger'
-import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage'
-import { onChange, settings as settingsDecorator } from '../decorators'
+import { System } from 'typings';
+import { getNameSpace } from '@bot/libs/socket';
+import { debug } from '@bot/libs/logger';
+import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage';
+import { onChange, settings as settingsDecorator } from '../decorators';
 
 class TTS implements System {
   socket = getNameSpace('overlays/tts')
@@ -20,24 +20,24 @@ class TTS implements System {
 
   @onChange('settings')
   async init() {
-    this.clients.forEach(c => c.emit('settings', { ...this.settings, token: this.token }))
+    this.clients.forEach(c => c.emit('settings', { ...this.settings, token: this.token }));
   }
 
   async sockets(client: SocketIO.Socket) {
-    debug('socket', 'Overlays::TTS: some client connected to socket')
+    debug('socket', 'Overlays::TTS: some client connected to socket');
 
-    client.emit('settings', { ...this.settings, token: this.token })
+    client.emit('settings', { ...this.settings, token: this.token });
   }
 
   emitTTS(text: string) {
-    this.clients.forEach(c => c.emit('tts', text))
+    this.clients.forEach(c => c.emit('tts', text));
   }
 
   onMessageHighlight(data: TwitchPrivateMessage) {
-    if (!this.settings.triggerByHighlight) return
+    if (!this.settings.triggerByHighlight) return;
 
-    this.emitTTS(data.message.value)
+    this.emitTTS(data.message.value);
   }
 }
 
-export default new TTS()
+export default new TTS();

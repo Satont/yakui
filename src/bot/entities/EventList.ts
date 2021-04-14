@@ -1,5 +1,5 @@
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core'
-import MyBigInt from '../customTypes/BigInt'
+import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import MyBigInt from '../customTypes/BigInt';
 
 @Entity({
   tableName: 'eventlist',

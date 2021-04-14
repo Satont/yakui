@@ -1,5 +1,5 @@
-import { Entity, PrimaryKey, Property, Unique } from '@mikro-orm/core'
-import JsonType from '../customTypes/JsonType'
+import { Entity, PrimaryKey, Property, Unique } from '@mikro-orm/core';
+import JsonType from '../customTypes/JsonType';
 
 @Entity({
   tableName: 'settings',

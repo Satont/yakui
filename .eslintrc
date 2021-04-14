@@ -1,3 +1,4 @@
+
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
@@ -14,7 +15,8 @@
     "@typescript-eslint/no-var-requires": 1,
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/indent": ["error", 2],
-    "semi": [2, "never"],
+    "@typescript-eslint/no-inferrable-types": "off",
+    "semi": [2, "always"],
     "prefer-const": ["error", {
       "destructuring": "all",
       "ignoreReadBeforeAssign": false
@@ -30,8 +32,6 @@
       "jsx": true
     },
     "useJSXTextNode": true,
-    "project": [ "./tsconfig.json", "./src/bot/tsconfig.json" ],
-    "tsconfigRootDir": "./",
-    "extraFileExtensions": [".vue"]
+    "tsconfigRootDir": "./"
   }
 }

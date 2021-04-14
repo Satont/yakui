@@ -1,49 +1,49 @@
-import { Entity, Enum, PrimaryKey, Property, Unique, ManyToOne } from '@mikro-orm/core'
-import { File } from './File'
+import { Entity, Enum, PrimaryKey, Property, Unique, ManyToOne } from '@mikro-orm/core';
+import { File } from './File';
 
 @Entity({
   tableName: 'commands',
 })
 export class Command {
   @PrimaryKey()
-  id!: number
-  
+  id!: number;
+
   @Unique({ name: 'commands_name_unique' })
   @Property({ length: 255 })
-  name!: string
-  
+  name!: string;
+
   @Property({ columnType: 'json', default: '[]' })
-  aliases?: string[] = []
-  
+  aliases?: string[] = [];
+
   @Property({ default: 10 })
-  cooldown?: number = 10
+  cooldown?: number = 10;
 
   @Property()
-  description?: string
+  description?: string;
 
   @Property()
-  response!: string
-  
+  response!: string;
+
   @Property({ default: true })
-  enabled = true
-  
+  enabled = true;
+
   @Property({ default: true })
-  visible = true
-  
+  visible = true;
+
   @Enum({ default: 'viewers' })
-  permission: CommandPermission = CommandPermission.VIEWERS
-  
+  permission: CommandPermission = CommandPermission.VIEWERS;
+
   @Property({ default: 0 })
-  price?: number = 0
-  
+  price?: number = 0;
+
   @Property({ default: 0 })
-  usage?: number = 0
+  usage?: number = 0;
 
   @ManyToOne({ fieldName: 'sound_file_id' })
-  sound_file?: File
-  
+  sound_file?: File;
+
   @Property()
-  sound_volume?: number
+  sound_volume?: number;
 }
 
 export enum CommandPermission {
@@ -51,6 +51,6 @@ export enum CommandPermission {
   FOLLOWERS = 'followers',
   VIPS = 'vips',
   SUBSCRIBERS = 'subscribers',
-  MODERATORS = 'moderators', 
-  BROADCASTER = 'broadcaster'
+  MODERATORS = 'moderators',
+  BROADCASTER = 'broadcaster',
 }

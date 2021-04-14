@@ -1,5 +1,5 @@
-import { Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core'
-import { File } from './File'
+import { Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
+import { File } from './File';
 
 @Entity({
   tableName: 'greetings',

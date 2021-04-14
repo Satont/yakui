@@ -1,9 +1,9 @@
-import { Entity, Index, PrimaryKey, Property, Unique, OneToOne, OneToMany, Collection } from '@mikro-orm/core'
-import MyBigInt from '../customTypes/BigInt'
-import { SongLike } from './SongLike'
-import { UserBit } from './UserBit'
-import { UserDailyMessages } from './UserDailyMessages'
-import { UserTip } from './UserTip'
+import { Entity, Index, PrimaryKey, Property, Unique, OneToOne, OneToMany, Collection } from '@mikro-orm/core';
+import MyBigInt from '../customTypes/BigInt';
+import { SongLike } from './SongLike';
+import { UserBit } from './UserBit';
+import { UserDailyMessages } from './UserDailyMessages';
+import { UserTip } from './UserTip';
 
 @Entity({
   tableName: 'users',
@@ -50,30 +50,30 @@ export class User {
 
   @Property({ persist: false })
   get todayMessages() {
-    const now = new Date()
-    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
     if (this.daily) {
-      return this.daily.toArray().find(o => o.date === startOfDay.getTime())?.count ?? 0
-    } else return 0
+      return this.daily.toArray().find(o => o.date === startOfDay.getTime())?.count ?? 0;
+    } else return 0;
   }
 
   @Property({ persist: false })
   get totalTips() {
     if (this.tips.toArray().length) {
-      return this.tips.toArray().reduce((previous, current) => previous + Number(current.inMainCurrencyAmount), 0)
-    } else return 0
+      return this.tips.toArray().reduce((previous, current) => previous + Number(current.inMainCurrencyAmount), 0);
+    } else return 0;
   }
 
   @Property({ persist: false })
   get totalBits() {
     if (this.bits.toArray().length) {
-      return this.bits.toArray().reduce((previous, current) => previous + Number(current.amount), 0)
-    } else return 0
+      return this.bits.toArray().reduce((previous, current) => previous + Number(current.amount), 0);
+    } else return 0;
   }
 
   @Property({ persist: false })
   get watchedFormatted() {
-    return `${((this.watched / (1 * 60 * 1000)) / 60).toFixed(1)}h`
+    return `${((this.watched / (1 * 60 * 1000)) / 60).toFixed(1)}h`;
   }
 }

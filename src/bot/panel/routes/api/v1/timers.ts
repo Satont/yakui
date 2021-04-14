@@ -1,33 +1,33 @@
-import { Router, Request, Response, NextFunction } from 'express'
-import { checkSchema, validationResult } from 'express-validator'
-import { Timer } from '@bot/entities/Timer'
-import isAdmin from '@bot/panel/middlewares/isAdmin'
-import timers from '@bot/systems/timers'
-import { RequestContext, wrap } from '@mikro-orm/core'
+import { Router, Request, Response, NextFunction } from 'express';
+import { checkSchema, validationResult } from 'express-validator';
+import { Timer } from '@bot/entities/Timer';
+import isAdmin from '@bot/panel/middlewares/isAdmin';
+import timers from '@bot/systems/timers';
+import { RequestContext, wrap } from '@mikro-orm/core';
 
 const router = Router({
   mergeParams: true,
-})
+});
 
 router.get('/', isAdmin, async (req, res, next) => {
   try {
-    const timers = await RequestContext.getEntityManager().getRepository(Timer).findAll()
+    const timers = await RequestContext.getEntityManager().getRepository(Timer).findAll();
 
-    res.json(timers)
+    res.json(timers);
   } catch (e) {
-    next(e)
+    next(e);
   }
-})
+});
 
 router.get('/:id', isAdmin, async (req, res, next) => {
   try {
-    const timer = await RequestContext.getEntityManager().getRepository(Timer).findOne({ id: Number(req.params.id) })
+    const timer = await RequestContext.getEntityManager().getRepository(Timer).findOne({ id: Number(req.params.id) });
 
-    res.json(timer)
+    res.json(timer);
   } catch (e) {
-    next(e)
+    next(e);
   }
-})
+});
 
 router.post('/', isAdmin, checkSchema({
   id: {
@@ -61,12 +61,12 @@ router.post('/', isAdmin, checkSchema({
   },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
-    validationResult(req).throw()
-    const body = req.body
+    validationResult(req).throw();
+    const body = req.body;
 
-    const repository = RequestContext.getEntityManager().getRepository(Timer)
+    const repository = RequestContext.getEntityManager().getRepository(Timer);
     
-    const timer = body.id ? await repository.findOne({ id: Number(body.id) }) : repository.create(body)
+    const timer = body.id ? await repository.findOne({ id: Number(body.id) }) : repository.create(body);
 
     wrap(timer).assign({
       name: body.name,
@@ -74,16 +74,16 @@ router.post('/', isAdmin, checkSchema({
       interval: body.interval,
       messages: body.messages,
       responses: body.responses,
-    })
+    });
 
-    await repository.persistAndFlush(timer)
-    await timers.init()
+    await repository.persistAndFlush(timer);
+    await timers.init();
 
-    res.json(timer)
+    res.json(timer);
   } catch (e) {
-    next(e)
+    next(e);
   }
-})
+});
 
 router.delete('/', isAdmin, checkSchema({
   id: {
@@ -92,19 +92,19 @@ router.delete('/', isAdmin, checkSchema({
   },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
-    validationResult(req).throw()
+    validationResult(req).throw();
     
-    const repository = RequestContext.getEntityManager().getRepository(Timer)
-    const timer = await repository.findOne({ id: Number(req.body.id) })
+    const repository = RequestContext.getEntityManager().getRepository(Timer);
+    const timer = await repository.findOne({ id: Number(req.body.id) });
 
-    await repository.removeAndFlush(timer)
-    await timers.init()
+    await repository.removeAndFlush(timer);
+    await timers.init();
 
-    res.send('Ok')
+    res.send('Ok');
   } catch (e) {
-    next(e)
+    next(e);
   }
-})
+});
 
 
-export default router
+export default router;

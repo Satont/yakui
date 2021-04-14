@@ -1,9 +1,9 @@
-import { System } from 'typings'
+import { System } from 'typings';
 
 export function parser(name?: string): MethodDecorator {
   return (instance: System, methodName: string): void => {
-    if (!instance.parsers) instance.parsers = []
+    if (!instance.parsers) instance.parsers = [];
 
-    instance.parsers.push({ name, fnc: methodName })
-  }
+    instance.parsers.push({ name, fnc: methodName });
+  };
 }

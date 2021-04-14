@@ -1,12 +1,12 @@
-import { System, Command as CommandType, CommandOptions } from 'typings'
-import { Command } from '@bot/entities/Command'
-import { orm } from '@bot/libs/db'
+import { System, Command as CommandType, CommandOptions } from 'typings';
+import { Command } from '@bot/entities/Command';
+import { orm } from '@bot/libs/db';
 
 export default new class CustomCommands implements System {
   commands: CommandType[] = []
 
   async init() {
-    const commands = await orm.em.fork().getRepository(Command).findAll(['sound_file'])
+    const commands = await orm.em.fork().getRepository(Command).findAll(['sound_file']);
 
     this.commands = commands.map(command => ({
       id: command.id,
@@ -24,11 +24,11 @@ export default new class CustomCommands implements System {
       sound_volume: command.sound_volume,
       type: 'custom',
       usage: command.usage,
-    }))
+    }));
 
   }
 
   async fnc(opts: CommandOptions) {
-    return opts.command.response
+    return opts.command.response;
   }
-}
+};

@@ -1,6 +1,6 @@
-import { Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core'
-import MyBigInt from '../customTypes/BigInt'
-import { User } from './User'
+import { Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
+import MyBigInt from '../customTypes/BigInt';
+import { User } from './User';
 
 @Entity({
   tableName: 'users_bits',

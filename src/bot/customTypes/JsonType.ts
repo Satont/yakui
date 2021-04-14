@@ -1,25 +1,25 @@
-import { Type } from '@mikro-orm/core'
+import { Type } from '@mikro-orm/core';
 
 export default class JsonType extends Type<string, string> {
   convertToDatabaseValue(value: any): string {
     try {
-      return JSON.stringify(value)
+      return JSON.stringify(value);
     } catch (e) {
-      console.log(value)
-      console.error(e)
+      console.log(value);
+      console.error(e);
     }
   }
 
   convertToJSValue(value: string): any {
     try {
-      return JSON.parse(value)
+      return JSON.parse(value);
     } catch (e) {
-      console.log(value)
-      console.error(e)
+      console.log(value);
+      console.error(e);
     }
   }
 
   getColumnType() {
-    return `text`
+    return `text`;
   }
 }

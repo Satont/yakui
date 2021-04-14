@@ -1,15 +1,15 @@
-import { Type } from '@mikro-orm/core'
+import { Type } from '@mikro-orm/core';
 
 export default class MyBigInt extends Type<number, string> {
   convertToDatabaseValue(v: number) {
-    return String(v)
+    return String(v);
   }
 
   convertToJSValue(v: string) {
-    return Number(String(v))
+    return Number(String(v));
   }
 
   getColumnType() {
-    return `int8`
+    return `int8`;
   }
 }

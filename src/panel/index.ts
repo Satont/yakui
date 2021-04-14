@@ -1,47 +1,47 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import VueClipboard from 'vue-clipboard2'
-import Axios from './vue/plugins/axios'
-import VueSocketIO from 'vue-socket.io-extended'
-import LoadScript from 'vue-plugin-load-script'
-import Socket, { getNameSpace } from './vue/plugins/socket'
-import BootstrapVue from 'bootstrap-vue'
-import Toast from 'vue-toastification'
-import 'vue-toastification/dist/index.css'
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
-import './css/main.css'
-import { store } from './vue/plugins/vuex'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import VueClipboard from 'vue-clipboard2';
+import Axios from './vue/plugins/axios';
+import VueSocketIO from 'vue-socket.io-extended';
+import LoadScript from 'vue-plugin-load-script';
+import Socket, { getNameSpace } from './vue/plugins/socket';
+import BootstrapVue from 'bootstrap-vue';
+import Toast from 'vue-toastification';
+import 'vue-toastification/dist/index.css';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+import './css/main.css';
+import { store } from './vue/plugins/vuex';
 
-import isLogged from './helpers/isLogged'
+import isLogged from './helpers/isLogged';
 
-Vue.use(VueRouter)
-Vue.use(VueClipboard)
-Vue.use(BootstrapVue)
-Vue.use(Toast)
-Vue.use(LoadScript)
-Vue.component('loading', () => import('./vue/components/loadingAnimation.vue'))
-Vue.component('side-bar', () => import('./vue/components/sidebar.vue'))
-Vue.component('nav-bar', () => import('./vue/components/navbar.vue'))
-Vue.component('variables-list', () => import('./vue/components/variablesList.vue'))
-Vue.component('dashboard', () => import('./vue/pages/dashboard/index.vue'))
+Vue.use(VueRouter);
+Vue.use(VueClipboard);
+Vue.use(BootstrapVue);
+Vue.use(Toast);
+Vue.use(LoadScript);
+Vue.component('loading', () => import('./vue/components/loadingAnimation.vue'));
+Vue.component('side-bar', () => import('./vue/components/sidebar.vue'));
+Vue.component('nav-bar', () => import('./vue/components/navbar.vue'));
+Vue.component('variables-list', () => import('./vue/components/variablesList.vue'));
+Vue.component('dashboard', () => import('./vue/pages/dashboard/index.vue'));
 
 const start = async () => {
-  const user = await isLogged(true, true)
-  store.commit('setLoggedUser', user)
+  const user = await isLogged(true, true);
+  store.commit('setLoggedUser', user);
 
-  Vue.use(VueSocketIO, Socket)
-  Vue.use(Axios)
+  Vue.use(VueSocketIO, Socket);
+  Vue.use(Axios);
 
-  const metaDataSocket = getNameSpace({ name: 'systems/metaData' })
+  const metaDataSocket = getNameSpace({ name: 'systems/metaData' });
   await new Promise((res) => metaDataSocket.emit('getData', data => {
-    store.commit('setMetaData', data)
-    document.title = data.bot?.username?.toUpperCase()
-    res(null)
-  }))
+    store.commit('setMetaData', data);
+    document.title = data.bot?.username?.toUpperCase();
+    res(null);
+  }));
 
-  const filesSocket = getNameSpace({ name: 'systems/files' })
-  filesSocket.emit('getAll', (_err, files) => store.commit('setFilesList', files))
+  const filesSocket = getNameSpace({ name: 'systems/files' });
+  filesSocket.emit('getAll', (_err, files) => store.commit('setFilesList', files));
 
   const router = new VueRouter({
     mode: 'history',
@@ -92,7 +92,7 @@ const start = async () => {
       { path: '/overlays/edit/:id?', name: 'OverlaysManagerEdit', component: () => import('./vue/pages/overlays/edit.vue') },
       { path: '/files', name: 'Files', component: () => import('./vue/pages/files/index.vue') },
     ],
-  })
+  });
 
   const app = new Vue({
     data: {
@@ -120,24 +120,24 @@ const start = async () => {
     `,
     async mounted() {
       metaDataSocket.on('data', data => {
-        store.commit('setMetaData', data)
-        document.title = data.bot?.username?.toUpperCase()
-      })
+        store.commit('setMetaData', data);
+        document.title = data.bot?.username?.toUpperCase();
+      });
     },
     store,
-  }).$mount('#app')
+  }).$mount('#app');
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   router.beforeEach((to, from, next) => {
-    app.loading = true
-    next()
-  })
+    app.loading = true;
+    next();
+  });
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   router.afterEach((to, from) => {
-    app.loading = false
-  })
+    app.loading = false;
+  });
 
-}
+};
 
-start()
+start();

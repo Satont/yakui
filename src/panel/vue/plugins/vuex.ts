@@ -1,6 +1,6 @@
-import Vuex from 'vuex'
-import Vue from 'vue'
-Vue.use(Vuex)
+import Vuex from 'vuex';
+import Vue from 'vue';
+Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
@@ -10,15 +10,15 @@ const store = new Vuex.Store({
   },
   mutations: {
     setFilesList(state, files) {
-      Vue.set(state, 'filesList', files)
+      Vue.set(state, 'filesList', files);
     },
     setLoggedUser(state, user) {
-      Vue.set(state, 'loggedUser', user)
+      Vue.set(state, 'loggedUser', user);
     },
     setMetaData(state, data) {
-      Vue.set(state, 'metaData', data)
+      Vue.set(state, 'metaData', data);
     },
   },
-})
+});
 
-export { store }
+export { store };

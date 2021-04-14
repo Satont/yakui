@@ -1,9 +1,9 @@
-import dotenv from 'dotenv'
-import { Options, EntityCaseNamingStrategy  } from '@mikro-orm/core'
-import { TsMorphMetadataProvider } from '@mikro-orm/reflection'
-import { info } from './libs/logger'
+import dotenv from 'dotenv';
+import { Options, EntityCaseNamingStrategy  } from '@mikro-orm/core';
+import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
+import { info } from './libs/logger';
 
-dotenv.config()
+dotenv.config();
 
 export default {
   logger: (msg: string) => info(msg),
@@ -41,4 +41,4 @@ export default {
     safe: true,
     emit: 'ts',
   },
-} as Options
+} as Options;

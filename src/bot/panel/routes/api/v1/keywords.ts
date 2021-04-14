@@ -1,31 +1,31 @@
-import { Router, Request, Response, NextFunction } from 'express'
-import { checkSchema, validationResult } from 'express-validator'
-import { Keyword } from '@bot/entities/Keyword'
-import isAdmin from '@bot/panel/middlewares/isAdmin'
-import cache from '@bot/libs/cache'
-import { RequestContext, wrap } from '@mikro-orm/core'
+import { Router, Request, Response, NextFunction } from 'express';
+import { checkSchema, validationResult } from 'express-validator';
+import { Keyword } from '@bot/entities/Keyword';
+import isAdmin from '@bot/panel/middlewares/isAdmin';
+import cache from '@bot/libs/cache';
+import { RequestContext, wrap } from '@mikro-orm/core';
 
 const router = Router({
   mergeParams: true,
-})
+});
 
 router.get('/', async (req, res, next) => {
   try {
-    res.json([...cache.keywords.values()])
+    res.json([...cache.keywords.values()]);
   } catch (e) {
-    next(e)
+    next(e);
   }
-})
+});
 
 router.get('/:id', isAdmin, async (req, res, next) => {
   try {
-    const keyword = cache.keywords.get(req.params.id)
+    const keyword = cache.keywords.get(req.params.id);
 
-    res.json(keyword)
+    res.json(keyword);
   } catch (e) {
-    next(e)
+    next(e);
   }
-})
+});
 
 router.post('/', isAdmin, checkSchema({
   id: {
@@ -54,26 +54,26 @@ router.post('/', isAdmin, checkSchema({
   },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
-    validationResult(req).throw()
-    const body = req.body
+    validationResult(req).throw();
+    const body = req.body;
 
-    const repository = RequestContext.getEntityManager().getRepository(Keyword)
-    const keyword = body.id ? await repository.findOne({ id: body.id }) : repository.create(body)
+    const repository = RequestContext.getEntityManager().getRepository(Keyword);
+    const keyword = body.id ? await repository.findOne({ id: body.id }) : repository.create(body);
 
     wrap(keyword).assign({
       name: body.name,
       enabled: body.enabled,
       response: body.response,
       cooldown: body.cooldown,
-    })
+    });
 
-    await repository.persistAndFlush(keyword)
-    await cache.updateKeywords()
-    res.json(keyword)
+    await repository.persistAndFlush(keyword);
+    await cache.updateKeywords();
+    res.json(keyword);
   } catch (e) {
-    next(e)
+    next(e);
   }
-})
+});
 
 router.delete('/', isAdmin, checkSchema({
   id: {
@@ -82,16 +82,16 @@ router.delete('/', isAdmin, checkSchema({
   },
 }), async (req: Request, res: Response, next: NextFunction) => {
   try {
-    validationResult(req).throw()
-    const repository = RequestContext.getEntityManager().getRepository(Keyword)
+    validationResult(req).throw();
+    const repository = RequestContext.getEntityManager().getRepository(Keyword);
 
-    await repository.removeAndFlush(await repository.findOne({ id: req.body.id }))
-    await cache.updateKeywords()
-    res.send('Ok')
+    await repository.removeAndFlush(await repository.findOne({ id: req.body.id }));
+    await cache.updateKeywords();
+    res.send('Ok');
   } catch (e) {
-    next(e)
+    next(e);
   }
-})
+});
 
 
-export default router
+export default router;
