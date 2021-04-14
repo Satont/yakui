@@ -1,5 +1,3 @@
-import { chunk as makeChunk } from 'lodash';
-
 import { System, ParserOptions, CommandOptions, UserPermissions } from 'typings';
 import { User } from '@bot/entities/User';
 import tmi from '@bot/libs/tmi';
@@ -11,20 +9,24 @@ import { CommandPermission } from '@bot/entities/Command';
 import { settings } from '../decorators';
 import { parser } from '../decorators/parser';
 import { command } from '../decorators/command';
+import { getChatters } from '../microtasks/getChatters';
+import oauth from '../libs/oauth';
+import { countWatched } from '../microtasks/countWatched';
+import { info } from '../libs/logger';
 
 class Users implements System {
-  private countWatchedTimeout: NodeJS.Timeout = null
-  private getChattersTimeout: NodeJS.Timeout = null
-  chatters: Array<{ username: string, id: string }> = []
+  private countWatchedTimeout: NodeJS.Timeout = null;
+  private getChattersTimeout: NodeJS.Timeout = null;
+  chatters: Array<{ username: string; id: string }> = [];
 
   @settings()
-  enabled = true
+  enabled = true;
 
   @settings()
-  ignoredUsers: string[] = []
+  ignoredUsers: string[] = [];
 
   @settings()
-  botAdmins: string[] = []
+  botAdmins: string[] = [];
 
   @settings()
   points = {
@@ -33,12 +35,11 @@ class Users implements System {
       interval: 1,
       amount: 1,
     },
-    watch:{
+    watch: {
       interval: 1,
       amount: 1,
     },
-  }
-
+  };
 
   async init() {
     await this.getChatters();
@@ -56,12 +57,12 @@ class Users implements System {
     const [id, username] = [opts.raw.userInfo.userId, opts.raw.userInfo.userName];
 
     const repository = orm.em.fork().getRepository(User);
-    const user = await repository.findOne(Number(id)) || repository.assign(new User(), { id: Number(id), username, messages: 0 });
+    const user = (await repository.findOne(Number(id))) || repository.assign(new User(), { id: Number(id), username, messages: 0 });
 
     user.username = opts.raw.userInfo.userName;
-    user.messages +=  1;
+    user.messages += 1;
 
-    const updatePoints = (Number(user.lastMessagePoints) + pointsInterval <= user.messages) && this.points.enabled;
+    const updatePoints = Number(user.lastMessagePoints) + pointsInterval <= user.messages && this.points.enabled;
 
     if (updatePoints && twitch.streamMetaData?.startedAt && pointsPerMessage !== 0 && pointsInterval !== 0) {
       user.points = user.points + pointsPerMessage;
@@ -74,16 +75,18 @@ class Users implements System {
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
     const dailyRepository = orm.em.fork().getRepository(UserDailyMessages);
-    const daily = await dailyRepository.findOne({ user: user.id, date: startOfDay.getTime() }) || dailyRepository.assign(new UserDailyMessages(), {
-      user,
-      date: startOfDay.getTime(),
-    });
+    const daily =
+      (await dailyRepository.findOne({ user: user.id, date: startOfDay.getTime() })) ||
+      dailyRepository.assign(new UserDailyMessages(), {
+        user,
+        date: startOfDay.getTime(),
+      });
 
     daily.count += 1;
     await dailyRepository.persistAndFlush(daily);
   }
 
-  async getUserStats({ id, username }: { id?: string, username?: string }): Promise<User> {
+  async getUserStats({ id, username }: { id?: string; username?: string }): Promise<User> {
     if (!id && !username) throw new Error('Id or username should be used.');
 
     if (!id) {
@@ -109,40 +112,25 @@ class Users implements System {
 
     if (!twitch.streamMetaData?.startedAt || !this.enabled) return;
 
-    const repository = orm.em.fork().getRepository(User);
-    const usersForUpdate: User[] = [];
-
-    for (const chatter of this.chatters) {
-      if (this.isIgnored(chatter.username.toLowerCase())) continue;
-
-      const user = await repository.findOne(Number(chatter.id)) || repository.assign(new User(), { id: Number(chatter.id), username: chatter.username });
-
-      const updatePoints = (new Date().getTime() - new Date(user.lastWatchedPoints).getTime() >= pointsInterval) && this.points.enabled;
-
-      if (pointsPerWatch !== 0 && pointsInterval !== 0 && updatePoints) {
-        user.lastWatchedPoints = new Date().getTime();
-        user.points += pointsPerWatch;
-      }
-
-      user.watched += 1 * 60 * 1000;
-      usersForUpdate.push(user);
-    }
-
-    await repository.persistAndFlush(usersForUpdate);
+    countWatched({
+      chatters: this.chatters.filter((c) => this.isIgnored(c.username.toLowerCase())),
+      points: {
+        enabled: this.points.enabled,
+        perWatch: pointsPerWatch,
+        interval: pointsInterval,
+      },
+    });
   }
 
   private async getChatters() {
     clearTimeout(this.getChattersTimeout);
-    this.getChattersTimeout = setTimeout(() => this.getChatters(), 5 * 60 * 1000);
+    this.getChattersTimeout = setTimeout(() => this.getChatters(), 10 * 1000);
 
-    this.chatters = [];
-
-    for (const chunk of makeChunk((await tmi.bot.api?.unsupported.getChatters(tmi.channel?.name))?.allChatters, 100)) {
-
-      const users = (await tmi.bot.api?.helix.users.getUsersByNames(chunk)).map(user => ({ username: user.name, id: user.id }));
-
-      this.chatters.push(...users);
+    if (!oauth.botAccessToken || !oauth.clientId || !oauth.channel) {
+      return;
     }
+    this.chatters = await getChatters({ accessToken: oauth.botAccessToken, clientId: oauth.clientId, channel: oauth.channel });
+    info(this.chatters);
   }
 
   @command({
@@ -169,7 +157,7 @@ class Users implements System {
     if (!searchForPermission) return true;
 
     const userPerms = Object.entries(this.getUserPermissions(badges, raw));
-    const commandPermissionIndex = userPerms.indexOf(userPerms.find(v => v[0] === searchForPermission));
+    const commandPermissionIndex = userPerms.indexOf(userPerms.find((v) => v[0] === searchForPermission));
 
     return userPerms.some((p, index) => p[1] && index <= commandPermissionIndex);
   }
@@ -207,7 +195,6 @@ class Users implements System {
   isIgnored(user: string | number) {
     return this.ignoredUsers?.includes(String(user));
   }
-
 }
 
 export default new Users();
