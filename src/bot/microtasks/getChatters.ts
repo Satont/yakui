@@ -11,16 +11,6 @@ import { error } from '../libs/logger';
 type Opts = { channel: string; clientId: string; accessToken: string };
 
 export const getChatters = async (opts: Opts): Promise<Array<{ username: string; id: string }>> => {
-  /*   if (isMainThread) {
-    console.log('mainThreaded');
-    const worker = new Worker(__filename, { workerData: opts });
-    const value = await new Promise((res) => worker.on('message', res));
-    return value as any;
-  } else {
-    console.log('not mainThread');
-    parentPort.postMessage(workerData);
-  } */
-
   if (isMainThread) {
     const value = await new Promise((resolve, reject) => {
       const worker = new Worker(__filename, { workerData: opts });
