@@ -9,25 +9,29 @@ import { onHosting, onHosted, onRaided, onSubscribe, onReSubscribe, onMessageHig
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage';
 import oauth from './oauth';
 
-export default new class Tmi {
+class Tmi {
   bot: {
-    api: ApiClient | null,
-    chat: Chat | null
+    api: ApiClient | null;
+    chat: Chat | null;
+    auth: RefreshableAuthProvider;
   } = {
     chat: null,
     api: null,
-  }
+    auth: null,
+  };
 
   broadcaster: {
-    api: ApiClient | null,
-    chat: Chat | null
+    api: ApiClient | null;
+    chat: Chat | null;
+    auth: RefreshableAuthProvider;
   } = {
     chat: null,
     api: null,
-  }
+    auth: null,
+  };
 
-  channel: { name: string, id: string }
-  parsedLinesPerStream = 0
+  channel: { name: string; id: string };
+  parsedLinesPerStream = 0;
 
   async connect(type: 'bot' | 'broadcaster') {
     if (!oauth.clientId || !oauth.clientSecret || !oauth[`${type}RefreshToken`]) {
@@ -40,15 +44,16 @@ export default new class Tmi {
       await this.disconnect(type);
 
       const staticProvider = new StaticAuthProvider(oauth.clientId);
-      const authProvider = new RefreshableAuthProvider(staticProvider as any, {
+      this[type].auth = new RefreshableAuthProvider(staticProvider as any, {
         clientSecret: oauth.clientSecret,
         refreshToken: oauth[`${type}RefreshToken`],
-        onRefresh: async ({ refreshToken }) => {
+        onRefresh: async ({ accessToken, refreshToken }) => {
+          oauth[`${type}AccessToken`] = accessToken;
           oauth[`${type}RefreshToken`] = refreshToken;
         },
       });
 
-      this[type].api = new ApiClient({ authProvider });
+      this[type].api = new ApiClient({ authProvider: this[type].auth });
 
       if (type === 'bot') {
         await this.getChannel(oauth.channel);
@@ -58,7 +63,7 @@ export default new class Tmi {
       }
 
       if (!this.channel) return;
-      this[type].chat = new Chat(authProvider as any, { channels: [this.channel.name] });
+      this[type].chat = new Chat(this[type].auth as any, { channels: [this.channel.name] });
       this.listeners(type);
       await this[type].chat.connect();
     } catch (e) {
@@ -108,7 +113,7 @@ export default new class Tmi {
     });
 
     if (type === 'bot') {
-      client.onAnyMessage(msg => {
+      client.onAnyMessage((msg) => {
         this.parsedLinesPerStream++;
         if (msg.tags.get('msg-id') !== 'highlighted-message') return;
         onMessageHighlight(msg as TwitchPrivateMessage);
@@ -145,22 +150,29 @@ export default new class Tmi {
       });
       client.onResub((channel, username, subInfo) => {
         const tier = isNaN(Number(subInfo.plan)) ? 'Twitch prime' : String(Number(subInfo.plan) / 1000);
-        onReSubscribe({ username, tier, message: subInfo.message, months: subInfo.streak, overallMonths: subInfo.months, isPrime: subInfo.isPrime });
+        onReSubscribe({
+          username,
+          tier,
+          message: subInfo.message,
+          months: subInfo.streak,
+          overallMonths: subInfo.months,
+          isPrime: subInfo.isPrime,
+        });
       });
     }
   }
 
-  async say({ type = 'bot', message }: { type?: 'bot' | 'broadcaster', message: string }) {
+  async say({ type = 'bot', message }: { type?: 'bot' | 'broadcaster'; message: string }) {
     if (process.env.NODE_ENV === 'production') this[type].chat?.say(this.channel.name, message);
     chatOut(message);
   }
 
-  async timeout({ username, duration, reason }: { username: string, duration: number, reason?: string }) {
+  async timeout({ username, duration, reason }: { username: string; duration: number; reason?: string }) {
     if (process.env.NODE_ENV === 'production') await this.bot.chat?.timeout(this.channel.name, username, duration, reason);
     timeout(`${username} | ${duration}s | ${reason ?? ''}`);
   }
 
-  async whispers({ type = 'bot', message, target }: { type?: 'bot' | 'broadcaster', message: string, target: string }) {
+  async whispers({ type = 'bot', message, target }: { type?: 'bot' | 'broadcaster'; message: string; target: string }) {
     if (process.env.NODE_ENV === 'production') this[type].chat?.whisper(target, message);
     whisperOut(`${target}: ${message}`);
   }
@@ -169,4 +181,6 @@ export default new class Tmi {
     await import('./loader');
     await import('./currency');
   }
-};
+}
+
+export default new Tmi();

@@ -27,7 +27,7 @@ const loader = async () => {
         if (!loadedFile) continue;
         loadedSystems.push(loadedFile);
         if (loadedFile.socket) {
-          loadedFile.socket.on('connection', client => {
+          loadedFile.socket.on('connection', (client) => {
             if (loadedFile.sockets) loadedFile.sockets(client);
             if (!loadedFile.clients) loadedFile.clients = [];
             loadedFile.clients.push(client);
@@ -50,10 +50,8 @@ loader().then(async () => {
       await system.init();
     }
   }
-
   await cache.init();
   setTimeout(() => {
     loaded = true;
   }, 5000);
 });
-
