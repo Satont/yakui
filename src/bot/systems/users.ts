@@ -124,13 +124,16 @@ class Users implements System {
 
   private async getChatters() {
     clearTimeout(this.getChattersTimeout);
-    this.getChattersTimeout = setTimeout(() => this.getChatters(), 10 * 1000);
+    this.getChattersTimeout = setTimeout(() => this.getChatters(), 1 * 60 * 1000);
 
     if (!oauth.botAccessToken || !oauth.clientId || !oauth.channel) {
       return;
     }
-    this.chatters = await getChatters({ accessToken: oauth.botAccessToken, clientId: oauth.clientId, channel: oauth.channel });
-    info(this.chatters);
+    this.chatters = await getChatters({
+      accessToken: (await tmi.bot.auth.getAccessToken()).accessToken,
+      clientId: oauth.clientId,
+      channel: oauth.channel,
+    });
   }
 
   @command({

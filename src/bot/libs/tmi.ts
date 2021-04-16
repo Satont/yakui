@@ -13,17 +13,21 @@ class Tmi {
   bot: {
     api: ApiClient | null;
     chat: Chat | null;
+    auth: RefreshableAuthProvider;
   } = {
     chat: null,
     api: null,
+    auth: null,
   };
 
   broadcaster: {
     api: ApiClient | null;
     chat: Chat | null;
+    auth: RefreshableAuthProvider;
   } = {
     chat: null,
     api: null,
+    auth: null,
   };
 
   channel: { name: string; id: string };
@@ -40,15 +44,16 @@ class Tmi {
       await this.disconnect(type);
 
       const staticProvider = new StaticAuthProvider(oauth.clientId);
-      const authProvider = new RefreshableAuthProvider(staticProvider as any, {
+      this[type].auth = new RefreshableAuthProvider(staticProvider as any, {
         clientSecret: oauth.clientSecret,
         refreshToken: oauth[`${type}RefreshToken`],
-        onRefresh: async ({ refreshToken }) => {
+        onRefresh: async ({ accessToken, refreshToken }) => {
+          oauth[`${type}AccessToken`] = accessToken;
           oauth[`${type}RefreshToken`] = refreshToken;
         },
       });
 
-      this[type].api = new ApiClient({ authProvider });
+      this[type].api = new ApiClient({ authProvider: this[type].auth });
 
       if (type === 'bot') {
         await this.getChannel(oauth.channel);
@@ -58,7 +63,7 @@ class Tmi {
       }
 
       if (!this.channel) return;
-      this[type].chat = new Chat(authProvider as any, { channels: [this.channel.name] });
+      this[type].chat = new Chat(this[type].auth as any, { channels: [this.channel.name] });
       this.listeners(type);
       await this[type].chat.connect();
     } catch (e) {

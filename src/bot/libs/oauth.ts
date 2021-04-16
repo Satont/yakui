@@ -3,25 +3,25 @@ import tmi from './tmi';
 
 class OAuth {
   @settings()
-  channel: string = null
+  channel: string = null;
 
   @settings()
-  clientId: string = null
+  clientId: string = null;
 
   @settings()
-  clientSecret: string = null
+  clientSecret: string = null;
 
   @settings()
-  botAccessToken: string = null
+  botAccessToken: string = null;
 
   @settings()
-  botRefreshToken: string = null
+  botRefreshToken: string = null;
 
   @settings()
-  broadcasterAccessToken: string = null
+  broadcasterAccessToken: string = null;
 
   @settings()
-  broadcasterRefreshToken: string = null
+  broadcasterRefreshToken: string = null;
 
   @onChange(['channel'])
   async callTmi() {
@@ -34,12 +34,12 @@ class OAuth {
     await this.callTmi();
   }
 
-  @onChange('botAccessToken')
+  @onChange('botRefreshToken')
   callBotConnect() {
     return tmi.connect('bot');
   }
 
-  @onChange('broadcasterAccessToken')
+  @onChange('broadcasterRefreshToken')
   callBroadcasterConnect() {
     return tmi.connect('broadcaster');
   }

@@ -28,34 +28,36 @@ export const countWatched = async (opts: Opts) => {
         }
       });
     });
-  } else {
-    try {
-      const data: Opts = opts || workerData;
-      const orm = await MikroORM.init();
-      const repository = orm.em.getRepository(User);
-      const usersForUpdate: User[] = [];
+  }
+  try {
+    const data: Opts = opts || workerData;
+    const orm = await MikroORM.init();
+    const repository = orm.em.getRepository(User);
+    const usersForUpdate: User[] = [];
 
-      for (const chatter of opts.chatters) {
-        const user =
-          (await repository.findOne(Number(chatter.id))) ||
-          repository.assign(new User(), { id: Number(chatter.id), username: chatter.username });
+    for (const chatter of opts.chatters) {
+      const user =
+        (await repository.findOne(Number(chatter.id))) ||
+        repository.assign(new User(), { id: Number(chatter.id), username: chatter.username });
 
-        const updatePoints =
-          new Date().getTime() - new Date(user.lastWatchedPoints).getTime() >= data.points.interval && data.points.enabled;
+      const updatePoints = new Date().getTime() - new Date(user.lastWatchedPoints).getTime() >= data.points.interval && data.points.enabled;
 
-        if (data.points.perWatch && data.points.interval && updatePoints) {
-          user.lastWatchedPoints = new Date().getTime();
-          user.points += data.points.perWatch;
-        }
-
-        user.watched += 1 * 60 * 1000;
-        usersForUpdate.push(user);
+      if (data.points.perWatch && data.points.interval && updatePoints) {
+        user.lastWatchedPoints = new Date().getTime();
+        user.points += data.points.perWatch;
       }
 
-      await repository.persistAndFlush(usersForUpdate);
-      parentPort?.postMessage('Done');
-    } catch (e) {
-      error(e);
+      user.watched += 1 * 60 * 1000;
+      usersForUpdate.push(user);
     }
+
+    await repository.persistAndFlush(usersForUpdate);
+    parentPort?.postMessage('Done');
+  } catch (e) {
+    error(e);
   }
 };
+
+if (!isMainThread) {
+  countWatched(workerData);
+}

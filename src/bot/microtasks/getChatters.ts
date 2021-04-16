@@ -11,7 +11,7 @@ import { error } from '../libs/logger';
 type Opts = { channel: string; clientId: string; accessToken: string };
 
 export const getChatters = async (opts: Opts): Promise<Array<{ username: string; id: string }>> => {
-  if (isMainThread) {
+  /*   if (isMainThread) {
     console.log('mainThreaded');
     const worker = new Worker(__filename, { workerData: opts });
     const value = await new Promise((res) => worker.on('message', res));
@@ -19,9 +19,9 @@ export const getChatters = async (opts: Opts): Promise<Array<{ username: string;
   } else {
     console.log('not mainThread');
     parentPort.postMessage(workerData);
-  }
+  } */
 
-  /* if (isMainThread) {
+  if (isMainThread) {
     const value = await new Promise((resolve, reject) => {
       const worker = new Worker(__filename, { workerData: opts });
       worker.on('message', resolve);
@@ -34,6 +34,7 @@ export const getChatters = async (opts: Opts): Promise<Array<{ username: string;
     });
     return value as Array<{ username: string; id: string }>;
   }
+
   try {
     const data: Opts = opts || workerData;
     const apiClient = new ApiClient({ authProvider: new StaticAuthProvider(data.clientId, data.accessToken) });
@@ -48,5 +49,9 @@ export const getChatters = async (opts: Opts): Promise<Array<{ username: string;
     parentPort?.postMessage(chatters);
   } catch (e) {
     error(e);
-  } */
+  }
 };
+
+if (!isMainThread) {
+  getChatters(workerData);
+}
