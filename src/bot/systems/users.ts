@@ -12,7 +12,6 @@ import { command } from '../decorators/command';
 import { getChatters } from '../microtasks/getChatters';
 import oauth from '../libs/oauth';
 import { countWatched } from '../microtasks/countWatched';
-import { info } from '../libs/logger';
 
 class Users implements System {
   private countWatchedTimeout: NodeJS.Timeout = null;
