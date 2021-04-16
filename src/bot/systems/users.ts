@@ -112,7 +112,7 @@ class Users implements System {
     if (!twitch.streamMetaData?.startedAt || !this.enabled) return;
 
     countWatched({
-      chatters: this.chatters.filter((c) => this.isIgnored(c.username.toLowerCase())),
+      chatters: this.chatters.filter((c) => !this.isIgnored(c.username.toLowerCase())),
       points: {
         enabled: this.points.enabled,
         perWatch: pointsPerWatch,

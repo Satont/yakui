@@ -29,13 +29,14 @@ export const countWatched = async (opts: Opts) => {
       });
     });
   }
+
   try {
-    const data: Opts = opts || workerData;
+    const data: Opts = workerData;
     const orm = await MikroORM.init();
     const repository = orm.em.getRepository(User);
     const usersForUpdate: User[] = [];
-
-    for (const chatter of opts.chatters) {
+    console.log(data);
+    for (const chatter of data.chatters) {
       const user =
         (await repository.findOne(Number(chatter.id))) ||
         repository.assign(new User(), { id: Number(chatter.id), username: chatter.username });
@@ -53,6 +54,7 @@ export const countWatched = async (opts: Opts) => {
 
     await repository.persistAndFlush(usersForUpdate);
     parentPort?.postMessage('Done');
+    process.exit(0);
   } catch (e) {
     error(e);
   }
