@@ -35,7 +35,7 @@ export const countWatched = async (opts: Opts) => {
     const orm = await MikroORM.init();
     const repository = orm.em.getRepository(User);
     const usersForUpdate: User[] = [];
-    console.log(data);
+
     for (const chatter of data.chatters) {
       const user =
         (await repository.findOne(Number(chatter.id))) ||
