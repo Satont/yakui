@@ -6,7 +6,7 @@ import twitch from './twitch';
 import includesOneOf from '@bot/commons/includesOneOf';
 import users from './users';
 import tmi from '@bot/libs/tmi';
-import { User as UserModel } from '@bot/entities/User';
+import { User, User as UserModel } from '@bot/entities/User';
 import currency from '@bot/libs/currency';
 import Axios from 'axios';
 import { System, Command } from 'typings';
@@ -21,8 +21,8 @@ import { orm } from '@bot/libs/db';
 import { CommandPermission } from '../entities/Command';
 import { QueryBuilder } from '@mikro-orm/postgresql';
 
-export default new class Variables implements System {
-  variables: Array<{ name: string, response: string, custom?: boolean }> = [
+export default new (class Variables implements System {
+  variables: Array<{ name: string; response: string; custom?: boolean }> = [
     { name: '$sender', response: 'Username of user who triggered message' },
     { name: '$followage', response: 'Followage of user' },
     { name: '$stream.uptime', response: 'Current stream uptime' },
@@ -31,7 +31,7 @@ export default new class Variables implements System {
     { name: '$channel.game', response: 'Channel game' },
     { name: '$channel.title', response: 'Channel title' },
     { name: '$channel.followers', response: 'Number of channel followers' },
-    { name: '$random.online.user', response: 'Pick\'s random online user' },
+    { name: '$random.online.user', response: 'Pick`s random online user' },
     { name: '$random.N-N', response: 'Random beetwen 2 numbers' },
     { name: '$subs', response: 'Count of channel subscribers' },
     { name: '$subs.last.sub.username', response: 'Username of latest subscriber' },
@@ -62,26 +62,33 @@ export default new class Variables implements System {
     { name: '$user.bits', response: 'User bits' },
     { name: '$user.watched', response: 'User watched time' },
     { name: '$user.points', response: 'User points' },
-    { name: '(api|GET/POST|http://example.com)', response: 'Make api request. If response it plain text use (api._response). If response is json use (api.someVariableFromJson)' },
+    {
+      name: '(api|GET/POST|http://example.com)',
+      response: 'Make api request. If response it plain text use (api._response). If response is json use (api.someVariableFromJson)',
+    },
     { name: '$command.stats.used', response: 'How much times command was used' },
-  ]
+  ];
 
   async init() {
     const repository = orm.em.fork().getRepository(Variable);
-    const variables = (await repository.findAll())
-      .map((variable: Variable) => ({ name: `$_${variable.name}`, response: variable.response, custom: true }));
+    const variables = (await repository.findAll()).map((variable: Variable) => ({
+      name: `$_${variable.name}`,
+      response: variable.response,
+      custom: true,
+    }));
 
     this.variables.push(...variables);
   }
 
-  async parseMessage(opts: { message: string, raw?: TwitchPrivateMessage, argument?: string, command?: Command }) {
+  async parseMessage(opts: { message: string; raw?: TwitchPrivateMessage; argument?: string; command?: Command }) {
     let result = opts.message;
     const userInfo = opts.raw?.userInfo;
-    const getLatestAgoString = (timestamp: number) => hd(Date.now() - timestamp, {
-      units: ['mo', 'd', 'h', 'm'],
-      round: true,
-      language: locales.translate('lang.code'),
-    });
+    const getLatestAgoString = (timestamp: number) =>
+      hd(Date.now() - timestamp, {
+        units: ['mo', 'd', 'h', 'm'],
+        round: true,
+        language: locales.translate('lang.code'),
+      });
 
     result = result
       .replace(/\$sender/gimu, '@' + userInfo?.userName ?? tmi.bot.chat?.currentNick)
@@ -90,7 +97,6 @@ export default new class Variables implements System {
       .replace(/\$channel\.game/gimu, twitch.channelMetaData.game)
       .replace(/\$channel\.title/gimu, twitch.channelMetaData.title)
       .replace(/\$stream\.uptime/gimu, twitch.uptime)
-      .replace(/\$random\.online\.user/gimu, sample(users.chatters)?.username)
       .replace(/\$random\.(\d+)-(\d+)/gimu, (match, first, second) => String(_.random(first, second)))
       .replace(/\$subs\.last\.sub\.username/gimu, twitch.channelMetaData.latestSubscriber?.username)
       .replace(/\$subs\.last\.sub\.ago/gimu, getLatestAgoString(twitch.channelMetaData.latestSubscriber?.timestamp))
@@ -117,7 +123,12 @@ export default new class Variables implements System {
     }
 
     if (/\$prices/gimu.test(result)) {
-      result = result.replace(/\$prices/gimu, Commands.getPricesList().map(c => `${c.name} — ${c.price}`).join(', '));
+      result = result.replace(
+        /\$prices/gimu,
+        Commands.getPricesList()
+          .map((c) => `${c.name} — ${c.price}`)
+          .join(', '),
+      );
     }
 
     if (/\$top\.points/gimu.test(result)) {
@@ -144,6 +155,24 @@ export default new class Variables implements System {
       result = result.replace(/\$top\.messages/gimu, await this.getTop('messages', opts.argument));
     }
 
+    if (/\$random\.online\.user/gimu.test(result)) {
+      const dbUser = await orm.em
+        .fork()
+        .getRepository(User)
+        .find({
+          id: {
+            $in: users.chatters.map((c) => Number(c.id)),
+          },
+          messages: {
+            $gt: 2,
+          },
+        });
+
+      const user = users.chatters.find((u) => u.id === String((sample(dbUser) as User)?.id));
+
+      result = result.replace(/\$random\.online\.user/gimu, user?.username);
+    }
+
     if (/(\(eval)(.*)(\))/gimu.test(result)) {
       const toEval = result.match(/(\(eval)(.*)(\))/)[2].trim();
       result = result.replace(/(\(eval)(.*)(\))/gimu, await evaluate({ raw: opts.raw, param: opts.argument, message: toEval }));
@@ -155,16 +184,17 @@ export default new class Variables implements System {
 
     if (/\$faceit\.[a-z]{3}/gimu.test(result)) {
       const faceitData = await satontapi.getFaceitData();
-      if (faceitData) result = result
-        .replace(/\$faceit\.elo/, String(faceitData.elo))
-        .replace(/\$faceit\.lvl/, String(faceitData.lvl));
+      if (faceitData) result = result.replace(/\$faceit\.elo/, String(faceitData.elo)).replace(/\$faceit\.lvl/, String(faceitData.lvl));
     }
 
     if (/\$_[0-9a-z]+/gimu.test(result)) {
       result = await this.parseCustomVariables(result);
     }
 
-    if (includesOneOf(result, ['user.messages', 'user.tips', 'user.bits', 'user.watched', 'user.points', 'user.daily.messages']) && userInfo) {
+    if (
+      includesOneOf(result, ['user.messages', 'user.tips', 'user.bits', 'user.watched', 'user.points', 'user.daily.messages']) &&
+      userInfo
+    ) {
       const user = await users.getUserStats({ id: userInfo?.userId });
 
       result = result
@@ -184,7 +214,7 @@ export default new class Variables implements System {
   }
 
   async getTop(type: 'watched' | 'tips' | 'bits' | 'messages' | 'messages.today' | 'points', page = '1') {
-    let result: Array<{ username: string, value: number }> = [];
+    let result: Array<{ username: string; value: number }> = [];
     if (isNaN(Number(page))) page = '1';
     if (Number(page) <= 0) page = '1';
 
@@ -194,86 +224,126 @@ export default new class Variables implements System {
     const limit = 10;
 
     if (type === 'watched') {
-      result = (await orm.em.fork().getRepository(UserModel).find({
-        username: { $nin: ignored },
-      }, {
-        limit,
-        orderBy: { [type]: 'DESC' },
-        offset,
-      })).map(user => ({ username: user.username, value: user[type] }));
-
-      return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${((result.value / (1 * 60 * 1000)) / 60).toFixed(1)}h`).join(', ');
-    } else if (type === 'messages') {
-      result = (await orm.em.fork().getRepository(UserModel).find({
-        username: { $nin: ignored },
-      }, {
-        limit,
-        orderBy: { [type]: 'DESC' },
-        offset,
-      })).map(user => ({ username: user.username, value: user[type] }));
+      result = (
+        await orm.em
+          .fork()
+          .getRepository(UserModel)
+          .find(
+            {
+              username: { $nin: ignored },
+            },
+            {
+              limit,
+              orderBy: { [type]: 'DESC' },
+              offset,
+            },
+          )
+      ).map((user) => ({ username: user.username, value: user[type] }));
 
       return result
-        .map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ');
+        .map((result, index) => `${index + 1 + offset}. ${result.username} - ${(result.value / (1 * 60 * 1000) / 60).toFixed(1)}h`)
+        .join(', ');
+    } else if (type === 'messages') {
+      result = (
+        await orm.em
+          .fork()
+          .getRepository(UserModel)
+          .find(
+            {
+              username: { $nin: ignored },
+            },
+            {
+              limit,
+              orderBy: { [type]: 'DESC' },
+              offset,
+            },
+          )
+      ).map((user) => ({ username: user.username, value: user[type] }));
+
+      return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ');
     } else if (type === 'tips') {
       const qb: QueryBuilder<UserModel> = (orm.em.fork() as any).createQueryBuilder(UserModel, 'user');
 
-      const result: Array<{ id: number, username: string, value: number }> = await orm.em.fork().getConnection().execute(qb
-        .select(['user.id', 'user.username'])
-        .where({ username: { $nin: ignored } })
-        .join('user.tips', 'tips')
-        .addSelect('COALESCE(SUM("tips"."inMainCurrencyAmount"), 0) as "value"')
-        .offset(offset)
-        .limit(limit)
-        .groupBy('id')
-        .getKnexQuery()
-        .orderBy('value', 'desc')
-        .toQuery());
+      const result: Array<{ id: number; username: string; value: number }> = await orm.em
+        .fork()
+        .getConnection()
+        .execute(
+          qb
+            .select(['user.id', 'user.username'])
+            .where({ username: { $nin: ignored } })
+            .join('user.tips', 'tips')
+            .addSelect('COALESCE(SUM("tips"."inMainCurrencyAmount"), 0) as "value"')
+            .offset(offset)
+            .limit(limit)
+            .groupBy('id')
+            .getKnexQuery()
+            .orderBy('value', 'desc')
+            .toQuery(),
+        );
 
-      return result
-        .map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}${currency.botCurrency}`).join(', ');
+      return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}${currency.botCurrency}`).join(', ');
     } else if (type === 'bits') {
       const qb: QueryBuilder<UserModel> = (orm.em.fork() as any).createQueryBuilder(UserModel, 'user');
 
-      const result: Array<{ id: number, username: string, value: number }> = await orm.em.fork().getConnection().execute(qb
-        .select(['user.id', 'user.username'])
-        .where({ username: { $nin: ignored } })
-        .join('user.bits', 'bits')
-        .addSelect('COALESCE(SUM("bits"."amount"), 0) as "value"')
-        .offset(offset)
-        .limit(limit)
-        .groupBy('id')
-        .getKnexQuery()
-        .orderBy('value', 'desc')
-        .toQuery());
+      const result: Array<{ id: number; username: string; value: number }> = await orm.em
+        .fork()
+        .getConnection()
+        .execute(
+          qb
+            .select(['user.id', 'user.username'])
+            .where({ username: { $nin: ignored } })
+            .join('user.bits', 'bits')
+            .addSelect('COALESCE(SUM("bits"."amount"), 0) as "value"')
+            .offset(offset)
+            .limit(limit)
+            .groupBy('id')
+            .getKnexQuery()
+            .orderBy('value', 'desc')
+            .toQuery(),
+        );
 
-      return result
-        .map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ');
+      return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ');
     } else if (type === 'messages.today') {
       const now = new Date();
       const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-      result = (await orm.em.fork().getRepository(UserDailyMessages).find({
-        date: startOfDay.getTime(),
-      }, {
-        limit,
-        orderBy: { count: 'desc' },
-        offset,
-        populate: ['user'],
-      })).map(daily => ({ username: daily.user.username, value: daily.count }));
+      result = (
+        await orm.em
+          .fork()
+          .getRepository(UserDailyMessages)
+          .find(
+            {
+              date: startOfDay.getTime(),
+            },
+            {
+              limit,
+              orderBy: { count: 'desc' },
+              offset,
+              populate: ['user'],
+            },
+          )
+      ).map((daily) => ({ username: daily.user.username, value: daily.count }));
 
-      return result
-        .map((item, index: number) => `${index + 1 + offset}. ${item.username} - ${item.value}`).join(', ');
-    } if (type === 'points') {
-      result = (await orm.em.fork().getRepository(UserModel).find({
-        username: { $nin: ignored },
-      }, {
-        limit,
-        orderBy: { [type]: 'DESC' },
-        offset,
-      })).map(user => ({ username: user.username, value: user[type] }));
+      return result.map((item, index: number) => `${index + 1 + offset}. ${item.username} - ${item.value}`).join(', ');
+    }
+    if (type === 'points') {
+      result = (
+        await orm.em
+          .fork()
+          .getRepository(UserModel)
+          .find(
+            {
+              username: { $nin: ignored },
+            },
+            {
+              limit,
+              orderBy: { [type]: 'DESC' },
+              offset,
+            },
+          )
+      ).map((user) => ({ username: user.username, value: user[type] }));
 
-      return result
-        .map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ');
+      return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ');
     } else {
       return 'unknown type of top';
     }
@@ -304,8 +374,11 @@ export default new class Variables implements System {
           }
           for (const tag of rData) {
             let path = data;
-            const ids = tag.replace('(api.', '').replace(')', '').split('.');
-            _.each(ids, function (id) {
+            const ids = tag
+              .replace('(api.', '')
+              .replace(')', '')
+              .split('.');
+            _.each(ids, function(id) {
               const isArray = id.match(/(\S+)\[(\d+)\]/i);
               if (isArray) {
                 path = path[isArray[1]][isArray[2]];
@@ -325,7 +398,7 @@ export default new class Variables implements System {
   }
 
   async parseCustomVariables(result: string) {
-    for (const variable of this.variables.filter(v => v.custom)) {
+    for (const variable of this.variables.filter((v) => v.custom)) {
       const match = result.match(new RegExp(`\\${variable.name}`));
       if (!match) continue;
       result = result.replace(match[0], variable.response);
@@ -334,13 +407,16 @@ export default new class Variables implements System {
     return result;
   }
 
-  async changeCustomVariable({ raw, text, response }: { raw: TwitchPrivateMessage, response: string, text: string }) {
+  async changeCustomVariable({ raw, text, response }: { raw: TwitchPrivateMessage; response: string; text: string }) {
     const isAdmin = users.hasPermission(raw.userInfo.badges, CommandPermission.MODERATORS, raw);
 
     if (isAdmin && text.length) {
       const match = response.match(/\$_(\S*)/g);
       if (match) {
-        const variable = await orm.em.fork().getRepository(Variable).findOne({ name: this.variables.find(v => v.name === match[0].replace('$_', '')).name });
+        const variable = await orm.em
+          .fork()
+          .getRepository(Variable)
+          .findOne({ name: this.variables.find((v) => v.name === match[0].replace('$_', '')).name });
         variable.response = text;
         await orm.em.fork().persistAndFlush(variable);
         tmi.say({ message: `@${raw.userInfo.userName} ✅` });
@@ -350,11 +426,8 @@ export default new class Variables implements System {
   }
 
   async getSong() {
-    const [spotifySong, satontApiSong] = await Promise.all([
-      spotify.getSong(),
-      satontapi.getSong(),
-    ]);
+    const [spotifySong, satontApiSong] = await Promise.all([spotify.getSong(), satontapi.getSong()]);
 
     return spotifySong || satontApiSong || locales.translate('song.notPlaying');
   }
-};
+})();
