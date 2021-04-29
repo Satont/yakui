@@ -14,9 +14,9 @@ import { orm } from './db';
 import { File } from '@bot/entities/File';
 
 class Parser {
-  systems: { [x: string]: System } = {}
+  systems: { [x: string]: System } = {};
   inited = false;
-  cooldowns: string[] = []
+  cooldowns: string[] = [];
 
   async parse(message: string, raw: TwitchPrivateMessage) {
     const isCommand = message.startsWith('!');
@@ -48,14 +48,22 @@ class Parser {
       }
     }
 
-    if (!command) return;
+    if (!command || !command?.enabled) return;
     if (!users.hasPermission(raw.userInfo.badges, command.permission, raw)) return;
 
     if (command.price && !this.cooldowns.includes(command.name)) {
-      let user = await orm.em.fork().getRepository(User).findOne({ id: Number(raw.userInfo.userId) });
+      let user = await orm.em
+        .fork()
+        .getRepository(User)
+        .findOne({ id: Number(raw.userInfo.userId) });
+
       if (!user) {
-        user = orm.em.fork().getRepository(User).create({ id: Number(raw.userInfo.userId), username: raw.userInfo.userName });
+        user = orm.em
+          .fork()
+          .getRepository(User)
+          .create({ id: Number(raw.userInfo.userId), username: raw.userInfo.userName });
       }
+
       if (user.points < command.price) {
         tmi.say({ message: locales.translate('price.notEnought', raw.userInfo.userName) });
         return;
@@ -90,7 +98,7 @@ class Parser {
 
     if (!commandResult.length) return;
     const userPerms = users.getUserPermissions(raw.userInfo.badges, raw);
-    this.cooldowns.includes(command.name) && (!userPerms.broadcaster && !userPerms.moderators)
+    this.cooldowns.includes(command.name) && !userPerms.broadcaster && !userPerms.moderators
       ? tmi.whispers({ target: raw.userInfo.userName, message: commandResult })
       : tmi.say({ message: commandResult });
 
@@ -101,7 +109,11 @@ class Parser {
   }
 
   private async increaseCommandUsage({ id }: { id: Command['id'] }) {
-    const cmd = await orm.em.fork().getRepository(CommandModel).findOne({ id });
+    const cmd = await orm.em
+      .fork()
+      .getRepository(CommandModel)
+      .findOne({ id });
+
     cmd.usage += 1;
     orm.em.fork().persistAndFlush(cmd);
   }
