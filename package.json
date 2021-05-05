@@ -41,7 +41,7 @@
     "@types/spotify-web-api-node": "^4.0.2",
     "@types/terser-webpack-plugin": "^5.0.2",
     "@typescript-eslint/eslint-plugin": "^4.11.0",
-    "@typescript-eslint/parser": "^4.11.0",
+    "@typescript-eslint/parser": "^4.22.1",
     "@vue/component-compiler-utils": "^3.2.0",
     "css-minimizer-webpack-plugin": "^1.1.5",
     "eslint": "^7.16.0",
