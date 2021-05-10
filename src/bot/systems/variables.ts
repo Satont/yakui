@@ -156,21 +156,23 @@ export default new (class Variables implements System {
     }
 
     if (/\$random\.online\.user/gimu.test(result)) {
-      const dbUser = await orm.em
+      const queryUsers = users.chatters.filter((u) => u.id !== String(opts.raw.userInfo.userId)).map((c) => Number(c.id));
+      const dbUsers: User[] = await orm.em
         .fork()
         .getRepository(User)
         .find({
           id: {
-            $in: users.chatters.map((c) => Number(c.id)),
+            $in: queryUsers,
           },
           messages: {
             $gt: 2,
           },
         });
 
-      const user = users.chatters.find((u) => u.id === String((sample(dbUser) as User)?.id));
+      const randomOnlineUser = sample(dbUsers) as User;
+      const randomUser = users.chatters.find((u) => String(randomOnlineUser?.id) === u.id);
 
-      result = result.replace(/\$random\.online\.user/gimu, user?.username);
+      result = result.replace(/\$random\.online\.user/gimu, randomUser?.username ?? 'Ghost');
     }
 
     if (/(\(eval)(.*)(\))/gimu.test(result)) {
