@@ -162,8 +162,23 @@ class Tmi {
     }
   }
 
+  private splitLine(input: string, length: number) {
+    let lastSpace = input.substring(0, length).lastIndexOf(' ');
+
+    if (lastSpace === -1) {
+      lastSpace = length - 1;
+    }
+
+    return [input.substring(0, lastSpace), input.substring(lastSpace + 1)];
+  }
+
   async say({ type = 'bot', message }: { type?: 'bot' | 'broadcaster'; message: string }) {
-    if (process.env.NODE_ENV === 'production') this[type].chat?.say(this.channel.name, message);
+    if (process.env.NODE_ENV === 'production') {
+      const messages = this.splitLine(message, 500);
+      for (const msg of messages) {
+        this[type].chat?.say(this.channel.name, msg);
+      }
+    }
     chatOut(message);
   }
 
