@@ -56,6 +56,16 @@ export default new (class Variables implements System {
     { name: '(eval)', response: 'JavaScript evaluate' },
     { name: '$faceit.lvl', response: 'Faceit lvl' },
     { name: '$faceit.elo', response: 'Faceit elo' },
+    { name: '$faceit.todayEloDiff', response: 'Faceit elo diff for current day' },
+    { name: '$faceit.latestMatches', response: 'Faceit latest matches stats' },
+    { name: '$faceit.stats.lifetime.currentstreak', response: 'Faceit current win streak' },
+    { name: '$faceit.stats.lifetime.kdratio', response: 'Faceit lifetime K/D ratio' },
+    { name: '$faceit.stats.lifetime.headshots', response: 'Faceit lifetime headshots number' },
+    { name: '$faceit.stats.lifetime.winrate', response: 'Faceit lfietime winrate' },
+    { name: '$faceit.stats.lifetime.wins', response: 'Faceit total wins' },
+    { name: '$faceit.stats.lifetime.avgkd', response: 'Faceit lifetime avg K/D' },
+    { name: '$faceit.stats.lifetime.avghspercentage', response: 'Faceit avarage headshots percentage' },
+    { name: '$faceit.stats.lifetime.matches', response: 'Faceit lifetime matches played' },
     { name: '$user.messages', response: 'User messages' },
     { name: '$user.daily.messages', response: 'User today messages' },
     { name: '$user.tips', response: 'User tips' },
@@ -184,9 +194,32 @@ export default new (class Variables implements System {
       result = result.replace(/\$command\.stats\.used/gimu, String(opts.command?.usage ?? 'unknown'));
     }
 
-    if (/\$faceit\.[a-z]{3}/gimu.test(result)) {
+    if (/\$faceit\.[a-z]+/gimu.test(result)) {
       const faceitData = await satontapi.getFaceitData();
-      if (faceitData) result = result.replace(/\$faceit\.elo/, String(faceitData.elo)).replace(/\$faceit\.lvl/, String(faceitData.lvl));
+
+      if (faceitData) {
+        result = result
+          .replace(/\$faceit\.elo/, String(faceitData.elo))
+          .replace(/\$faceit\.lvl/, String(faceitData.lvl))
+          .replace(/\$faceit\.todayEloDiff/, faceitData.todayEloDiff)
+          .replace(
+            /\$faceit\.latestMatches/,
+            faceitData.latestMatches
+              .map(
+                (m) =>
+                  `${m.result} ${m.eloDiff} on ${m.map} (${m.teamScore}), KD: ${m.kd} (${m.kills}/${m.death}), HS: ${m.hs.number}(${m.hs.percentage}%)`,
+              )
+              .join(' | '),
+          )
+          .replace(/\$faceit\.stats\.lifetime\.currentstreak/, faceitData.stats.lifetime['Current Win Streak'])
+          .replace(/\$faceit\.stats\.lifetime\.kdratio/, faceitData.stats.lifetime['K/D Ratio'])
+          .replace(/\$faceit\.stats\.lifetime\.headshots/, faceitData.stats.lifetime['Total Headshots %'])
+          .replace(/\$faceit\.stats\.lifetime\.winrate/, faceitData.stats.lifetime['Win Rate %'])
+          .replace(/\$faceit\.stats\.lifetime\.wins/, faceitData.stats.lifetime['Wins'])
+          .replace(/\$faceit\.stats\.lifetime\.avgkd/, faceitData.stats.lifetime['Average K/D Ratio'])
+          .replace(/\$faceit\.stats\.lifetime\.avghspercentage/, faceitData.stats.lifetime['Average Headshots %'])
+          .replace(/\$faceit\.stats\.lifetime\.matches/, faceitData.stats.lifetime.Matches);
+      }
     }
 
     if (/\$_[0-9a-z]+/gimu.test(result)) {
