@@ -163,6 +163,10 @@ class Tmi {
   }
 
   private splitLine(input: string, length: number) {
+    if (input.length < length) {
+      return [input];
+    }
+
     let lastSpace = input.substring(0, length).lastIndexOf(' ');
 
     if (lastSpace === -1) {
