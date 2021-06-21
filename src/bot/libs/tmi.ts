@@ -84,7 +84,7 @@ class Tmi {
 
     if (client && this.channel) {
       client.part(this.channel.name);
-      await client.quit();
+      client.quit();
 
       this[type].chat = null;
       this[type].api = null;
@@ -97,6 +97,7 @@ class Tmi {
     client.onDisconnect((manually, reason) => {
       if (!manually) {
         info(`TMI: ${type} disconnected from server ${reason}`);
+        this.connect(type);
       }
     });
 
