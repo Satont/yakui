@@ -83,6 +83,7 @@ class Tmi {
     const client = this[type].chat;
 
     if (client && this.channel) {
+      client.removeListener();
       client.part(this.channel.name);
       await client.quit();
 
