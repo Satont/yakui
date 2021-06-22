@@ -84,7 +84,7 @@ class Tmi {
 
     if (client && this.channel) {
       client.part(this.channel.name);
-      client.quit();
+      await client.quit();
 
       this[type].chat = null;
       this[type].api = null;
