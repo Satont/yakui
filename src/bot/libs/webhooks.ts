@@ -2,10 +2,10 @@ import tmi from './tmi';
 import { info, error } from './logger';
 import general from '../settings/general';
 
-export default new class WebHooks {
-  private callBackUrl: string = null
-  private validityInSeconds = 864000
-  private initTimeout: NodeJS.Timeout = null
+class WebHooks {
+  private callBackUrl: string = null;
+  private validityInSeconds = 864000;
+  private initTimeout: NodeJS.Timeout = null;
 
   async init() {
     const url = general.siteUrl;
@@ -17,7 +17,7 @@ export default new class WebHooks {
     this.unsubscribe('streams').then(() => this.subscribe('streams'));
     this.unsubscribe('moderator').then(() => this.subscribe('moderator'));
 
-    this.initTimeout = setTimeout((() => this.init()), this.validityInSeconds * 1000);
+    this.initTimeout = setTimeout(() => this.init(), this.validityInSeconds * 1000);
   }
 
   async unsubscribe(type: 'follows' | 'streams' | 'moderator') {
@@ -79,4 +79,6 @@ export default new class WebHooks {
 
     return true;
   }
-};
+}
+
+export default new WebHooks();

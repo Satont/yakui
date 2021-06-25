@@ -26,7 +26,7 @@ app.get('/oauth', (req, res) => {
   res.sendFile(resolve(process.cwd(), 'public', 'oauth.html'));
 });
 app.get('/oauth/validate', (req, res) => Authorization.validate(req, res));
-app.get('/oauth/refresh',  (req, res) => Authorization.refresh(req, res));
+app.get('/oauth/refresh', (req, res) => Authorization.refresh(req, res));
 
 app.get('/overlay/:overlay', (req, res) => {
   res.sendFile(resolve(process.cwd(), 'public', 'overlays.html'));
@@ -42,10 +42,12 @@ app.get('/public', (req, res) => {
 
 app.use('/api/v1', v1);
 
-app.use(history({
-  index: '/',
-  htmlAcceptHeaders: ['text/html', 'application/xhtml+xml'],
-}));
+app.use(
+  history({
+    index: '/',
+    htmlAcceptHeaders: ['text/html', 'application/xhtml+xml'],
+  }),
+);
 
 app.get('/', (req, res) => {
   res.sendFile(resolve(process.cwd(), 'public', 'panel.html'));
@@ -65,5 +67,3 @@ export const server = http.createServer(app);
 server.listen(PORT, '0.0.0.0', () => {
   info(`PANEL: Server initiliazed on ${PORT}`);
 });
-
-process.on('SIGTERM', () => server.close());
