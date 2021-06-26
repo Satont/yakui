@@ -31,5 +31,5 @@ jobs:
         if: "${{ env.CAPROVER_URL != '' }}"
         with:
           url: ${{ env.CAPROVER_URL }}
-          method: "POST"
-          customHeaders: "{ WEBHOOK_SECRET: $CAPROVER_SECRET }""
+          method: 'POST'
+          customHeaders: '{ WEBHOOK_SECRET: $CAPROVER_SECRET }'
