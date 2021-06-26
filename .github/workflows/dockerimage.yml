@@ -9,6 +9,8 @@ jobs:
   build:
     if: "! contains(toJSON(github.event.commits.*.message), '[skip-docker]')"
     runs-on: ubuntu-latest
+    env:
+      CAPROVER_URL: ${{ secrets.CAPROVER_DEPLOYER_URL }}
     steps:
       - uses: actions/checkout@master
       - name: Docker Build & Push to Docker Hub
@@ -25,11 +27,10 @@ jobs:
           LATEST: 'true'
       - name: Deploy Stage
         uses: fjogeleit/http-request-action@master
-        if: "${{ secrets.CAPROVER_DEPLOYER_URL != '' }}"
+        if: "${{ env.CAPROVER_URL != '' }}"
         env:
-          URL: ${{ secrets.CAPROVER_DEPLOYER_URL }}
           SECRET: ${{ secrets.CAPROVER_WEBHOOK_SECRET }}
         with:
-          url: ${{ env.URL }}
+          url: ${{ env.CAPROVER_URL }}
           method: 'POST'
           customHeaders: '{ WEBHOOK_SECRET: $SECRET }'
