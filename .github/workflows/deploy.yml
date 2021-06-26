@@ -1,0 +1,24 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: ['Publish Docker Hub']
+    types:
+      - completed
+
+jobs:
+  build:
+    if: "! contains(toJSON(github.event.commits.*.message), '[skip-deploy]')"
+    runs-on: ubuntu-latest
+    env:
+      CAPROVER_URL: ${{ secrets.CAPROVER_DEPLOYER_URL }}
+      CAPROVER_SECRET: ${{ secrets.CAPROVER_WEBHOOK_SECRET }}
+    steps:
+      - name: Deploy Stage
+        uses: CamiloGarciaLaRotta/watermelon-http-client@v1
+        if: env.CAPROVER_URL != null
+        with:
+          url: ${{ env.CAPROVER_URL }}
+          method: post
+          headers: '{"WEBHOOK_SECRET": "${{ secrets.CAPROVER_WEBHOOK_SECRET }}"}'
+          verbose: true
