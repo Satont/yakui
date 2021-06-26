@@ -1,16 +1,16 @@
 import { System, CommandOptions, ParserOptions, UserPermissions } from 'typings';
 import tmi from '@bot/libs/tmi';
-import { CommandPermission } from '@bot/entities/Command';
 import users from './users';
 import { settings } from '../decorators';
 import { parser } from '../decorators/parser';
 import { command } from '../decorators/command';
 import { link } from '@satont/text-utils';
+import { CommandPermission } from '@prisma/client';
 
 const symbolsRegexp = /([^\s\u0500-\u052F\u0400-\u04FF\w]+)/g;
 
 class Moderation implements System {
-  permits: string[] = []
+  permits: string[] = [];
   warnings: Warnings = {
     links: [],
     blacklist: [],
@@ -19,10 +19,10 @@ class Moderation implements System {
     caps: [],
     color: [],
     emotes: [],
-  }
+  };
 
   @settings()
-  enabled = false
+  enabled = false;
 
   @settings()
   links: ILinks = {
@@ -38,7 +38,7 @@ class Moderation implements System {
       time: 1,
       message: 'links disallowed [warn]',
     },
-  }
+  };
 
   @settings()
   blacklist: IBlackList = {
@@ -54,7 +54,7 @@ class Moderation implements System {
       time: 1,
       message: 'some word in blacklist [warn]',
     },
-  }
+  };
 
   @settings()
   symbols: ISymbols = {
@@ -73,7 +73,7 @@ class Moderation implements System {
       time: 1,
       message: 'so much symbols [warn]',
     },
-  }
+  };
 
   @settings()
   longMessage: ILongMessage = {
@@ -91,7 +91,7 @@ class Moderation implements System {
       time: 1,
       message: 'so long message [warn]',
     },
-  }
+  };
 
   @settings()
   caps: ICaps = {
@@ -110,7 +110,7 @@ class Moderation implements System {
       time: 1,
       message: 'caps disallowed [warn]',
     },
-  }
+  };
 
   @settings()
   emotes: IEmotes = {
@@ -128,7 +128,7 @@ class Moderation implements System {
       time: 1,
       message: 'so much emotes [warn]',
     },
-  }
+  };
 
   @settings()
   color = {
@@ -143,7 +143,7 @@ class Moderation implements System {
       time: 1,
       message: 'colored messages disallowed [warn]',
     },
-  }
+  };
 
   onStreamEnd() {
     for (const [type] of Object.entries(this.warnings)) this.warnings[type] = [];
@@ -153,10 +153,10 @@ class Moderation implements System {
     for (const [type] of Object.entries(this.warnings)) this.warnings[type] = [];
   }
 
-  private doesWarned({ type, username }: { type: keyof Warnings, username: string }) {
+  private doesWarned({ type, username }: { type: keyof Warnings; username: string }) {
     return this.warnings[type].includes(username.toLowerCase());
   }
-  private removeFromWarned({ type, username }: { type: keyof Warnings, username: string }) {
+  private removeFromWarned({ type, username }: { type: keyof Warnings; username: string }) {
     this.warnings[type].splice(this.warnings[type].indexOf(username.toLowerCase()), 1);
   }
 
@@ -176,7 +176,7 @@ class Moderation implements System {
   async parse(opts: ParserOptions) {
     if (!this.enabled) return false;
     const userPermissions = users.getUserPermissions(opts.raw.userInfo.badges, opts.raw);
-    if (userPermissions.broadcaster || userPermissions.moderators) return false;
+    if (userPermissions.BROADCASTER || userPermissions.MODERATORS) return false;
     if (await this.blacklistParser(opts, userPermissions)) return true;
     if (await this.linksParser(opts, userPermissions)) return true;
     if (await this.symbolsParser(opts, userPermissions)) return true;
@@ -190,12 +190,13 @@ class Moderation implements System {
     const settings = this.links;
 
     if (!settings?.enabled) return false;
-    if (!settings?.subscribers && permissions.subscribers) return false;
-    if (!settings?.vips && permissions.vips) return false;
+    if (!settings?.subscribers && permissions.SUBSCRIBERS) return false;
+    if (!settings?.vips && permissions.VIPS) return false;
     const message = opts.message;
 
     if (!link.length(message)) return false;
-    if (!settings.clips && (/.*(clips.twitch.tv\/)(\w+)/g.test(opts.message) || /.*(www.twitch.tv\/\w+\/clip\/)(\w+)/g.test(opts.message))) return false;
+    if (!settings.clips && (/.*(clips.twitch.tv\/)(\w+)/g.test(opts.message) || /.*(www.twitch.tv\/\w+\/clip\/)(\w+)/g.test(opts.message)))
+      return false;
 
     const username = opts.raw.userInfo.userName.toLowerCase();
     const type = 'links';
@@ -220,8 +221,8 @@ class Moderation implements System {
     const settings = this.symbols;
 
     if (!settings?.enabled) return false;
-    if (!settings?.subscribers && permissions.subscribers) return false;
-    if (!settings?.vips && permissions.vips) return false;
+    if (!settings?.subscribers && permissions.SUBSCRIBERS) return false;
+    if (!settings?.vips && permissions.VIPS) return false;
 
     if (opts.message.length < settings.trigger.length) return false;
 
@@ -258,8 +259,8 @@ class Moderation implements System {
     const settings = this.longMessage;
 
     if (!settings?.enabled) return false;
-    if (!settings?.subscribers && permissions.subscribers) return false;
-    if (!settings?.vips && permissions.vips) return false;
+    if (!settings?.subscribers && permissions.SUBSCRIBERS) return false;
+    if (!settings?.vips && permissions.VIPS) return false;
 
     if (opts.message.length < settings.trigger.length) return false;
 
@@ -282,9 +283,8 @@ class Moderation implements System {
     const settings = this.caps;
 
     if (!settings?.enabled) return false;
-    if (!settings?.subscribers && permissions.subscribers) return false;
-    if (!settings?.vips && permissions.vips) return false;
-
+    if (!settings?.subscribers && permissions.SUBSCRIBERS) return false;
+    if (!settings?.vips && permissions.VIPS) return false;
 
     const username = opts.raw.userInfo.userName.toLowerCase();
     const type = 'caps';
@@ -292,7 +292,7 @@ class Moderation implements System {
 
     let capsLength = 0;
 
-    for (const emote of opts.raw.parseEmotes().filter(o => o.type === 'emote')) {
+    for (const emote of opts.raw.parseEmotes().filter((o) => o.type === 'emote')) {
       message = message.replace(emote['name'], '').trim();
     }
 
@@ -324,12 +324,12 @@ class Moderation implements System {
     const settings = this.emotes;
 
     if (!settings?.enabled) return false;
-    if (!settings?.subscribers && permissions.subscribers) return false;
-    if (!settings?.vips && permissions.vips) return false;
+    if (!settings?.subscribers && permissions.SUBSCRIBERS) return false;
+    if (!settings?.vips && permissions.VIPS) return false;
 
     const username = opts.raw.userInfo.userName.toLowerCase();
     const type = 'emotes';
-    const emotesLength = opts.raw.parseEmotes().filter(o => o.type === 'emote').length;
+    const emotesLength = opts.raw.parseEmotes().filter((o) => o.type === 'emote').length;
 
     if (emotesLength < settings.trigger.length) return false;
 
@@ -349,8 +349,8 @@ class Moderation implements System {
     const settings = this.color;
 
     if (!settings?.enabled) return false;
-    if (!settings?.subscribers && permissions.subscribers) return false;
-    if (!settings?.vips && permissions.vips) return false;
+    if (!settings?.subscribers && permissions.SUBSCRIBERS) return false;
+    if (!settings?.vips && permissions.VIPS) return false;
 
     const username = opts.raw.userInfo.userName.toLowerCase();
     const type = 'color';
@@ -373,8 +373,8 @@ class Moderation implements System {
     const settings = this.blacklist;
 
     if (!settings?.enabled) return false;
-    if (!settings?.subscribers && permissions.subscribers) return false;
-    if (!settings?.vips && permissions.vips) return false;
+    if (!settings?.subscribers && permissions.SUBSCRIBERS) return false;
+    if (!settings?.vips && permissions.VIPS) return false;
 
     const username = opts.raw.userInfo.userName.toLowerCase();
     const type = 'blacklist';
@@ -403,52 +403,52 @@ class Moderation implements System {
 export default new Moderation();
 
 export interface Warnings {
-  [x: string]: string[],
+  [x: string]: string[];
 }
 
 export interface ITimeoutWarning {
-  time: number,
-  message: string
+  time: number;
+  message: string;
 }
 
 export interface IDefaultSettings {
-  enabled: boolean,
-  subscribers: boolean,
-  vips: boolean,
-  timeout: ITimeoutWarning,
-  warning: ITimeoutWarning,
+  enabled: boolean;
+  subscribers: boolean;
+  vips: boolean;
+  timeout: ITimeoutWarning;
+  warning: ITimeoutWarning;
 }
 
 export interface ILinks extends IDefaultSettings {
-  clips: boolean,
+  clips: boolean;
 }
 
 export interface ISymbols extends IDefaultSettings {
   trigger: {
-    length: number,
-    percent: number,
-  }
+    length: number;
+    percent: number;
+  };
 }
 
 export interface ILongMessage extends IDefaultSettings {
   trigger: {
-    length: number,
-  }
+    length: number;
+  };
 }
 
 export interface ICaps extends IDefaultSettings {
   trigger: {
-    length: number,
-    percent: number,
-  }
+    length: number;
+    percent: number;
+  };
 }
 
 export interface IEmotes extends IDefaultSettings {
   trigger: {
-    length: number,
-  }
+    length: number;
+  };
 }
 
 export interface IBlackList extends IDefaultSettings {
-  values: string[]
+  values: string[];
 }

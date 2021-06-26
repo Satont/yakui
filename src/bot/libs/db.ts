@@ -1,8 +1,2 @@
-import { MikroORM } from '@mikro-orm/core';
-
-export let orm: MikroORM;
-export const start = async () => {
-  orm = await MikroORM.init();
-};
-
-start();
+import { PrismaClient } from '@prisma/client';
+export const prisma = new PrismaClient();

@@ -1,29 +1,28 @@
-import { orm } from '../libs/db';
-import { Settings } from '../entities/Settings';
+import { prisma } from '../libs/db';
 import { loaded, loadedSystems } from '../libs/loader';
 
 export const cache: ICache = {};
 
 type TVariable = {
-  value: any,
-  previousValue: any,
-  firstChange: boolean,
-  onChange: string,
+  value: any;
+  previousValue: any;
+  firstChange: boolean;
+  onChange: string;
   settings: {
-    shouldLoad: boolean,
-    loaded: boolean,
-  }
-}
+    shouldLoad: boolean;
+    loaded: boolean;
+  };
+};
 
 interface ICache {
-  [x: string]: Record<string, TVariable>
+  [x: string]: Record<string, TVariable>;
 }
 
 type Opts = {
-  instance?: any,
-  propertyName: any,
-  fromSettings?: boolean
-}
+  instance?: any;
+  propertyName: any;
+  fromSettings?: boolean;
+};
 
 export const setupObserver = ({ instance, propertyName, fromSettings = false } = {} as Opts) => {
   const instanceName = instance.constructor.name.toLowerCase();
@@ -42,7 +41,7 @@ export const setupObserver = ({ instance, propertyName, fromSettings = false } =
       },
     };
     Object.defineProperty(instance, propertyName, {
-      set: function (value) {
+      set: function(value) {
         cache[instanceName][propertyName].firstChange = cache[instanceName][propertyName].firstChange === undefined;
         if (cache[instanceName][propertyName].value === value) return;
 
@@ -56,7 +55,7 @@ export const setupObserver = ({ instance, propertyName, fromSettings = false } =
         const shouldCallChange = shouldCallOnChange(cache[instanceName][propertyName]);
 
         if (shouldCallChange) {
-          const clazz = loadedSystems.find(c => c.constructor.name.toLowerCase() === instanceName);
+          const clazz = loadedSystems.find((c) => c.constructor.name.toLowerCase() === instanceName);
           const data = {
             property: propertyName,
             oldValuie: cache[instanceName][propertyName].previousValue,
@@ -68,18 +67,27 @@ export const setupObserver = ({ instance, propertyName, fromSettings = false } =
 
         return true;
       },
-      get: function () {
+      get: function() {
         return cache[instanceName][propertyName].value;
       },
     });
   }
 };
 
-const updateValue = async ({ space, name, value }) => {
-  const repository = orm.em.fork().getRepository(Settings);
-  const item = await repository.findOne({ space, name }) || repository.create({ space, name });
-  item.value = value;
-  await repository.persistAndFlush(item);
+const updateValue = async ({ space, name, value }: { space: string; name: string; value: any }) => {
+  const query = { space, name };
+  await prisma.settings.upsert({
+    where: {
+      settings_space_name_unique: { ...query },
+    },
+    update: {
+      value,
+    },
+    create: {
+      ...query,
+      value,
+    },
+  });
 };
 
 const shouldCallOnChange = (varCache: TVariable) => {

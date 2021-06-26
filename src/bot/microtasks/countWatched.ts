@@ -4,8 +4,7 @@ import 'source-map-support/register';
 
 import { isMainThread, parentPort, Worker, workerData } from 'worker_threads';
 import { error } from '../libs/logger';
-import { MikroORM } from '@mikro-orm/core';
-import { User } from '../entities/User';
+import { PrismaClient, Users } from '@prisma/client';
 
 type Opts = {
   chatters: Array<{ username: string; id: string }>;
@@ -32,27 +31,34 @@ export const countWatched = async (opts: Opts) => {
 
   try {
     const data: Opts = workerData;
-    const orm = await MikroORM.init();
-    const repository = orm.em.getRepository(User);
-    const usersForUpdate: User[] = [];
+    const prisma = new PrismaClient();
+    const usersForUpdate: Users[] = [];
 
     for (const chatter of data.chatters) {
-      const user =
-        (await repository.findOne(Number(chatter.id))) ||
-        repository.assign(new User(), { id: Number(chatter.id), username: chatter.username });
+      const user = await prisma.users.upsert({
+        where: {
+          id: Number(chatter.id),
+        },
+        update: {},
+        create: { id: Number(chatter.id), username: chatter.username },
+      });
 
-      const updatePoints = new Date().getTime() - new Date(user.lastWatchedPoints).getTime() >= data.points.interval && data.points.enabled;
+      const updatePoints =
+        new Date().getTime() - new Date(user.lastWatchedPoints.toString()).getTime() >= data.points.interval && data.points.enabled;
 
       if (data.points.perWatch && data.points.interval && updatePoints) {
-        user.lastWatchedPoints = new Date().getTime();
+        user.lastWatchedPoints = BigInt(new Date().getTime());
         user.points += data.points.perWatch;
       }
 
-      user.watched += 1 * 60 * 1000;
+      user.watched = BigInt(Number(user.watched) + 1 * 60 * 1000);
       usersForUpdate.push(user);
     }
 
-    await repository.persistAndFlush(usersForUpdate);
+    await prisma.users.updateMany({
+      data: usersForUpdate,
+    });
+
     parentPort?.postMessage('Done');
     process.exit(0);
   } catch (e) {

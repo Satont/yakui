@@ -8,6 +8,7 @@ class WebHooks {
   private initTimeout: NodeJS.Timeout = null;
 
   async init() {
+    clearTimeout(this.initTimeout);
     const url = general.siteUrl;
     if (url.includes('localhost')) return;
 

@@ -40,6 +40,7 @@ export type currency =
 class Currency {
   private base: currency = 'USD';
   private updateRatesTimeout: NodeJS.Timeout = null;
+  private apiKey = '5a49b07f3cb307ac7141598d120f0e90';
 
   rates: { [key in currency]: number } = {
     CAD: 0,
@@ -99,7 +100,7 @@ class Currency {
   private async updateRates() {
     clearTimeout(this.updateRatesTimeout);
     try {
-      const { data } = await axios.get(`https://api.exchangeratesapi.io/latest?base=${this.base}`);
+      const { data } = await axios.get(`https://api.exchangeratesapi.io/latest?base=${this.base}&access_key=${this.apiKey}`);
 
       const rates: { [key in currency]: number } = data.rates;
 

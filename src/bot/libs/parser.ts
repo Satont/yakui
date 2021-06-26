@@ -6,12 +6,9 @@ import Variables from '@bot/systems/variables';
 
 import users from '@bot/systems/users';
 import variables from '@bot/systems/variables';
-import { User } from '@bot/entities/User';
 import locales from './locales';
 import cache from './cache';
-import { Command as CommandModel } from '@bot/entities/Command';
-import { orm } from './db';
-import { File } from '@bot/entities/File';
+import { prisma } from './db';
 
 class Parser {
   systems: { [x: string]: System } = {};
@@ -52,23 +49,16 @@ class Parser {
     if (!users.hasPermission(raw.userInfo.badges, command.permission, raw)) return;
 
     if (command.price && !this.cooldowns.includes(command.name)) {
-      let user = await orm.em
-        .fork()
-        .getRepository(User)
-        .findOne({ id: Number(raw.userInfo.userId) });
-
-      if (!user) {
-        user = orm.em
-          .fork()
-          .getRepository(User)
-          .create({ id: Number(raw.userInfo.userId), username: raw.userInfo.userName });
-      }
+      const user = await prisma.users.upsert({
+        where: { id: Number(raw.userInfo.userId) },
+        update: {},
+        create: { id: Number(raw.userInfo.userId), username: raw.userInfo.userName },
+      });
 
       if (user.points < command.price) {
         tmi.say({ message: locales.translate('price.notEnought', raw.userInfo.userName) });
         return;
       } else user.points -= command.price;
-      await orm.em.fork().persistAndFlush(user);
     }
 
     if (command.type === 'custom') {
@@ -98,7 +88,7 @@ class Parser {
 
     if (!commandResult.length) return;
     const userPerms = users.getUserPermissions(raw.userInfo.badges, raw);
-    this.cooldowns.includes(command.name) && !userPerms.broadcaster && !userPerms.moderators
+    this.cooldowns.includes(command.name) && !userPerms.BROADCASTER && !userPerms.MODERATORS
       ? tmi.whispers({ target: raw.userInfo.userName, message: commandResult })
       : tmi.say({ message: commandResult });
 
@@ -109,20 +99,21 @@ class Parser {
   }
 
   private async increaseCommandUsage({ id }: { id: Command['id'] }) {
-    const cmd = await orm.em
-      .fork()
-      .getRepository(CommandModel)
-      .findOne({ id });
-
-    cmd.usage += 1;
-    orm.em.fork().persistAndFlush(cmd);
+    prisma.commands.update({
+      where: { id },
+      data: {
+        usage: {
+          increment: 1,
+        },
+      },
+    });
   }
 
   private async emitAlert(command: Command) {
     const { default: alerts } = await import('@bot/overlays/alerts');
     alerts.emitAlert({
       audio: {
-        file: command.sound_file as File,
+        file: command.sound_file,
         volume: command.sound_volume,
       },
     });

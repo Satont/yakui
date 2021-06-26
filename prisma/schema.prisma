@@ -1,0 +1,205 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum CommandPermission {
+  VIEWERS
+  FOLLOWERS
+  VIPS
+  SUBSCRIBERS
+  MODERATORS
+  BROADCASTER
+}
+
+model Commands {
+  id            Int               @id @default(autoincrement())
+  name          String            @unique @db.VarChar(255)
+  aliases       Json?             @default("[]") @db.Json
+  cooldown      Int?              @default(10)
+  description   String?
+  response      String
+  enabled       Boolean           @default(true)
+  visible       Boolean           @default(true)
+  permission    CommandPermission @default(VIEWERS)
+  price         Int?              @default(0)
+  usage         Int?              @default(0)
+  sound_volume  Int?
+  sound_file_id Int?
+  sound_file    Files?            @relation(fields: [sound_file_id], references: [id])
+
+  @@map(name: "commands")
+}
+
+model EventList {
+  id        Int    @id @default(autoincrement())
+  name      String @db.VarChar(255)
+  data      Json   @db.Json
+  timestamp BigInt
+
+  @@map(name: "eventlist")
+}
+
+model Events {
+  id         Int    @id @default(autoincrement())
+  name       String @unique @db.VarChar(255)
+  operations Json?  @default("[]") @db.Json
+
+  @@map(name: "events")
+}
+
+model Files {
+  id        Int         @id @default(autoincrement())
+  name      String      @db.VarChar(255)
+  type      String      @db.VarChar(255)
+  data      String
+  commands  Commands[]
+  greetings Greetings[]
+
+  @@map(name: "files")
+}
+
+model Greetings {
+  id            Int      @id @default(autoincrement())
+  userId        Int?
+  username      String?  @db.VarChar(255)
+  message       String
+  enabled       Boolean?
+  sound_file_id Int?
+  sound_volume  Int?
+  sound_file    Files?   @relation(fields: [sound_file_id], references: [id])
+
+  @@map(name: "greetings")
+}
+
+model Keywords {
+  id       Int      @id @default(autoincrement())
+  name     String   @unique @db.VarChar(255)
+  response String
+  enabled  Boolean? @default(true)
+  cooldown Int?     @default(30)
+
+  @@index([name], name: "keywords_name_index")
+  @@map(name: "keywords")
+}
+
+model Overlays {
+  id   Int     @id @default(autoincrement())
+  name String  @db.VarChar(255)
+  data String
+  css  String?
+  js   Json?   @default("[]") @db.Json
+
+  @@map(name: "overlays")
+}
+
+model Settings {
+  id    Int     @id @default(autoincrement())
+  space String  @db.VarChar(255)
+  name  String  @db.VarChar(255)
+  value String?
+
+  @@unique([space, name], name: "settings_space_name_unique")
+  @@map(name: "settings")
+}
+
+model SongLikes {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  name      String  @db.VarChar(255)
+  createdAt BigInt
+  updatedAt BigInt?
+
+  @@unique([userId, name], name: "songs_likes_userid_name_unique")
+  @@map(name: "song_likes")
+}
+
+model Timers {
+  id               Int      @id @default(autoincrement())
+  name             String   @db.VarChar(255)
+  enabled          Boolean? @default(true)
+  interval         Int?     @default(0)
+  responses        Json?    @default("[]") @db.Json
+  last             Int?
+  triggerTimeStamp BigInt?  @default(0)
+  messages         Int?     @default(0)
+  triggerMessage   Int?     @default(0)
+
+  @@map(name: "timers")
+}
+
+model Users {
+  id                   Int                  @id @default(autoincrement())
+  username             String?              @db.VarChar(255)
+  messages             Int?                 @default(0)
+  watched              BigInt?              @default(0)
+  points               Int?                 @default(0)
+  lastMessagePoints    BigInt?              @default(0)
+  lastWatchedPoints    BigInt?              @default(0)
+  users_bits           UsersBits[]
+  users_daily_messages UsersDailyMessages[]
+  users_tips           UsersTips[]
+
+  @@index([username], name: "users_username_index")
+  @@map(name: "users")
+}
+
+model UsersBits {
+  id        Int     @id @default(autoincrement())
+  amount    BigInt
+  message   String?
+  timestamp BigInt
+  userId    Int
+  users     Users   @relation(fields: [userId], references: [id])
+
+  @@map(name: "users_bits")
+}
+
+model UsersDailyMessages {
+  id     Int    @id @default(autoincrement())
+  userId Int
+  count  Int?   @default(0)
+  date   BigInt
+  user   Users  @relation(fields: [userId], references: [id])
+
+  @@map(name: "users_daily_messages")
+}
+
+model UsersTips {
+  id                   Int     @id @default(autoincrement())
+  amount               Float   @db.Real
+  inMainCurrencyAmount Float   @db.Real
+  rates                Json    @db.Json
+  currency             String  @db.VarChar(255)
+  message              String?
+  timestamp            BigInt
+  userId               Int?
+  user                 Users?  @relation(fields: [userId], references: [id])
+
+  @@map(name: "users_tips")
+}
+
+model Variables {
+  id       Int      @id @default(autoincrement())
+  name     String   @unique @db.VarChar(255)
+  response String
+  enabled  Boolean?
+
+  @@index([name], name: "variables_name_index")
+  @@map(name: "variables")
+}
+
+model Widgets {
+  id   Int    @id @default(autoincrement())
+  name String @unique @db.VarChar(255)
+  x    Int
+  y    Int
+  w    Int
+  h    Int
+
+  @@map(name: "widgets")
+}

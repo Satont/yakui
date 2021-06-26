@@ -4,10 +4,8 @@ import WebSocket from 'ws';
 
 import { onDonation } from '@bot/libs/eventsCaller';
 import currencyLib, { currency as currencyType } from '@bot/libs/currency';
-import { User } from '@bot/entities/User';
-import { UserTip } from '@bot/entities/UserTip';
 import { error, info } from '@bot/libs/logger';
-import { orm } from '@bot/libs/db';
+import { prisma } from '@bot/libs/db';
 import { onChange, onLoad, settings } from '../decorators';
 import { IOnChangeOpts } from '../decorators/onChange';
 
@@ -20,22 +18,22 @@ type DonationAlertsEvent = {
   amount: number;
   currency: currencyType;
   billing_system: string;
-}
+};
 
 class Donationalerts {
-  private centrifugeSocket: Centrifuge = null
-  private channel: Centrifuge.Subscription = null
-  private readonly audioRegular = /https:\/\/static\.donationalerts\.ru\/audiodonations[./\w]+/gm
-  private readonly donationsCache = new Set()
+  private centrifugeSocket: Centrifuge = null;
+  private channel: Centrifuge.Subscription = null;
+  private readonly audioRegular = /https:\/\/static\.donationalerts\.ru\/audiodonations[./\w]+/gm;
+  private readonly donationsCache = new Set();
 
   @settings()
-  access_token: string = null
+  access_token: string = null;
 
   @settings()
-  refresh_token: string = null
+  refresh_token: string = null;
 
   @settings()
-  enabled = false
+  enabled = false;
 
   @onChange('enabled')
   onEnabledChange(opts: IOnChangeOpts) {
@@ -79,7 +77,7 @@ class Donationalerts {
 
   recheckToken() {
     return axios.get('https://www.donationalerts.com/api/v1/user/oauth', {
-      headers: { 'Authorization': `Bearer ${this.access_token}` },
+      headers: { Authorization: `Bearer ${this.access_token}` },
     });
   }
 
@@ -103,7 +101,7 @@ class Donationalerts {
       websocket: WebSocket,
       onPrivateSubscribe: async ({ data }, cb) => {
         const request = await axios.post('https://www.donationalerts.com/api/v1/centrifuge/subscribe', data, {
-          headers: { 'Authorization': `Bearer ${this.access_token}` },
+          headers: { Authorization: `Bearer ${this.access_token}` },
         });
         cb({ status: 200, data: { channels: request.data.channels } });
       },
@@ -125,7 +123,7 @@ class Donationalerts {
 
     try {
       const request = await axios.get('https://www.donationalerts.com/api/v1/user/oauth', {
-        headers: { 'Authorization': `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       return {
@@ -137,7 +135,7 @@ class Donationalerts {
     }
   }
 
-  async listeners(opts: { token: string, id: number }) {
+  async listeners(opts: { token: string; id: number }) {
     this.centrifugeSocket.on('disconnect', (reason: unknown) => {
       info(`DONATIONALERTS: disconnected from socket`);
       info(reason);
@@ -166,7 +164,7 @@ class Donationalerts {
         return this.donationsCache?.add(data.id);
       }
 
-      const user = await orm.em.fork().getRepository(User).findOne({ username: data.username.toLowerCase() });
+      const user = await prisma.users.findFirst({ where: { username: data.username.toLowerCase() } });
 
       const message = data.message?.replace(this.audioRegular, '<audio>');
 
@@ -181,11 +179,12 @@ class Donationalerts {
       };
 
       if (data.billing_system !== 'fake' && user) {
-        const tip = orm.em.fork().getRepository(UserTip).create({
-          ...donationData,
-          user,
+        await prisma.usersTips.create({
+          data: {
+            ...donationData,
+            userId: user.id,
+          },
         });
-        await orm.em.fork().getRepository(UserTip).persistAndFlush(tip);
       }
 
       onDonation({

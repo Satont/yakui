@@ -1,31 +1,27 @@
-import { File } from '@bot/entities/File';
 import { getNameSpace } from '@bot/libs/socket';
 import { System } from 'typings';
-import { orm } from '@bot/libs/db';
+import { prisma } from '@bot/libs/db';
+import { Files } from '@prisma/client';
 
-export default new class Files implements System {
-  socket = getNameSpace('systems/files')
+class FilesSystem implements System {
+  socket = getNameSpace('systems/files');
 
-  async insert(files: IInsert[]) {
-    const filesEntities: File[] = [];
-    for (const file of files) {
-      filesEntities.push(orm.em.fork().getRepository(File).create(file));
-    }
-    await orm.em.fork().persistAndFlush(filesEntities);
-    return filesEntities;
+  insert(files: Array<Omit<Files, 'id'>>) {
+    return prisma.files.createMany({
+      data: files,
+    });
   }
 
-  async getOne(id: number) {
-    return await orm.em.fork().getRepository(File).findOne({ id });
+  getOne(id: number) {
+    return prisma.files.findFirst({ where: { id } });
   }
 
-  async getAll() {
-    return await orm.em.fork().getRepository(File).findAll();
+  getAll() {
+    return prisma.files.findMany();
   }
 
-  async delete(id: number) {
-    const file = await orm.em.fork().getRepository(File).findOne({ id });
-    return await orm.em.fork().getRepository(File).removeAndFlush(file);
+  delete(id: number) {
+    return prisma.files.delete({ where: { id } });
   }
 
   sockets(client: SocketIO.Socket) {
@@ -50,7 +46,7 @@ export default new class Files implements System {
         cb(e, null);
       }
     });
-    client.on('insert', async (query: IInsert[], cb) => {
+    client.on('insert', async (query: Array<Omit<Files, 'id'>>, cb) => {
       try {
         cb(null, await this.insert(query));
       } catch (e) {
@@ -58,10 +54,6 @@ export default new class Files implements System {
       }
     });
   }
-};
-
-interface IInsert {
-  type: string;
-  data: string;
-  name: string;
 }
+
+export default new FilesSystem();

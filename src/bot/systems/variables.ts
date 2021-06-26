@@ -6,22 +6,18 @@ import twitch from './twitch';
 import includesOneOf from '@bot/commons/includesOneOf';
 import users from './users';
 import tmi from '@bot/libs/tmi';
-import { User, User as UserModel } from '@bot/entities/User';
 import currency from '@bot/libs/currency';
 import Axios from 'axios';
 import { System, Command } from 'typings';
-import { Variable } from '@bot/entities/Variable';
 import spotify from '@bot/integrations/spotify';
 import locales from '@bot/libs/locales';
 import evaluate from '@bot/commons/eval';
 import satontapi from '@bot/integrations/satontapi';
 import Commands from './commands';
-import { UserDailyMessages } from '@bot/entities/UserDailyMessages';
-import { orm } from '@bot/libs/db';
-import { CommandPermission } from '../entities/Command';
-import { QueryBuilder } from '@mikro-orm/postgresql';
+import { prisma } from '@bot/libs/db';
+import { CommandPermission } from '@prisma/client';
 
-export default new (class Variables implements System {
+class Variables implements System {
   variables: Array<{ name: string; response: string; custom?: boolean }> = [
     { name: '$sender', response: 'Username of user who triggered message' },
     { name: '$followage', response: 'Followage of user' },
@@ -80,8 +76,7 @@ export default new (class Variables implements System {
   ];
 
   async init() {
-    const repository = orm.em.fork().getRepository(Variable);
-    const variables = (await repository.findAll()).map((variable: Variable) => ({
+    const variables = (await prisma.variables.findMany()).map((variable) => ({
       name: `$_${variable.name}`,
       response: variable.response,
       custom: true,
@@ -167,19 +162,18 @@ export default new (class Variables implements System {
 
     if (/\$random\.online\.user/gimu.test(result)) {
       const queryUsers = users.chatters.filter((u) => u.id !== String(opts.raw.userInfo.userId)).map((c) => Number(c.id));
-      const dbUsers: User[] = await orm.em
-        .fork()
-        .getRepository(User)
-        .find({
+      const dbUsers = await prisma.users.findMany({
+        where: {
           id: {
-            $in: queryUsers,
+            in: queryUsers,
           },
           messages: {
-            $gt: 2,
+            gt: 2,
           },
-        });
+        },
+      });
 
-      const randomOnlineUser = sample(dbUsers) as User;
+      const randomOnlineUser = sample(dbUsers);
       const randomUser = users.chatters.find((u) => String(randomOnlineUser?.id) === u.id);
 
       result = result.replace(/\$random\.online\.user/gimu, randomUser?.username ?? 'Ghost');
@@ -260,40 +254,38 @@ export default new (class Variables implements System {
 
     if (type === 'watched') {
       result = (
-        await orm.em
-          .fork()
-          .getRepository(UserModel)
-          .find(
-            {
-              username: { $nin: ignored },
+        await prisma.users.findMany({
+          where: {
+            username: {
+              notIn: ignored,
             },
-            {
-              limit,
-              orderBy: { [type]: 'DESC' },
-              offset,
-            },
-          )
-      ).map((user) => ({ username: user.username, value: user[type] }));
+          },
+          take: limit,
+          skip: offset,
+          orderBy: {
+            [type]: 'desc',
+          },
+        })
+      ).map((u) => ({ username: u.username, value: Number(u[type]) }));
 
       return result
         .map((result, index) => `${index + 1 + offset}. ${result.username} - ${(result.value / (1 * 60 * 1000) / 60).toFixed(1)}h`)
         .join(', ');
     } else if (type === 'messages') {
       result = (
-        await orm.em
-          .fork()
-          .getRepository(UserModel)
-          .find(
-            {
-              username: { $nin: ignored },
+        await prisma.users.findMany({
+          where: {
+            username: {
+              notIn: ignored,
             },
-            {
-              limit,
-              orderBy: { [type]: 'DESC' },
-              offset,
-            },
-          )
-      ).map((user) => ({ username: user.username, value: user[type] }));
+          },
+          take: limit,
+          skip: offset,
+          orderBy: {
+            [type]: 'desc',
+          },
+        })
+      ).map((u) => ({ username: u.username, value: u[type] }));
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ');
     } else if (type === 'tips') {
@@ -343,40 +335,38 @@ export default new (class Variables implements System {
       const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
       result = (
-        await orm.em
-          .fork()
-          .getRepository(UserDailyMessages)
-          .find(
-            {
-              date: startOfDay.getTime(),
-            },
-            {
-              limit,
-              orderBy: { count: 'desc' },
-              offset,
-              populate: ['user'],
-            },
-          )
+        await prisma.usersDailyMessages.findMany({
+          where: {
+            date: startOfDay.getTime(),
+          },
+          take: limit,
+          orderBy: {
+            count: 'desc',
+          },
+          skip: offset,
+          include: {
+            user: true,
+          },
+        })
       ).map((daily) => ({ username: daily.user.username, value: daily.count }));
 
       return result.map((item, index: number) => `${index + 1 + offset}. ${item.username} - ${item.value}`).join(', ');
     }
     if (type === 'points') {
       result = (
-        await orm.em
-          .fork()
-          .getRepository(UserModel)
-          .find(
-            {
-              username: { $nin: ignored },
+        await prisma.users.findMany({
+          where: {
+            username: {
+              notIn: ignored,
             },
-            {
-              limit,
-              orderBy: { [type]: 'DESC' },
-              offset,
-            },
-          )
-      ).map((user) => ({ username: user.username, value: user[type] }));
+          },
+          take: limit,
+          orderBy: {
+            [type]: 'desc',
+          },
+          skip: offset,
+        })
+      ).map((u) => ({ username: u.username, value: u[type] }));
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ');
     } else {
@@ -448,12 +438,14 @@ export default new (class Variables implements System {
     if (isAdmin && text.length) {
       const match = response.match(/\$_(\S*)/g);
       if (match) {
-        const variable = await orm.em
-          .fork()
-          .getRepository(Variable)
-          .findOne({ name: this.variables.find((v) => v.name === match[0].replace('$_', '')).name });
-        variable.response = text;
-        await orm.em.fork().persistAndFlush(variable);
+        await prisma.variables.update({
+          where: {
+            name: this.variables.find((v) => v.name === match[0].replace('$_', '')).name,
+          },
+          data: {
+            response: text,
+          },
+        });
         tmi.say({ message: `@${raw.userInfo.userName} ✅` });
         return true;
       } else return false;
@@ -465,4 +457,6 @@ export default new (class Variables implements System {
 
     return spotifySong || satontApiSong || locales.translate('song.notPlaying');
   }
-})();
+}
+
+export default new Variables();

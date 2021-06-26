@@ -1,20 +1,23 @@
-import { Event } from '@bot/entities/Event';
-import { Greeting } from '@bot/entities/Greeting';
-import { Overlay } from '@bot/entities/Overlay';
-import { Keyword } from '@bot/entities/Keyword';
+/* eslint-disable @typescript-eslint/indent */
 import { Command, System } from 'typings';
 import { loadedSystems } from './loader';
 import { info } from './logger';
-import { orm } from './db';
+import { prisma } from './db';
+import { Events, Files, Greetings, Keywords, Overlays } from '@prisma/client';
 
-export default new class Cache {
-  private _parsers: Map<string, { system: System, fnc: any }> = new Map()
-  private _commands: Map<string, Command> = new Map()
-  private _commandsAliases: Map<string, Command> = new Map()
-  private _overlays: Map<string, Overlay> = new Map()
-  private _events: Map<string, Event> = new Map()
-  private _greetings: Map<string, Greeting> = new Map()
-  private _keywords: Map<string, Keyword> = new Map()
+class Cache {
+  private _parsers: Map<string, { system: System; fnc: any }> = new Map();
+  private _commands: Map<string, Command> = new Map();
+  private _commandsAliases: Map<string, Command> = new Map();
+  private _overlays: Map<string, Overlays> = new Map();
+  private _events: Map<string, Events> = new Map();
+  private _greetings: Map<
+    string,
+    Greetings & {
+      sound_file: Files;
+    }
+  > = new Map();
+  private _keywords: Map<string, Keywords> = new Map();
 
   async init() {
     this.updateCommands();
@@ -57,12 +60,14 @@ export default new class Cache {
     const locales = (await import('./locales')).default;
     this._commands.clear();
 
-    for (const system of loadedSystems.filter(system => system.commands)) {
-      system.commands.map(c => ({ ...c, system })).forEach(c => {
-        c.description = c.description ? locales.translateWithNulled(c.description) ?? c.description : null;
-        this._commands.set(c.name as string, c);
-        c.aliases?.forEach(a => this._commandsAliases.set(a, c));
-      });
+    for (const system of loadedSystems.filter((system) => system.commands)) {
+      system.commands
+        .map((c) => ({ ...c, system }))
+        .forEach((c) => {
+          c.description = c.description ? locales.translateWithNulled(c.description) ?? c.description : null;
+          this._commands.set(c.name as string, c);
+          c.aliases?.forEach((a) => this._commandsAliases.set(a, c));
+        });
     }
 
     info(`CACHE: Commands size: ${this._commands.size}, aliases size: ${this._commandsAliases.size}`);
@@ -71,17 +76,19 @@ export default new class Cache {
   updateParsers() {
     this._parsers.clear();
 
-    for (const system of loadedSystems.filter(system => system.parsers)) {
-      system.parsers.map(p => ({ ...p, system })).forEach(p => {
-        this._parsers.set(system.constructor.name, p);
-      });
+    for (const system of loadedSystems.filter((system) => system.parsers)) {
+      system.parsers
+        .map((p) => ({ ...p, system }))
+        .forEach((p) => {
+          this._parsers.set(system.constructor.name, p);
+        });
     }
     info(`CACHE: Parsers size: ${this._parsers.size}`);
   }
 
   async updateOverlays() {
     this._overlays.clear();
-    for (const overlay of await orm.em.fork().getRepository(Overlay).findAll()) {
+    for (const overlay of await prisma.overlays.findMany()) {
       this._overlays.set(String(overlay.id), overlay);
     }
 
@@ -91,7 +98,7 @@ export default new class Cache {
   async updateEvents() {
     this._events.clear();
 
-    for (const event of await orm.em.fork().getRepository(Event).findAll()) {
+    for (const event of await prisma.events.findMany()) {
       this._events.set(event.name, event);
     }
 
@@ -101,7 +108,11 @@ export default new class Cache {
   async updateGreetings() {
     this._greetings.clear();
 
-    for (const greeting of await orm.em.fork().getRepository(Greeting).findAll()) {
+    for (const greeting of await prisma.greetings.findMany({
+      include: {
+        sound_file: true,
+      },
+    })) {
       this._greetings.set(String(greeting.id), greeting);
     }
 
@@ -111,10 +122,12 @@ export default new class Cache {
   async updateKeywords() {
     this._keywords.clear();
 
-    for (const keyword of await orm.em.fork().getRepository(Keyword).findAll()) {
+    for (const keyword of await prisma.keywords.findMany()) {
       this._keywords.set(String(keyword.id), keyword);
     }
 
     info(`CACHE: Keywords size: ${this._keywords.size}`);
   }
-};
+}
+
+export default new Cache();

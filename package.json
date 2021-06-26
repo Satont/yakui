@@ -18,7 +18,8 @@
     "migration:create": "mikro-orm migration:create",
     "migration:up": "mikro-orm migration:up",
     "migration:down": "mikro-orm migration:down",
-    "prebuild:bot": "rimraf dest/**"
+    "prebuild:bot": "rimraf dest/**",
+    "prisma": "prisma"
   },
   "engines": {
     "node": ">=12"
@@ -47,6 +48,7 @@
     "eslint": "^7.16.0",
     "html-webpack-plugin": "^4.5.0",
     "nodemon": "^2.0.6",
+    "prisma": "^2.25.0",
     "remove-files-webpack-plugin": "^1.4.4",
     "terser-webpack-plugin": "^5.0.3",
     "ts-loader": "^8.0.12",
@@ -62,6 +64,7 @@
     "@mikro-orm/core": "^4.3.4",
     "@mikro-orm/postgresql": "^4.3.4",
     "@mikro-orm/reflection": "^4.3.4",
+    "@prisma/client": "^2.25.0",
     "@satont/text-utils": "^1.0.6",
     "axios": "^0.21.1",
     "body-parser": "^1.19.0",

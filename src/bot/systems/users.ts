@@ -4,14 +4,14 @@ import tmi from '@bot/libs/tmi';
 import { UserDailyMessages } from '@bot/entities/UserDailyMessages';
 import twitch from './twitch';
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage';
-import { orm } from '@bot/libs/db';
-import { CommandPermission } from '@bot/entities/Command';
+import { prisma } from '@bot/libs/db';
 import { settings } from '../decorators';
 import { parser } from '../decorators/parser';
 import { command } from '../decorators/command';
 import { getChatters } from '../microtasks/getChatters';
 import oauth from '../libs/oauth';
 import { countWatched } from '../microtasks/countWatched';
+import { CommandPermission } from '@prisma/client';
 
 class Users implements System {
   private countWatchedTimeout: NodeJS.Timeout = null;
@@ -147,11 +147,11 @@ class Users implements System {
 
   getUserPermissions(badges: Map<string, string>, raw?: TwitchPrivateMessage): UserPermissions {
     return {
-      broadcaster: badges.has('broadcaster') || this.botAdmins?.includes(raw?.userInfo.userName),
-      moderators: badges.has('moderator'),
-      vips: badges.has('vip'),
-      subscribers: badges.has('subscriber') || badges.has('founder'),
-      viewers: true,
+      BROADCASTERS: badges.has('broadcaster') || this.botAdmins?.includes(raw?.userInfo.userName),
+      MODERATORS: badges.has('moderator'),
+      VIPS: badges.has('vip'),
+      SUBSCRIBERS: badges.has('subscriber') || badges.has('founder'),
+      VIEWERS: true,
     };
   }
 

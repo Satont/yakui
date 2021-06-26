@@ -4,12 +4,11 @@ import 'source-map-support/register';
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { start as dbConnect, orm } from '@bot/libs/db';
+import { prisma } from '@bot/libs/db';
 import { error } from '@bot/libs/logger';
 
 const start = async () => {
-  await dbConnect();
-  if (!(await orm.isConnected())) return setTimeout(() => start(), 1000);
+  await prisma.$connect();
 
   await import('@bot/libs/tmi');
   await import('@bot/panel');
