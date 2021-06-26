@@ -16,5 +16,5 @@ jobs:
         with:
           url: ${{ env.CAPROVER_URL }}
           method: post
-          data: '{"WEBHOOK_SECRET": "data"}'
+          data: '{ "title": "dummy-todo", "userId": 1, "completed": false }'
           verbose: true
