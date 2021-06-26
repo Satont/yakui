@@ -1,4 +1,4 @@
-name: Publish Docker
+name: Publish Docker GitLab
 
 on:
   push:
@@ -19,16 +19,16 @@ jobs:
         env:
           USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
           PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
-          DOCKERFILE: "Dockerfile"
-          IMAGE_NAME: "satont/yakui"
+          DOCKERFILE: 'Dockerfile'
+          IMAGE_NAME: 'satont/yakui'
           TAG_NAME: ${{ github.sha }}
-          LATEST: "true"
+          LATEST: 'true'
       - name: Build & Push to GitLab Package as latest
         uses: opspresso/action-docker@v0.2.8
         env:
           USERNAME: ${{ secrets.GITLAB_DOCKER_USERNAME }}
           PASSWORD: ${{ secrets.GITLAB_DOCKER_PASSWORD }}
           REGISTRY: registry.gitlab.com
-          IMAGE_NAME: "satont/yakui"
+          IMAGE_NAME: 'satont/yakui'
           TAG_NAME: ${{ github.sha }}
-          LATEST: "true"
+          LATEST: 'true'

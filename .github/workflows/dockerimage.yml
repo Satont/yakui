@@ -25,7 +25,7 @@ jobs:
           LATEST: 'true'
       - name: Deploy Stage
         uses: fjogeleit/http-request-action@master
-        if: ${{ secrets.CAPROVER_DEPLOYER_URL != '' }}
+        if: "${{ secrets.CAPROVER_DEPLOYER_URL != '' }}"
         env:
           URL: ${{ secrets.CAPROVER_DEPLOYER_URL }}
           SECRET: ${{ secrets.CAPROVER_WEBHOOK_SECRET }}
