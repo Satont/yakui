@@ -16,4 +16,4 @@ jobs:
         with:
           url: ${{ env.CAPROVER_URL }}
           method: post
-          headers: '{"WEBHOOK_SECRET": "asdasdasd"}'
+          headers: '{"WEBHOOK_SECRET": "${{env.CAPROVER_SECRET}}"}'
