@@ -9,6 +9,9 @@ jobs:
   build:
     if: "! contains(toJSON(github.event.commits.*.message), '[skip-docker]')"
     runs-on: ubuntu-latest
+    env:
+      CAPROVER_URL: ${{ secrets.CAPROVER_DEPLOYER_URL }}
+      CAPROVER_SECRET: ${{ secrets.CAPROVER_WEBHOOK_SECRET }}
     steps:
       - uses: actions/checkout@master
       - name: Docker Build & Push to Docker Hub
@@ -32,3 +35,11 @@ jobs:
           IMAGE_NAME: 'satont/yakui'
           TAG_NAME: ${{ github.sha }}
           LATEST: 'true'
+      - name: Deploy Stage
+        uses: CamiloGarciaLaRotta/watermelon-http-client@v1
+        if: env.CAPROVER_URL != null
+        with:
+          url: ${{ env.CAPROVER_URL }}
+          method: post
+          headers: '{"WEBHOOK_SECRET": "${{ secrets.CAPROVER_WEBHOOK_SECRET }}"}'
+          verbose: true
