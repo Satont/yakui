@@ -1,6 +1,6 @@
 name: Build Web and Bot
 
-on: [push]
+on: [push, workflow_dispatch]
 
 jobs:
   build:
@@ -10,16 +10,16 @@ jobs:
       matrix:
         node-version: [14.x]
     steps:
-    - uses: actions/checkout@v1
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: install dependencies
-      run: npm install
-    - name: run eslint
-      run: npm run eslint
-    - name: build web
-      run: npm run build:web
-    - name: build bot
-      run: npm run build:bot
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: install dependencies
+        run: npm install
+      - name: run eslint
+        run: npm run eslint
+      - name: build web
+        run: npm run build:web
+      - name: build bot
+        run: npm run build:bot

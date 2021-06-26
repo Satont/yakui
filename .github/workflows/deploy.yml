@@ -5,6 +5,7 @@ on:
     workflows: ['Publish Docker Hub']
     types:
       - completed
+  workflow_dispatch:
 
 jobs:
   build:
