@@ -1,9 +1,8 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { checkSchema, validationResult } from 'express-validator';
-import { Greeting } from '@bot/entities/Greeting';
 import isAdmin from '@bot/panel/middlewares/isAdmin';
 import cache from '@bot/libs/cache';
-import { RequestContext } from '@mikro-orm/core';
+import { prisma } from '@bot/libs/db';
 
 const router = Router({
   mergeParams: true,
@@ -19,7 +18,7 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:id', isAdmin, async (req, res, next) => {
   const greeting = cache.greetings.get(req.params.id);
-  greeting.sound_file = (greeting.sound_file?.id as any) ?? null;
+  greeting.sound_file = (greeting.sound_file_id as any) ?? null;
 
   try {
     res.json(greeting);
