@@ -32,4 +32,4 @@ jobs:
         with:
           url: ${{ env.CAPROVER_URL }}
           method: 'POST'
-          customHeaders: '{ "WEBHOOK_SECRET": "$CAPROVER_SECRET" }'
+          customHeaders: '{"WEBHOOK_SECRET":"${{env.CAPROVER_SECRET}}"}'
