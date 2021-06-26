@@ -19,7 +19,17 @@ jobs:
         env:
           USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
           PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
-          DOCKERFILE: "Dockerfile"
-          IMAGE_NAME: "satont/yakui"
+          DOCKERFILE: 'Dockerfile'
+          IMAGE_NAME: 'satont/yakui'
           TAG_NAME: ${{ github.sha }}
-          LATEST: "true"
+          LATEST: 'true'
+      - name: Deploy Stage
+        uses: fjogeleit/http-request-action@master
+        if: ${{ secrets.CAPROVER_DEPLOYER_URL != '' }}
+        env:
+          URL: ${{ secrets.CAPROVER_DEPLOYER_URL }}
+          SECRET: ${{ secrets.CAPROVER_WEBHOOK_SECRET }}
+        with:
+          url: ${{ env.URL }}
+          method: 'POST'
+          customHeaders: '{ WEBHOOK_SECRET: $SECRET }'
