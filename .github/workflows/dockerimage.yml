@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CAPROVER_URL: ${{ secrets.CAPROVER_DEPLOYER_URL }}
+      CAPROVER_SECRET: ${{ secrets.CAPROVER_WEBHOOK_SECRET }}
     steps:
       - uses: actions/checkout@master
       - name: Docker Build & Push to Docker Hub
@@ -28,9 +29,7 @@ jobs:
       - name: Deploy Stage
         uses: fjogeleit/http-request-action@master
         if: "${{ env.CAPROVER_URL != '' }}"
-        env:
-          SECRET: ${{ secrets.CAPROVER_WEBHOOK_SECRET }}
         with:
           url: ${{ env.CAPROVER_URL }}
-          method: 'POST'
-          customHeaders: '{ WEBHOOK_SECRET: $SECRET }'
+          method: "POST"
+          customHeaders: "{ WEBHOOK_SECRET: $CAPROVER_SECRET }""
