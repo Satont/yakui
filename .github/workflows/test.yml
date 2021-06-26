@@ -1,6 +1,6 @@
 name: Publish to Docker Hub
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   build:
@@ -16,4 +16,4 @@ jobs:
         with:
           url: ${{ env.CAPROVER_URL }}
           method: post
-          headers: '{"WEBHOOK_SECRET": "${{env.CAPROVER_SECRET}}"}'
+          headers: '{"WEBHOOK_SECRET": "asdasdasd"}'
