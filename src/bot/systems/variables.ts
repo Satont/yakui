@@ -289,45 +289,13 @@ class Variables implements System {
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ');
     } else if (type === 'tips') {
-      const qb: QueryBuilder<UserModel> = (orm.em.fork() as any).createQueryBuilder(UserModel, 'user');
-
-      const result: Array<{ id: number; username: string; value: number }> = await orm.em
-        .fork()
-        .getConnection()
-        .execute(
-          qb
-            .select(['user.id', 'user.username'])
-            .where({ username: { $nin: ignored } })
-            .join('user.tips', 'tips')
-            .addSelect('COALESCE(SUM("tips"."inMainCurrencyAmount"), 0) as "value"')
-            .offset(offset)
-            .limit(limit)
-            .groupBy('id')
-            .getKnexQuery()
-            .orderBy('value', 'desc')
-            .toQuery(),
-        );
+      const sql = `select "user"."id", "user"."username", COALESCE(SUM("tips"."inMainCurrencyAmount"), 0) as "value" from "users" as "user" inner join "users_tips" as "tips" on "user"."id" = "tips"."userId" where 1 = 1 group by "user"."id" order by "value" desc limit ${limit} offset ${offset}`;
+      const result: Array<{ id: number; username: string; value: number }> = await prisma.$queryRaw(sql);
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}${currency.botCurrency}`).join(', ');
     } else if (type === 'bits') {
-      const qb: QueryBuilder<UserModel> = (orm.em.fork() as any).createQueryBuilder(UserModel, 'user');
-
-      const result: Array<{ id: number; username: string; value: number }> = await orm.em
-        .fork()
-        .getConnection()
-        .execute(
-          qb
-            .select(['user.id', 'user.username'])
-            .where({ username: { $nin: ignored } })
-            .join('user.bits', 'bits')
-            .addSelect('COALESCE(SUM("bits"."amount"), 0) as "value"')
-            .offset(offset)
-            .limit(limit)
-            .groupBy('id')
-            .getKnexQuery()
-            .orderBy('value', 'desc')
-            .toQuery(),
-        );
+      const sql = `select "user"."id", "user"."username", COALESCE(SUM("tips"."amount"), 0) as "value" from "users" as "user" inner join "users_bits" as "bits" on "user"."id" = "tips"."userId" where 1 = 1 group by "user"."id" order by "value" desc limit ${limit} offset ${offset}`;
+      const result: Array<{ id: number; username: string; value: number }> = await prisma.$queryRaw(sql);
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ');
     } else if (type === 'messages.today') {
