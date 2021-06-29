@@ -48,33 +48,31 @@ router.get(
 
       const body = req.query as any;
 
-      const query = `select
-          "user".*,
-          COALESCE(
-            SUM(
-              "userTips"."inMainCurrencyAmount"
-            ),
-            0
-          ) as "tips",
-          COALESCE(
-            SUM("userBits"."amount"),
-            0
-          ) as "bits"
-        from
-          "users" as "user"
-          left join "users_tips" as "userTips" on "user"."id" = "userTips"."userId"
-          left join "users_bits" as "userBits" on "user"."id" = "userBits"."userId"
-        where "user"."username" like '%${body.byUsername ?? ''}%'
-        group by
-          "user"."id"
-        order by
-          "${body.sortBy}" ${JSON.parse(body.sortDesc) ? 'DESC' : 'ASC'} ASC NULLS LAST
-        limit
-          ${body.perPage}
-        offset ${(body.page - 1) * body.perPage}
-            `;
-
-      const users = await prisma.$queryRaw`${query}`;
+      const users = await prisma.$queryRaw`select
+      "user".*,
+      COALESCE(
+        SUM(
+          "userTips"."inMainCurrencyAmount"
+        ),
+        0
+      ) as "tips",
+      COALESCE(
+        SUM("userBits"."amount"),
+        0
+      ) as "bits"
+    from
+      "users" as "user"
+      left join "users_tips" as "userTips" on "user"."id" = "userTips"."userId"
+      left join "users_bits" as "userBits" on "user"."id" = "userBits"."userId"
+    where "user"."username" like '%${body.byUsername ?? ''}%'
+    group by
+      "user"."id"
+    order by
+      "${body.sortBy}" ${JSON.parse(body.sortDesc) ? 'DESC' : 'ASC'} ASC NULLS LAST
+    limit
+      ${body.perPage}
+    offset ${(body.page - 1) * body.perPage}
+        `;
       const total = await prisma.users.count();
 
       res.json({ users, total });
