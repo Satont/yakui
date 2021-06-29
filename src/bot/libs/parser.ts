@@ -99,7 +99,7 @@ class Parser {
   }
 
   private async increaseCommandUsage({ id }: { id: Command['id'] }) {
-    prisma.commands.update({
+    await prisma.commands.update({
       where: { id },
       data: {
         usage: {

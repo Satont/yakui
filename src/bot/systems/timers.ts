@@ -36,7 +36,7 @@ class TimersSystem implements System {
 
       const message = await variables.parseMessage({ message: timer.responses[timer.last] });
       tmi.say({ message });
-      prisma.timers.update({
+      await prisma.timers.update({
         where: { id: timer.id },
         data: {
           last: ++timer.last % JSON.parse(timer.responses as string).length,

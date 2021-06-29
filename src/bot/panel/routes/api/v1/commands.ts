@@ -46,6 +46,11 @@ router.post(
       isString: true,
       in: ['body'],
     },
+    originalName: {
+      isString: true,
+      in: ['body'],
+      optional: true,
+    },
     visible: {
       isBoolean: true,
       in: ['body'],
@@ -117,13 +122,15 @@ router.post(
 
       const command = await prisma.commands.upsert({
         where: {
-          id: body.id,
+          name: body.originalName,
         },
         update: {
           ...body,
+          originalName: undefined,
         },
         create: {
           ...body,
+          originalName: undefined,
         },
       });
 

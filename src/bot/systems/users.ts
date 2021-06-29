@@ -75,7 +75,7 @@ class Users implements System {
     const updatePoints = Number(user.lastMessagePoints) + pointsInterval <= user.messages && this.points.enabled;
 
     if (updatePoints && twitch.streamMetaData?.startedAt && pointsPerMessage !== 0 && pointsInterval !== 0) {
-      prisma.users.update({
+      await prisma.users.update({
         where: { id: user.id },
         data: { points: { increment: pointsPerMessage }, lastMessagePoints: BigInt(new Date().getTime()) },
       });
@@ -84,7 +84,7 @@ class Users implements System {
     const now = new Date();
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-    prisma.usersDailyMessages.upsert({
+    await prisma.usersDailyMessages.upsert({
       where: {
         users_daily_messages_userid_name_unique: {
           userId: user.id,

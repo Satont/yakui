@@ -4,7 +4,7 @@ import 'source-map-support/register';
 
 import { isMainThread, parentPort, Worker, workerData } from 'worker_threads';
 import { error } from '../libs/logger';
-import { PrismaClient, Users } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 type Opts = {
   chatters: Array<{ username: string; id: string }>;
@@ -32,18 +32,13 @@ export const countWatched = async (opts: Opts) => {
   try {
     const data: Opts = workerData;
     const prisma = new PrismaClient();
-    const usersForUpdate: Users[] = [];
 
     for (const chatter of data.chatters) {
       const user = await prisma.users.upsert({
         where: {
           id: Number(chatter.id),
         },
-        update: {
-          watched: {
-            increment: 1 * 60 * 1000,
-          },
-        },
+        update: {},
         create: { id: Number(chatter.id), username: chatter.username, watched: 1 * 60 * 1000 },
       });
 
@@ -55,14 +50,13 @@ export const countWatched = async (opts: Opts) => {
         user.points += data.points.perWatch;
       }
 
-      usersForUpdate.push(user);
-    }
+      user.watched = BigInt(Number(user.watched) + 1 * 60 * 1000);
 
-    await prisma.users
-      .updateMany({
-        data: usersForUpdate,
-      })
-      .catch(error);
+      await prisma.users.update({
+        where: { id: user.id },
+        data: user,
+      });
+    }
 
     parentPort?.postMessage('Done');
     process.exit(0);
