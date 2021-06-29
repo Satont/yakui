@@ -1,21 +1,16 @@
-/* import { Router, Request, Response, NextFunction } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { checkSchema, validationResult } from 'express-validator';
 
 import { User } from '@bot/entities/User';
 import currency from '@bot/libs/currency';
 import isAdmin from '@bot/panel/middlewares/isAdmin';
-import { RequestContext, wrap } from '@mikro-orm/core';
-import { UserBit } from '@bot/entities/UserBit';
-import { UserTip } from '@bot/entities/UserTip';
-import { QueryBuilder } from '@mikro-orm/postgresql';
+import { prisma } from '@bot/libs/db';
 
 const router = Router({
   mergeParams: true,
 });
 
-const qb: QueryBuilder<User> = (orm.em.fork() as any).createQueryBuilder(User, 'user');
-
-router.get(
+/* router.get(
   '/',
   checkSchema({
     page: {
@@ -84,12 +79,11 @@ router.get(
       next(e);
     }
   },
-);
+); */
 
 router.get('/:id', async (req, res, next) => {
   try {
-    const repository = RequestContext.getEntityManager().getRepository(User);
-    const user = await repository.findOne(Number(req.params.id), ['bits', 'tips']);
+    const user = await prisma.users.findFirst({ where: { id: Number(req.params.id) }, include: { tips: true, bits: true } });
 
     res.json(user);
   } catch (e) {
@@ -97,7 +91,7 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
-router.delete(
+/* router.delete(
   '/',
   isAdmin,
   checkSchema({
@@ -181,7 +175,6 @@ router.post(
       next(e);
     }
   },
-);
+); */
 
 export default router;
- */

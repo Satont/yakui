@@ -39,8 +39,12 @@ export const countWatched = async (opts: Opts) => {
         where: {
           id: Number(chatter.id),
         },
-        update: {},
-        create: { id: Number(chatter.id), username: chatter.username },
+        update: {
+          watched: {
+            increment: 1 * 60 * 1000,
+          },
+        },
+        create: { id: Number(chatter.id), username: chatter.username, watched: 1 * 60 * 1000 },
       });
 
       const updatePoints =
@@ -51,13 +55,14 @@ export const countWatched = async (opts: Opts) => {
         user.points += data.points.perWatch;
       }
 
-      user.watched = BigInt(Number(user.watched) + 1 * 60 * 1000);
       usersForUpdate.push(user);
     }
 
-    await prisma.users.updateMany({
-      data: usersForUpdate,
-    });
+    await prisma.users
+      .updateMany({
+        data: usersForUpdate,
+      })
+      .catch(error);
 
     parentPort?.postMessage('Done');
     process.exit(0);

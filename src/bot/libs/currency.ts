@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { settings } from '../decorators';
 import { info, error } from './logger';
 
@@ -40,7 +40,6 @@ export type currency =
 class Currency {
   private base: currency = 'USD';
   private updateRatesTimeout: NodeJS.Timeout = null;
-  private apiKey = '5a49b07f3cb307ac7141598d120f0e90';
 
   rates: { [key in currency]: number } = {
     CAD: 0,
@@ -100,9 +99,14 @@ class Currency {
   private async updateRates() {
     clearTimeout(this.updateRatesTimeout);
     try {
-      const { data } = await axios.get(`https://api.exchangeratesapi.io/latest?base=${this.base}&access_key=${this.apiKey}`);
+      type Rates = {
+        [key in currency]: number;
+      };
+      const { data } = await axios.get<{ conversion_rates: Rates }>(
+        `https://v6.exchangerate-api.com/v6/70e7e29014fed7ff595d594f/latest/${this.base}`,
+      );
 
-      const rates: { [key in currency]: number } = data.rates;
+      const rates = data.conversion_rates;
 
       for (const [rate, value] of Object.entries(rates)) {
         this.rates[rate] = Number(value.toFixed(4));

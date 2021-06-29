@@ -5,7 +5,7 @@
   "author": "Satont <satontworldwide@gmail.com>",
   "scripts": {
     "prestart": "npm run migration:up",
-    "start": "cross-env NODE_ENV=production node --experimental-report --report-on-fatalerror --report-directory=./logs/ --always_compact --optimize_for_size --gc_interval=100 dest/index.js",
+    "start": "cross-env NODE_ENV=production node --experimental-report --report-on-fatalerror --report-directory=./logs/ --always_compact --optimize_for_size --gc_interval=100 dist/index.js",
     "build": "npm run build:web && npm run build:bot",
     "dev": "npm run dev:web & npm run dev:bot",
     "dev:bot": "nodemon",
@@ -17,7 +17,7 @@
     "eslint:fix": "npx eslint --ext .ts --fix src",
     "migration:create": "prisma migrate dev",
     "migration:up": "prisma migrate deploy",
-    "prebuild:bot": "rimraf dest/**",
+    "prebuild:bot": "rimraf dist",
     "prisma": "prisma"
   },
   "engines": {
@@ -127,7 +127,7 @@
     "useTsNode": true,
     "configPaths": [
       "./src/bot/mikro-orm.config.ts",
-      "./dest/mikro-orm.config.js"
+      "./dist/mikro-orm.config.js"
     ]
   }
 }

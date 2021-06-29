@@ -1,3 +1,5 @@
+import './prototypes';
+
 import './moduleAlias';
 import 'reflect-metadata';
 import 'source-map-support/register';

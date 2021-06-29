@@ -1,6 +1,5 @@
 import { prisma } from '../libs/db';
 import { loadedSystems } from '../libs/loader';
-import { Settings as SettingsModel } from '../entities/Settings';
 import { cache, setupObserver } from './_observer';
 
 export function SettingsDecorator(spaceName?: string) {

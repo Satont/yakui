@@ -1,9 +1,8 @@
 import { Router } from 'express';
-import { RequestContext } from '@mikro-orm/core';
 
 import commands from './commands';
 import timers from './timers';
-//import users from './users';
+import users from './users';
 import settings from './settings';
 import events from './events';
 import eventlist from './eventlist';
@@ -23,7 +22,7 @@ router.get('/', (req, res) => {
 
 router.use('/commands', commands);
 router.use('/timers', timers);
-//router.use('/users', users);
+router.use('/users', users);
 router.use('/settings', settings);
 router.use('/events', events);
 router.use('/eventlist', eventlist);
