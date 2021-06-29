@@ -9,11 +9,11 @@ generator client {
 }
 
 enum CommandPermission {
-  VIEWERS
-  FOLLOWERS
-  VIPS
-  SUBSCRIBERS
-  MODERATORS
+  VIEWER
+  FOLLOWER
+  VIP
+  SUBSCRIBER
+  MODERATOR
   BROADCASTER
 }
 
@@ -26,7 +26,7 @@ model Commands {
   response      String
   enabled       Boolean           @default(true)
   visible       Boolean           @default(true)
-  permission    CommandPermission @default(VIEWERS)
+  permission    CommandPermission @default(VIEWER)
   price         Int?              @default(0)
   usage         Int?              @default(0)
   sound_volume  Int?
@@ -134,16 +134,16 @@ model Timers {
 }
 
 model Users {
-  id                   Int                  @id @default(autoincrement())
-  username             String?              @db.VarChar(255)
-  messages             Int?                 @default(0)
-  watched              BigInt?              @default(0)
-  points               Int?                 @default(0)
-  lastMessagePoints    BigInt?              @default(0)
-  lastWatchedPoints    BigInt?              @default(0)
-  users_bits           UsersBits[]
-  users_daily_messages UsersDailyMessages[]
-  users_tips           UsersTips[]
+  id                Int                  @id @default(autoincrement())
+  username          String?              @db.VarChar(255)
+  messages          Int?                 @default(0)
+  watched           BigInt?              @default(0)
+  points            Int?                 @default(0)
+  lastMessagePoints BigInt?              @default(0)
+  lastWatchedPoints BigInt?              @default(0)
+  bits              UsersBits[]
+  daily_messages    UsersDailyMessages[]
+  tips              UsersTips[]
 
   @@index([username], name: "users_username_index")
   @@map(name: "users")
@@ -167,6 +167,7 @@ model UsersDailyMessages {
   date   BigInt
   user   Users  @relation(fields: [userId], references: [id])
 
+  @@unique([userId, date], name: "users_daily_messages_userid_name_unique")
   @@map(name: "users_daily_messages")
 }
 

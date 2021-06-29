@@ -16,6 +16,10 @@ import satontapi from '@bot/integrations/satontapi';
 import Commands from './commands';
 import { prisma } from '@bot/libs/db';
 import { CommandPermission } from '@prisma/client';
+import { watchedFormatted } from '../helpers/watchedFormatted';
+import { totalTips } from '../helpers/totalTips';
+import { totalBits } from '../helpers/totalBits';
+import { todayMessages } from '../helpers/todayMessages';
 
 class Variables implements System {
   variables: Array<{ name: string; response: string; custom?: boolean }> = [
@@ -200,8 +204,8 @@ class Variables implements System {
             /\$faceit\.latestMatches/,
             faceitData.latestMatches
               .map(
-                (m) =>
-                  `${m.result} ${m.eloDiff} on ${m.map} (${m.teamScore}), KD: ${m.kd} (${m.kills}/${m.death}), HS: ${m.hs.number}(${m.hs.percentage}%)`,
+                (m) => `${m.result} ${m.eloDiff} on ${m.map} (${m.teamScore}),
+                   KD: ${m.kd} (${m.kills}/${m.death}), HS: ${m.hs.number}(${m.hs.percentage}%)`,
               )
               .join(' | '),
           )
@@ -228,11 +232,11 @@ class Variables implements System {
 
       result = result
         .replace(/\$user\.messages/gimu, String(user.messages))
-        .replace(/\$user\.watched/gimu, user.watchedFormatted)
-        .replace(/\$user\.tips/gimu, String(user.totalTips))
-        .replace(/\$user\.bits/gimu, String(user.totalBits))
+        .replace(/\$user\.watched/gimu, watchedFormatted(user.watched))
+        .replace(/\$user\.tips/gimu, String(totalTips(user.tips)))
+        .replace(/\$user\.bits/gimu, String(totalBits(user.bits)))
         .replace(/\$user\.points/gimu, String(user.points))
-        .replace(/\$user\.daily\.messages/gimu, String(user.todayMessages));
+        .replace(/\$user\.daily\.messages/gimu, String(todayMessages(user.daily_messages)));
     }
 
     if (result.includes('(api|')) {
@@ -289,11 +293,13 @@ class Variables implements System {
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ');
     } else if (type === 'tips') {
+      // eslint-disable-next-line max-len
       const sql = `select "user"."id", "user"."username", COALESCE(SUM("tips"."inMainCurrencyAmount"), 0) as "value" from "users" as "user" inner join "users_tips" as "tips" on "user"."id" = "tips"."userId" where 1 = 1 group by "user"."id" order by "value" desc limit ${limit} offset ${offset}`;
       const result: Array<{ id: number; username: string; value: number }> = await prisma.$queryRaw(sql);
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}${currency.botCurrency}`).join(', ');
     } else if (type === 'bits') {
+      // eslint-disable-next-line max-len
       const sql = `select "user"."id", "user"."username", COALESCE(SUM("tips"."amount"), 0) as "value" from "users" as "user" inner join "users_bits" as "bits" on "user"."id" = "tips"."userId" where 1 = 1 group by "user"."id" order by "value" desc limit ${limit} offset ${offset}`;
       const result: Array<{ id: number; username: string; value: number }> = await prisma.$queryRaw(sql);
 
@@ -401,7 +407,7 @@ class Variables implements System {
   }
 
   async changeCustomVariable({ raw, text, response }: { raw: TwitchPrivateMessage; response: string; text: string }) {
-    const isAdmin = users.hasPermission(raw.userInfo.badges, CommandPermission.MODERATORS, raw);
+    const isAdmin = users.hasPermission(raw.userInfo.badges, CommandPermission.MODERATOR, raw);
 
     if (isAdmin && text.length) {
       const match = response.match(/\$_(\S*)/g);

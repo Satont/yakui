@@ -55,37 +55,56 @@ class Users implements System {
 
     const [id, username] = [opts.raw.userInfo.userId, opts.raw.userInfo.userName];
 
-    const repository = orm.em.fork().getRepository(User);
-    const user = (await repository.findOne(Number(id))) || repository.assign(new User(), { id: Number(id), username, messages: 0 });
-
-    user.username = opts.raw.userInfo.userName;
-    user.messages += 1;
+    const user = await prisma.users.upsert({
+      where: {
+        id: Number(id),
+      },
+      update: {
+        messages: {
+          increment: 1,
+        },
+        username,
+      },
+      create: {
+        id: Number(id),
+        username,
+        messages: 0,
+      },
+    });
 
     const updatePoints = Number(user.lastMessagePoints) + pointsInterval <= user.messages && this.points.enabled;
 
     if (updatePoints && twitch.streamMetaData?.startedAt && pointsPerMessage !== 0 && pointsInterval !== 0) {
-      user.points = user.points + pointsPerMessage;
-      user.lastMessagePoints = new Date().getTime();
+      prisma.users.update({
+        where: { id: user.id },
+        data: { points: { increment: pointsPerMessage }, lastMessagePoints: BigInt(new Date().getTime()) },
+      });
     }
-
-    await repository.persistAndFlush(user);
 
     const now = new Date();
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-    const dailyRepository = orm.em.fork().getRepository(UserDailyMessages);
-    const daily =
-      (await dailyRepository.findOne({ user: user.id, date: startOfDay.getTime() })) ||
-      dailyRepository.assign(new UserDailyMessages(), {
-        user,
-        date: startOfDay.getTime(),
-      });
-
-    daily.count += 1;
-    await dailyRepository.persistAndFlush(daily);
+    prisma.usersDailyMessages.upsert({
+      where: {
+        users_daily_messages_userid_name_unique: {
+          userId: user.id,
+          date: BigInt(startOfDay.getTime()),
+        },
+      },
+      update: {
+        count: {
+          increment: 1,
+        },
+      },
+      create: {
+        userId: user.id,
+        date: BigInt(startOfDay.getTime()),
+        count: 1,
+      },
+    });
   }
 
-  async getUserStats({ id, username }: { id?: string; username?: string }): Promise<User> {
+  async getUserStats({ id, username }: { id?: string; username?: string }) {
     if (!id && !username) throw new Error('Id or username should be used.');
 
     if (!id) {
@@ -94,14 +113,21 @@ class Users implements System {
       username = byName.name;
     }
 
-    const repository = orm.em.fork().getRepository(User);
-    const user = await repository.findOne(Number(id), ['tips', 'bits', 'daily']);
-
-    if (user) return user;
-
-    const create = repository.assign(new User(), { id: Number(id), username });
-    await repository.persistAndFlush(create);
-    return create;
+    return await prisma.users.upsert({
+      where: {
+        id: Number(id),
+      },
+      update: {},
+      create: {
+        id: Number(id),
+        username,
+      },
+      include: {
+        tips: true,
+        bits: true,
+        daily_messages: true,
+      },
+    });
   }
 
   private async countWatched() {
@@ -147,11 +173,11 @@ class Users implements System {
 
   getUserPermissions(badges: Map<string, string>, raw?: TwitchPrivateMessage): UserPermissions {
     return {
-      BROADCASTERS: badges.has('broadcaster') || this.botAdmins?.includes(raw?.userInfo.userName),
-      MODERATORS: badges.has('moderator'),
-      VIPS: badges.has('vip'),
-      SUBSCRIBERS: badges.has('subscriber') || badges.has('founder'),
-      VIEWERS: true,
+      BROADCASTER: badges.has('broadcaster') || this.botAdmins?.includes(raw?.userInfo.userName),
+      MODERATOR: badges.has('moderator'),
+      VIP: badges.has('vip'),
+      SUBSCRIBER: badges.has('subscriber') || badges.has('founder'),
+      VIEWER: true,
     };
   }
 
@@ -166,7 +192,7 @@ class Users implements System {
 
   @command({
     name: 'ignore add',
-    permission: CommandPermission.MODERATORS,
+    permission: CommandPermission.MODERATOR,
     visible: false,
     description: 'commands.ignore.add.description',
   })
@@ -180,7 +206,7 @@ class Users implements System {
 
   @command({
     name: 'ignore remove',
-    permission: CommandPermission.MODERATORS,
+    permission: CommandPermission.MODERATOR,
     visible: false,
     description: 'commands.ignore.remove.description',
   })

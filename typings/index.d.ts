@@ -82,10 +82,10 @@ export type Integration = System;
 
 export interface UserPermissions {
   BROADCASTER: boolean;
-  MODERATORS: boolean;
-  VIPS: boolean;
-  SUBSCRIBERS: boolean;
-  VIEWERS: boolean;
+  MODERATOR: boolean;
+  VIP: boolean;
+  SUBSCRIBER: boolean;
+  VIEWER: boolean;
 }
 export type DonationData = {
   userId?: number;

@@ -196,7 +196,7 @@ class Twitch implements System {
 
   @command({
     name: 'title',
-    permission: CommandPermission.MODERATORS,
+    permission: CommandPermission.MODERATOR,
     visible: false,
     description: 'commands.title.description',
   })
@@ -213,7 +213,7 @@ class Twitch implements System {
   @command({
     name: 'category',
     aliases: ['game'],
-    permission: CommandPermission.MODERATORS,
+    permission: CommandPermission.MODERATOR,
     visible: false,
     description: 'commands.category.description',
   })

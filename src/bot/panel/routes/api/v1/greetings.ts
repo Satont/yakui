@@ -78,15 +78,14 @@ router.post(
       validationResult(req).throw();
       const body = req.body;
 
-      const repository = RequestContext.getEntityManager().getRepository(Greeting);
-      const greeting = body.id ? await repository.findOne({ id: Number(body.id) }) : repository.create(body);
-
-      repository.assign(greeting, {
-        userId: body.userId ? Number(body.userId) : null,
-        ...body,
+      const greeting = await prisma.greetings.upsert({
+        where: { id: Number(body.id) },
+        update: {
+          ...body,
+        },
+        create: body,
       });
 
-      await repository.persistAndFlush(greeting);
       await cache.updateGreetings();
       res.json(greeting);
     } catch (e) {
@@ -107,10 +106,8 @@ router.delete(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       validationResult(req).throw();
-      const repository = RequestContext.getEntityManager().getRepository(Greeting);
-      const greeting = await repository.findOne({ id: Number(req.body.id) });
+      await prisma.greetings.delete({ where: { id: Number(req.body.id) } });
 
-      await repository.removeAndFlush(greeting);
       await cache.updateGreetings();
       res.send('Ok');
     } catch (e) {
