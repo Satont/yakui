@@ -4,7 +4,8 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["filterJson", "nApi"]
 }
 
 enum CommandPermission {
@@ -98,10 +99,10 @@ model Overlays {
 }
 
 model Settings {
-  id    Int     @id @default(autoincrement())
-  space String  @db.VarChar(255)
-  name  String  @db.VarChar(255)
-  value String?
+  id    Int    @id @default(autoincrement())
+  space String @db.VarChar(255)
+  name  String @db.VarChar(255)
+  value Json?
 
   @@unique([space, name], name: "settings_space_name_unique")
   @@map(name: "settings")
