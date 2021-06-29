@@ -6,6 +6,7 @@ import customcommands from '@bot/systems/customcommands';
 import cache from '@bot/libs/cache';
 import { cloneDeep } from 'lodash';
 import { prisma } from '@bot/libs/db';
+import { Commands as CommandsType } from '@prisma/client';
 
 const router = Router({
   mergeParams: true,
@@ -45,11 +46,6 @@ router.post(
     name: {
       isString: true,
       in: ['body'],
-    },
-    originalName: {
-      isString: true,
-      in: ['body'],
-      optional: true,
     },
     visible: {
       isBoolean: true,
@@ -120,19 +116,20 @@ router.post(
         return res.status(400).send({ message: 'This aliase or name already exists.' });
       }
 
-      const command = await prisma.commands.upsert({
-        where: {
-          name: body.originalName,
-        },
-        update: {
-          ...body,
-          originalName: undefined,
-        },
-        create: {
-          ...body,
-          originalName: undefined,
-        },
-      });
+      let command: CommandsType;
+
+      if (!body.id) {
+        command = await prisma.commands.create({
+          data: body,
+        });
+      } else {
+        command = await prisma.commands.update({
+          where: {
+            id: body.id,
+          },
+          data: body,
+        });
+      }
 
       await customcommands.init();
       cache.updateCommands();

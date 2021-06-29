@@ -82,10 +82,7 @@ import { CommandPermission } from '.prisma/client';
 
 @Component
 export default class CommandsManagerEdit extends Vue {
-  command: Command & {
-    originalName?: string;
-  } = {
-    originalName: undefined,
+  command: Command = {
     name: null,
     response: null,
     cooldown: 10,
@@ -138,7 +135,6 @@ export default class CommandsManagerEdit extends Vue {
       const { data } = await this.$axios.get('/commands/' + id);
 
       this.command = data;
-      this.command.originalName = data.name;
     }
   }
 

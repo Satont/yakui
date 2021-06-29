@@ -10,7 +10,7 @@ const router = Router({
   mergeParams: true,
 });
 
-/* router.get(
+router.get(
   '/',
   checkSchema({
     page: {
@@ -47,39 +47,42 @@ const router = Router({
       validationResult(req).throw();
 
       const body = req.query as any;
-      const repository = RequestContext.getEntityManager().getRepository(User);
-      const where = body.byUsername
-        ? {
-            username: { $like: `%${body.byUsername}%` },
-          }
-        : {};
 
-      const query = qb
-        .select('user.*')
-        .join('user.tips', 'userTips', null, 'leftJoin')
-        .join('user.bits', 'userBits', null, 'leftJoin')
-        .where(where)
-        .addSelect('COALESCE(SUM("userTips"."inMainCurrencyAmount"), 0) as "tips"')
-        .addSelect('COALESCE(SUM("userBits"."amount"), 0) as "bits"')
-        .offset((body.page - 1) * body.perPage)
-        .limit(body.perPage)
-        .groupBy('id')
-        .getKnexQuery()
-        .orderByRaw(`"${body.sortBy}" ${JSON.parse(body.sortDesc) ? 'DESC' : 'ASC'} NULLS LAST`)
-        .toQuery();
+      const query = `select
+          "user".*,
+          COALESCE(
+            SUM(
+              "userTips"."inMainCurrencyAmount"
+            ),
+            0
+          ) as "tips",
+          COALESCE(
+            SUM("userBits"."amount"),
+            0
+          ) as "bits"
+        from
+          "users" as "user"
+          left join "users_tips" as "userTips" on "user"."id" = "userTips"."userId"
+          left join "users_bits" as "userBits" on "user"."id" = "userBits"."userId"
+        where "user"."username" like '%${body.byUsername ?? ''}%'
+        group by
+          "user"."id"
+        order by
+          "${body.sortBy}" ${JSON.parse(body.sortDesc) ? 'DESC' : 'ASC'} ASC NULLS LAST
+        limit
+          ${body.perPage}
+        offset ${(body.page - 1) * body.perPage}
+            `;
 
-      const users = await orm.em
-        .fork()
-        .getConnection()
-        .execute(query);
-      const total = await repository.count();
+      const users = await prisma.$queryRaw`${query}`;
+      const total = await prisma.users.count();
 
       res.json({ users, total });
     } catch (e) {
       next(e);
     }
   },
-); */
+);
 
 router.get('/:id', async (req, res, next) => {
   try {

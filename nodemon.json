@@ -1,8 +1,9 @@
 {
   "watch": ["src/bot"],
-  "exec": "npm run build:bot; npm start",
+  "exec": "yarn build:bot && yarn start",
   "ext": "ts",
   "ignore": [
     "src/bot/data/migrations/**"
-  ]
+  ],
+  "signal": "SIGINT"
 }
