@@ -47,32 +47,33 @@ router.get(
       validationResult(req).throw();
 
       const body = req.query as any;
-
-      const users = await prisma.$queryRaw`select
-      "user".*,
-      COALESCE(
-        SUM(
-          "userTips"."inMainCurrencyAmount"
-        ),
-        0
-      ) as "tips",
-      COALESCE(
-        SUM("userBits"."amount"),
-        0
-      ) as "bits"
-    from
-      "users" as "user"
-      left join "users_tips" as "userTips" on "user"."id" = "userTips"."userId"
-      left join "users_bits" as "userBits" on "user"."id" = "userBits"."userId"
-    where "user"."username" like '%${body.byUsername ?? ''}%'
-    group by
-      "user"."id"
-    order by
-      "${body.sortBy}" ${JSON.parse(body.sortDesc) ? 'DESC' : 'ASC'} ASC NULLS LAST
-    limit
-      ${body.perPage}
-    offset ${(body.page - 1) * body.perPage}
-        `;
+      const users = await prisma.$queryRaw(
+        `select
+            "user".*,
+            COALESCE(
+              SUM(
+                "userTips"."inMainCurrencyAmount"
+              ),
+              0
+            ) as "tips",
+            COALESCE(
+              SUM("userBits"."amount"),
+              0
+            ) as "bits"
+          from
+            "users" as "user"
+            left join "users_tips" as "userTips" on "user"."id" = "userTips"."userId"
+            left join "users_bits" as "userBits" on "user"."id" = "userBits"."userId"
+          ${body.byUsername ? `where "user"."username" like '%${body.byUsername}%'` : ''}
+          group by
+            "user"."id"
+          order by
+            "${body.sortBy}" ${JSON.parse(body.sortDesc) ? 'DESC' : 'ASC'} NULLS LAST
+          limit
+            ${body.perPage || 30}
+          offset ${(body.page - 1) * body.perPage || 0}
+              `,
+      );
       const total = await prisma.users.count();
 
       res.json({ users, total });
@@ -92,7 +93,7 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
-/* router.delete(
+router.delete(
   '/',
   isAdmin,
   checkSchema({
@@ -104,10 +105,8 @@ router.get('/:id', async (req, res, next) => {
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       validationResult(req).throw();
-      const repository = RequestContext.getEntityManager().getRepository(User);
-      const user = await repository.findOne(Number(req.params.id));
 
-      await repository.removeAndFlush(user);
+      await prisma.users.delete({ where: { id: Number(req.params.id) } });
       res.send('Ok');
     } catch (e) {
       next(e);
@@ -126,56 +125,77 @@ router.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       validationResult(req).throw();
-
-      const repository = RequestContext.getEntityManager().getRepository(User);
-      const bitRepository = RequestContext.getEntityManager().getRepository(UserBit);
-      const tipRepository = RequestContext.getEntityManager().getRepository(UserTip);
-      const user = await repository.findOne(req.body.user.id, ['bits', 'tips']);
+      const user = await prisma.users.findFirst({
+        where: { id: req.body.user.id },
+        include: {
+          bits: true,
+          tips: true,
+        },
+      });
 
       if (!user) throw new Error('User not found');
-
       for (const bodyBit of req.body.user.bits) {
-        const bit = bodyBit.id ? await bitRepository.findOne(bodyBit.id) : new UserBit();
-        bitRepository.assign(bit, { ...bodyBit, user: bodyBit.userId });
-        bitRepository.persist(bit);
+        const data = {
+          ...bodyBit,
+          amount: BigInt(bodyBit.amount),
+          timestamp: BigInt(bodyBit.timestamp),
+        };
+        if (bodyBit.id) {
+          await prisma.usersBits.update({
+            where: { id: bodyBit.id },
+            data,
+          });
+        } else {
+          await prisma.usersBits.create({
+            data,
+          });
+        }
       }
 
       for (const id of req.body.delete.bits) {
-        bitRepository.remove(await bitRepository.findOne({ id }));
+        await prisma.usersBits.delete({ where: { id } }).catch(() => null);
       }
 
       for (const id of req.body.delete.tips) {
-        tipRepository.remove(await tipRepository.findOne({ id }));
+        await prisma.usersTips.delete({ where: { id } }).catch(() => null);
       }
 
       for (let bodyTip of req.body.user.tips) {
         bodyTip = {
           ...bodyTip,
+          timestamp: BigInt(bodyTip.timestamp),
           inMainCurrencyAmount: currency.exchange({ amount: bodyTip.amount, from: bodyTip.currency }),
           rates: currency.rates,
           amount: Number(bodyTip.amount),
         };
 
-        const tip = bodyTip.id ? await tipRepository.findOne(bodyTip.id) : new UserTip();
-
-        tipRepository.assign(tip, bodyTip);
-        tipRepository.persist(tip);
+        if (bodyTip.id) {
+          await prisma.usersTips.update({
+            where: { id: bodyTip.id },
+            data: bodyTip,
+          });
+        } else {
+          await prisma.usersTips.create({
+            data: bodyTip,
+          });
+        }
       }
 
       delete req.body.user.bits;
       delete req.body.user.tips;
 
-      wrap(user).assign(req.body.user);
-
-      await bitRepository.flush();
-      await tipRepository.flush();
-      await repository.flush();
+      await prisma.users.update({
+        where: {
+          id: user.id,
+        },
+        data: req.body.user,
+      });
 
       res.send('Ok');
     } catch (e) {
       next(e);
     }
   },
-); */
+);
 
 export default router;
