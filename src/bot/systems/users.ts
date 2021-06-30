@@ -1,7 +1,5 @@
 import { System, ParserOptions, CommandOptions, UserPermissions } from 'typings';
-import { User } from '@bot/entities/User';
 import tmi from '@bot/libs/tmi';
-import { UserDailyMessages } from '@bot/entities/UserDailyMessages';
 import twitch from './twitch';
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage';
 import { prisma } from '@bot/libs/db';

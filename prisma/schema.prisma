@@ -48,7 +48,7 @@ model EventList {
 model Events {
   id         Int    @id @default(autoincrement())
   name       String @unique @db.VarChar(255)
-  operations Json?  @default("[]") @db.Json
+  operations Json?
 
   @@map(name: "events")
 }

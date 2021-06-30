@@ -72,7 +72,7 @@ router.delete(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       validationResult(req).throw();
-      await prisma.widgets.delete({ where: { id: req.body.id } });
+      await prisma.widgets.delete({ where: { id: Number(req.body.id) } });
       res.json('Ok');
     } catch (e) {
       next(e);

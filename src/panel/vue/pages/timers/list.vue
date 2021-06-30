@@ -24,11 +24,11 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { Route } from 'vue-router'
-import { Timer } from '@bot/entities/Timer'
+import { Timers } from '@prisma/client'
 
 @Component
 export default class TimersManagerList extends Vue {
-  timers: Timer[] = []
+  timers: Timers[] = []
 
   async created() {
     const { data } = await this.$axios.get('/timers')

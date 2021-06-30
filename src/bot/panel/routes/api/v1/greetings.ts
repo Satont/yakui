@@ -78,13 +78,9 @@ router.post(
       validationResult(req).throw();
       const body = req.body;
 
-      const greeting = await prisma.greetings.upsert({
-        where: { id: Number(body.id) },
-        update: {
-          ...body,
-        },
-        create: body,
-      });
+      const greeting = body.id
+        ? await prisma.greetings.update({ where: { id: body.id }, data: body })
+        : await prisma.greetings.create({ data: body });
 
       await cache.updateGreetings();
       res.json(greeting);

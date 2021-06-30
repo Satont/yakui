@@ -1,6 +1,7 @@
-import '../moduleAlias';
-import 'reflect-metadata';
 import 'source-map-support/register';
+import 'module-alias/register';
+
+import 'reflect-metadata';
 
 import { ApiClient } from 'twitch';
 import { StaticAuthProvider } from 'twitch-auth';

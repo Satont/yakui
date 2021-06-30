@@ -1,4 +1,4 @@
-import { CommandOptions } from '@/typings';
+import { CommandOptions } from 'typings';
 import { onChange, settings } from '../decorators';
 import { command } from '../decorators/command';
 import locales from '../libs/locales';

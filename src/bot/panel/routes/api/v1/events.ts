@@ -24,11 +24,11 @@ router.post('/', isAdmin, async (req, res, next) => {
         name: data.name,
       },
       update: {
-        operations: JSON.stringify(data.operations),
+        operations: data.operations,
       },
       create: {
         name: data.name,
-        operations: JSON.stringify(data.operations),
+        operations: data.operations,
       },
     });
 

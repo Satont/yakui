@@ -152,7 +152,7 @@ router.delete(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       validationResult(req).throw();
-      await prisma.commands.delete({ where: { id: req.body.id } });
+      await prisma.commands.delete({ where: { id: Number(req.body.id) } });
       await customcommands.init();
       cache.updateCommands();
       res.send('Ok');

@@ -1,8 +1,9 @@
+import 'source-map-support/register';
+import 'module-alias/register';
+
+import 'reflect-metadata';
 import './prototypes';
 
-import './moduleAlias';
-import 'reflect-metadata';
-import 'source-map-support/register';
 import dotenv from 'dotenv';
 dotenv.config();
 

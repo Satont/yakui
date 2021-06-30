@@ -1,6 +1,7 @@
-import '../moduleAlias';
-import 'reflect-metadata';
 import 'source-map-support/register';
+import 'module-alias/register';
+
+import 'reflect-metadata';
 
 import { isMainThread, parentPort, Worker, workerData } from 'worker_threads';
 import { error } from '../libs/logger';

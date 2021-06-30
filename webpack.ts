@@ -1,27 +1,10 @@
 import VueLoaderPlugin from 'vue-loader/lib/plugin';
 import HtmlPlugin from 'html-webpack-plugin';
-import RemovePlugin from 'remove-files-webpack-plugin';
 import { resolve } from 'path';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
-
-const isDev = () => process.env.NODE_ENV === 'development';
-
-const removePluginOptions = {
-  root: './public',
-  test: [
-    {
-      folder: './dest',
-      method: (absoluteItemPath) => new RegExp(/\.js$/, 'm').test(absoluteItemPath),
-      recursive: true,
-    },
-    {
-      folder: '.',
-      method: (absoluteItemPath) => new RegExp(/\.html$/, 'm').test(absoluteItemPath),
-    },
-  ],
-};
+import { CleanWebpackPlugin } from 'clean-webpack-plugin';
 
 export default {
   devServer: {
@@ -68,10 +51,9 @@ export default {
     ],
   },
   plugins: [
-    /*  new RemovePlugin({
-      before: removePluginOptions,
-      watch: removePluginOptions,
-    }), */
+    new CleanWebpackPlugin({
+      dangerouslyAllowCleanPatternsOutsideProject: true,
+    }),
     new VueLoaderPlugin(),
     new MiniCssExtractPlugin({
       filename: '[name].[contenthash].css',
