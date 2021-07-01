@@ -59,10 +59,6 @@
     "webpack-cli": "^4.2.0"
   },
   "dependencies": {
-    "@mikro-orm/cli": "^4.3.4",
-    "@mikro-orm/core": "^4.3.4",
-    "@mikro-orm/postgresql": "^4.3.4",
-    "@mikro-orm/reflection": "^4.3.4",
     "@prisma/client": "^2.25.0",
     "@satont/text-utils": "^1.0.6",
     "axios": "^0.21.1",
