@@ -91,6 +91,7 @@ class Variables implements System {
 
   async parseMessage(opts: { message: string; raw?: TwitchPrivateMessage; argument?: string; command?: Command }) {
     let result = opts.message;
+    if (!opts.message) return;
     const userInfo = opts.raw?.userInfo;
     const getLatestAgoString = (timestamp: number) =>
       hd(Date.now() - timestamp, {
@@ -351,6 +352,7 @@ class Variables implements System {
   async makeApiRequest(result: string) {
     const match = result.match(/\((api)\|(POST|GET)\|(\S+)\)/);
     if (match.length) {
+      // eslint-disable-next-line max-len
       // '(api|GET|https://qwe.ru)' = ["(api|GET|https://qwe.ru)", "api", "GET", "https://qwe.ru", index: 0, input: "(api|GET|https://qwe.ru)", groups: undefined]
       result = result.replace(match[0], '');
       const method: 'GET' | 'POST' = match[2] as any;
