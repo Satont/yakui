@@ -2,9 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { checkSchema, validationResult } from 'express-validator';
 import isAdmin from '@bot/panel/middlewares/isAdmin';
 import cache from '@bot/libs/cache';
-import { RequestContext, wrap } from '@mikro-orm/core';
 import { prisma } from '@bot/libs/db';
-import { Keywords } from '.prisma/client';
 
 const router = Router({
   mergeParams: true,

@@ -3,8 +3,6 @@ import { checkSchema, validationResult } from 'express-validator';
 import OverlaysSystem from '@bot/systems/overlays';
 import isAdmin from '@bot/panel/middlewares/isAdmin';
 import cache from '@bot/libs/cache';
-import { RequestContext, wrap } from '@mikro-orm/core';
-import { Overlays } from '@prisma/client';
 import { prisma } from '@src/bot/libs/db';
 
 const router = Router({ mergeParams: true });

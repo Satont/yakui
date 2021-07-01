@@ -2,7 +2,6 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { checkSchema, validationResult } from 'express-validator';
 import variables from '@bot/systems/variables';
 import isAdmin from '@bot/panel/middlewares/isAdmin';
-import { RequestContext, wrap } from '@mikro-orm/core';
 import { prisma } from '@src/bot/libs/db';
 
 const router = Router({
