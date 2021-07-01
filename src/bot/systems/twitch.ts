@@ -238,12 +238,12 @@ class Twitch implements System {
     await prisma.settings.upsert({
       where: { settings_space_name_unique: { space: 'twitch', name: 'latestSubscriber' } },
       update: {
-        value: JSON.stringify(value),
+        value,
       },
       create: {
         space: 'twitch',
         name: 'latestSubscriber',
-        value: JSON.stringify(value),
+        value,
       },
     });
   }
@@ -261,12 +261,12 @@ class Twitch implements System {
     await prisma.settings.upsert({
       where: { settings_space_name_unique: { space: 'twitch', name: 'latestRESubscriber' } },
       update: {
-        value: JSON.stringify(value),
+        value,
       },
       create: {
         space: 'twitch',
         name: 'latestReSubscriber',
-        value: JSON.stringify(value),
+        value,
       },
     });
   }

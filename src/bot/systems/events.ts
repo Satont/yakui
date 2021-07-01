@@ -66,8 +66,8 @@ class Events implements System {
     };
   }
 
-  async addToEventList({ name, data }: { name: string; data: Record<string, unknown> }) {
-    const event = await prisma.eventList.create({ data: { name, data: JSON.stringify(data), timestamp: Date.now() } });
+  async addToEventList({ name, data }: { name: string; data: Record<string, any> }) {
+    const event = await prisma.eventList.create({ data: { name, data: data, timestamp: Date.now() } });
 
     this.clients.forEach((c) => c.emit('event', event));
   }

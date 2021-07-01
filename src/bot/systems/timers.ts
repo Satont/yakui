@@ -39,7 +39,7 @@ class TimersSystem implements System {
       await prisma.timers.update({
         where: { id: timer.id },
         data: {
-          last: ++timer.last % JSON.parse(timer.responses as string).length,
+          last: ++timer.last % (timer.responses as string[]).length,
           triggerTimeStamp: BigInt(Date.now()),
           triggerMessage: tmi.parsedLinesPerStream,
         },
