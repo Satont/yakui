@@ -144,8 +144,13 @@ class Twitch implements System {
   private async getChannelSubscribers() {
     clearTimeout(this.intervals.subscribers);
     this.intervals.subscribers = setTimeout(() => this.getChannelSubscribers(), 1 * 60 * 1000);
+
     try {
       if (!tmi.broadcaster.api || !tmi.channel?.id) return;
+      const broadcaster = await tmi.broadcaster.api.helix.users.getMe();
+      if (broadcaster.broadcasterType !== 'affiliate' && broadcaster.broadcasterType !== 'partner') {
+        return;
+      }
       const data = await tmi.broadcaster.api?.helix.subscriptions.getSubscriptionsPaginated(tmi.channel?.id).getAll();
       this.channelMetaData.subs = data.length - 1 || 0;
     } catch (e) {

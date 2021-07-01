@@ -23,6 +23,17 @@ class EventSubs {
 
   async init() {
     const url = general.siteUrl.replace('https://', '').replace('http://', '');
+    const api = new ApiClient({
+      authProvider: new ClientCredentialsAuthProvider(oauth.clientId, oauth.clientSecret),
+    });
+    this.adapter = new TwitchEventSub.EventSubMiddleware(api, {
+      hostName: url,
+      pathPrefix: 'eventsub',
+      secret: this.secret,
+    });
+
+    await this.adapter.apply(panel.app);
+
     if (!panel.ready || !tmi.channel?.id || !loaded || !tmi.broadcaster?.api) {
       return setTimeout(() => this.init(), 1000);
     }
@@ -35,19 +46,7 @@ class EventSubs {
 
     info('EventSub: starting initializating.');
 
-    const api = new ApiClient({
-      authProvider: new ClientCredentialsAuthProvider(oauth.clientId, oauth.clientSecret),
-    });
-
-    this.adapter = new TwitchEventSub.EventSubMiddleware(api, {
-      hostName: url,
-      pathPrefix: 'twitch/eventsub',
-      secret: this.secret,
-    });
-
     await api.helix.eventSub.deleteAllSubscriptions();
-
-    await this.adapter.apply(panel.app);
     await this.adapter.markAsReady();
 
     await this.adapter.subscribeToChannelUpdateEvents(tmi.channel.id, onStreamChange).catch(error);
@@ -55,8 +54,6 @@ class EventSubs {
     await this.adapter.subscribeToChannelModeratorAddEvents(tmi.channel.id, onAddModerator).catch(error);
     await this.adapter.subscribeToChannelModeratorRemoveEvents(tmi.channel.id, onRemoveModerator).catch(error);
     info(`EventSub: initializated.`);
-    const subscriptions = await api.helix.eventSub.getSubscriptions();
-    subscriptions.data.forEach((s) => console.log((s as any)._data));
   }
 }
 
