@@ -14,7 +14,7 @@
     "quotes": ["error", "single", { "allowTemplateLiterals": true }],
     "@typescript-eslint/no-var-requires": 1,
     "@typescript-eslint/explicit-module-boundary-types": "off",
-    "@typescript-eslint/indent": ["error", 2],
+    "@typescript-eslint/indent": ["warn", 2],
     "@typescript-eslint/no-inferrable-types": "off",
     "semi": [2, "always"],
     "prefer-const": ["error", {

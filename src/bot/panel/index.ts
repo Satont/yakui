@@ -1,20 +1,20 @@
 import express, { Request, Response } from 'express';
-import bodyparser from 'body-parser';
 import history from 'connect-history-api-fallback';
 import { resolve } from 'path';
 import http from 'http';
 
 import v1 from './routes/api/v1';
 import { error, info } from '@bot/libs/logger';
-import twitch from './routes/twitch';
 import Authorization from '@bot/systems/authorization';
+import twitch from './routes/twitch';
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
 
 export const app = express();
+export let ready = false;
 
-app.use(bodyparser.urlencoded({ extended: false }));
-app.use(bodyparser.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 app.use('/twitch', twitch);
 app.use('/static', express.static(resolve(process.cwd(), 'public', 'dest')));
 app.use('/icons', express.static(resolve(process.cwd(), 'public', 'icons')));
@@ -66,4 +66,5 @@ export const server = http.createServer(app);
 
 server.listen(PORT, '0.0.0.0', () => {
   info(`PANEL: Server initiliazed on ${PORT}`);
+  ready = true;
 });

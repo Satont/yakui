@@ -2,7 +2,7 @@ import { CommandOptions } from 'typings';
 import { onChange, settings } from '../decorators';
 import { command } from '../decorators/command';
 import locales from '../libs/locales';
-import webhooks from '../libs/webhooks';
+import eventsub from '../libs/eventsub';
 import cache from '../libs/cache';
 import { CommandPermission } from '@prisma/client';
 
@@ -15,7 +15,7 @@ class General {
 
   @onChange('siteUrl')
   onSiteUrlChange() {
-    webhooks.init();
+    eventsub.init();
   }
 
   @onChange('locale')

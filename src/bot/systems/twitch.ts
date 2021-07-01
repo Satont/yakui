@@ -4,12 +4,13 @@ import humanizeDuration from 'humanize-duration';
 import { onStreamStart, onStreamEnd } from '@bot/libs/eventsCaller';
 import locales from '@bot/libs/locales';
 import { System, CommandOptions } from 'typings';
-import { INewSubscriber, INewResubscriber, IWebHookStreamChanged } from 'typings/events';
+import { INewSubscriber, INewResubscriber } from 'typings/events';
 import { error } from '@bot/libs/logger';
 import { prisma } from '@bot/libs/db';
 import { settings } from '../decorators';
 import { command } from '../decorators/command';
 import { CommandPermission } from '@prisma/client';
+import { EventSubChannelUpdateEvent } from 'twitch-eventsub/lib/Events/EventSubChannelUpdateEvent';
 
 class Twitch implements System {
   private intervals = {
@@ -117,13 +118,11 @@ class Twitch implements System {
     this.channelMetaData.title = data.title;
   }
 
-  async onStreamChange(opts: IWebHookStreamChanged) {
-    if (opts.game_id) {
-      const game = await tmi.bot.api?.helix.games.getGameById(opts.game_id);
-      this.channelMetaData.game = game.name;
+  async onStreamChange(data: EventSubChannelUpdateEvent) {
+    if (data.categoryName) {
+      this.channelMetaData.game = data.categoryName;
     }
-    this.channelMetaData.title = opts.title;
-    this.streamMetaData.viewers = opts.viewer_count;
+    this.channelMetaData.title = data.streamTitle;
   }
 
   private async getChannelData() {

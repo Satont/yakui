@@ -3,13 +3,15 @@ import { get } from 'lodash';
 
 import tmi from '@bot/libs/tmi';
 import { System, DonationData, HostType } from 'typings';
-import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove, INewResubscriber, INewSubscriber } from 'typings/events';
+import { INewResubscriber, INewSubscriber } from 'typings/events';
 import { getNameSpace } from '@bot/libs/socket';
 import { PubSubRedemptionMessage } from 'twitch-pubsub-client/lib';
 import alerts from '@bot/overlays/alerts';
 import tts from '@bot/overlays/tts';
 import cache from '@bot/libs/cache';
 import { prisma } from '@bot/libs/db';
+import { EventSubChannelFollowEvent } from 'twitch-eventsub/lib/Events/EventSubChannelFollowEvent';
+import { EventSubChannelModeratorEvent } from 'twitch-eventsub/lib/Events/EventSubChannelModeratorEvent';
 
 class Events implements System {
   socket = getNameSpace('widgets/eventlist');
@@ -103,19 +105,19 @@ class Events implements System {
     this.addToEventList({ name: 'raided', data: { username, viewers } });
   }
 
-  onUserFollow({ from_name }: IWebHookUserFollow) {
-    this.fire({ name: 'follow', opts: { username: from_name } });
-    this.addToEventList({ name: 'follow', data: { username: from_name } });
+  onUserFollow({ userName }: EventSubChannelFollowEvent) {
+    this.fire({ name: 'follow', opts: { username: userName } });
+    this.addToEventList({ name: 'follow', data: { username: userName } });
   }
 
-  onAddModerator({ event_data: { user_name: username } }: IWebHookModeratorAdd) {
-    this.fire({ name: 'newmod', opts: { username } });
-    this.addToEventList({ name: 'newmod', data: { username } });
+  onAddModerator(data: EventSubChannelModeratorEvent) {
+    this.fire({ name: 'newmod', opts: { username: data.userName } });
+    this.addToEventList({ name: 'newmod', data: { username: data.userName } });
   }
 
-  onRemoveModerator({ event_data: { user_name: username } }: IWebHookModeratorRemove) {
-    this.fire({ name: 'removemod', opts: { username } });
-    this.addToEventList({ name: 'removemod', data: { username } });
+  onRemoveModerator(data: EventSubChannelModeratorEvent) {
+    this.fire({ name: 'removemod', opts: { username: data.userName } });
+    this.addToEventList({ name: 'removemod', data: { username: data.userName } });
   }
 
   onSubscribe(data: INewSubscriber) {

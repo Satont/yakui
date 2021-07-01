@@ -1,12 +1,5 @@
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage';
-import {
-  IWebHookUserFollow,
-  IWebHookModeratorAdd,
-  IWebHookModeratorRemove,
-  INewSubscriber,
-  INewResubscriber,
-  IWebHookStreamChanged,
-} from './events';
+import { INewSubscriber, INewResubscriber } from './events';
 import { PubSubRedemptionMessage } from 'twitch-pubsub-client/lib';
 import { CommandPermission } from '@prisma/client';
 import { Namespace } from 'socket.io';
@@ -68,10 +61,10 @@ export interface System {
   onRaided?: (data: HostType) => void | Promise<void>;
   onDbUpdate?(data: DbUpdate): void | Promise<void>;
   sockets?: (socket: SocketIO.Socket) => void | Promise<void>;
-  onAddModerator?: (data: IWebHookModeratorAdd) => void | Promise<void>;
-  onRemoveModerator?: (data: IWebHookModeratorRemove) => void | Promise<void>;
-  onUserFollow?: (data: IWebHookUserFollow) => void | Promise<void>;
-  onStreamChange?: (data: IWebHookStreamChanged) => void | Promise<void>;
+  onAddModerator?: (data: EventSubChannelModeratorEvent) => void | Promise<void>;
+  onRemoveModerator?: (data: EventSubChannelModeratorEvent) => void | Promise<void>;
+  onUserFollow?: (data: EventSubChannelFollowEvent) => void | Promise<void>;
+  onStreamChange?: (data: EventSubChannelUpdateEvent) => void | Promise<void>;
   onSubscribe?: (data: INewSubscriber) => void | Promise<void>;
   onReSubscribe?: (data: INewResubscriber) => void | Promise<void>;
   onRedemption?: (data: PubSubRedemptionMessage) => void | Promise<void>;
