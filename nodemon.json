@@ -1,6 +1,6 @@
 {
   "watch": ["src/bot"],
-  "exec": "yarn build:bot && yarn start",
+  "exec": "yarn build:bot && node ./dist/index.js",
   "ext": "ts",
   "ignore": [
     "src/bot/data/migrations/**"

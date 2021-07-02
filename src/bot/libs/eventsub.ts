@@ -2,7 +2,7 @@ import tmi from './tmi';
 import { error, info } from './logger';
 import general from '../settings/general';
 import * as TwitchEventSub from 'twitch-eventsub';
-import * as panel from '../panel';
+import panel from '../panel';
 import { settings } from '../decorators';
 import { onAddModerator, onRemoveModerator, onUserFollow, onStreamChange } from '@bot/libs/eventsCaller';
 import { loaded } from './loader';
@@ -34,7 +34,7 @@ class EventSubs {
 
     await this.adapter.apply(panel.app);
 
-    if (!panel.ready || !tmi.channel?.id || !loaded || !tmi.broadcaster?.api) {
+    if (!tmi.channel?.id || !loaded || !tmi.broadcaster?.api) {
       return setTimeout(() => this.init(), 1000);
     }
     if (url.includes('localhost')) {

@@ -7,12 +7,12 @@ import v1 from './routes/api/v1';
 import { error, info } from '@bot/libs/logger';
 import Authorization from '@bot/systems/authorization';
 import twitch from './routes/twitch';
+import morgan from 'morgan';
 
-const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
-
-export const app = express();
-export let ready = false;
-
+const app = express();
+// eslint-disable-next-line prefer-const
+let ready = false;
+app.use(morgan('tiny'));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use('/twitch', twitch);
@@ -62,9 +62,18 @@ app.use((err, req: Request, res: Response, next) => {
   } else next();
 });
 
-export const server = http.createServer(app);
+const server = http.createServer(app);
 
-server.listen(PORT, '0.0.0.0', () => {
-  info(`PANEL: Server initiliazed on ${PORT}`);
-  ready = true;
-});
+function listen() {
+  server.listen(process.env.PORT ? Number(process.env.PORT) : 3000, process.env.HOST ?? '0.0.0.0', () => {
+    info(`Panel listening on ${process.env.PORT ? Number(process.env.PORT) : 3000} port.`);
+    ready = true;
+  });
+}
+
+export default {
+  app,
+  ready,
+  server,
+  listen,
+};
