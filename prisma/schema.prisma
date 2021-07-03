@@ -167,6 +167,7 @@ model UsersDailyMessages {
   date   BigInt
   user   Users  @relation(fields: [userId], references: [id])
 
+  @@unique([userId, date], name: "users_daily_messages_userid_name_unique")
   @@map("users_daily_messages")
 }
 
