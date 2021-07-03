@@ -75,11 +75,12 @@ export type Integration = System;
 
 export interface UserPermissions {
   BROADCASTER: boolean;
-  MODERATOR: boolean;
-  VIP: boolean;
-  SUBSCRIBER: boolean;
-  VIEWER: boolean;
+  MODERATORS: boolean;
+  VIPS: boolean;
+  SUBSCRIBERS: boolean;
+  VIEWERS: boolean;
 }
+
 export type DonationData = {
   userId?: number;
   username: string;

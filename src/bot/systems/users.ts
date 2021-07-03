@@ -172,10 +172,10 @@ class Users implements System {
   getUserPermissions(badges: Map<string, string>, raw?: TwitchPrivateMessage): UserPermissions {
     return {
       BROADCASTER: badges.has('broadcaster') || this.botAdmins?.includes(raw?.userInfo.userName),
-      MODERATOR: badges.has('moderator'),
-      VIP: badges.has('vip'),
-      SUBSCRIBER: badges.has('subscriber') || badges.has('founder'),
-      VIEWER: true,
+      MODERATORS: badges.has('moderator'),
+      VIPS: badges.has('vip'),
+      SUBSCRIBERS: badges.has('subscriber') || badges.has('founder'),
+      VIEWERS: true,
     };
   }
 
@@ -183,9 +183,10 @@ class Users implements System {
     if (!searchForPermission) return true;
 
     const userPerms = Object.entries(this.getUserPermissions(badges, raw));
-    const commandPermissionIndex = userPerms.indexOf(userPerms.find((v) => v[0] === searchForPermission));
+    const commandPermissionIndex = userPerms.indexOf(userPerms.find((perm) => perm[0] === searchForPermission));
 
-    return userPerms.some((p, index) => p[1] && index <= commandPermissionIndex);
+    const hasPerm = userPerms.some((p, index) => p[1] && index <= commandPermissionIndex);
+    return hasPerm;
   }
 
   @command({

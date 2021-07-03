@@ -132,7 +132,7 @@ router.post(
       }
 
       await customcommands.init();
-      cache.updateCommands();
+      await cache.updateCommands();
       res.json(command);
     } catch (e) {
       next(e);

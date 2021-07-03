@@ -176,7 +176,7 @@ class Moderation implements System {
   async parse(opts: ParserOptions) {
     if (!this.enabled) return false;
     const userPermissions = users.getUserPermissions(opts.raw.userInfo.badges, opts.raw);
-    if (userPermissions.BROADCASTER || userPermissions.MODERATOR) return false;
+    if (userPermissions.BROADCASTER || userPermissions.MODERATORS) return false;
     if (await this.blacklistParser(opts, userPermissions)) return true;
     if (await this.linksParser(opts, userPermissions)) return true;
     if (await this.symbolsParser(opts, userPermissions)) return true;
@@ -190,8 +190,8 @@ class Moderation implements System {
     const settings = this.links;
 
     if (!settings?.enabled) return false;
-    if (!settings?.subscribers && permissions.SUBSCRIBER) return false;
-    if (!settings?.vips && permissions.VIP) return false;
+    if (!settings?.subscribers && permissions.SUBSCRIBERS) return false;
+    if (!settings?.vips && permissions.VIPS) return false;
     const message = opts.message;
 
     if (!link.length(message)) return false;
@@ -221,8 +221,8 @@ class Moderation implements System {
     const settings = this.symbols;
 
     if (!settings?.enabled) return false;
-    if (!settings?.subscribers && permissions.SUBSCRIBER) return false;
-    if (!settings?.vips && permissions.VIP) return false;
+    if (!settings?.subscribers && permissions.SUBSCRIBERS) return false;
+    if (!settings?.vips && permissions.VIPS) return false;
 
     if (opts.message.length < settings.trigger.length) return false;
 
@@ -259,8 +259,8 @@ class Moderation implements System {
     const settings = this.longMessage;
 
     if (!settings?.enabled) return false;
-    if (!settings?.subscribers && permissions.SUBSCRIBER) return false;
-    if (!settings?.vips && permissions.VIP) return false;
+    if (!settings?.subscribers && permissions.SUBSCRIBERS) return false;
+    if (!settings?.vips && permissions.VIPS) return false;
 
     if (opts.message.length < settings.trigger.length) return false;
 
@@ -283,8 +283,8 @@ class Moderation implements System {
     const settings = this.caps;
 
     if (!settings?.enabled) return false;
-    if (!settings?.subscribers && permissions.SUBSCRIBER) return false;
-    if (!settings?.vips && permissions.VIP) return false;
+    if (!settings?.subscribers && permissions.SUBSCRIBERS) return false;
+    if (!settings?.vips && permissions.VIPS) return false;
 
     const username = opts.raw.userInfo.userName.toLowerCase();
     const type = 'caps';
@@ -324,8 +324,8 @@ class Moderation implements System {
     const settings = this.emotes;
 
     if (!settings?.enabled) return false;
-    if (!settings?.subscribers && permissions.SUBSCRIBER) return false;
-    if (!settings?.vips && permissions.VIP) return false;
+    if (!settings?.subscribers && permissions.SUBSCRIBERS) return false;
+    if (!settings?.vips && permissions.VIPS) return false;
 
     const username = opts.raw.userInfo.userName.toLowerCase();
     const type = 'emotes';
@@ -349,8 +349,8 @@ class Moderation implements System {
     const settings = this.color;
 
     if (!settings?.enabled) return false;
-    if (!settings?.subscribers && permissions.SUBSCRIBER) return false;
-    if (!settings?.vips && permissions.VIP) return false;
+    if (!settings?.subscribers && permissions.SUBSCRIBERS) return false;
+    if (!settings?.vips && permissions.VIPS) return false;
 
     const username = opts.raw.userInfo.userName.toLowerCase();
     const type = 'color';
@@ -373,8 +373,8 @@ class Moderation implements System {
     const settings = this.blacklist;
 
     if (!settings?.enabled) return false;
-    if (!settings?.subscribers && permissions.SUBSCRIBER) return false;
-    if (!settings?.vips && permissions.VIP) return false;
+    if (!settings?.subscribers && permissions.SUBSCRIBERS) return false;
+    if (!settings?.vips && permissions.VIPS) return false;
 
     const username = opts.raw.userInfo.userName.toLowerCase();
     const type = 'blacklist';

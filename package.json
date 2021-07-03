@@ -6,6 +6,7 @@
   "scripts": {
     "prestart": "npm run migration:up",
     "start": "cross-env NODE_ENV=production node --experimental-report --report-on-fatalerror --report-directory=./logs/ --always_compact --optimize_for_size --gc_interval=100 dist/index.js",
+    "debug": "node --inspect=0.0.0.0:9229 --nolazy ./dist/index.js",
     "build": "npm run build:web && npm run build:bot",
     "dev": "npm run dev:web & npm run dev:bot",
     "dev:bot": "nodemon",
