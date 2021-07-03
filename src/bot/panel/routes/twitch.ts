@@ -1,9 +1,12 @@
-import { Router } from 'express';
+import express, { Router } from 'express';
 import axios from 'axios';
 import { error } from '@bot/libs/logger';
 import oauth from '../../libs/oauth';
 
 const router = Router();
+
+router.use(express.urlencoded({ extended: false }));
+router.use(express.json());
 
 router.get('/auth/callback', async (req, res) => {
   const state = JSON.parse(Buffer.from(req.query.state as string, 'base64').toString('utf-8'));

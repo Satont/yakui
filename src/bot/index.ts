@@ -8,15 +8,17 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { prisma } from '@bot/libs/db';
-import { error } from '@bot/libs/logger';
-import { loaded } from '@bot/libs/loader';
+import { error, info } from '@bot/libs/logger';
+import loader, { loaded } from '@bot/libs/loader';
 
 const start = async () => {
   await prisma.$connect();
 
   await import('@bot/libs/tmi');
   await import('@bot/libs/socket');
+  await loader();
   listenHttp();
+  info('All system loaded.');
 };
 
 function listenHttp() {

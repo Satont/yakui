@@ -11,6 +11,7 @@ import oauth from './oauth';
 
 class EventSubs {
   private adapter: TwitchEventSub.EventSubMiddleware;
+  //private listener: TwitchEventSub.EventSubListener;
 
   @settings()
   secret =
@@ -31,12 +32,18 @@ class EventSubs {
       pathPrefix: 'eventsub',
       secret: this.secret,
     });
+    /* this.adapter = new TwitchEventSub.MiddlewareAdapter({
+      hostName: url,
+      pathPrefix: 'eventsub',
+    });
+    
+    this.listener = new TwitchEventSub.EventSubListener(api, this.adapter, this.secret); */
 
-    await this.adapter.apply(panel.app);
-
-    if (!tmi.channel?.id || !loaded || !tmi.broadcaster?.api) {
+    if (!tmi.channel?.id || !tmi.broadcaster?.api) {
       return setTimeout(() => this.init(), 1000);
     }
+    await this.adapter.apply(panel.app);
+    //await this.listener.applyMiddleware(panel.app);
     if (url.includes('localhost')) {
       return info(`EventSub: incorrect domain ${url}, will not working`);
     }

@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import express, { Router } from 'express';
 
 import commands from './commands';
 import timers from './timers';
@@ -15,6 +15,9 @@ import chatMessage from './chatMessage';
 import files from './files';
 
 const router = Router();
+
+router.use(express.urlencoded({ extended: false }));
+router.use(express.json());
 
 router.get('/', (req, res) => {
   res.send('This is api v1');

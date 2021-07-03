@@ -44,14 +44,18 @@ const loader = async () => {
   }
 };
 
-loader().then(async () => {
+export default async function(): Promise<void> {
+  await loader();
   for (const system of loadedSystems) {
     if (system.init) {
       await system.init();
     }
   }
   await cache.init();
-  setTimeout(() => {
-    loaded = true;
-  }, 5000);
-});
+  return new Promise((res) => {
+    setTimeout(() => {
+      loaded = true;
+      res();
+    }, 5000);
+  });
+}

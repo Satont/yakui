@@ -149,7 +149,7 @@ class Users implements System {
     clearTimeout(this.getChattersTimeout);
     this.getChattersTimeout = setTimeout(() => this.getChatters(), 1 * 60 * 1000);
 
-    if (!oauth.botAccessToken || !oauth.clientId || !oauth.channel) {
+    if (!oauth.botAccessToken || !oauth.clientId || !oauth.channel || !!tmi?.bot?.auth) {
       return;
     }
     this.chatters = await getChatters({

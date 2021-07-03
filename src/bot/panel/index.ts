@@ -12,9 +12,7 @@ import morgan from 'morgan';
 const app = express();
 // eslint-disable-next-line prefer-const
 let ready = false;
-app.use(morgan('tiny'));
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+app.use(morgan('combined'));
 app.use('/twitch', twitch);
 app.use('/static', express.static(resolve(process.cwd(), 'public', 'dest')));
 app.use('/icons', express.static(resolve(process.cwd(), 'public', 'icons')));
