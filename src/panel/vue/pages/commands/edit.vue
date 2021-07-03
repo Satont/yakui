@@ -87,7 +87,7 @@ export default class CommandsManagerEdit extends Vue {
     response: null,
     cooldown: 10,
     visible: true,
-    permission: 'VIEWER',
+    permission: 'VIEWERS',
     description: null,
     aliases: [],
     price: 0,
@@ -97,11 +97,11 @@ export default class CommandsManagerEdit extends Vue {
   };
 
   avaliablePermissions: Array<{ value: CommandPermission; text: string }> = [
-    { value: 'VIEWER', text: 'Viewers' },
-    { value: 'FOLLOWER', text: 'Followers' },
-    { value: 'VIP', text: 'Vips' },
-    { value: 'SUBSCRIBER', text: 'Subscribers' },
-    { value: 'MODERATOR', text: 'Moderators' },
+    { value: 'VIEWERS', text: 'Viewers' },
+    { value: 'FOLLOWERS', text: 'Followers' },
+    { value: 'VIPS', text: 'Vips' },
+    { value: 'SUBSCRIBERS', text: 'Subscribers' },
+    { value: 'MODERATORS', text: 'Moderators' },
     { value: 'BROADCASTER', text: 'Broadcaster' },
   ];
 

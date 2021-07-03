@@ -190,7 +190,7 @@ class Users implements System {
 
   @command({
     name: 'ignore add',
-    permission: CommandPermission.MODERATOR,
+    permission: CommandPermission.MODERATORS,
     visible: false,
     description: 'commands.ignore.add.description',
   })
@@ -204,7 +204,7 @@ class Users implements System {
 
   @command({
     name: 'ignore remove',
-    permission: CommandPermission.MODERATOR,
+    permission: CommandPermission.MODERATORS,
     visible: false,
     description: 'commands.ignore.remove.description',
   })

@@ -162,7 +162,7 @@ class Moderation implements System {
 
   @command({
     name: 'permit',
-    permission: CommandPermission.MODERATOR,
+    permission: CommandPermission.MODERATORS,
     visible: false,
     description: 'commands.permit.description',
   })

@@ -1,19 +1,19 @@
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["filterJson", "nApi"]
 }
 
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
 enum CommandPermission {
-  VIEWER
-  FOLLOWER
-  VIP
-  SUBSCRIBER
-  MODERATOR
+  VIEWERS
+  FOLLOWERS
+  VIPS
+  SUBSCRIBERS
+  MODERATORS
   BROADCASTER
 }
 
@@ -26,14 +26,14 @@ model Commands {
   response      String
   enabled       Boolean           @default(true)
   visible       Boolean           @default(true)
-  permission    CommandPermission @default(VIEWER)
+  permission    CommandPermission @default(VIEWERS)
   price         Int?              @default(0)
   usage         Int?              @default(0)
   sound_volume  Int?
   sound_file_id Int?
   sound_file    Files?            @relation(fields: [sound_file_id], references: [id])
 
-  @@map(name: "commands")
+  @@map("commands")
 }
 
 model EventList {
@@ -42,15 +42,15 @@ model EventList {
   data      Json   @db.Json
   timestamp BigInt
 
-  @@map(name: "eventlist")
+  @@map("eventlist")
 }
 
 model Events {
   id         Int    @id @default(autoincrement())
   name       String @unique @db.VarChar(255)
-  operations Json?
+  operations Json?  @default("[]") @db.Json
 
-  @@map(name: "events")
+  @@map("events")
 }
 
 model Files {
@@ -61,7 +61,7 @@ model Files {
   commands  Commands[]
   greetings Greetings[]
 
-  @@map(name: "files")
+  @@map("files")
 }
 
 model Greetings {
@@ -74,7 +74,7 @@ model Greetings {
   sound_volume  Int?
   sound_file    Files?   @relation(fields: [sound_file_id], references: [id])
 
-  @@map(name: "greetings")
+  @@map("greetings")
 }
 
 model Keywords {
@@ -85,7 +85,7 @@ model Keywords {
   cooldown Int?     @default(30)
 
   @@index([name], name: "keywords_name_index")
-  @@map(name: "keywords")
+  @@map("keywords")
 }
 
 model Overlays {
@@ -95,17 +95,17 @@ model Overlays {
   css  String?
   js   Json?   @default("[]") @db.Json
 
-  @@map(name: "overlays")
+  @@map("overlays")
 }
 
 model Settings {
   id    Int    @id @default(autoincrement())
   space String @db.VarChar(255)
   name  String @db.VarChar(255)
-  value Json?
+  value Json?  @default("null") @db.Json
 
   @@unique([space, name], name: "settings_space_name_unique")
-  @@map(name: "settings")
+  @@map("settings")
 }
 
 model SongLikes {
@@ -116,7 +116,7 @@ model SongLikes {
   updatedAt BigInt?
 
   @@unique([userId, name], name: "songs_likes_userid_name_unique")
-  @@map(name: "song_likes")
+  @@map("songs_likes")
 }
 
 model Timers {
@@ -130,11 +130,11 @@ model Timers {
   messages         Int?     @default(0)
   triggerMessage   Int?     @default(0)
 
-  @@map(name: "timers")
+  @@map("timers")
 }
 
 model Users {
-  id                Int                  @id @default(autoincrement())
+  id                Int                  @id
   username          String?              @db.VarChar(255)
   messages          Int?                 @default(0)
   watched           BigInt?              @default(0)
@@ -146,7 +146,7 @@ model Users {
   tips              UsersTips[]
 
   @@index([username], name: "users_username_index")
-  @@map(name: "users")
+  @@map("users")
 }
 
 model UsersBits {
@@ -157,7 +157,7 @@ model UsersBits {
   userId    Int
   users     Users   @relation(fields: [userId], references: [id])
 
-  @@map(name: "users_bits")
+  @@map("users_bits")
 }
 
 model UsersDailyMessages {
@@ -167,8 +167,7 @@ model UsersDailyMessages {
   date   BigInt
   user   Users  @relation(fields: [userId], references: [id])
 
-  @@unique([userId, date], name: "users_daily_messages_userid_name_unique")
-  @@map(name: "users_daily_messages")
+  @@map("users_daily_messages")
 }
 
 model UsersTips {
@@ -182,7 +181,7 @@ model UsersTips {
   userId               Int?
   user                 Users?  @relation(fields: [userId], references: [id])
 
-  @@map(name: "users_tips")
+  @@map("users_tips")
 }
 
 model Variables {
@@ -191,8 +190,9 @@ model Variables {
   response String
   enabled  Boolean?
 
+  @@unique([name], name: "variables_name_unique")
   @@index([name], name: "variables_name_index")
-  @@map(name: "variables")
+  @@map("variables")
 }
 
 model Widgets {
@@ -203,5 +203,5 @@ model Widgets {
   w    Int
   h    Int
 
-  @@map(name: "widgets")
+  @@map("widgets")
 }

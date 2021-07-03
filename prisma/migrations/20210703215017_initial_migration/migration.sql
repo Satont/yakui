@@ -1,8 +1,5 @@
--- CreateEnum
-CREATE TYPE "CommandPermission" AS ENUM ('VIEWERS', 'FOLLOWERS', 'VIPS', 'SUBSCRIBERS', 'MODERATORS', 'BROADCASTER');
-
 -- CreateTable
-CREATE TABLE IF NOT EXISTS "commands" (
+CREATE TABLE "commands" (
     "id" SERIAL NOT NULL,
     "name" VARCHAR(255) NOT NULL,
     "aliases" JSON DEFAULT E'[]',
@@ -11,7 +8,7 @@ CREATE TABLE IF NOT EXISTS "commands" (
     "response" TEXT NOT NULL,
     "enabled" BOOLEAN NOT NULL DEFAULT true,
     "visible" BOOLEAN NOT NULL DEFAULT true,
-    "permission" "CommandPermission" NOT NULL DEFAULT E'VIEWERS',
+    "permission" TEXT NOT NULL DEFAULT E'viewers',
     "price" INTEGER DEFAULT 0,
     "usage" INTEGER DEFAULT 0,
     "sound_volume" INTEGER,
@@ -21,7 +18,7 @@ CREATE TABLE IF NOT EXISTS "commands" (
 );
 
 -- CreateTable
-CREATE TABLE IF NOT EXISTS "eventlist" (
+CREATE TABLE "eventlist" (
     "id" SERIAL NOT NULL,
     "name" VARCHAR(255) NOT NULL,
     "data" JSON NOT NULL,
@@ -31,7 +28,7 @@ CREATE TABLE IF NOT EXISTS "eventlist" (
 );
 
 -- CreateTable
-CREATE TABLE IF NOT EXISTS "events" (
+CREATE TABLE "events" (
     "id" SERIAL NOT NULL,
     "name" VARCHAR(255) NOT NULL,
     "operations" JSON DEFAULT E'[]',
@@ -40,7 +37,7 @@ CREATE TABLE IF NOT EXISTS "events" (
 );
 
 -- CreateTable
-CREATE TABLE IF NOT EXISTS "files" (
+CREATE TABLE "files" (
     "id" SERIAL NOT NULL,
     "name" VARCHAR(255) NOT NULL,
     "type" VARCHAR(255) NOT NULL,
@@ -50,7 +47,7 @@ CREATE TABLE IF NOT EXISTS "files" (
 );
 
 -- CreateTable
-CREATE TABLE IF NOT EXISTS "greetings" (
+CREATE TABLE "greetings" (
     "id" SERIAL NOT NULL,
     "userId" INTEGER,
     "username" VARCHAR(255),
@@ -63,7 +60,7 @@ CREATE TABLE IF NOT EXISTS "greetings" (
 );
 
 -- CreateTable
-CREATE TABLE IF NOT EXISTS "keywords" (
+CREATE TABLE "keywords" (
     "id" SERIAL NOT NULL,
     "name" VARCHAR(255) NOT NULL,
     "response" TEXT NOT NULL,
@@ -74,7 +71,16 @@ CREATE TABLE IF NOT EXISTS "keywords" (
 );
 
 -- CreateTable
-CREATE TABLE IF NOT EXISTS "overlays" (
+CREATE TABLE "mikro_orm_migrations" (
+    "id" SERIAL NOT NULL,
+    "name" VARCHAR(255),
+    "executed_at" TIMESTAMPTZ(6) DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "overlays" (
     "id" SERIAL NOT NULL,
     "name" VARCHAR(255) NOT NULL,
     "data" TEXT NOT NULL,
@@ -85,17 +91,17 @@ CREATE TABLE IF NOT EXISTS "overlays" (
 );
 
 -- CreateTable
-CREATE TABLE IF NOT EXISTS "settings" (
+CREATE TABLE "settings" (
     "id" SERIAL NOT NULL,
     "space" VARCHAR(255) NOT NULL,
     "name" VARCHAR(255) NOT NULL,
-    "value" JSONB,
+    "value" TEXT,
 
     PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE IF NOT EXISTS "song_likes" (
+CREATE TABLE "songs_likes" (
     "id" SERIAL NOT NULL,
     "userId" INTEGER NOT NULL,
     "name" VARCHAR(255) NOT NULL,
@@ -106,7 +112,7 @@ CREATE TABLE IF NOT EXISTS "song_likes" (
 );
 
 -- CreateTable
-CREATE TABLE IF NOT EXISTS "timers" (
+CREATE TABLE "timers" (
     "id" SERIAL NOT NULL,
     "name" VARCHAR(255) NOT NULL,
     "enabled" BOOLEAN DEFAULT true,
@@ -121,8 +127,8 @@ CREATE TABLE IF NOT EXISTS "timers" (
 );
 
 -- CreateTable
-CREATE TABLE IF NOT EXISTS "users" (
-    "id" SERIAL NOT NULL,
+CREATE TABLE "users" (
+    "id" INTEGER NOT NULL,
     "username" VARCHAR(255),
     "messages" INTEGER DEFAULT 0,
     "watched" BIGINT DEFAULT 0,
@@ -134,7 +140,7 @@ CREATE TABLE IF NOT EXISTS "users" (
 );
 
 -- CreateTable
-CREATE TABLE IF NOT EXISTS "users_bits" (
+CREATE TABLE "users_bits" (
     "id" SERIAL NOT NULL,
     "amount" BIGINT NOT NULL,
     "message" TEXT,
@@ -145,7 +151,7 @@ CREATE TABLE IF NOT EXISTS "users_bits" (
 );
 
 -- CreateTable
-CREATE TABLE IF NOT EXISTS "users_daily_messages" (
+CREATE TABLE "users_daily_messages" (
     "id" SERIAL NOT NULL,
     "userId" INTEGER NOT NULL,
     "count" INTEGER DEFAULT 0,
@@ -155,7 +161,7 @@ CREATE TABLE IF NOT EXISTS "users_daily_messages" (
 );
 
 -- CreateTable
-CREATE TABLE IF NOT EXISTS "users_tips" (
+CREATE TABLE "users_tips" (
     "id" SERIAL NOT NULL,
     "amount" REAL NOT NULL,
     "inMainCurrencyAmount" REAL NOT NULL,
@@ -169,7 +175,7 @@ CREATE TABLE IF NOT EXISTS "users_tips" (
 );
 
 -- CreateTable
-CREATE TABLE IF NOT EXISTS "variables" (
+CREATE TABLE "variables" (
     "id" SERIAL NOT NULL,
     "name" VARCHAR(255) NOT NULL,
     "response" TEXT NOT NULL,
@@ -179,7 +185,7 @@ CREATE TABLE IF NOT EXISTS "variables" (
 );
 
 -- CreateTable
-CREATE TABLE IF NOT EXISTS "widgets" (
+CREATE TABLE "widgets" (
     "id" SERIAL NOT NULL,
     "name" VARCHAR(255) NOT NULL,
     "x" INTEGER NOT NULL,
@@ -191,51 +197,46 @@ CREATE TABLE IF NOT EXISTS "widgets" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX IF NOT EXISTS "commands.name_unique" ON "commands"("name");
+CREATE UNIQUE INDEX "commands_name_unique" ON "commands"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX IF NOT EXISTS "events.name_unique" ON "events"("name");
+CREATE UNIQUE INDEX "events_name_unique" ON "events"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX IF NOT EXISTS "keywords.name_unique" ON "keywords"("name");
+CREATE UNIQUE INDEX "keywords_name_unique" ON "keywords"("name");
 
 -- CreateIndex
-CREATE INDEX IF NOT EXISTS "keywords_name_index" ON "keywords"("name");
+CREATE INDEX "keywords_name_index" ON "keywords"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX IF NOT EXISTS "settings_space_name_unique" ON "settings"("space", "name");
+CREATE UNIQUE INDEX "settings_space_name_unique" ON "settings"("space", "name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX IF NOT EXISTS "songs_likes_userid_name_unique" ON "song_likes"("userId", "name");
+CREATE UNIQUE INDEX "songs_likes_userid_name_unique" ON "songs_likes"("userId", "name");
 
 -- CreateIndex
-CREATE INDEX IF NOT EXISTS "users_username_index" ON "users"("username");
+CREATE INDEX "users_username_index" ON "users"("username");
 
 -- CreateIndex
-CREATE UNIQUE INDEX IF NOT EXISTS "variables.name_unique" ON "variables"("name");
+CREATE UNIQUE INDEX "variables_name_unique" ON "variables"("name");
 
 -- CreateIndex
-CREATE INDEX IF NOT EXISTS "variables_name_index" ON "variables"("name");
+CREATE INDEX "variables_name_index" ON "variables"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX IF NOT EXISTS "widgets.name_unique" ON "widgets"("name");
+CREATE UNIQUE INDEX "widgets_name_unique" ON "widgets"("name");
 
 -- AddForeignKey
-ALTER TABLE "commands" DROP CONSTRAINT IF EXISTS "sound_file_id";
 ALTER TABLE "commands" ADD FOREIGN KEY ("sound_file_id") REFERENCES "files"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "greetings" DROP CONSTRAINT IF EXISTS "sound_file_id";
 ALTER TABLE "greetings" ADD FOREIGN KEY ("sound_file_id") REFERENCES "files"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "users_bits" DROP CONSTRAINT IF EXISTS "userId";
 ALTER TABLE "users_bits" ADD FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "users_daily_messages" DROP CONSTRAINT IF EXISTS "userId";
 ALTER TABLE "users_daily_messages" ADD FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "users_tips" DROP CONSTRAINT IF EXISTS "userId";
 ALTER TABLE "users_tips" ADD FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;

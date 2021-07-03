@@ -200,13 +200,24 @@ class Twitch implements System {
 
   @command({
     name: 'title',
-    permission: CommandPermission.MODERATOR,
     visible: false,
     description: 'commands.title.description',
   })
-  async setTitle(opts: CommandOptions) {
-    if (!opts.argument.trim().length) return `$sender ${this.channelMetaData.title}`;
+  async getTitle(opts: CommandOptions) {
+    if (!opts.argument.trim().length) {
+      return `$sender ${this.channelMetaData.title}`;
+    } else {
+      return this.setTitle(opts);
+    }
+  }
 
+  @command({
+    name: 'title set',
+    visible: false,
+    description: 'commands.title.description',
+    permission: CommandPermission.MODERATORS,
+  })
+  async setTitle(opts: CommandOptions) {
     await tmi.bot.api?.kraken.channels.updateChannel(tmi.channel?.id, {
       status: opts.argument,
     });
@@ -217,13 +228,25 @@ class Twitch implements System {
   @command({
     name: 'category',
     aliases: ['game'],
-    permission: CommandPermission.MODERATOR,
+    visible: true,
+    description: 'commands.category.description',
+  })
+  async getGame(opts: CommandOptions) {
+    if (!opts.argument.trim().length) {
+      return `$sender ${this.channelMetaData.game}`;
+    } else {
+      return this.setGame(opts);
+    }
+  }
+
+  @command({
+    name: 'category set',
+    aliases: ['game set'],
+    permission: CommandPermission.MODERATORS,
     visible: false,
     description: 'commands.category.description',
   })
   async setGame(opts: CommandOptions) {
-    if (!opts.argument.trim().length) return `$sender ${this.channelMetaData.game}`;
-
     const suggestedGame = await tmi.bot.api?.helix.games.getGameByName(opts.argument);
 
     if (!suggestedGame) return;

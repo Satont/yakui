@@ -26,7 +26,7 @@ class General {
   @command({
     name: 'help',
     aliases: ['description'],
-    permission: CommandPermission.VIEWER,
+    permission: CommandPermission.VIEWERS,
     description: 'commands.help.description',
   })
   async getHelp(opts: CommandOptions) {
