@@ -100,7 +100,7 @@ class Parser {
     const userPerms = users.getUserPermissions(raw.userInfo.badges, raw);
     this.cooldowns.includes(command.name) && !userPerms.broadcaster && !userPerms.moderators
       ? tmi.whispers({ target: raw.userInfo.userName, message: commandResult })
-      : tmi.say({ message: commandResult });
+      : tmi.say({ message: commandResult, replyTo: raw.id });
 
     if (command.cooldown !== 0 && !this.cooldowns.includes(command.name)) {
       this.cooldowns.push(command.name);
