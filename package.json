@@ -54,7 +54,7 @@
     "vue-loader": "^15.9.6",
     "vue-style-loader": "^4.1.2",
     "vue-template-compiler": "^2.6.12",
-    "webpack": "^5.11.0",
+    "webpack": "^5.42.1",
     "webpack-cli": "^4.2.0"
   },
   "dependencies": {
@@ -100,10 +100,10 @@
     "tlds": "^1.216.0",
     "ts-morph": "^9.1.0",
     "ts-node": "^9.1.1",
-    "twitch": "^4.3.6",
-    "twitch-auth": "^4.3.6",
-    "twitch-chat-client": "^4.3.6",
-    "twitch-pubsub-client": "^4.3.6",
+    "twitch": "^4.6.0",
+    "twitch-auth": "^4.6.0",
+    "twitch-chat-client": "^4.6.0",
+    "twitch-pubsub-client": "^4.6.0",
     "vue": "^2.6.12",
     "vue-class-component": "^7.2.6",
     "vue-clipboard2": "^0.3.1",
