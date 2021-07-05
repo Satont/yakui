@@ -114,7 +114,7 @@
     "vue-socket.io-extended": "^4.0.5",
     "vue-toastification": "^1.7.8",
     "vuex": "^3.6.0",
-    "ws": "^7.4.1"
+    "ws": "^7.5.2"
   },
   "_moduleAliases": {
     "@bot": "dest/",
