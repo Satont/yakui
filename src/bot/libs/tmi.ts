@@ -178,11 +178,11 @@ class Tmi {
     return [input.substring(0, lastSpace), input.substring(lastSpace + 1)];
   }
 
-  async say({ type = 'bot', message }: { type?: 'bot' | 'broadcaster'; message: string }) {
+  async say({ type = 'bot', message, replyTo }: { type?: 'bot' | 'broadcaster'; message: string; replyTo?: string }) {
     if (process.env.NODE_ENV === 'production') {
       const messages = this.splitLine(message, 500);
       for (const msg of messages) {
-        this[type].chat?.say(this.channel.name, msg);
+        this[type].chat?.say(this.channel.name, msg, { replyTo });
       }
     }
     chatOut(message);
