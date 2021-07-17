@@ -1,28 +1,28 @@
-import { CommandOptions } from '@/typings';
+import { CommandOptions } from 'typings';
 import { onChange, settings } from '../decorators';
 import { command } from '../decorators/command';
-import { CommandPermission } from '../entities/Command';
 import locales from '../libs/locales';
-import webhooks from '../libs/webhooks';
+import eventsub from '../libs/eventsub';
 import cache from '../libs/cache';
+import { CommandPermission } from '@prisma/client';
 
 class General {
   @settings()
-  siteUrl = 'http://localhost:3000'
+  siteUrl = 'http://localhost:3000';
 
   @settings()
-  locale = 'ru'
+  locale = 'ru';
 
   @onChange('siteUrl')
   onSiteUrlChange() {
-    webhooks.init();
+    eventsub.init();
   }
 
   @onChange('locale')
   onLocaleChange() {
     locales.init();
   }
-  
+
   @command({
     name: 'help',
     aliases: ['description'],

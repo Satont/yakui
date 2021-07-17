@@ -6,18 +6,18 @@ import { info, error } from '@bot/libs/logger';
 import { onChange, onLoad, settings } from '../decorators';
 
 class Spotify implements Integration {
-  client: SpotifyApi | null = null
-  private refreshTimeout: NodeJS.Timeout = null
+  client: SpotifyApi | null = null;
+  private refreshTimeout: NodeJS.Timeout = null;
 
   @settings()
-  access_token: string = null
+  access_token: string = null;
 
   @settings()
-  refresh_token: string = null
+  refresh_token: string = null;
 
   @settings()
-  enabled = false
-  
+  enabled = false;
+
   @onChange(['enabled', 'access_token', 'refresh_token'])
   @onLoad()
   async init() {
@@ -49,9 +49,9 @@ class Spotify implements Integration {
     if (!this.client) return false;
     const data = await this.client.getMyCurrentPlayingTrack();
 
-    if (!data.body || !data.body?.item || !data.body.is_playing) return false;
+    if (!data.body || !data.body?.item || !data.body.is_playing || data.body.item.type === 'episode') return false;
 
-    return `${data.body.item.artists.map(o => o.name).join(', ')} — ${data.body.item.name}`;
+    return `${data.body.item.artists.map((o) => o.name).join(', ')} — ${data.body.item.name}`;
   }
 }
 

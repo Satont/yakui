@@ -2,13 +2,11 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@/*": ["./*"],
       "@src/*": ["src/*"],
       "@bot/*": ["src/bot/*"],
       "@panel/*": ["src/panel/*"],
       "@login/*": ["src/login/*"],
-      "typings": ["typings"],
-      "@typings": ["src/typings/*"]
+      "typings": ["typings"]
     },
     "target": "es6",
     "module": "commonjs",

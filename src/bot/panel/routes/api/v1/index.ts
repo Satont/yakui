@@ -1,5 +1,4 @@
-import { Router } from 'express';
-import { RequestContext } from '@mikro-orm/core';
+import express, { Router } from 'express';
 
 import commands from './commands';
 import timers from './timers';
@@ -14,13 +13,11 @@ import overlays from './overlays';
 import widgets from './widgets';
 import chatMessage from './chatMessage';
 import files from './files';
-import { orm } from '@bot/libs/db';
 
 const router = Router();
 
-router.use((req, res, next) => {
-  RequestContext.create(orm.em.fork(), next);
-});
+router.use(express.urlencoded({ extended: false }));
+router.use(express.json());
 
 router.get('/', (req, res) => {
   res.send('This is api v1');

@@ -16,88 +16,98 @@
       <a @click="show = 'raided'" class="btn btn-primary btn-sm">Raided</a>
       <a @click="show = 'redemption'" class="btn btn-primary btn-sm">Redemption</a>
     </div>
-  <div class="jumbotron jumbotron-fluid">
+    <div class="jumbotron jumbotron-fluid">
       <h1 class="display-4">{{ show }} event</h1>
       <p class="lead">{{ this.$data[show].description }}</p>
-  </div>
-
-  <table class="table table-dark table-sm">
-    <thead>
-      <tr align="center">
-        <th colspan="2">Avalible variables for {{ show }} event</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="(variable, index) in this.$data[show].variables" :key="index">
-        <td>{{ variable.name }}</td>
-        <td>{{ variable.description }}</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="card card-bg" :key="index" v-for="(operation, index) in this.$data[show].operations" style="margin-bottom:15px;">
-    <div class="card-body">
-      <select class="custom-select" v-model="operation.key" style="margin-bottom:15px;">
-        <option value="sendMessage">Send Chat Message</option>
-        <option value="playAudio">Play audio</option>
-        <option value="TTS">Say any message in TTS overlay</option>
-      </select>
-      <center><label>Filter of operation (javascript)</label></center>
-      <input type="text" class="form-control" v-model="operation.filter" placeholder="$username === 'moobot'">
-      <br>
-
-      <center><label v-if="operation.key === 'sendMessage'">Message for sending</label></center>
-      <input type="text" class="form-control" v-if="operation.key === 'sendMessage'" v-model="operation.message" placeholder="Message for sending">
-
-      <center><label v-if="operation.key === 'playAudio'">Audio for playing</label></center>
-      <select v-if="operation.key === 'playAudio'" class="custom-select" v-model="operation.audioId" style="margin-bottom:15px;">
-        <option v-for="option in $store.state.filesList.filter(o => o.type.startsWith('audio'))" v-bind:key="option.id" v-bind:value="option.id">
-          {{ option.name }}
-        </option>
-      </select>
-      <center><label v-if="operation.key === 'playAudio'">Volume of audio</label></center>
-      <input type="text" class="form-control" v-if="operation.key === 'playAudio'" v-model.number="operation.audioVolume" value="100">
-
-      <center><label v-if="operation.key === 'TTS'">Message for talking</label></center>
-      <input type="text" class="form-control" v-if="operation.key === 'TTS'" v-model="operation.message" placeholder="Message for talking">
     </div>
-    <div class="card-footer text-muted">
-      <button type="button" class="btn btn-block btn-danger btn-sm" @click="deleteOperation(index)">Delete</button>
+
+    <table class="table table-dark table-sm">
+      <thead>
+        <tr align="center">
+          <th colspan="2">Avalible variables for {{ show }} event</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(variable, index) in this.$data[show].variables" :key="index">
+          <td>{{ variable.name }}</td>
+          <td>{{ variable.description }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card card-bg" :key="index" v-for="(operation, index) in this.$data[show].operations" style="margin-bottom:15px;">
+      <div class="card-body">
+        <select class="custom-select" v-model="operation.key" style="margin-bottom:15px;">
+          <option value="sendMessage">Send Chat Message</option>
+          <option value="playAudio">Play audio</option>
+          <option value="TTS">Say any message in TTS overlay</option>
+        </select>
+        <center><label>Filter of operation (javascript)</label></center>
+        <input type="text" class="form-control" v-model="operation.filter" placeholder="$username === 'moobot'" />
+        <br />
+
+        <center><label v-if="operation.key === 'sendMessage'">Message for sending</label></center>
+        <input
+          type="text"
+          class="form-control"
+          v-if="operation.key === 'sendMessage'"
+          v-model="operation.message"
+          placeholder="Message for sending"
+        />
+
+        <center><label v-if="operation.key === 'playAudio'">Audio for playing</label></center>
+        <select v-if="operation.key === 'playAudio'" class="custom-select" v-model="operation.audioId" style="margin-bottom:15px;">
+          <option
+            v-for="option in $store.state.filesList.filter((o) => o.type.startsWith('audio'))"
+            v-bind:key="option.id"
+            v-bind:value="option.id"
+          >
+            {{ option.name }}
+          </option>
+        </select>
+        <center><label v-if="operation.key === 'playAudio'">Volume of audio</label></center>
+        <input type="text" class="form-control" v-if="operation.key === 'playAudio'" v-model.number="operation.audioVolume" value="100" />
+
+        <center><label v-if="operation.key === 'TTS'">Message for talking</label></center>
+        <input
+          type="text"
+          class="form-control"
+          v-if="operation.key === 'TTS'"
+          v-model="operation.message"
+          placeholder="Message for talking"
+        />
+      </div>
+      <div class="card-footer text-muted">
+        <button type="button" class="btn btn-block btn-danger btn-sm" @click="deleteOperation(index)">Delete</button>
+      </div>
     </div>
-  </div>
-  <br>
-  <button type="button" class="btn btn-block btn-success" @click="save()" style="margin-bottom:5px;">Save</button>
-  <button type="button" class="btn btn-block btn-success" @click="addOperation()">Add new opperation</button>
+    <br />
+    <button type="button" class="btn btn-block btn-success" @click="save()" style="margin-bottom:5px;">Save</button>
+    <button type="button" class="btn btn-block btn-success" @click="addOperation()">Add new opperation</button>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import { Event } from '@bot/entities/Event'
+import Vue from 'vue';
+import { Events } from '@prisma/client';
 
 export default Vue.extend({
   data: () => ({
     show: 'follow',
     follow: {
-      variables: [
-        { name: '$username', description: 'Username of user who followed' },
-      ],
+      variables: [{ name: '$username', description: 'Username of user who followed' }],
       description: 'Triggering when channel got new follower.',
-      operations: []
+      operations: [],
     },
     newmod: {
-      variables: [
-        { name: '$username', description: 'Username of user who got moderated' },
-      ],
+      variables: [{ name: '$username', description: 'Username of user who got moderated' }],
       description: 'Triggering when channel got new moderator.',
-      operations: []
+      operations: [],
     },
     removemod: {
-      variables: [
-        { name: '$username', description: 'Username of user who lost moderation' },
-      ],
+      variables: [{ name: '$username', description: 'Username of user who lost moderation' }],
       description: 'Triggering when channel lost some moderator.',
-      operations: []
+      operations: [],
     },
     message: {
       variables: [
@@ -105,45 +115,45 @@ export default Vue.extend({
         { name: '$message', description: 'Typed message' },
       ],
       description: 'Triggering when someone post message in chat',
-      operations: []
+      operations: [],
     },
     tip: {
       variables: [
         { name: '$username', description: 'Username of user who donated' },
         { name: '$amount', description: 'How much donated' },
         { name: '$currency', description: 'Currency of donate' },
-        { name: '$message', description: 'Message of donation' }
+        { name: '$message', description: 'Message of donation' },
       ],
       description: 'Triggering when you get some donation',
-      operations: []
+      operations: [],
     },
     bits: {
       variables: [
         { name: '$username', description: 'Username of user who donated' },
         { name: '$amount', description: 'How much donated' },
-        { name: '$message', description: 'Message of donation' }
+        { name: '$message', description: 'Message of donation' },
       ],
       description: 'Triggering when you get some cheers',
-      operations: []
+      operations: [],
     },
     sub: {
       variables: [
         { name: '$username', description: 'Username of user who subscribed' },
         { name: '$sub.tier', description: 'Tier of sub. Twitch prime/1/2/3/' },
-        { name: '$message', description: 'Message of resub' }
+        { name: '$message', description: 'Message of resub' },
       ],
       description: 'Triggering when some user did subscribtion',
-      operations: []
+      operations: [],
     },
     resub: {
       variables: [
         { name: '$username', description: 'Username of user who resubscribed' },
         { name: '$sub.tier', description: 'Tier of sub. Twitch prime/1/2/3/' },
         { name: '$sub.months', description: 'Cumulative streak of user months' },
-        { name: '$message', description: 'Message of resub' }
+        { name: '$message', description: 'Message of resub' },
       ],
       description: 'Triggering when some user did resubscribtion',
-      operations: []
+      operations: [],
     },
     subGift: {
       variables: [
@@ -153,31 +163,31 @@ export default Vue.extend({
         { name: '$subgift.recipient', description: 'Username of recipient user' },
       ],
       description: 'Triggering when some user gift subscribtion to another user',
-      operations: []
+      operations: [],
     },
     hosted: {
       variables: [
         { name: '$username', description: 'Username who started host' },
-        { name: '$viewers', description: 'Viewers of host' }
+        { name: '$viewers', description: 'Viewers of host' },
       ],
       description: 'Triggering when you got hosted',
-      operations: []
+      operations: [],
     },
     hosting: {
       variables: [
         { name: '$username', description: 'Username of target' },
-        { name: '$viewers', description: 'Viewers of host' }
+        { name: '$viewers', description: 'Viewers of host' },
       ],
       description: 'Triggering when yuo starting host',
-      operations: []
+      operations: [],
     },
     raided: {
       variables: [
         { name: '$username', description: 'Username raider' },
-        { name: '$viewers', description: 'Viewers of raid' }
+        { name: '$viewers', description: 'Viewers of raid' },
       ],
       description: 'Triggering when someone start to raid you',
-      operations: []
+      operations: [],
     },
     redemption: {
       variables: [
@@ -187,34 +197,34 @@ export default Vue.extend({
         { name: '$message', description: 'Message of user sended.' },
       ],
       description: 'Redemption recieved',
-      operations: []
+      operations: [],
     },
   }),
   async created() {
-    const { data }: { data: Event[] } = await this.$axios.get('/events')
+    const { data }: { data: Events[] } = await this.$axios.get('/events');
 
     for (const event of data) {
-      this[event.name].operations = event.operations
+      this[event.name].operations = event.operations;
     }
   },
   methods: {
-    addOperation: function () {
-      this[this.show].operations.push({ key: 'sendMessage', message: '' })
+    addOperation: function() {
+      this[this.show].operations.push({ key: 'sendMessage', message: '' });
     },
-    deleteOperation: function (index) {
-      this[this.show].operations.splice(index, 1)
+    deleteOperation: function(index) {
+      this[this.show].operations.splice(index, 1);
     },
-    save: async function () {
-      await this.$axios.post('/events', { name: this.show, operations: this[this.show].operations })
-      this.$toast.success('Success')
-    }
-  }
-})
+    save: async function() {
+      await this.$axios.post('/events', { name: this.show, operations: this[this.show].operations });
+      this.$toast.success('Success');
+    },
+  },
+});
 </script>
 
 <style scoped>
 .card-bg {
-  background-color: #50585f !important
+  background-color: #50585f !important;
 }
 #navigation {
   list-style: none;

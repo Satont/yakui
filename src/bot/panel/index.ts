@@ -1,20 +1,18 @@
 import express, { Request, Response } from 'express';
-import bodyparser from 'body-parser';
 import history from 'connect-history-api-fallback';
 import { resolve } from 'path';
 import http from 'http';
 
 import v1 from './routes/api/v1';
 import { error, info } from '@bot/libs/logger';
-import twitch from './routes/twitch';
 import Authorization from '@bot/systems/authorization';
+import twitch from './routes/twitch';
+import morgan from 'morgan';
 
-const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
-
-export const app = express();
-
-app.use(bodyparser.urlencoded({ extended: false }));
-app.use(bodyparser.json());
+const app = express();
+// eslint-disable-next-line prefer-const
+let ready = false;
+app.use(morgan('combined'));
 app.use('/twitch', twitch);
 app.use('/static', express.static(resolve(process.cwd(), 'public', 'dest')));
 app.use('/icons', express.static(resolve(process.cwd(), 'public', 'icons')));
@@ -62,8 +60,18 @@ app.use((err, req: Request, res: Response, next) => {
   } else next();
 });
 
-export const server = http.createServer(app);
+const server = http.createServer(app);
 
-server.listen(PORT, '0.0.0.0', () => {
-  info(`PANEL: Server initiliazed on ${PORT}`);
-});
+function listen() {
+  server.listen(process.env.PORT ? Number(process.env.PORT) : 3000, process.env.HOST ?? '0.0.0.0', () => {
+    info(`Panel listening on ${process.env.PORT ? Number(process.env.PORT) : 3000} port.`);
+    ready = true;
+  });
+}
+
+export default {
+  app,
+  ready,
+  server,
+  listen,
+};

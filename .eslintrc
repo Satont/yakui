@@ -14,7 +14,7 @@
     "quotes": ["error", "single", { "allowTemplateLiterals": true }],
     "@typescript-eslint/no-var-requires": 1,
     "@typescript-eslint/explicit-module-boundary-types": "off",
-    "@typescript-eslint/indent": ["error", 2],
+    "@typescript-eslint/indent": ["warn", 2],
     "@typescript-eslint/no-inferrable-types": "off",
     "semi": [2, "always"],
     "prefer-const": ["error", {
@@ -25,7 +25,8 @@
     "comma-dangle": [2, "always-multiline"],
     "@typescript-eslint/no-explicit-any": "off",
     "brace-style": "error",
-    "object-curly-spacing": [2, "always"]
+    "object-curly-spacing": [2, "always"],
+    "max-len": ["error", { "code": 140 }]
   },
   "parserOptions": {
     "ecmaFeatures": {

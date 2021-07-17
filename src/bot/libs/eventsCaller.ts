@@ -1,9 +1,12 @@
 import { loadedSystems } from './loader';
 import { DonationData, HostType } from 'typings';
 import { info, donate, hosted, hosting, raided, moded, unmoded, follow, sub, resub, redemption, highlight } from './logger';
-import { IWebHookModeratorAdd, IWebHookModeratorRemove, IWebHookUserFollow, IWebHookStreamChanged, INewSubscriber, INewResubscriber } from 'typings/events';
+import { INewSubscriber, INewResubscriber } from 'typings/events';
 import { PubSubRedemptionMessage } from 'twitch-pubsub-client/lib';
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage';
+import { EventSubChannelUpdateEvent } from 'twitch-eventsub/lib/Events/EventSubChannelUpdateEvent';
+import { EventSubChannelFollowEvent } from 'twitch-eventsub/lib/Events/EventSubChannelFollowEvent';
+import { EventSubChannelModeratorEvent } from 'twitch-eventsub/lib/Events/EventSubChannelModeratorEvent';
 
 export const onStreamStart = () => {
   info(`TWITCH: Stream started`);
@@ -35,7 +38,6 @@ export const onHosting = ({ username, viewers }: HostType) => {
   }
 };
 
-
 export const onHosted = ({ username, viewers }: HostType) => {
   hosted(`${username}, ${viewers}`);
 
@@ -52,32 +54,32 @@ export const onRaided = ({ username, viewers }: HostType) => {
   }
 };
 
-export const onAddModerator = (data: IWebHookModeratorAdd) => {
-  moded(data.event_data.user_name);
+export const onAddModerator = (data: EventSubChannelModeratorEvent) => {
+  moded(data.userName);
 
   for (const system of loadedSystems) {
     if (typeof system.onAddModerator === 'function') system.onAddModerator(data);
   }
 };
 
-export const onRemoveModerator = (data: IWebHookModeratorRemove) => {
-  unmoded(data.event_data.user_name);
+export const onRemoveModerator = (data: EventSubChannelModeratorEvent) => {
+  unmoded(data.userName);
 
   for (const system of loadedSystems) {
     if (typeof system.onRemoveModerator === 'function') system.onRemoveModerator(data);
   }
 };
 
-export const onUserFollow = (data: IWebHookUserFollow) => {
-  follow(data.from_name);
+export const onUserFollow = (data: EventSubChannelFollowEvent) => {
+  follow(data.userName);
 
   for (const system of loadedSystems) {
     if (typeof system.onUserFollow === 'function') system.onUserFollow(data);
   }
 };
 
-export const onStreamChange = (data: IWebHookStreamChanged) => {
-  info(`STREAM CHANGED | TITLE: ${data.title} | GAME ${data.game_id}`);
+export const onStreamChange = (data: EventSubChannelUpdateEvent) => {
+  info(`STREAM CHANGED | TITLE: ${data.streamTitle} | GAME ${data.categoryName}`);
 
   for (const system of loadedSystems) {
     if (typeof system.onStreamChange === 'function') system.onStreamChange(data);

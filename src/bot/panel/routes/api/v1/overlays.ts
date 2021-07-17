@@ -1,13 +1,11 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { checkSchema, validationResult } from 'express-validator';
-import Overlays from '@bot/systems/overlays';
+import OverlaysSystem from '@bot/systems/overlays';
 import isAdmin from '@bot/panel/middlewares/isAdmin';
-import { Overlay } from '@bot/entities/Overlay';
 import cache from '@bot/libs/cache';
-import { RequestContext, wrap } from '@mikro-orm/core';
+import { prisma } from '@src/bot/libs/db';
 
 const router = Router({ mergeParams: true });
-
 
 router.get('/', async (req, res, next) => {
   try {
@@ -19,7 +17,7 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:id', (req, res, next) => {
   try {
-    const overlay = Overlays.getOverlay(req.params.id);
+    const overlay = OverlaysSystem.getOverlay(req.params.id);
 
     res.json(overlay);
   } catch (e) {
@@ -29,7 +27,7 @@ router.get('/:id', (req, res, next) => {
 
 router.get('/parse/:id', async (req, res, next) => {
   try {
-    const data = await Overlays.parseOverlayData(req.params.id);
+    const data = await OverlaysSystem.parseOverlayData(req.params.id);
 
     res.json(data);
   } catch (e) {
@@ -37,75 +35,76 @@ router.get('/parse/:id', async (req, res, next) => {
   }
 });
 
-router.post('/', isAdmin, checkSchema({
-  id: {
-    isNumeric: true,
-    in: ['body'],
-    optional: {
-      options: { nullable: true },
+router.post(
+  '/',
+  isAdmin,
+  checkSchema({
+    id: {
+      isNumeric: true,
+      in: ['body'],
+      optional: {
+        options: { nullable: true },
+      },
     },
-  },
-  name: {
-    isString: true,
-    in: ['body'],
-  },
-  data: {
-    isString: true,
-    in: ['body'],
-  },
-  css: {
-    isString: true,
-    in: ['body'],
-    optional: {
-      options: { nullable: true },
+    name: {
+      isString: true,
+      in: ['body'],
     },
-  },
-  js: {
-    isArray: true,
-    in: ['body'],
-    optional: {
-      options: { nullable: true },
+    data: {
+      isString: true,
+      in: ['body'],
     },
+    css: {
+      isString: true,
+      in: ['body'],
+      optional: {
+        options: { nullable: true },
+      },
+    },
+    js: {
+      isArray: true,
+      in: ['body'],
+      optional: {
+        options: { nullable: true },
+      },
+    },
+  }),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      validationResult(req).throw();
+
+      const overlay = req.body.id
+        ? await prisma.overlays.update({ where: { id: Number(req.body.id) }, data: req.body })
+        : await prisma.overlays.create({ data: req.body });
+
+      await cache.updateOverlays();
+      res.json(overlay);
+    } catch (e) {
+      next(e);
+    }
   },
-}), async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    validationResult(req).throw();
+);
 
-    const repository = RequestContext.getEntityManager().getRepository(Overlay);
-    const overlay = req.body.id ? await repository.findOne({ id: req.body.id }) : repository.create(req.body);
+router.delete(
+  '/',
+  isAdmin,
+  checkSchema({
+    id: {
+      isNumeric: true,
+      in: ['body'],
+    },
+  }),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      validationResult(req).throw();
+      await prisma.overlays.delete({ where: { id: Number(req.body.id) } });
 
-    wrap(overlay).assign({
-      name: req.body.name,
-      data: req.body.data,
-      css: req.body.css,
-      js: req.body.js,
-    });
-
-    await repository.persistAndFlush(overlay);
-    await cache.updateOverlays();
-    res.json(overlay);
-  } catch (e) {
-    next(e);
-  }
-});
-
-router.delete('/', isAdmin, checkSchema({
-  id: {
-    isNumeric: true,
-    in: ['body'],
+      await cache.updateOverlays();
+      res.send('Ok');
+    } catch (e) {
+      next(e);
+    }
   },
-}), async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    validationResult(req).throw();
-    const repository = RequestContext.getEntityManager().getRepository(Overlay);
-    const overlay = await repository.findOne({ id: req.body.id });
-    await repository.removeAndFlush(overlay);
-
-    await cache.updateOverlays();
-    res.send('Ok');
-  } catch (e) {
-    next(e);
-  }
-});
+);
 
 export default router;

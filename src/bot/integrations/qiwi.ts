@@ -1,21 +1,19 @@
 import axios from 'axios';
 
-import { User }  from '@bot/entities/User';
-import { UserTip } from '@bot/entities/UserTip';
 import currency from '@bot/libs/currency';
 import { onDonation } from '@bot/libs/eventsCaller';
 import { info, error } from '@bot/libs/logger';
-import { orm } from '@bot/libs/db';
+import { prisma } from '@bot/libs/db';
 import { onChange, onLoad, settings } from '../decorators';
 
 class Qiwi {
-  pollTimeout: NodeJS.Timeout = null
+  pollTimeout: NodeJS.Timeout = null;
 
   @settings()
-  enabled = false
+  enabled = false;
 
   @settings()
-  token: string = null
+  token: string = null;
 
   @onChange(['enabled', 'token'])
   @onLoad()
@@ -38,19 +36,19 @@ class Qiwi {
         const inComingCurrency = event.attributes.DONATION_CURRENCY;
         const message = event.attributes.DONATION_MESSAGE ?? '';
 
-        const user = await orm.em.fork().getRepository(User).findOne({ username: sender.toLowerCase() });
+        const user = await prisma.users.findFirst({ where: { username: sender.toLowerCase() } });
         if (user) {
-          const tip = orm.em.fork().getRepository(UserTip).create({
-            userId: user.id,
-            amount: event.attributes.DONATION_AMOUNT,
-            rates: currency.rates,
-            currency: inComingCurrency,
-            inMainCurrencyAmount: currency.exchange({ from: inComingCurrency, amount }),
-            message,
-            timestamp: Date.now(),
-            user,
+          await prisma.usersTips.create({
+            data: {
+              amount: event.attributes.DONATION_AMOUNT,
+              rates: currency.rates,
+              currency: inComingCurrency,
+              inMainCurrencyAmount: currency.exchange({ from: inComingCurrency, amount }),
+              message,
+              timestamp: Date.now(),
+              userId: user.id,
+            },
           });
-          await orm.em.fork().getRepository(UserTip).persistAndFlush(tip);
         }
 
         onDonation({

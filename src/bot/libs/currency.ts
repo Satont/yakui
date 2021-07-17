@@ -99,9 +99,14 @@ class Currency {
   private async updateRates() {
     clearTimeout(this.updateRatesTimeout);
     try {
-      const { data } = await axios.get(`https://api.exchangeratesapi.io/latest?base=${this.base}`);
+      type Rates = {
+        [key in currency]: number;
+      };
+      const { data } = await axios.get<{ conversion_rates: Rates }>(
+        `https://v6.exchangerate-api.com/v6/70e7e29014fed7ff595d594f/latest/${this.base}`,
+      );
 
-      const rates: { [key in currency]: number } = data.rates;
+      const rates = data.conversion_rates;
 
       for (const [rate, value] of Object.entries(rates)) {
         this.rates[rate] = Number(value.toFixed(4));

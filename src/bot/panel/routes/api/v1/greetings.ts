@@ -1,9 +1,8 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { checkSchema, validationResult } from 'express-validator';
-import { Greeting } from '@bot/entities/Greeting';
 import isAdmin from '@bot/panel/middlewares/isAdmin';
 import cache from '@bot/libs/cache';
-import { RequestContext } from '@mikro-orm/core';
+import { prisma } from '@bot/libs/db';
 
 const router = Router({
   mergeParams: true,
@@ -19,7 +18,7 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:id', isAdmin, async (req, res, next) => {
   const greeting = cache.greetings.get(req.params.id);
-  greeting.sound_file = (greeting.sound_file?.id as any) ?? null;
+  greeting.sound_file = (greeting.sound_file_id as any) ?? null;
 
   try {
     res.json(greeting);
@@ -79,15 +78,10 @@ router.post(
       validationResult(req).throw();
       const body = req.body;
 
-      const repository = RequestContext.getEntityManager().getRepository(Greeting);
-      const greeting = body.id ? await repository.findOne({ id: Number(body.id) }) : repository.create(body);
+      const greeting = body.id
+        ? await prisma.greetings.update({ where: { id: body.id }, data: body })
+        : await prisma.greetings.create({ data: body });
 
-      repository.assign(greeting, {
-        userId: body.userId ? Number(body.userId) : null,
-        ...body,
-      });
-
-      await repository.persistAndFlush(greeting);
       await cache.updateGreetings();
       res.json(greeting);
     } catch (e) {
@@ -108,10 +102,8 @@ router.delete(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       validationResult(req).throw();
-      const repository = RequestContext.getEntityManager().getRepository(Greeting);
-      const greeting = await repository.findOne({ id: Number(req.body.id) });
+      await prisma.greetings.delete({ where: { id: Number(req.body.id) } });
 
-      await repository.removeAndFlush(greeting);
       await cache.updateGreetings();
       res.send('Ok');
     } catch (e) {

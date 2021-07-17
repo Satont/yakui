@@ -199,7 +199,6 @@ class Tmi {
   }
 
   private async loadLibs() {
-    await import('./loader');
     await import('./currency');
   }
 }

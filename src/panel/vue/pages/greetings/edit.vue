@@ -21,10 +21,10 @@
       </b-form-group>
 
       <b-form-group label="Greeting sound" label-for="sound">
-        <b-form-select id="sound" v-model="greeting.sound_file" :options="selectOptions"></b-form-select>
+        <b-form-select id="sound" v-model="greeting.sound_file_id" :options="selectOptions"></b-form-select>
       </b-form-group>
 
-      <div v-if="greeting.sound_file">
+      <div v-if="greeting.sound_file_id">
         <label for="pitch">Sound volume: {{ greeting.sound_volume }}</label>
         <b-form-input id="pitch" v-model="greeting.sound_volume" type="range" min="1" max="100" step="1"></b-form-input>
       </div>
@@ -53,7 +53,7 @@ export default class GreetingsManagerEdit extends Vue {
     userId: null,
     enabled: true,
     message: null,
-    sound_file: null,
+    sound_file_id: undefined,
     sound_volume: 50,
   };
 
@@ -64,7 +64,7 @@ export default class GreetingsManagerEdit extends Vue {
   }
 
   get selectOptions() {
-    return [{ value: null, text: 'No sound' }, ...this.audiosList];
+    return [{ value: undefined, text: 'No sound' }, ...this.audiosList];
   }
 
   async onSubmit(event) {

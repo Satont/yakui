@@ -1,20 +1,33 @@
-import './moduleAlias';
-import 'reflect-metadata';
 import 'source-map-support/register';
+import 'module-alias/register';
+
+import 'reflect-metadata';
+import './prototypes';
+
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { start as dbConnect, orm } from '@bot/libs/db';
-import { error } from '@bot/libs/logger';
+import { prisma } from '@bot/libs/db';
+import { error, info } from '@bot/libs/logger';
+import loader, { loaded } from '@bot/libs/loader';
 
 const start = async () => {
-  await dbConnect();
-  if (!(await orm.isConnected())) return setTimeout(() => start(), 1000);
+  await prisma.$connect();
 
   await import('@bot/libs/tmi');
-  await import('@bot/panel');
   await import('@bot/libs/socket');
+  await loader();
+  listenHttp();
+  info('All system loaded.');
 };
+
+function listenHttp() {
+  if (!loaded) {
+    return setTimeout(() => listenHttp(), 1000);
+  }
+
+  import('@bot/panel').then((p) => p.default.listen());
+}
 
 start();
 
@@ -35,10 +48,11 @@ process.on('SIGTERM', () => makeGracefullExit());
 process.on('SIGINT', () => makeGracefullExit());
 
 async function makeGracefullExit() {
-  (await import('@bot/panel')).server.close();
+  (await import('@bot/panel')).default.server.close();
   const tmi = (await import('@bot/libs/tmi')).default;
-  await tmi.bot?.chat?.quit();
-  await tmi.broadcaster.chat?.quit();
-  await (await import('@bot/libs/pubsub')).default.disconnect();
-  await (await import('@bot/integrations/donationalerts')).default.disconnect();
+  tmi.bot?.chat?.quit();
+  tmi.broadcaster.chat?.quit();
+  (await import('@bot/libs/pubsub')).default.disconnect();
+  (await import('@bot/integrations/donationalerts')).default.disconnect();
+  process.exit(0);
 }

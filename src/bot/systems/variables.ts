@@ -6,22 +6,22 @@ import twitch from './twitch';
 import includesOneOf from '@bot/commons/includesOneOf';
 import users from './users';
 import tmi from '@bot/libs/tmi';
-import { User, User as UserModel } from '@bot/entities/User';
 import currency from '@bot/libs/currency';
 import Axios from 'axios';
 import { System, Command } from 'typings';
-import { Variable } from '@bot/entities/Variable';
 import spotify from '@bot/integrations/spotify';
 import locales from '@bot/libs/locales';
 import evaluate from '@bot/commons/eval';
 import satontapi from '@bot/integrations/satontapi';
 import Commands from './commands';
-import { UserDailyMessages } from '@bot/entities/UserDailyMessages';
-import { orm } from '@bot/libs/db';
-import { CommandPermission } from '../entities/Command';
-import { QueryBuilder } from '@mikro-orm/postgresql';
+import { prisma } from '@bot/libs/db';
+import { CommandPermission } from '@prisma/client';
+import { watchedFormatted } from '../helpers/watchedFormatted';
+import { totalTips } from '../helpers/totalTips';
+import { totalBits } from '../helpers/totalBits';
+import { todayMessages } from '../helpers/todayMessages';
 
-export default new (class Variables implements System {
+class Variables implements System {
   variables: Array<{ name: string; response: string; custom?: boolean }> = [
     { name: '$sender', response: 'Username of user who triggered message' },
     { name: '$followage', response: 'Followage of user' },
@@ -80,8 +80,7 @@ export default new (class Variables implements System {
   ];
 
   async init() {
-    const repository = orm.em.fork().getRepository(Variable);
-    const variables = (await repository.findAll()).map((variable: Variable) => ({
+    const variables = (await prisma.variables.findMany()).map((variable) => ({
       name: `$_${variable.name}`,
       response: variable.response,
       custom: true,
@@ -92,6 +91,7 @@ export default new (class Variables implements System {
 
   async parseMessage(opts: { message: string; raw?: TwitchPrivateMessage; argument?: string; command?: Command }) {
     let result = opts.message;
+    if (!opts.message) return;
     const userInfo = opts.raw?.userInfo;
     const getLatestAgoString = (timestamp: number) =>
       hd(Date.now() - timestamp, {
@@ -167,19 +167,18 @@ export default new (class Variables implements System {
 
     if (/\$random\.online\.user/gimu.test(result)) {
       const queryUsers = users.chatters.filter((u) => u.id !== String(opts.raw.userInfo.userId)).map((c) => Number(c.id));
-      const dbUsers: User[] = await orm.em
-        .fork()
-        .getRepository(User)
-        .find({
+      const dbUsers = await prisma.users.findMany({
+        where: {
           id: {
-            $in: queryUsers,
+            in: queryUsers,
           },
           messages: {
-            $gt: 2,
+            gt: 2,
           },
-        });
+        },
+      });
 
-      const randomOnlineUser = sample(dbUsers) as User;
+      const randomOnlineUser = sample(dbUsers);
       const randomUser = users.chatters.find((u) => String(randomOnlineUser?.id) === u.id);
 
       result = result.replace(/\$random\.online\.user/gimu, randomUser?.username ?? 'Ghost');
@@ -206,8 +205,8 @@ export default new (class Variables implements System {
             /\$faceit\.latestMatches/,
             faceitData.latestMatches
               .map(
-                (m) =>
-                  `${m.result} ${m.eloDiff} on ${m.map} (${m.teamScore}), KD: ${m.kd} (${m.kills}/${m.death}), HS: ${m.hs.number}(${m.hs.percentage}%)`,
+                (m) => `${m.result} ${m.eloDiff} on ${m.map} (${m.teamScore}),
+                   KD: ${m.kd} (${m.kills}/${m.death}), HS: ${m.hs.number}(${m.hs.percentage}%)`,
               )
               .join(' | '),
           )
@@ -234,11 +233,11 @@ export default new (class Variables implements System {
 
       result = result
         .replace(/\$user\.messages/gimu, String(user.messages))
-        .replace(/\$user\.watched/gimu, user.watchedFormatted)
-        .replace(/\$user\.tips/gimu, String(user.totalTips))
-        .replace(/\$user\.bits/gimu, String(user.totalBits))
+        .replace(/\$user\.watched/gimu, watchedFormatted(user.watched))
+        .replace(/\$user\.tips/gimu, String(totalTips(user.tips)))
+        .replace(/\$user\.bits/gimu, String(totalBits(user.bits)))
         .replace(/\$user\.points/gimu, String(user.points))
-        .replace(/\$user\.daily\.messages/gimu, String(user.todayMessages));
+        .replace(/\$user\.daily\.messages/gimu, String(todayMessages(user.daily_messages)));
     }
 
     if (result.includes('(api|')) {
@@ -260,82 +259,50 @@ export default new (class Variables implements System {
 
     if (type === 'watched') {
       result = (
-        await orm.em
-          .fork()
-          .getRepository(UserModel)
-          .find(
-            {
-              username: { $nin: ignored },
+        await prisma.users.findMany({
+          where: {
+            username: {
+              notIn: ignored,
             },
-            {
-              limit,
-              orderBy: { [type]: 'DESC' },
-              offset,
-            },
-          )
-      ).map((user) => ({ username: user.username, value: user[type] }));
+          },
+          take: limit,
+          skip: offset,
+          orderBy: {
+            [type]: 'desc',
+          },
+        })
+      ).map((u) => ({ username: u.username, value: Number(u[type]) }));
 
       return result
         .map((result, index) => `${index + 1 + offset}. ${result.username} - ${(result.value / (1 * 60 * 1000) / 60).toFixed(1)}h`)
         .join(', ');
     } else if (type === 'messages') {
       result = (
-        await orm.em
-          .fork()
-          .getRepository(UserModel)
-          .find(
-            {
-              username: { $nin: ignored },
+        await prisma.users.findMany({
+          where: {
+            username: {
+              notIn: ignored,
             },
-            {
-              limit,
-              orderBy: { [type]: 'DESC' },
-              offset,
-            },
-          )
-      ).map((user) => ({ username: user.username, value: user[type] }));
+          },
+          take: limit,
+          skip: offset,
+          orderBy: {
+            [type]: 'desc',
+          },
+        })
+      ).map((u) => ({ username: u.username, value: u[type] }));
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ');
     } else if (type === 'tips') {
-      const qb: QueryBuilder<UserModel> = (orm.em.fork() as any).createQueryBuilder(UserModel, 'user');
-
-      const result: Array<{ id: number; username: string; value: number }> = await orm.em
-        .fork()
-        .getConnection()
-        .execute(
-          qb
-            .select(['user.id', 'user.username'])
-            .where({ username: { $nin: ignored } })
-            .join('user.tips', 'tips')
-            .addSelect('COALESCE(SUM("tips"."inMainCurrencyAmount"), 0) as "value"')
-            .offset(offset)
-            .limit(limit)
-            .groupBy('id')
-            .getKnexQuery()
-            .orderBy('value', 'desc')
-            .toQuery(),
-        );
+      // eslint-disable-next-line max-len
+      const sql = `select "user"."id", "user"."username", COALESCE(SUM("tips"."inMainCurrencyAmount"), 0) as "value" from "users" as "user" inner join "users_tips" as "tips" on "user"."id" = "tips"."userId" where 1 = 1 group by "user"."id" order by "value" desc limit ${limit} offset ${offset}`;
+      const result: Array<{ id: number; username: string; value: number }> = await prisma.$queryRaw(sql);
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}${currency.botCurrency}`).join(', ');
     } else if (type === 'bits') {
-      const qb: QueryBuilder<UserModel> = (orm.em.fork() as any).createQueryBuilder(UserModel, 'user');
-
-      const result: Array<{ id: number; username: string; value: number }> = await orm.em
-        .fork()
-        .getConnection()
-        .execute(
-          qb
-            .select(['user.id', 'user.username'])
-            .where({ username: { $nin: ignored } })
-            .join('user.bits', 'bits')
-            .addSelect('COALESCE(SUM("bits"."amount"), 0) as "value"')
-            .offset(offset)
-            .limit(limit)
-            .groupBy('id')
-            .getKnexQuery()
-            .orderBy('value', 'desc')
-            .toQuery(),
-        );
+      // eslint-disable-next-line max-len
+      const sql = `select "user"."id", "user"."username", COALESCE(SUM("tips"."amount"), 0) as "value" from "users" as "user" inner join "users_bits" as "bits" on "user"."id" = "tips"."userId" where 1 = 1 group by "user"."id" order by "value" desc limit ${limit} offset ${offset}`;
+      const result: Array<{ id: number; username: string; value: number }> = await prisma.$queryRaw(sql);
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ');
     } else if (type === 'messages.today') {
@@ -343,40 +310,38 @@ export default new (class Variables implements System {
       const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
       result = (
-        await orm.em
-          .fork()
-          .getRepository(UserDailyMessages)
-          .find(
-            {
-              date: startOfDay.getTime(),
-            },
-            {
-              limit,
-              orderBy: { count: 'desc' },
-              offset,
-              populate: ['user'],
-            },
-          )
+        await prisma.usersDailyMessages.findMany({
+          where: {
+            date: startOfDay.getTime(),
+          },
+          take: limit,
+          orderBy: {
+            count: 'desc',
+          },
+          skip: offset,
+          include: {
+            user: true,
+          },
+        })
       ).map((daily) => ({ username: daily.user.username, value: daily.count }));
 
       return result.map((item, index: number) => `${index + 1 + offset}. ${item.username} - ${item.value}`).join(', ');
     }
     if (type === 'points') {
       result = (
-        await orm.em
-          .fork()
-          .getRepository(UserModel)
-          .find(
-            {
-              username: { $nin: ignored },
+        await prisma.users.findMany({
+          where: {
+            username: {
+              notIn: ignored,
             },
-            {
-              limit,
-              orderBy: { [type]: 'DESC' },
-              offset,
-            },
-          )
-      ).map((user) => ({ username: user.username, value: user[type] }));
+          },
+          take: limit,
+          orderBy: {
+            [type]: 'desc',
+          },
+          skip: offset,
+        })
+      ).map((u) => ({ username: u.username, value: u[type] }));
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ');
     } else {
@@ -387,6 +352,7 @@ export default new (class Variables implements System {
   async makeApiRequest(result: string) {
     const match = result.match(/\((api)\|(POST|GET)\|(\S+)\)/);
     if (match.length) {
+      // eslint-disable-next-line max-len
       // '(api|GET|https://qwe.ru)' = ["(api|GET|https://qwe.ru)", "api", "GET", "https://qwe.ru", index: 0, input: "(api|GET|https://qwe.ru)", groups: undefined]
       result = result.replace(match[0], '');
       const method: 'GET' | 'POST' = match[2] as any;
@@ -448,12 +414,14 @@ export default new (class Variables implements System {
     if (isAdmin && text.length) {
       const match = response.match(/\$_(\S*)/g);
       if (match) {
-        const variable = await orm.em
-          .fork()
-          .getRepository(Variable)
-          .findOne({ name: this.variables.find((v) => v.name === match[0].replace('$_', '')).name });
-        variable.response = text;
-        await orm.em.fork().persistAndFlush(variable);
+        await prisma.variables.update({
+          where: {
+            name: this.variables.find((v) => v.name === match[0].replace('$_', '')).name,
+          },
+          data: {
+            response: text,
+          },
+        });
         tmi.say({ message: `@${raw.userInfo.userName} ✅` });
         return true;
       } else return false;
@@ -465,4 +433,6 @@ export default new (class Variables implements System {
 
     return spotifySong || satontApiSong || locales.translate('song.notPlaying');
   }
-})();
+}
+
+export default new Variables();

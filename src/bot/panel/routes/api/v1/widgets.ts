@@ -1,15 +1,13 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import isAdmin from '@bot/panel/middlewares/isAdmin';
-import { Widget } from '@bot/entities/Widget';
 import { checkSchema, validationResult } from 'express-validator';
-import { RequestContext, wrap } from '@mikro-orm/core';
+import { prisma } from '@bot/libs/db';
 
 const router = Router();
 
 router.get('/', isAdmin, async (req, res, next) => {
   try {
-    const repository = RequestContext.getEntityManager().getRepository(Widget);
-    const widgets = await repository.findAll();
+    const widgets = await prisma.widgets.findMany();
 
     res.json(widgets);
   } catch (e) {
@@ -17,60 +15,69 @@ router.get('/', isAdmin, async (req, res, next) => {
   }
 });
 
-router.post('/', isAdmin,  checkSchema({
-  id: {
-    isNumeric: true,
-    in: ['body'],
-    optional: true,
-  },
-  y: {
-    isNumeric: true,
-    in: ['body'],
-  },
-  x: {
-    isNumeric: true,
-    in: ['body'],
-  },
-  w: {
-    isNumeric: true,
-    in: ['body'],
-  },
-  h: {
-    isNumeric: true,
-    in: ['body'],
-  },
-}), async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    validationResult(req).throw();
+router.post(
+  '/',
+  isAdmin,
+  checkSchema({
+    id: {
+      isNumeric: true,
+      in: ['body'],
+      optional: true,
+    },
+    y: {
+      isNumeric: true,
+      in: ['body'],
+    },
+    x: {
+      isNumeric: true,
+      in: ['body'],
+    },
+    w: {
+      isNumeric: true,
+      in: ['body'],
+    },
+    h: {
+      isNumeric: true,
+      in: ['body'],
+    },
+  }),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      validationResult(req).throw();
 
-    const repository = RequestContext.getEntityManager().getRepository(Widget);
-    const widget = req.body.id ? await repository.findOne(req.body.id) : repository.create(req.body);
+      const widget = await prisma.widgets.upsert({
+        where: {
+          id: req.body.id,
+        },
+        update: req.body,
+        create: req.body,
+      });
 
-    wrap(widget).assign(req.body);
-    await repository.persistAndFlush(widget);
-
-    res.json(widget);
-  } catch (e) {
-    next(e);
-  }
-});
-
-router.delete('/', isAdmin,  checkSchema({
-  id: {
-    isNumeric: true,
-    in: ['body'],
+      res.json(widget);
+    } catch (e) {
+      next(e);
+    }
   },
-}), async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    validationResult(req).throw();
-    const repository = RequestContext.getEntityManager().getRepository(Widget);
-    const widget = await repository.findOne(req.body.id);
+);
 
-    await repository.removeAndFlush(widget);
-    res.json('Ok');
-  } catch (e) {
-    next(e);
-  }
-});
+router.delete(
+  '/',
+  isAdmin,
+  checkSchema({
+    id: {
+      isNumeric: true,
+      in: ['body'],
+    },
+  }),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      validationResult(req).throw();
+      await prisma.widgets.delete({ where: { id: Number(req.body.id) } });
+      res.json('Ok');
+    } catch (e) {
+      next(e);
+    }
+  },
+);
 
 export default router;

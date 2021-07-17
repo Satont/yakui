@@ -1,9 +1,9 @@
-import { server } from '@bot/panel/index';
+import panel from '@bot/panel';
 import io from 'socket.io';
 import authorization from '@bot/systems/authorization';
 import { debug } from './logger';
 
-const socket = new io.Server().attach(server);
+const socket = new io.Server().attach(panel.server);
 
 export default socket;
 

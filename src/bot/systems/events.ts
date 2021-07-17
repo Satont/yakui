@@ -3,33 +3,33 @@ import { get } from 'lodash';
 
 import tmi from '@bot/libs/tmi';
 import { System, DonationData, HostType } from 'typings';
-import { IWebHookUserFollow, IWebHookModeratorAdd, IWebHookModeratorRemove, INewResubscriber, INewSubscriber } from 'typings/events';
-import { EventList } from '@bot/entities/EventList';
+import { INewResubscriber, INewSubscriber } from 'typings/events';
 import { getNameSpace } from '@bot/libs/socket';
 import { PubSubRedemptionMessage } from 'twitch-pubsub-client/lib';
 import alerts from '@bot/overlays/alerts';
-import { File } from '@bot/entities/File';
 import tts from '@bot/overlays/tts';
 import cache from '@bot/libs/cache';
-import { orm } from '@bot/libs/db';
+import { prisma } from '@bot/libs/db';
+import { EventSubChannelFollowEvent } from 'twitch-eventsub/lib/Events/EventSubChannelFollowEvent';
+import { EventSubChannelModeratorEvent } from 'twitch-eventsub/lib/Events/EventSubChannelModeratorEvent';
 
-export default new class Events implements System {
-  socket = getNameSpace('widgets/eventlist')
-  clients: SocketIO.Socket[] = []
+class Events implements System {
+  socket = getNameSpace('widgets/eventlist');
+  clients: SocketIO.Socket[] = [];
 
-  async fire({ name, opts }: { name: string, opts: any }) {
+  async fire({ name, opts }: { name: string; opts: any }) {
     const event = cache.events.get(name);
     if (!event) return;
 
-    for (const operation of event.operations) {
-      if (operation.filter && !await this.filter(operation.filter, opts)) continue;
+    for (const operation of event.operations as any[]) {
+      if (operation.filter && !(await this.filter(operation.filter, opts))) continue;
       if (operation.key === 'sendMessage') {
         const message = await this.prepareMessage(operation.message, opts);
         await tmi.say({ message });
       }
       if (operation.key === 'playAudio') {
-        const file = await orm.em.fork().getRepository(File).findOne({ id: operation.audioId });
-        alerts.emitAlert({ audio: { file: file, volume: operation.audioVolume }  });
+        const file = await prisma.files.findFirst({ where: { id: operation.audioId } });
+        alerts.emitAlert({ audio: { file: file, volume: operation.audioVolume } });
       }
       if (operation.key === 'TTS') tts.emitTTS(await this.prepareMessage(operation.message, opts));
     }
@@ -44,7 +44,6 @@ export default new class Events implements System {
   }
 
   async prepareMessage(message: string, opts: any) {
-
     for (const [key, value] of Object.entries(this.replaceVariables(opts))) {
       message = message.replace(key, value);
     }
@@ -69,12 +68,10 @@ export default new class Events implements System {
     };
   }
 
-  async addToEventList({ name, data }: { name: string, data: Record<string, unknown> }) {
-    const repository = orm.em.fork().getRepository(EventList);
-    const event = repository.assign(new EventList(), { name, data, timestamp: Date.now() });
-    await repository.persistAndFlush(event);
+  async addToEventList({ name, data }: { name: string; data: Record<string, any> }) {
+    const event = await prisma.eventList.create({ data: { name, data: data, timestamp: Date.now() } });
 
-    this.clients.forEach(c => c.emit('event', event));
+    this.clients.forEach((c) => c.emit('event', event));
   }
 
   sockets(client: SocketIO.Socket) {
@@ -86,7 +83,7 @@ export default new class Events implements System {
   }
 
   onDonation(data: DonationData) {
-    this.fire( { name: 'tip', opts: data });
+    this.fire({ name: 'tip', opts: data });
     this.addToEventList({
       name: 'tip',
       data: { username: data.username, currency: data.currency, amount: data.inMainCurrencyAmount, message: data.message },
@@ -108,19 +105,19 @@ export default new class Events implements System {
     this.addToEventList({ name: 'raided', data: { username, viewers } });
   }
 
-  onUserFollow({ from_name }: IWebHookUserFollow) {
-    this.fire({ name: 'follow', opts: { username: from_name } });
-    this.addToEventList({ name: 'follow', data: { username: from_name } });
+  onUserFollow({ userName }: EventSubChannelFollowEvent) {
+    this.fire({ name: 'follow', opts: { username: userName } });
+    this.addToEventList({ name: 'follow', data: { username: userName } });
   }
 
-  onAddModerator({ event_data: { user_name: username } }: IWebHookModeratorAdd) {
-    this.fire({ name: 'newmod', opts: { username } });
-    this.addToEventList({ name: 'newmod', data: { username } });
+  onAddModerator(data: EventSubChannelModeratorEvent) {
+    this.fire({ name: 'newmod', opts: { username: data.userName } });
+    this.addToEventList({ name: 'newmod', data: { username: data.userName } });
   }
 
-  onRemoveModerator({ event_data: { user_name: username } }: IWebHookModeratorRemove) {
-    this.fire({ name: 'removemod', opts: { username } });
-    this.addToEventList({ name: 'removemod', data: { username } });
+  onRemoveModerator(data: EventSubChannelModeratorEvent) {
+    this.fire({ name: 'removemod', opts: { username: data.userName } });
+    this.addToEventList({ name: 'removemod', data: { username: data.userName } });
   }
 
   onSubscribe(data: INewSubscriber) {
@@ -156,7 +153,13 @@ export default new class Events implements System {
 
     this.addToEventList({
       name: 'resub',
-      data: { username: data.username, tier: data.tier, message: data.message, months: data.months, overallMonths: data.overallMonths },
+      data: {
+        username: data.username,
+        tier: data.tier,
+        message: data.message,
+        months: data.months,
+        overallMonths: data.overallMonths,
+      },
     });
   }
 
@@ -176,4 +179,6 @@ export default new class Events implements System {
       data: { name: data.rewardName, username: data.userName, amount: data.rewardCost, message: data.message },
     });
   }
-};
+}
+
+export default new Events();

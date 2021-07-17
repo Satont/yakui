@@ -34,11 +34,13 @@ const start = async () => {
   Vue.use(Axios);
 
   const metaDataSocket = getNameSpace({ name: 'systems/metaData' });
-  await new Promise((res) => metaDataSocket.emit('getData', data => {
-    store.commit('setMetaData', data);
-    document.title = data.bot?.username?.toUpperCase();
-    res(null);
-  }));
+  await new Promise((res) =>
+    metaDataSocket.emit('getData', (data) => {
+      store.commit('setMetaData', data);
+      document.title = data.bot?.username?.toUpperCase();
+      res(null);
+    }),
+  );
 
   const filesSocket = getNameSpace({ name: 'systems/files' });
   filesSocket.emit('getAll', (_err, files) => store.commit('setFilesList', files));
@@ -63,7 +65,12 @@ const start = async () => {
         path: '/integrations',
         component: () => import('./vue/pages/integrations/index.vue'),
         children: [
-          { path: '', alias: 'donationalerts', name: 'DonationAlerts', component: () => import('./vue/pages/integrations/donationalerts.vue') },
+          {
+            path: '',
+            alias: 'donationalerts',
+            name: 'DonationAlerts',
+            component: () => import('./vue/pages/integrations/donationalerts.vue'),
+          },
           { path: 'spotify', name: 'Spotify', component: () => import('./vue/pages/integrations/spotify.vue') },
           { path: 'qiwi', name: 'Qiwi', component: () => import('./vue/pages/integrations/qiwi.vue') },
           { path: 'satontapi', name: 'Satont api', component: () => import('./vue/pages/integrations/satontapi.vue') },
@@ -119,7 +126,7 @@ const start = async () => {
     </div>
     `,
     async mounted() {
-      metaDataSocket.on('data', data => {
+      metaDataSocket.on('data', (data) => {
         store.commit('setMetaData', data);
         document.title = data.bot?.username?.toUpperCase();
       });
@@ -137,7 +144,6 @@ const start = async () => {
   router.afterEach((to, from) => {
     app.loading = false;
   });
-
 };
 
 start();
