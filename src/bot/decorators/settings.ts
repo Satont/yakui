@@ -10,7 +10,6 @@ export function SettingsDecorator(spaceName?: string) {
       const module = loadedSystems.find((s) => s.constructor.name.toLowerCase() === space);
       if (!loadedSystems.length || !module) return setTimeout(() => load(), 1000);
 
-      console.log(clazz.constructor.name, module.constructor.name);
       const item = await prisma.settings.findFirst({ where: { space, name } });
 
       if (!item) {
