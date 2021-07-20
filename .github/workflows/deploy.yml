@@ -1,10 +1,10 @@
 name: Deploy
 
 on:
-  workflow_run:
-    workflows: ['Publish Docker Hub']
-    types:
-      - completed
+  #workflow_run:
+  #workflows: ['Publish Docker Hub']
+  #types:
+  #- completed
   workflow_dispatch:
 
 jobs:
