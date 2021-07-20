@@ -1,6 +1,6 @@
-FROM node:16-alpine3.14
+FROM node:16-buster
 
-RUN apk add --no-cache bash
+RUN apt install openssl
 
 COPY . /app
 WORKDIR /app
