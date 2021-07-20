@@ -6,6 +6,7 @@ COPY . /app
 WORKDIR /app
 
 RUN yarn
+RUN yarn prisma generate
 RUN yarn eslint
 RUN yarn build
 #RUN npm prune --production
