@@ -1,6 +1,6 @@
 FROM node:16-buster-slim
 
-RUN apt install bash openssl
+RUN apt-get update && apt install bash openssl
 
 COPY . /app
 WORKDIR /app
