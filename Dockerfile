@@ -5,9 +5,9 @@ RUN apk add --no-cache bash
 COPY . /app
 WORKDIR /app
 
-RUN npm install
-RUN npm run eslint
-RUN npm run build
+RUN yarn
+RUN yarn eslint
+RUN yarn build
 #RUN npm prune --production
 
 EXPOSE 3000
