@@ -66,9 +66,14 @@ router.post(
     try {
       validationResult(req).throw();
 
+      const data = {
+        ...req.body,
+        triggerTimeStamp: 0,
+      };
+
       const timer = req.body.id
-        ? await prisma.timers.update({ where: { id: Number(req.body.id) }, data: req.body })
-        : await prisma.timers.create({ data: req.body });
+        ? await prisma.timers.update({ where: { id: Number(data.id) }, data })
+        : await prisma.timers.create({ data });
 
       await timers.init();
       res.json(timer);
