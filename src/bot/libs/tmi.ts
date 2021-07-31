@@ -68,6 +68,7 @@ class Tmi {
       await this[type].chat.connect();
     } catch (e) {
       error(e);
+      setTimeout(() => this.connect(type), 20 * 1000);
     }
   }
 
