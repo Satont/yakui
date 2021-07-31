@@ -36,7 +36,14 @@
 
       <b-form-group>
         <template slot="label" label-for="response"> Command response <variables-list></variables-list> </template>
-        <b-form-input id="response" v-model="command.response" type="text" required placeholder="Enter command response"></b-form-input>
+        <b-form-textarea
+          id="response"
+          v-model="command.response"
+          type="text"
+          required
+          placeholder="Enter command response"
+          rows="3"
+        ></b-form-textarea>
       </b-form-group>
 
       <b-form-group label="Command description" label-for="description">
