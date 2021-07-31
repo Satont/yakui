@@ -15,15 +15,17 @@ class Parser {
   inited = false;
   cooldowns: string[] = [];
 
-  async parse(message: string, raw: TwitchPrivateMessage) {
+  parse(message: string, raw: TwitchPrivateMessage) {
     const isCommand = message.startsWith('!');
 
     if (isCommand) {
-      await this.parseCommand(message, raw);
+      this.parseCommand(message, raw);
     }
 
     for (const parser of cache.parsers.values()) {
-      await parser.system[parser.fnc].call(parser.system, { message, raw });
+      setTimeout(() => {
+        parser.system[parser.fnc].call(parser.system, { message, raw });
+      }, 1);
     }
   }
 
