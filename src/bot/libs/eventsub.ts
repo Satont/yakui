@@ -5,11 +5,16 @@ import * as TwitchEventSub from 'twitch-eventsub';
 import panel from '../panel';
 import { settings } from '../decorators';
 import { onAddModerator, onRemoveModerator, onUserFollow, onStreamChange } from '@bot/libs/eventsCaller';
-import { loaded } from './loader';
 import { ApiClient, ClientCredentialsAuthProvider } from 'twitch';
 import oauth from './oauth';
 
 class EventSubs {
+  private timers: {
+    followCache: NodeJS.Timer;
+  } = {
+    followCache: null,
+  };
+  private followCache: string[] = [];
   private adapter: TwitchEventSub.EventSubMiddleware;
   //private listener: TwitchEventSub.EventSubListener;
 
@@ -32,11 +37,17 @@ class EventSubs {
       pathPrefix: 'eventsub',
       secret: this.secret,
     });
+    this.timers.followCache = setInterval(() => (this.followCache = []), 10 * 60 * 1000);
+    process
+      .on('exit', () => clearInterval(this.timers.followCache))
+      .on('SIGINT', () => clearInterval(this.timers.followCache))
+      .on('SIGTERM', () => clearInterval(this.timers.followCache));
+
     /* this.adapter = new TwitchEventSub.MiddlewareAdapter({
       hostName: url,
       pathPrefix: 'eventsub',
     });
-    
+
     this.listener = new TwitchEventSub.EventSubListener(api, this.adapter, this.secret); */
 
     if (!tmi.channel?.id || !tmi.broadcaster?.api) {
@@ -57,7 +68,13 @@ class EventSubs {
     await this.adapter.markAsReady();
 
     await this.adapter.subscribeToChannelUpdateEvents(tmi.channel.id, onStreamChange).catch(error);
-    await this.adapter.subscribeToChannelFollowEvents(tmi.channel.id, onUserFollow).catch(error);
+    await this.adapter
+      .subscribeToChannelFollowEvents(tmi.channel.id, (follow) => {
+        if (this.followCache.includes(follow.userId)) return;
+        this.followCache.push(follow.userId);
+        onUserFollow(follow);
+      })
+      .catch(error);
     await this.adapter.subscribeToChannelModeratorAddEvents(tmi.channel.id, onAddModerator).catch(error);
     await this.adapter.subscribeToChannelModeratorRemoveEvents(tmi.channel.id, onRemoveModerator).catch(error);
     info(`EventSub: initializated.`);
