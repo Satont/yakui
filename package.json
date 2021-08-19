@@ -100,7 +100,7 @@
     "tlds": "^1.216.0",
     "ts-morph": "^9.1.0",
     "ts-node": "^9.1.1",
-    "tsconfig-paths": "^3.9.0",
+    "tsconfig-paths": "^3.10.1",
     "twitch": "^4.6.2",
     "twitch-auth": "^4.6.2",
     "twitch-chat-client": "^4.6.2",
