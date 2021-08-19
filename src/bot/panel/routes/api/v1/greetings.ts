@@ -18,7 +18,6 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:id', isAdmin, async (req, res, next) => {
   const greeting = cache.greetings.get(req.params.id);
-  greeting.sound_file = (greeting.sound_file_id as any) ?? null;
 
   try {
     res.json(greeting);
