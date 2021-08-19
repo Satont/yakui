@@ -20,7 +20,10 @@ router.get('/:id', isAdmin, async (req, res, next) => {
   const greeting = cache.greetings.get(req.params.id);
 
   try {
-    res.json(greeting);
+    res.json({
+      ...greeting,
+      sound_file: undefined,
+    });
   } catch (e) {
     next(e);
   }
