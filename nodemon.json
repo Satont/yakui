@@ -1,9 +1,10 @@
 {
-  "watch": ["src/bot"],
+  "watch": [
+    "src/bot"
+  ],
   "exec": "yarn build:bot && node ./dist/index.js",
   "ext": "ts",
   "ignore": [
     "src/bot/data/migrations/**"
-  ],
-  "signal": "SIGINT"
+  ]
 }
