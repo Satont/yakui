@@ -40,7 +40,7 @@
     "@types/pg": "^7.14.7",
     "@types/serve-favicon": "^2.5.2",
     "@types/socket.io": "^2.1.12",
-    "@types/spotify-web-api-node": "^5.0.2",
+    "@types/spotify-web-api-node": "^5.0.3",
     "@types/terser-webpack-plugin": "^5.0.2",
     "@typescript-eslint/eslint-plugin": "^4.11.0",
     "@typescript-eslint/parser": "^4.11.0",
