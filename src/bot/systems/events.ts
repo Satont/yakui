@@ -17,7 +17,7 @@ class Events implements System {
   socket = getNameSpace('widgets/eventlist');
   clients: SocketIO.Socket[] = [];
 
-  async fire({ name, opts }: { name: string; opts: any }) {
+  async fire({ name, opts }: { name: string; opts: Record<string, string | number | Record<string, unknown>>}) {
     const event = cache.events.get(name);
     if (!event) return;
 
@@ -45,13 +45,13 @@ class Events implements System {
 
   async prepareMessage(message: string, opts: any) {
     for (const [key, value] of Object.entries(this.replaceVariables(opts))) {
-      message = message.replace(key, value);
+      message = message.replace(key, String(value));
     }
 
     return message;
   }
 
-  private replaceVariables(opts: any) {
+  private replaceVariables(opts: Record<string, string>) {
     return {
       $name: get(opts, 'name', ''),
       $username: get(opts, 'username', ''),
@@ -62,9 +62,7 @@ class Events implements System {
       '$sub.months': get(opts, 'sub.months', 0),
       '$sub.overallMonths': get(opts, 'sub.overallMonths', 0),
       '$subgift.recipient': get(opts, 'subgift.recipient', ''),
-      '$host.viewers': get(opts, 'host.viewers', 0),
-      '$hosted.viewers': get(opts, 'hosted.viewers', 0),
-      '$raid.viewers': get(opts, 'raid.viewers', 0),
+      $viewers: get(opts, 'viewers', 0),
     };
   }
 
