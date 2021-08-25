@@ -3,7 +3,7 @@ import { Command, System } from 'typings';
 import { loadedSystems } from './loader';
 import { info } from './logger';
 import { prisma } from './db';
-import { Events, Files, Greetings, Keywords, Overlays } from '@prisma/client';
+import { Events, Files, Greetings, Keywords, Overlays, Quotes } from '@prisma/client';
 
 class Cache {
   private _parsers: Map<string, { system: System; fnc: any }> = new Map();
@@ -18,6 +18,7 @@ class Cache {
     }
   > = new Map();
   private _keywords: Map<string, Keywords> = new Map();
+  private _quotes: Map<string, Quotes> = new Map()
 
   async init() {
     this.updateCommands();
@@ -26,6 +27,7 @@ class Cache {
     await this.updateEvents();
     await this.updateGreetings();
     await this.updateKeywords();
+    await this.updateQuotes();
   }
 
   get parsers() {
@@ -54,6 +56,10 @@ class Cache {
 
   get keywords() {
     return new Map(this._keywords);
+  }
+
+  get quotes() {
+    return new Map(this._quotes);
   }
 
   async updateCommands() {
@@ -127,6 +133,16 @@ class Cache {
     }
 
     info(`CACHE: Keywords size: ${this._keywords.size}`);
+  }
+
+  async updateQuotes() {
+    this._quotes.clear();
+
+    for (const quote of await prisma.quotes.findMany()) {
+      this._quotes.set(String(quote.id), quote);
+    }
+
+    info(`CACHE: Quotes size: ${this._quotes.size}`);
   }
 }
 
