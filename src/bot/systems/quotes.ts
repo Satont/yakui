@@ -2,9 +2,9 @@ import { CommandOptions } from 'typings';
 import { prisma } from '@bot/libs/db';
 import { command } from '../decorators/command';
 import cache from '../libs/cache';
-import { randomInt } from 'crypto';
 import { CommandPermission } from '@prisma/client';
 import general from '../settings/general';
+import { sample } from 'lodash';
 
 class QuotesSytem {
   @command({
@@ -13,7 +13,7 @@ class QuotesSytem {
     aliases: ['paste', 'паста'],
   })
   async qoute(opts: CommandOptions) {
-    const id = opts.argument.length ? opts.argument : randomInt(cache.quotes.size).toString();
+    const id = opts.argument.length > 0 ? opts.argument : sample([...cache.quotes.values()])?.id?.toString();
     const quote = cache.quotes.get(id);
     
     if (quote) {
