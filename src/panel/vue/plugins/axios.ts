@@ -10,6 +10,7 @@ export default function AxiosPlugin<AxiosPluginOptions>(Vue: typeof _Vue, option
     baseURL: '/api/v1',
     headers: {
       'x-twitch-token': localStorage.getItem('accessToken'),
+      'x-twitch-code': localStorage.getItem('code'),
       'Content-Type': 'application/json',
     },
   });

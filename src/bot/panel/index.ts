@@ -8,14 +8,18 @@ import { error, info } from '@bot/libs/logger';
 import Authorization from '@bot/systems/authorization';
 import twitch from './routes/twitch';
 import morgan from 'morgan';
+import user from './middlewares/user';
 
 const app = express();
 // eslint-disable-next-line prefer-const
 let ready = false;
-app.use(morgan('combined'));
+if (process.env.NODE_ENV === 'production') {
+  app.use(morgan('combined'));
+}
 app.use('/twitch', twitch);
 app.use('/static', express.static(resolve(process.cwd(), 'public', 'dest')));
 app.use('/icons', express.static(resolve(process.cwd(), 'public', 'icons')));
+app.use(user);
 
 app.get('/login', (req, res) => {
   res.sendFile(resolve(process.cwd(), 'public', 'login.html'));
@@ -47,7 +51,7 @@ app.use(
   }),
 );
 
-app.get('/', (req, res) => {
+app.get('/', (req: Request, res) => {
   res.sendFile(resolve(process.cwd(), 'public', 'panel.html'));
 });
 

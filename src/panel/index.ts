@@ -97,7 +97,11 @@ const start = async () => {
 
       { path: '/overlays', name: 'OverlaysManagerList', component: () => import('./vue/pages/overlays/list.vue') },
       { path: '/overlays/edit/:id?', name: 'OverlaysManagerEdit', component: () => import('./vue/pages/overlays/edit.vue') },
+
       { path: '/files', name: 'Files', component: () => import('./vue/pages/files/index.vue') },
+
+      { path: '/quotes', name: 'QuotesManagerList', component: () => import('./vue/pages/quotes/list.vue') },
+      { path: '/quotes/edit/:id?', name: 'QuotesManagerEdit', component: () => import('./vue/pages/quotes/edit.vue') },
     ],
   });
 
