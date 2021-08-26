@@ -7,7 +7,7 @@ import { checkSchema, validationResult } from 'express-validator';
 
 const router = Router({ mergeParams: true });
 
-router.get('/', (req: Request, res) => {
+router.get('/', (_, res) => {
   res.send([...cache.quotes.values()]);
 });
 
@@ -35,7 +35,8 @@ router.delete('/:id', isAdmin, async (req, res, next) => {
     }
   
     await prisma.quotes.delete({ where: query });
-  
+
+    await cache.updateQuotes();
     res.status(201).send('Ok');
   } catch (error) {
     next(error);
