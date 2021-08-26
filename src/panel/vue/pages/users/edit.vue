@@ -144,7 +144,6 @@ export default class UsersManagerEdit extends Vue {
   }
 
   addTip() {
-    console.log(this.user.tips);
     this.user.tips.push({
       amount: 0,
       message: null,

@@ -4,17 +4,41 @@ import { command } from '../decorators/command';
 import cache from '../libs/cache';
 import { randomInt } from 'crypto';
 import { CommandPermission } from '@prisma/client';
+import general from '../settings/general';
 
 class QuotesSytem {
   @command({
-    name: 'qoute',
+    name: 'quote',
     visible: false,
     aliases: ['paste', 'паста'],
   })
-  qoute() {
-    const text = cache.quotes.get([...cache.quotes.keys()][randomInt(cache.quotes.size)])?.text;
+  async qoute(opts: CommandOptions) {
+    const id = opts.argument.length ? opts.argument : randomInt(cache.quotes.size).toString();
+    const quote = cache.quotes.get(id);
+    
+    if (quote) {
+      prisma.quotes.update({
+        where: {
+          id: quote.id,
+        },
+        data: {
+          used: {
+            increment: 1,
+          },
+        },
+      });
+    }
 
-    return text;
+    return quote?.text;
+  }
+
+  @command({
+    name: 'quote list',
+    visible: false,
+    aliases: ['paste list', 'пасты'],
+  })
+  quotes() {
+    return `${general.siteUrl}/public/#/quotes`;
   }
 
   @command({
@@ -57,7 +81,7 @@ class QuotesSytem {
     });
 
     if (!quote) {
-      return `Quote with id ${opts.argument} now found.`;
+      return `Quote with id ${opts.argument} not found.`;
     }
 
     await prisma.quotes.delete({ 

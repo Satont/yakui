@@ -31,21 +31,21 @@ function listenHttp() {
 
 start();
 
-process.on('unhandledRejection', (reason, promise) => {
-  error(reason);
-  error(promise);
-});
-process.on('uncaughtException', (err: Error) => {
-  const date = new Date().toISOString();
+process
+  .on('unhandledRejection', (reason, promise) => {
+    error(reason);
+    error(promise);
+  })
+  .on('uncaughtException', (err: Error) => {
+    const date = new Date().toISOString();
 
-  process.report?.writeReport(`uncaughtException-${date}`, err);
-  error(err);
+    process.report?.writeReport(`uncaughtException-${date}`, err);
+    error(err);
 
-  process.exit(1);
-});
-
-process.on('SIGTERM', () => makeGracefullExit());
-process.on('SIGINT', () => makeGracefullExit());
+    process.exit(1);
+  })
+  .on('SIGTERM', () => makeGracefullExit())
+  .on('SIGINT', () => makeGracefullExit());
 
 async function makeGracefullExit() {
   (await import('@bot/panel')).default.server.close();

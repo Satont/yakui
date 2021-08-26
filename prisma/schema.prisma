@@ -214,6 +214,7 @@ model Quotes {
   text     String @db.Text
   author   Users? @relation(fields: [authorId], references: [id])
   authorId Int?
+  used     Int    @default(0)
 
   @@unique([text], name: "quotes_text_unique")
   @@map("quotes")

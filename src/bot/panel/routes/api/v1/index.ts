@@ -13,6 +13,7 @@ import overlays from './overlays';
 import widgets from './widgets';
 import chatMessage from './chatMessage';
 import files from './files';
+import quotes from './quotes';
 
 const router = Router();
 
@@ -36,5 +37,6 @@ router.use('/overlays', overlays);
 router.use('/widgets', widgets);
 router.use('/chatMessage', chatMessage);
 router.use('/files', files);
+router.use('/quotes', quotes);
 
 export default router;

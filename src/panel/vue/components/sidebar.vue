@@ -9,10 +9,11 @@
     <b-nav-item router-link to="/timers"><i class="fas fa-history"></i> Timers</b-nav-item>
     <b-nav-item router-link to="/users"><i class="fas fa-users"></i> Users</b-nav-item>
     <b-nav-item router-link to="/keywords"><i class="far fa-keyboard"></i> Keywords</b-nav-item>
-    <b-nav-item outer-link to="/variables"><i class="fas fa-superscript"></i> Variables</b-nav-item>
-    <b-nav-item outer-link to="/greetings"><i class="far fa-hand-spock"></i> Greetings</b-nav-item>
-    <b-nav-item outer-link to="/overlays"><i class="fas fa-file-alt"></i> Overlays</b-nav-item>
-    <b-nav-item outer-link to="/files"><i class="far fa-file"></i> Files</b-nav-item>
+    <b-nav-item router-link to="/variables"><i class="fas fa-superscript"></i> Variables</b-nav-item>
+    <b-nav-item router-link to="/greetings"><i class="far fa-hand-spock"></i> Greetings</b-nav-item>
+    <b-nav-item router-link to="/overlays"><i class="fas fa-file-alt"></i> Overlays</b-nav-item>
+    <b-nav-item router-link to="/files"><i class="far fa-file"></i> Files</b-nav-item>
+    <b-nav-item router-link to="/quotes"><i class="fas fa-quote-right"></i> Quotes</b-nav-item>
   </b-nav>
 </div>
 

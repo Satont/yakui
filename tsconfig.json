@@ -2,11 +2,21 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@src/*": ["src/*"],
-      "@bot/*": ["src/bot/*"],
-      "@panel/*": ["src/panel/*"],
-      "@login/*": ["src/login/*"],
-      "typings": ["typings"]
+      "@src/*": [
+        "src/*"
+      ],
+      "@bot/*": [
+        "src/bot/*"
+      ],
+      "@panel/*": [
+        "src/panel/*"
+      ],
+      "@login/*": [
+        "src/login/*"
+      ],
+      "typings": [
+        "typings"
+      ]
     },
     "target": "es6",
     "module": "commonjs",
@@ -16,7 +26,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
-    "typeRoots" : [
+    "typeRoots": [
       "node_modules/@types",
       "typings"
     ]
@@ -25,10 +35,11 @@
     "./",
     "./src",
     "src/**/*.ts",
-    "src/**/*.vue"
+    "src/**/*.d.ts",
+    "src/**/*.vue",
+    "typings/**/*.d.ts"
   ],
   "exclude": [
-    "node_modules",
-    "src/typings"
+    "node_modules"
   ]
 }
