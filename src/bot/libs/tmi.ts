@@ -84,6 +84,9 @@ class Tmi {
     const client = this[type].chat;
 
     if (client && this.channel) {
+      client.removeListener(client.onMessage);
+      client.removeListener(client.onAnyMessage);
+      client.removeListener(client.onAction);
       client.removeListener();
       client.part(this.channel.name);
       await client.quit();
@@ -96,11 +99,9 @@ class Tmi {
   async listeners(type: 'bot' | 'broadcaster') {
     const client = this[type].chat;
 
-    client.onDisconnect((manually, reason) => {
-      if (!manually) {
-        info(`TMI: ${type} disconnected from server ${reason}`);
-        this.connect(type);
-      }
+    client.onDisconnect((_manually, reason) => {
+      info(`TMI: ${type} disconnected from server ${reason}`);
+      this.connect(type);
     });
 
     client.onConnect(async () => {
