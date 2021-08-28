@@ -106,10 +106,7 @@ router.post(
     try {
       validationResult(req).throw();
 
-      const body = {
-        ...req.body,
-        cooldown: Number(req.body),
-      };
+      const body = req.body;
 
       const names: string[] = Commands.getCommands()
         .filter((c) => c.id !== body.id)
