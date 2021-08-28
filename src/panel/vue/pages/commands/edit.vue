@@ -23,7 +23,7 @@
       </b-form-group>
 
       <b-form-group label="Command cooldown" label-for="cooldown">
-        <b-form-input id="cooldown" v-model="command.cooldown" type="number" placeholder="Enter command cooldown"></b-form-input>
+        <b-form-input id="cooldown" v-model.number="command.cooldown" type="number" placeholder="Enter command cooldown"></b-form-input>
       </b-form-group>
 
       <b-form-group label="Command price" label-for="price">
