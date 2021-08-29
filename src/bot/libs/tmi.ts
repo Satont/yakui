@@ -95,7 +95,6 @@ class Tmi {
 
   async listeners(type: 'bot' | 'broadcaster') {
     const client = this[type].chat;
-    client.removeListener();
 
     client.onDisconnect((manually, reason) => {
       if (manually) {
