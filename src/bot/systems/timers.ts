@@ -34,19 +34,12 @@ class TimersSystem implements System {
         continue;
       }
 
-      if (timer.responses[timer.last]) {
-        const message = await variables.parseMessage({ message: timer.responses[timer.last] });
-        tmi.say({ message });
-      }
 
-      await prisma.timers.update({
-        where: { id: timer.id },
-        data: {
-          last: ++timer.last % (timer.responses as string[]).length,
-          triggerTimeStamp: BigInt(Date.now()),
-          triggerMessage: tmi.parsedLinesPerStream,
-        },
-      });
+      const message = await variables.parseMessage({ message: timer.responses[timer.last] });
+      tmi.say({ message });
+      timer.last = ++timer.last % (timer.responses as string[]).length;
+      timer.triggerTimeStamp = BigInt(Date.now());
+      timer.triggerMessage = tmi.parsedLinesPerStream;
     }
   }
 }
