@@ -75,7 +75,7 @@
     "express": "^4.17.1",
     "express-validator": "^6.8.1",
     "humanize-duration": "^3.25.0",
-    "i": "^0.3.6",
+    "i": "^0.3.7",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.21.14",
     "lodash": "^4.17.20",
