@@ -8,10 +8,10 @@ import { CommandPermission } from '@prisma/client';
 
 class General {
   @settings()
-  siteUrl = 'http://localhost:3000';
+    siteUrl = 'http://localhost:3000';
 
   @settings()
-  locale = 'ru';
+    locale = 'ru';
 
   @onChange('siteUrl')
   onSiteUrlChange() {

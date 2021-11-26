@@ -22,128 +22,128 @@ class Moderation implements System {
   };
 
   @settings()
-  enabled = false;
+    enabled = false;
 
   @settings()
-  links: ILinks = {
-    enabled: false,
-    subscribers: false,
-    vips: false,
-    clips: false,
-    timeout: {
-      time: 600,
-      message: 'links disallowed',
-    },
-    warning: {
-      time: 1,
-      message: 'links disallowed [warn]',
-    },
-  };
+    links: ILinks = {
+      enabled: false,
+      subscribers: false,
+      vips: false,
+      clips: false,
+      timeout: {
+        time: 600,
+        message: 'links disallowed',
+      },
+      warning: {
+        time: 1,
+        message: 'links disallowed [warn]',
+      },
+    };
 
   @settings()
-  blacklist: IBlackList = {
-    enabled: false,
-    subscribers: false,
-    vips: false,
-    values: [],
-    timeout: {
-      time: 600,
-      message: 'some word in blacklist',
-    },
-    warning: {
-      time: 1,
-      message: 'some word in blacklist [warn]',
-    },
-  };
+    blacklist: IBlackList = {
+      enabled: false,
+      subscribers: false,
+      vips: false,
+      values: [],
+      timeout: {
+        time: 600,
+        message: 'some word in blacklist',
+      },
+      warning: {
+        time: 1,
+        message: 'some word in blacklist [warn]',
+      },
+    };
 
   @settings()
-  symbols: ISymbols = {
-    enabled: false,
-    subscribers: false,
-    vips: false,
-    trigger: {
-      length: 15,
-      percent: 50,
-    },
-    timeout: {
-      time: 600,
-      message: 'so much symbols',
-    },
-    warning: {
-      time: 1,
-      message: 'so much symbols [warn]',
-    },
-  };
+    symbols: ISymbols = {
+      enabled: false,
+      subscribers: false,
+      vips: false,
+      trigger: {
+        length: 15,
+        percent: 50,
+      },
+      timeout: {
+        time: 600,
+        message: 'so much symbols',
+      },
+      warning: {
+        time: 1,
+        message: 'so much symbols [warn]',
+      },
+    };
 
   @settings()
-  longMessage: ILongMessage = {
-    enabled: false,
-    subscribers: false,
-    vips: false,
-    trigger: {
-      length: 15,
-    },
-    timeout: {
-      time: 600,
-      message: 'so long message',
-    },
-    warning: {
-      time: 1,
-      message: 'so long message [warn]',
-    },
-  };
+    longMessage: ILongMessage = {
+      enabled: false,
+      subscribers: false,
+      vips: false,
+      trigger: {
+        length: 15,
+      },
+      timeout: {
+        time: 600,
+        message: 'so long message',
+      },
+      warning: {
+        time: 1,
+        message: 'so long message [warn]',
+      },
+    };
 
   @settings()
-  caps: ICaps = {
-    enabled: false,
-    subscribers: false,
-    vips: false,
-    trigger: {
-      length: 15,
-      percent: 50,
-    },
-    timeout: {
-      time: 600,
-      message: 'caps disallowed',
-    },
-    warning: {
-      time: 1,
-      message: 'caps disallowed [warn]',
-    },
-  };
+    caps: ICaps = {
+      enabled: false,
+      subscribers: false,
+      vips: false,
+      trigger: {
+        length: 15,
+        percent: 50,
+      },
+      timeout: {
+        time: 600,
+        message: 'caps disallowed',
+      },
+      warning: {
+        time: 1,
+        message: 'caps disallowed [warn]',
+      },
+    };
 
   @settings()
-  emotes: IEmotes = {
-    enabled: false,
-    subscribers: false,
-    vips: false,
-    trigger: {
-      length: 10,
-    },
-    timeout: {
-      time: 600,
-      message: 'so much emotes',
-    },
-    warning: {
-      time: 1,
-      message: 'so much emotes [warn]',
-    },
-  };
+    emotes: IEmotes = {
+      enabled: false,
+      subscribers: false,
+      vips: false,
+      trigger: {
+        length: 10,
+      },
+      timeout: {
+        time: 600,
+        message: 'so much emotes',
+      },
+      warning: {
+        time: 1,
+        message: 'so much emotes [warn]',
+      },
+    };
 
   @settings()
-  color = {
-    enabled: false,
-    subscribers: false,
-    vips: false,
-    timeout: {
-      time: 600,
-      message: 'colored messages disallowed',
-    },
-    warning: {
-      time: 1,
-      message: 'colored messages disallowed [warn]',
-    },
-  };
+    color = {
+      enabled: false,
+      subscribers: false,
+      vips: false,
+      timeout: {
+        time: 600,
+        message: 'colored messages disallowed',
+      },
+      warning: {
+        time: 1,
+        message: 'colored messages disallowed [warn]',
+      },
+    };
 
   onStreamEnd() {
     for (const [type] of Object.entries(this.warnings)) this.warnings[type] = [];

@@ -78,7 +78,7 @@ class Currency {
   };
 
   @settings()
-  botCurrency: currency = 'RUB';
+    botCurrency: currency = 'RUB';
 
   constructor() {
     this.updateRates();

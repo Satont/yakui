@@ -10,10 +10,10 @@ class Qiwi {
   pollTimeout: NodeJS.Timeout = null;
 
   @settings()
-  enabled = false;
+    enabled = false;
 
   @settings()
-  token: string = null;
+    token: string = null;
 
   @onChange(['enabled', 'token'])
   @onLoad()

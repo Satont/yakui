@@ -14,20 +14,20 @@ class Tmi {
     chat: Chat | null;
     auth: RefreshingAuthProvider;
   } = {
-    chat: null,
-    api: null,
-    auth: null,
-  };
+      chat: null,
+      api: null,
+      auth: null,
+    };
 
   broadcaster: {
     api: ApiClient | null;
     chat: Chat | null;
     auth: RefreshingAuthProvider;
   } = {
-    chat: null,
-    api: null,
-    auth: null,
-  };
+      chat: null,
+      api: null,
+      auth: null,
+    };
 
   channel: { name: string; id: string };
   parsedLinesPerStream = 0;

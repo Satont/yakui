@@ -18,7 +18,7 @@ class Cache {
     }
   > = new Map();
   private _keywords: Map<string, Keywords> = new Map();
-  private _quotes: Map<string, Quotes> = new Map()
+  private _quotes: Map<string, Quotes> = new Map();
 
   async init() {
     this.updateCommands();

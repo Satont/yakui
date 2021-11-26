@@ -10,13 +10,13 @@ class Spotify implements Integration {
   private refreshTimeout: NodeJS.Timeout = null;
 
   @settings()
-  access_token: string = null;
+    access_token: string = null;
 
   @settings()
-  refresh_token: string = null;
+    refresh_token: string = null;
 
   @settings()
-  enabled = false;
+    enabled = false;
 
   @onChange(['enabled', 'access_token', 'refresh_token'])
   @onLoad()

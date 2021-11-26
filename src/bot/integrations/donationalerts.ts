@@ -27,13 +27,13 @@ class Donationalerts {
   private readonly donationsCache = new Set();
 
   @settings()
-  access_token: string = null;
+    access_token: string = null;
 
   @settings()
-  refresh_token: string = null;
+    refresh_token: string = null;
 
   @settings()
-  enabled = false;
+    enabled = false;
 
   @onChange('enabled')
   onEnabledChange(opts: IOnChangeOpts) {

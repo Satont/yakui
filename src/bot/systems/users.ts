@@ -17,26 +17,26 @@ class Users implements System {
   chatters: Array<{ username: string; id: string }> = [];
 
   @settings()
-  enabled = true;
+    enabled = true;
 
   @settings()
-  ignoredUsers: string[] = [];
+    ignoredUsers: string[] = [];
 
   @settings()
-  botAdmins: string[] = [];
+    botAdmins: string[] = [];
 
   @settings()
-  points = {
-    enabled: true,
-    messages: {
-      interval: 1,
-      amount: 1,
-    },
-    watch: {
-      interval: 1,
-      amount: 1,
-    },
-  };
+    points = {
+      enabled: true,
+      messages: {
+        interval: 1,
+        amount: 1,
+      },
+      watch: {
+        interval: 1,
+        amount: 1,
+      },
+    };
 
   async init() {
     await this.getChatters();

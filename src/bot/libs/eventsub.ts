@@ -13,14 +13,14 @@ class EventSubs {
   private timers: {
     followCache: NodeJS.Timer;
   } = {
-    followCache: null,
-  };
+      followCache: null,
+    };
   private followCache: string[] = [];
   private adapter: TwitchEventSub.EventSubMiddleware;
   //private listener: TwitchEventSub.EventSubListener;
 
   @settings()
-  secret = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    secret = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
   async init() {
     const url = general.siteUrl.replace('https://', '').replace('http://', '');

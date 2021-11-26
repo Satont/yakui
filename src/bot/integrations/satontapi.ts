@@ -43,18 +43,18 @@ class SatontApi {
   });
 
   @settings()
-  faceit = {
-    enabled: false,
-    nickname: null,
-  };
+    faceit = {
+      enabled: false,
+      nickname: null,
+    };
 
   @settings()
-  songs = {
-    enabled: false,
-    vk: null,
-    lastfm: null,
-    twitchdj: null,
-  };
+    songs = {
+      enabled: false,
+      vk: null,
+      lastfm: null,
+      twitchdj: null,
+    };
 
   async getFaceitData(): Promise<FaceitResponse | false> {
     if (!this.faceit.enabled || !this.faceit.nickname.trim().length) return false;

@@ -6,7 +6,7 @@ import cache from '@bot/libs/cache';
 import { parser } from '../decorators/parser';
 
 class Keyword {
-  cooldowns: string[] = []
+  cooldowns: string[] = [];
 
   @parser()
   async parse(opts: ParserOptions) {

@@ -11,13 +11,13 @@ class TTS implements System {
   clients: Socket[] = [];
 
   @settingsDecorator()
-  settings = {
-    voice: null,
-    volume: 30,
-    rate: 1.0,
-    pitch: 1.0,
-    triggerByHighlight: true,
-  };
+    settings = {
+      voice: null,
+      volume: 30,
+      rate: 1.0,
+      pitch: 1.0,
+      triggerByHighlight: true,
+    };
 
   @onChange('settings')
   async init() {

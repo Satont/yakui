@@ -12,7 +12,7 @@ const refreshTokenExpirationTime = 31 * 24 * 60 * 60; // 31 day
 
 class Authorization {
   @settings()
-  JWTKey = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+    JWTKey = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
   async validate(req: Request, res: Response) {
     const accessTokenHeader = req.headers['x-twitch-token'] as string | undefined;
