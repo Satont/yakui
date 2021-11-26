@@ -1,7 +1,7 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["filterJson", "nApi"]
-  binaryTargets   = ["native", "linux-arm-openssl-1.1.x"]
+  previewFeatures = ["filterJson"]
+  binaryTargets   = ["native", "linux-arm64-openssl-1.1.x"]
 }
 
 datasource db {
