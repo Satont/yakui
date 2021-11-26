@@ -3,7 +3,6 @@ import VueRouter from 'vue-router';
 import VueClipboard from 'vue-clipboard2';
 import Axios from './vue/plugins/axios';
 import VueSocketIO from 'vue-socket.io-extended';
-import LoadScript from 'vue-plugin-load-script';
 import Socket, { getNameSpace } from './vue/plugins/socket';
 import BootstrapVue from 'bootstrap-vue';
 import Toast from 'vue-toastification';
