@@ -30,6 +30,8 @@ class General {
     description: 'commands.help.description',
   })
   async getHelp(opts: CommandOptions) {
+    if (!opts.argument?.length) return;
+
     const command = cache.commands.get(opts.argument) || cache.commandsAliases.get(opts.argument);
 
     if (!command) {
