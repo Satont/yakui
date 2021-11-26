@@ -1,12 +1,10 @@
-import { loadedSystems } from './loader';
+import { PrivateMessage } from '@twurple/chat';
+import { EventSubChannelFollowEvent, EventSubChannelModeratorEvent, EventSubChannelUpdateEvent } from '@twurple/eventsub';
+import { PubSubRedemptionMessage } from '@twurple/pubsub';
 import { DonationData, HostType } from 'typings';
-import { info, donate, hosted, hosting, raided, moded, unmoded, follow, sub, resub, redemption, highlight } from './logger';
-import { INewSubscriber, INewResubscriber } from 'typings/events';
-import { PubSubRedemptionMessage } from 'twitch-pubsub-client/lib';
-import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage';
-import { EventSubChannelUpdateEvent } from 'twitch-eventsub/lib/Events/EventSubChannelUpdateEvent';
-import { EventSubChannelFollowEvent } from 'twitch-eventsub/lib/Events/EventSubChannelFollowEvent';
-import { EventSubChannelModeratorEvent } from 'twitch-eventsub/lib/Events/EventSubChannelModeratorEvent';
+import { INewResubscriber, INewSubscriber } from 'typings/events';
+import { loadedSystems } from './loader';
+import { donate, follow, highlight, hosted, hosting, info, moded, raided, redemption, resub, sub, unmoded } from './logger';
 
 export const onStreamStart = () => {
   info(`TWITCH: Stream started`);
@@ -103,15 +101,15 @@ export const onReSubscribe = (data: INewResubscriber) => {
 };
 
 export const onRedemption = (data: PubSubRedemptionMessage) => {
-  redemption(`${data.userName}, name: ${data.rewardName}, points: ${data.rewardCost}`);
+  redemption(`${data.userName}, name: ${data.rewardTitle}, points: ${data.rewardCost}`);
 
   for (const system of loadedSystems) {
     if (typeof system.onRedemption === 'function') system.onRedemption(data);
   }
 };
 
-export const onMessageHighlight = (data: TwitchPrivateMessage) => {
-  highlight(`${data.userInfo.userName}, message: ${data.message.value}`);
+export const onMessageHighlight = (data: PrivateMessage) => {
+  highlight(`${data.userInfo.userName}, message: ${data.content.value}`);
 
   for (const system of loadedSystems) {
     if (typeof system.onMessageHighlight === 'function') system.onMessageHighlight(data);

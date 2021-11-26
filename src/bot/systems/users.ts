@@ -1,7 +1,7 @@
 import { System, ParserOptions, CommandOptions, UserPermissions } from 'typings';
 import tmi from '@bot/libs/tmi';
 import twitch from './twitch';
-import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage';
+import { PrivateMessage } from '@twurple/chat';
 import { prisma } from '@bot/libs/db';
 import { settings } from '../decorators';
 import { parser } from '../decorators/parser';
@@ -168,7 +168,7 @@ class Users implements System {
     tmi.broadcaster.chat?.say(tmi.channel?.name, opts.argument);
   }
 
-  getUserPermissions(badges: Map<string, string>, raw?: TwitchPrivateMessage): UserPermissions {
+  getUserPermissions(badges: Map<string, string>, raw?: PrivateMessage): UserPermissions {
     return {
       BROADCASTER: badges.has('broadcaster') || this.botAdmins?.includes(raw?.userInfo.userName),
       MODERATORS: badges.has('moderator'),
@@ -178,7 +178,7 @@ class Users implements System {
     };
   }
 
-  hasPermission(badges: Map<string, string>, searchForPermission: CommandPermission, raw?: TwitchPrivateMessage) {
+  hasPermission(badges: Map<string, string>, searchForPermission: CommandPermission, raw?: PrivateMessage) {
     if (!searchForPermission) return true;
 
     const userPerms = Object.entries(this.getUserPermissions(badges, raw));

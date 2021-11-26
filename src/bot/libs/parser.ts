@@ -1,4 +1,4 @@
-import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage';
+import { PrivateMessage } from '@twurple/chat';
 
 import { Command, System } from 'typings';
 import tmi from './tmi';
@@ -15,7 +15,7 @@ class Parser {
   inited = false;
   cooldowns: string[] = [];
 
-  parse(message: string, raw: TwitchPrivateMessage) {
+  parse(message: string, raw: PrivateMessage) {
     const isCommand = message.startsWith('!');
 
     if (isCommand) {
@@ -29,7 +29,7 @@ class Parser {
     }
   }
 
-  private async parseCommand(message: string, raw: TwitchPrivateMessage) {
+  private async parseCommand(message: string, raw: PrivateMessage) {
     if (users.isIgnored(raw.userInfo.userName) || users.isIgnored(raw.userInfo.userId)) return;
 
     message = message.substring(1).trim();

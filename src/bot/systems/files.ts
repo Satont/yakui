@@ -2,6 +2,7 @@ import { getNameSpace } from '@bot/libs/socket';
 import { System } from 'typings';
 import { prisma } from '@bot/libs/db';
 import { Files } from '@prisma/client';
+import { Socket } from 'socket.io';
 
 class FilesSystem implements System {
   socket = getNameSpace('systems/files');
@@ -24,7 +25,7 @@ class FilesSystem implements System {
     return prisma.files.delete({ where: { id } });
   }
 
-  sockets(client: SocketIO.Socket) {
+  sockets(client: Socket) {
     client.on('getOne', async (id: number, cb) => {
       try {
         cb(null, await this.getOne(id));

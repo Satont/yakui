@@ -1,19 +1,18 @@
-import { ApiClient, RefreshableAuthProvider } from 'twitch';
-import { ChatClient as Chat } from 'twitch-chat-client';
-import { StaticAuthProvider } from 'twitch-auth';
+import { ApiClient } from '@twurple/api';
+import { ChatClient as Chat, PrivateMessage } from '@twurple/chat';
+import { StaticAuthProvider, RefreshingAuthProvider, getExpiryDateOfAccessToken } from '@twurple/auth';
 
 import Parser from './parser';
 import events from '@bot/systems/events';
 import { info, error, chatOut, chatIn, timeout, whisperOut } from './logger';
 import { onHosting, onHosted, onRaided, onSubscribe, onReSubscribe, onMessageHighlight } from './eventsCaller';
-import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage';
 import oauth from './oauth';
 
 class Tmi {
   bot: {
     api: ApiClient | null;
     chat: Chat | null;
-    auth: RefreshableAuthProvider;
+    auth: RefreshingAuthProvider;
   } = {
     chat: null,
     api: null,
@@ -23,7 +22,7 @@ class Tmi {
   broadcaster: {
     api: ApiClient | null;
     chat: Chat | null;
-    auth: RefreshableAuthProvider;
+    auth: RefreshingAuthProvider;
   } = {
     chat: null,
     api: null,
@@ -43,15 +42,21 @@ class Tmi {
     try {
       await this.disconnect(type);
 
-      const staticProvider = new StaticAuthProvider(oauth.clientId);
-      this[type].auth = new RefreshableAuthProvider(staticProvider as any, {
-        clientSecret: oauth.clientSecret,
-        refreshToken: oauth[`${type}RefreshToken`],
-        onRefresh: async ({ accessToken, refreshToken }) => {
-          oauth[`${type}AccessToken`] = accessToken;
-          oauth[`${type}RefreshToken`] = refreshToken;
+      this[type].auth = new RefreshingAuthProvider(
+        {
+          clientId: oauth.clientId,
+          clientSecret: oauth.clientSecret,
+          onRefresh: async ({ accessToken, refreshToken }) => {
+            oauth[`${type}AccessToken`] = accessToken;
+            oauth[`${type}RefreshToken`] = refreshToken;
+          },
         },
-      });
+        {
+          refreshToken: oauth[`${type}RefreshToken`],
+          expiresIn: 1000,
+          obtainmentTimestamp: Date.now() - 2000,
+        },
+      );
 
       this[type].api = new ApiClient({ authProvider: this[type].auth });
 
@@ -63,7 +68,7 @@ class Tmi {
       }
 
       if (!this.channel) return;
-      this[type].chat = new Chat(this[type].auth as any, { channels: [this.channel.name] });
+      this[type].chat = new Chat({ authProvider: this[type].auth, channels: [this.channel.name] });
       this.listeners(type);
       await this[type].chat.connect();
     } catch (e) {
@@ -120,7 +125,7 @@ class Tmi {
       client.onAnyMessage((msg) => {
         this.parsedLinesPerStream++;
         if (msg.tags.get('msg-id') !== 'highlighted-message') return;
-        onMessageHighlight(msg as TwitchPrivateMessage);
+        onMessageHighlight(msg as PrivateMessage);
       });
       client.onAction(async (channel, username, message, raw) => {
         chatIn(`${username} [${raw.userInfo.userId}]: ${message}`);
@@ -133,7 +138,7 @@ class Tmi {
         chatIn(`${username} [${raw.userInfo.userId}]: ${message}`);
 
         if (raw.isCheer) {
-          events.fire({ name: 'bits', opts: { amount: raw.totalBits, message } });
+          events.fire({ name: 'bits', opts: { amount: raw.bits, message } });
         } else {
           events.fire({ name: 'message', opts: { username, message } });
           Parser.parse(message, raw);

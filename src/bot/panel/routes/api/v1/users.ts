@@ -46,8 +46,7 @@ router.get(
       validationResult(req).throw();
 
       const body = req.query as any;
-      const users = await prisma.$queryRaw(
-        `select
+      const users = await prisma.$queryRaw`select
             "user".*,
             COALESCE(
               SUM(
@@ -71,8 +70,7 @@ router.get(
           limit
             ${body.perPage || 30}
           offset ${(body.page - 1) * body.perPage || 0}
-              `,
-      );
+              `;
       const total = await prisma.users.count();
 
       res.json({ users, total });

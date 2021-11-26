@@ -1,10 +1,10 @@
-import { PubSubClient, BasicPubSubClient } from 'twitch-pubsub-client';
+import { PubSubClient, BasicPubSubClient } from '@twurple/pubsub';
 import { error, info } from './logger';
 import tmi from './tmi';
 import { onRedemption } from './eventsCaller';
 
-export default new class PubSub {
-  basicPubSubClient: BasicPubSubClient = null
+class PubSub {
+  basicPubSubClient: BasicPubSubClient = null;
 
   async init() {
     if (!tmi.broadcaster.api) return;
@@ -20,7 +20,7 @@ export default new class PubSub {
     const pubSubClient = new PubSubClient(this.basicPubSubClient);
 
     try {
-      await pubSubClient.registerUserListener(tmi.broadcaster.api);
+      await pubSubClient.registerUserListener(tmi.broadcaster.auth);
       await pubSubClient.onRedemption(tmi.channel.id, onRedemption);
 
       info('PUBSUB: SUCCESSFULY SUBSCRIBED TO REDEMPTION EVENTS');
@@ -35,4 +35,6 @@ export default new class PubSub {
     this.basicPubSubClient.disconnect();
     this.basicPubSubClient = null;
   }
-};
+}
+
+export default new PubSub();

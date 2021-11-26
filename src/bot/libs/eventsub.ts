@@ -1,11 +1,12 @@
 import tmi from './tmi';
 import { error, info } from './logger';
 import general from '../settings/general';
-import * as TwitchEventSub from 'twitch-eventsub';
+import * as TwitchEventSub from '@twurple/eventsub';
 import panel from '../panel';
 import { settings } from '../decorators';
 import { onAddModerator, onRemoveModerator, onUserFollow, onStreamChange } from '@bot/libs/eventsCaller';
-import { ApiClient, ClientCredentialsAuthProvider } from 'twitch';
+import { ApiClient } from '@twurple/api';
+import { ClientCredentialsAuthProvider } from '@twurple/auth';
 import oauth from './oauth';
 
 class EventSubs {
@@ -19,20 +20,15 @@ class EventSubs {
   //private listener: TwitchEventSub.EventSubListener;
 
   @settings()
-  secret =
-    Math.random()
-      .toString(36)
-      .substring(2, 15) +
-    Math.random()
-      .toString(36)
-      .substring(2, 15);
+  secret = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
   async init() {
     const url = general.siteUrl.replace('https://', '').replace('http://', '');
     const api = new ApiClient({
       authProvider: new ClientCredentialsAuthProvider(oauth.clientId, oauth.clientSecret),
     });
-    this.adapter = new TwitchEventSub.EventSubMiddleware(api, {
+    this.adapter = new TwitchEventSub.EventSubMiddleware({
+      apiClient: api,
       hostName: url,
       pathPrefix: 'eventsub',
       secret: this.secret,

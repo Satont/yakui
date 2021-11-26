@@ -1,10 +1,9 @@
-import 'source-map-support/register';
 import 'module-alias/register';
-
 import 'reflect-metadata';
+import 'source-map-support/register';
 
-import { ApiClient } from 'twitch';
-import { StaticAuthProvider } from 'twitch-auth';
+import { ApiClient } from '@twurple/api';
+import { StaticAuthProvider } from '@twurple/auth';
 import { chunk as makeChunk } from 'lodash';
 import { isMainThread, parentPort, Worker, workerData } from 'worker_threads';
 import { error } from '../libs/logger';

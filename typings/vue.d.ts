@@ -1,16 +1,13 @@
 import { AxiosStatic } from 'axios';
 import VueSocketIO from 'vue-socket.io-extended';
-
-declare module 'vue-plugin-load-script'
-
 declare module 'vue/types/vue' {
   interface Vue {
     $axios: AxiosStatic;
     sockets: VueSocketIO;
-    $loadScript: (name: string) => Promise<void>;
-    $unloadScript: (name: string) => Promise<void>;
+    $loadScript: (src: string) => Promise<HTMLScriptElement>;
+    $unloadScript: (src: string) => Promise<void>;
   }
-  interface VueConstructor  {
+  interface VueConstructor {
     $axios: AxiosStatic;
     sockets: VueSocketIO;
   }

@@ -19,7 +19,51 @@ Vue.use(VueRouter);
 Vue.use(VueClipboard);
 Vue.use(BootstrapVue);
 Vue.use(Toast);
-Vue.use(LoadScript);
+
+Vue.prototype.$loadScript = function (src) {
+  // eslint-disable-line no-param-reassign
+  return new Promise(function (resolve, reject) {
+    let shouldAppend = false;
+    let el = document.querySelector('script[src="' + src + '"]');
+    if (!el) {
+      const newEl = document.createElement('script');
+      newEl.type = 'text/javascript';
+      newEl.async = true;
+      newEl.src = src;
+      el = newEl;
+      shouldAppend = true;
+    } else if (el.hasAttribute('data-loaded')) {
+      resolve(el);
+      return;
+    }
+
+    el.addEventListener('error', reject);
+    el.addEventListener('abort', reject);
+    el.addEventListener('load', function loadScriptHandler() {
+      el.setAttribute('data-loaded', 'true');
+      resolve(el);
+    });
+
+    if (shouldAppend) document.head.appendChild(el);
+  });
+};
+
+Vue.prototype.$unloadScript = function (src) {
+  // eslint-disable-line no-param-reassign
+  return new Promise(function (resolve, reject) {
+    const el = document.querySelector('script[src="' + src + '"]');
+
+    if (!el) {
+      reject();
+      return;
+    }
+
+    document.head.removeChild(el);
+
+    resolve(true);
+  });
+};
+
 Vue.component('loading', () => import('./vue/components/loadingAnimation.vue'));
 Vue.component('side-bar', () => import('./vue/components/sidebar.vue'));
 Vue.component('nav-bar', () => import('./vue/components/navbar.vue'));
@@ -113,7 +157,7 @@ const start = async () => {
     template: `
     <div>
       <nav-bar></nav-bar>
-      <div class="container-fluid">
+      <div class="container-fluid container">
         <side-bar></side-bar>
         <loading v-if="$root.loading"></loading>
         <div class="col-md-11 ml-sm-auto col-lg-11 px-md-4 pt-md-3">

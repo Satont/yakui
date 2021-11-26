@@ -10,7 +10,7 @@ import { prisma } from '@bot/libs/db';
 import { settings } from '../decorators';
 import { command } from '../decorators/command';
 import { CommandPermission } from '@prisma/client';
-import { EventSubChannelUpdateEvent } from 'twitch-eventsub/lib/Events/EventSubChannelUpdateEvent';
+import { EventSubChannelUpdateEvent } from '@twurple/eventsub';
 
 class Twitch implements System {
   private intervals = {
@@ -130,15 +130,15 @@ class Twitch implements System {
     this.intervals.channelData = setTimeout(() => this.getChannelData(), 1 * 60 * 1000);
     if (!tmi.channel?.id) return;
 
-    const channel = await tmi.bot.api?.kraken.users.getUser(tmi.channel?.id);
+    const channel = await tmi.bot.api.channels.getChannelInfo(tmi.channel?.id);
     if (!channel) return;
+    const broadcaster = await channel.getBroadcaster();
 
-    const data = await (await tmi.bot.api?.kraken.users.getUser(tmi.channel?.id))?.getChannel();
-
-    (this.channelMetaData.views = data?.views ?? 0),
-      (this.channelMetaData.game = data?.game ?? 'No data'),
-      (this.channelMetaData.title = data?.status ?? 'No data');
-    this.channelMetaData.followers = data?.followers ?? 0;
+    // @prettier-ignore
+    this.channelMetaData.views = broadcaster.views ?? 0;
+    this.channelMetaData.game = channel?.gameName ?? 'No data';
+    this.channelMetaData.title = channel?.title ?? 'No data';
+    this.channelMetaData.followers = /* channel?.followers ?? */ 0;
   }
 
   private async getChannelSubscribers() {
@@ -163,8 +163,10 @@ class Twitch implements System {
     clearTimeout(this.intervals.latestFollower);
     this.intervals.latestFollower = setTimeout(() => this.getChannelLatestFollower(), 1 * 60 * 1000);
 
+    if (!tmi.channel?.id) return;
+
     try {
-      const { data } = (await tmi.bot.api?.helix.users.getFollows({ followedUser: tmi.channel?.id })) || {};
+      const { data } = (await tmi.bot.api?.users.getFollows({ followedUser: tmi.channel?.id })) || {};
       if (!data) return;
       const follower = data[0];
 
@@ -178,7 +180,7 @@ class Twitch implements System {
   }
 
   async getFollowAge(userId: string) {
-    const follow = await tmi.bot.api?.helix.users.getFollows({ followedUser: tmi.channel?.id, user: userId });
+    const follow = await tmi.bot.api?.users.getFollows({ followedUser: tmi.channel?.id, user: userId });
     if (!follow.total) return 'not follower';
 
     return humanizeDuration(Date.now() - new Date(follow.data[0].followDate).getTime(), {
@@ -218,8 +220,8 @@ class Twitch implements System {
     permission: CommandPermission.MODERATORS,
   })
   async setTitle(opts: CommandOptions) {
-    await tmi.bot.api?.kraken.channels.updateChannel(tmi.channel?.id, {
-      status: opts.argument,
+    await tmi.bot.api.channels.updateChannelInfo(tmi.channel?.id, {
+      title: opts.argument,
     });
 
     return '$sender ✅';
@@ -247,12 +249,12 @@ class Twitch implements System {
     description: 'commands.category.description',
   })
   async setGame(opts: CommandOptions) {
-    const suggestedGame = await tmi.bot.api?.helix.games.getGameByName(opts.argument);
+    const suggestedGame = await tmi.bot.api?.games.getGameByName(opts.argument);
 
     if (!suggestedGame) return;
 
-    await tmi.bot.api?.kraken.channels.updateChannel(tmi.channel?.id, {
-      game: suggestedGame.name,
+    await tmi.bot.api.channels.updateChannelInfo(tmi.channel?.id, {
+      gameId: suggestedGame.id,
     });
 
     return '$sender ✅';

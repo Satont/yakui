@@ -13,7 +13,7 @@ export function SettingsDecorator(spaceName?: string) {
       const item = await prisma.settings.findFirst({ where: { space, name } });
 
       if (!item) {
-        await prisma.settings.create({ data: { space, name, value: module[name] } });
+        await prisma.settings.create({ data: { space, name, value: module[name] === null ? undefined : module[name] } });
       } else module[name] = item.value;
     };
     load().then(() => {

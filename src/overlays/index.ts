@@ -1,11 +1,52 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import LoadScript from 'vue-plugin-load-script';
-Vue.use(LoadScript);
+
+Vue.prototype.$loadScript = function (src) {
+  // eslint-disable-line no-param-reassign
+  return new Promise(function (resolve, reject) {
+    let shouldAppend = false;
+    let el = document.querySelector('script[src="' + src + '"]');
+    if (!el) {
+      const newEl = document.createElement('script');
+      newEl.type = 'text/javascript';
+      newEl.async = true;
+      newEl.src = src;
+      el = newEl;
+      shouldAppend = true;
+    } else if (el.hasAttribute('data-loaded')) {
+      resolve(el);
+      return;
+    }
+
+    el.addEventListener('error', reject);
+    el.addEventListener('abort', reject);
+    el.addEventListener('load', function loadScriptHandler() {
+      el.setAttribute('data-loaded', 'true');
+      resolve(el);
+    });
+
+    if (shouldAppend) document.head.appendChild(el);
+  });
+};
+
+Vue.prototype.$unloadScript = function (src) {
+  // eslint-disable-line no-param-reassign
+  return new Promise(function (resolve, reject) {
+    const el = document.querySelector('script[src="' + src + '"]');
+
+    if (!el) {
+      reject();
+      return;
+    }
+
+    document.head.removeChild(el);
+
+    resolve(true);
+  });
+};
 
 Vue.component('loading', () => import('../panel/vue/components/loadingAnimation.vue'));
 Vue.use(Router);
-
 
 const router = new Router({
   mode: 'history',
@@ -41,4 +82,3 @@ router.beforeEach((_to, _from, next) => {
 router.afterEach((_to, _from) => {
   app.loading = false;
 });
-

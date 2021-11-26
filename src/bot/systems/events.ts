@@ -5,19 +5,19 @@ import tmi from '@bot/libs/tmi';
 import { System, DonationData, HostType } from 'typings';
 import { INewResubscriber, INewSubscriber } from 'typings/events';
 import { getNameSpace } from '@bot/libs/socket';
-import { PubSubRedemptionMessage } from 'twitch-pubsub-client/lib';
+import { PubSubRedemptionMessage } from '@twurple/pubsub';
 import alerts from '@bot/overlays/alerts';
 import tts from '@bot/overlays/tts';
 import cache from '@bot/libs/cache';
 import { prisma } from '@bot/libs/db';
-import { EventSubChannelFollowEvent } from 'twitch-eventsub/lib/Events/EventSubChannelFollowEvent';
-import { EventSubChannelModeratorEvent } from 'twitch-eventsub/lib/Events/EventSubChannelModeratorEvent';
+import { EventSubChannelFollowEvent, EventSubChannelModeratorEvent } from '@twurple/eventsub';
+import { Socket } from 'socket.io';
 
 class Events implements System {
   socket = getNameSpace('widgets/eventlist');
-  clients: SocketIO.Socket[] = [];
+  clients: Socket[] = [];
 
-  async fire({ name, opts }: { name: string; opts: Record<string, string | number | Record<string, unknown>>}) {
+  async fire({ name, opts }: { name: string; opts: Record<string, string | number | Record<string, unknown>> }) {
     const event = cache.events.get(name);
     if (!event) return;
 
@@ -72,7 +72,7 @@ class Events implements System {
     this.clients.forEach((c) => c.emit('event', event));
   }
 
-  sockets(client: SocketIO.Socket) {
+  sockets(client: Socket) {
     this.clients.push(client);
     client.on('disconnect', () => {
       const index = this.clients.indexOf(client);
@@ -165,7 +165,7 @@ class Events implements System {
     this.fire({
       name: 'redemption',
       opts: {
-        name: data.rewardName,
+        name: data.rewardTitle,
         username: data.userName,
         amount: data.rewardCost,
         message: data.message,
@@ -174,7 +174,7 @@ class Events implements System {
 
     this.addToEventList({
       name: 'redemption',
-      data: { name: data.rewardName, username: data.userName, amount: data.rewardCost, message: data.message },
+      data: { name: data.rewardTitle, username: data.userName, amount: data.rewardCost, message: data.message },
     });
   }
 }

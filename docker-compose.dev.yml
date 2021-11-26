@@ -1,0 +1,14 @@
+version: '3.3'
+
+services:
+
+  db:
+      image: postgres:13
+      restart: always
+      command: postgres -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all
+      environment:
+        POSTGRES_USER: yakui
+        POSTGRES_PASSWORD: yakui
+        POSTGRES_DB: yakui
+      ports:
+        - 5500:5432

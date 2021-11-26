@@ -1,11 +1,11 @@
-import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage';
+import { PrivateMessage } from '@twurple/chat';
 import safeEval from 'safe-eval';
 import axios from 'axios';
 import _ from 'lodash';
 import tmi from '@bot/libs/tmi';
 import { prisma } from '../libs/db';
 
-export default async ({ raw, message, param }: { raw: TwitchPrivateMessage; message: string; param: string }) => {
+export default async ({ raw, message, param }: { raw: PrivateMessage; message: string; param: string }) => {
   const toEval = `(async function evaluation () { ${message} })()`;
   const context = {
     axios,

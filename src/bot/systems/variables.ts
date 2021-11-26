@@ -1,4 +1,4 @@
-import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage';
+import { PrivateMessage } from '@twurple/chat';
 import _, { sample } from 'lodash';
 import hd from 'humanize-duration';
 
@@ -89,7 +89,7 @@ class Variables implements System {
     this.variables.push(...variables);
   }
 
-  async parseMessage(opts: { message: string; raw?: TwitchPrivateMessage; argument?: string; command?: Command }) {
+  async parseMessage(opts: { message: string; raw?: PrivateMessage; argument?: string; command?: Command }) {
     let result = opts.message;
     if (!opts.message) return;
     const userInfo = opts.raw?.userInfo;
@@ -295,14 +295,18 @@ class Variables implements System {
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ');
     } else if (type === 'tips') {
       // eslint-disable-next-line max-len
-      const sql = `select "user"."id", "user"."username", COALESCE(SUM("tips"."inMainCurrencyAmount"), 0) as "value" from "users" as "user" inner join "users_tips" as "tips" on "user"."id" = "tips"."userId" where 1 = 1 group by "user"."id" order by "value" desc limit ${limit} offset ${offset}`;
-      const result: Array<{ id: number; username: string; value: number }> = await prisma.$queryRaw(sql);
+
+      const result: Array<{ id: number; username: string; value: number }> =
+        // eslint-disable-next-line max-len
+        await prisma.$queryRaw`select "user"."id", "user"."username", COALESCE(SUM("tips"."inMainCurrencyAmount"), 0) as "value" from "users" as "user" inner join "users_tips" as "tips" on "user"."id" = "tips"."userId" where 1 = 1 group by "user"."id" order by "value" desc limit ${limit} offset ${offset}`;
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}${currency.botCurrency}`).join(', ');
     } else if (type === 'bits') {
       // eslint-disable-next-line max-len
-      const sql = `select "user"."id", "user"."username", COALESCE(SUM("tips"."amount"), 0) as "value" from "users" as "user" inner join "users_bits" as "bits" on "user"."id" = "tips"."userId" where 1 = 1 group by "user"."id" order by "value" desc limit ${limit} offset ${offset}`;
-      const result: Array<{ id: number; username: string; value: number }> = await prisma.$queryRaw(sql);
+
+      const result: Array<{ id: number; username: string; value: number }> =
+        // eslint-disable-next-line max-len
+        await prisma.$queryRaw`select "user"."id", "user"."username", COALESCE(SUM("tips"."amount"), 0) as "value" from "users" as "user" inner join "users_bits" as "bits" on "user"."id" = "tips"."userId" where 1 = 1 group by "user"."id" order by "value" desc limit ${limit} offset ${offset}`;
 
       return result.map((result, index) => `${index + 1 + offset}. ${result.username} - ${result.value}`).join(', ');
     } else if (type === 'messages.today') {
@@ -375,11 +379,8 @@ class Variables implements System {
           }
           for (const tag of rData) {
             let path = data;
-            const ids = tag
-              .replace('(api.', '')
-              .replace(')', '')
-              .split('.');
-            _.each(ids, function(id) {
+            const ids = tag.replace('(api.', '').replace(')', '').split('.');
+            _.each(ids, function (id) {
               const isArray = id.match(/(\S+)\[(\d+)\]/i);
               if (isArray) {
                 path = path[isArray[1]][isArray[2]];
@@ -408,7 +409,7 @@ class Variables implements System {
     return result;
   }
 
-  async changeCustomVariable({ raw, text, response }: { raw: TwitchPrivateMessage; response: string; text: string }) {
+  async changeCustomVariable({ raw, text, response }: { raw: PrivateMessage; response: string; text: string }) {
     const isAdmin = users.hasPermission(raw.userInfo.badges, CommandPermission.MODERATORS, raw);
 
     if (isAdmin && text.length) {
