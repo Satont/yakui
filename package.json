@@ -64,7 +64,7 @@
     "@prisma/client": "^3.5.0",
     "@satont/text-utils": "^1.0.8",
     "@twurple/api": "^5.0.9",
-    "@twurple/auth": "^5.0.9",
+    "@twurple/auth": "^5.0.13",
     "@twurple/chat": "^5.0.9",
     "@twurple/eventsub": "^5.0.9",
     "@twurple/pubsub": "^5.0.9",
