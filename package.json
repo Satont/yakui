@@ -61,7 +61,7 @@
     "webpack-cli": "^4.9.1"
   },
   "dependencies": {
-    "@prisma/client": "^3.5.0",
+    "@prisma/client": "^3.9.0",
     "@satont/text-utils": "^1.0.8",
     "@twurple/api": "^5.0.9",
     "@twurple/auth": "^5.0.9",
