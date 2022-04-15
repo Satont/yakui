@@ -63,7 +63,7 @@
   "dependencies": {
     "@prisma/client": "^3.5.0",
     "@satont/text-utils": "^1.0.8",
-    "@twurple/api": "^5.0.9",
+    "@twurple/api": "^5.0.19",
     "@twurple/auth": "^5.0.9",
     "@twurple/chat": "^5.0.9",
     "@twurple/eventsub": "^5.0.9",
