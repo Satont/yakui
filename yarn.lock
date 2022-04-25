@@ -95,6 +95,17 @@
     "@types/node" "^12.12.5"
     tslib "^2.0.3"
 
+"@d-fischer/rate-limiter@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@d-fischer/rate-limiter/-/rate-limiter-0.5.0.tgz#709cc139567b04612093d66e645838a9b188cfcb"
+  integrity sha512-bYxZ//vhtRSHx/K7vpcLxglCA80FGRAuRbNI//HsJmJcJ6abCO7ed/JlSJT9t4exRUPanM8igvEFEkffA4P4ug==
+  dependencies:
+    "@d-fischer/logger" "^4.0.0"
+    "@d-fischer/promise.allsettled" "^2.0.2"
+    "@d-fischer/shared-utils" "^3.2.0"
+    "@types/node" "^12.12.5"
+    tslib "^2.0.3"
+
 "@d-fischer/raw-body@^2.4.3":
   version "2.4.3"
   resolved "https://registry.yarnpkg.com/@d-fischer/raw-body/-/raw-body-2.4.3.tgz#9453278fbcd3f14bc0ded34c4c085baed7a330b1"
@@ -608,28 +619,28 @@
   resolved "https://registry.yarnpkg.com/@tsconfig/node16/-/node16-1.0.2.tgz#423c77877d0569db20e1fc80885ac4118314010e"
   integrity sha512-eZxlbI8GZscaGS7kkc/trHTT5xgrjH3/1n2JDwusC9iahPKWMRvRjJSAN5mCXviuTGQ/lHnhvv8Q1YTpnfz9gA==
 
-"@twurple/api-call@^5.0.9":
-  version "5.0.9"
-  resolved "https://registry.yarnpkg.com/@twurple/api-call/-/api-call-5.0.9.tgz#157fb399ff8a0f810f0f3386af0e1447b663b9ea"
-  integrity sha512-ug0t0O+vgyJO3sgp7QPX5GO4k1LbemK5qvdYbKK+VaWl1hdd9XrQ6iMRWG5MHeEObudENkNRCTpuEhr+hSvoIA==
+"@twurple/api-call@^5.0.9", "@twurple/api-call@^5.1.4":
+  version "5.1.4"
+  resolved "https://registry.yarnpkg.com/@twurple/api-call/-/api-call-5.1.4.tgz#6369baacd0b240f088bb942ae06df013fc1d775b"
+  integrity sha512-KZe4Udy6yLIB6LAciPZ1O3cTZBKyPK7mRuH8OkW4TxqneqCsamW9D73942VgHI/+2Rvz7ubsjN8bkAwGAwobTQ==
   dependencies:
     "@d-fischer/cross-fetch" "^4.0.2"
     "@d-fischer/qs" "^7.0.2"
-    "@twurple/common" "^5.0.9"
+    "@twurple/common" "^5.1.4"
     "@types/node-fetch" "^2.5.7"
     tslib "^2.0.3"
 
-"@twurple/api@^5.0.9":
-  version "5.0.9"
-  resolved "https://registry.yarnpkg.com/@twurple/api/-/api-5.0.9.tgz#b5d58393dc1431e37449666a50bce672e29d1b81"
-  integrity sha512-LO53jrfrtF1jkss78CC4W+uZ7Q+wQ96hkYjiQ37084c46foHgvwGJwOyfqSgOeSNsAvV603cQbjDJ043pdVu1w==
+"@twurple/api@^5.1.4":
+  version "5.1.4"
+  resolved "https://registry.yarnpkg.com/@twurple/api/-/api-5.1.4.tgz#e8b58bf7801817d9a20dd0d4fb142abdca87f590"
+  integrity sha512-U+aJU0g4Blz8qiC65ho0e626FT8tUjL2bFErspSnrRUQyt/BrJd+JF/WPHG201VoU36Rmhzu7xaWuNtREQ0FvQ==
   dependencies:
     "@d-fischer/cache-decorators" "^3.0.0"
     "@d-fischer/logger" "^4.0.0"
-    "@d-fischer/rate-limiter" "^0.4.4"
+    "@d-fischer/rate-limiter" "^0.5.0"
     "@d-fischer/shared-utils" "^3.2.0"
-    "@twurple/api-call" "^5.0.9"
-    "@twurple/common" "^5.0.9"
+    "@twurple/api-call" "^5.1.4"
+    "@twurple/common" "^5.1.4"
     tslib "^2.0.3"
 
 "@twurple/auth@^5.0.9":
@@ -658,10 +669,10 @@
     ircv3 "^0.28.0"
     tslib "^2.0.3"
 
-"@twurple/common@^5.0.9":
-  version "5.0.9"
-  resolved "https://registry.yarnpkg.com/@twurple/common/-/common-5.0.9.tgz#9c395a8f96a4640f4e5d0ba2dbeee3ac01860ea4"
-  integrity sha512-9RUnPjWBn0FvoyFfO7SaV9TZ34J/6OBBZ1+dwHzf/1v1piDuK5dOuvgTR2q+8Qgf2zxZIUdoGe44s1ZjUspKkw==
+"@twurple/common@^5.0.9", "@twurple/common@^5.1.4":
+  version "5.1.4"
+  resolved "https://registry.yarnpkg.com/@twurple/common/-/common-5.1.4.tgz#88a8965e0030f840b60fd667340cdbc21e9b1774"
+  integrity sha512-wE8bz9RuB8/o99AF7waNcF7UlzwdlAtKL2sy6mGb3fUMXDL3tJpVuYckBe/OedxeaJMItddIub7PNUy8wO1uQg==
   dependencies:
     "@d-fischer/shared-utils" "^3.2.0"
     klona "^2.0.4"
