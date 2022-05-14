@@ -39,22 +39,22 @@ export type FaceitResponse = {
 
 class SatontApi {
   private base = axios.create({
-    baseURL: 'http://api.satont.ru',
+    baseURL: 'http://api.satont.dev',
   });
 
   @settings()
-    faceit = {
-      enabled: false,
-      nickname: null,
-    };
+  faceit = {
+    enabled: false,
+    nickname: null,
+  };
 
   @settings()
-    songs = {
-      enabled: false,
-      vk: null,
-      lastfm: null,
-      twitchdj: null,
-    };
+  songs = {
+    enabled: false,
+    vk: null,
+    lastfm: null,
+    twitchdj: null,
+  };
 
   async getFaceitData(): Promise<FaceitResponse | false> {
     if (!this.faceit.enabled || !this.faceit.nickname.trim().length) return false;
