@@ -486,10 +486,10 @@
   resolved "https://registry.yarnpkg.com/@prisma/engines-version/-/engines-version-3.5.0-38.78a5df6def6943431f4c022e1428dbc3e833cf8e.tgz#254fdb80ae6db397ee1e638d12561f35d058e340"
   integrity sha512-X16YmBmj7Omso4ZbkNBe6gPYlNcnwZMUPtXsguCkn+KoMqm3DJD9M4X31gx0Gf13Q44dY3SKPJZUk44/XUj/WA==
 
-"@prisma/engines@3.5.0-38.78a5df6def6943431f4c022e1428dbc3e833cf8e":
-  version "3.5.0-38.78a5df6def6943431f4c022e1428dbc3e833cf8e"
-  resolved "https://registry.yarnpkg.com/@prisma/engines/-/engines-3.5.0-38.78a5df6def6943431f4c022e1428dbc3e833cf8e.tgz#1873885836294060239f8a887452fd429dc03ae1"
-  integrity sha512-MqZUrxuLlIbjB3wu8LrRJOKcvR4k3dunKoI4Q2bPfAwLQY0XlpsLZ3TRVW1c32ooVk939p6iGNkaCUo63Et36g==
+"@prisma/engines@3.15.0-29.b9297dc3a59307060c1c39d7e4f5765066f38372":
+  version "3.15.0-29.b9297dc3a59307060c1c39d7e4f5765066f38372"
+  resolved "https://registry.yarnpkg.com/@prisma/engines/-/engines-3.15.0-29.b9297dc3a59307060c1c39d7e4f5765066f38372.tgz#c3dda39b42e9f62f910675818e4d813a16a3a76d"
+  integrity sha512-S5T0NuVF2+NoKoxY5bN6O/7avv4ifcjqqk5+JFZ6C4g+P7JMM3nY0wGBPI+46A8yGIDsyyFmvFTYiIDsEUwUeQ==
 
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
   version "1.1.2"
@@ -5416,12 +5416,12 @@ pretty-error@^4.0.0:
     lodash "^4.17.20"
     renderkid "^3.0.0"
 
-prisma@^3.5.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/prisma/-/prisma-3.5.0.tgz#3717368d75568b370869a5b588f688bd41a14130"
-  integrity sha512-WEYQ+H98O0yigG+lI0gfh4iyBChvnM6QTXPDtY9eFraLXAmyb6tf/T2mUdrUAU1AEvHLVzQA5A+RpONZlQozBg==
+prisma@^3.15.0:
+  version "3.15.0"
+  resolved "https://registry.yarnpkg.com/prisma/-/prisma-3.15.0.tgz#3c80e8ca0814f1e90668b883ceb0c9ce3f8c5538"
+  integrity sha512-HL1kGDuFi9PdhbVLYsQO9vAH9uRFAHk7ifUOQxSrzUDs7R4VfLtg45VvXz8VHwcgLY5h0OrDVe1TdEX7a4o9tg==
   dependencies:
-    "@prisma/engines" "3.5.0-38.78a5df6def6943431f4c022e1428dbc3e833cf8e"
+    "@prisma/engines" "3.15.0-29.b9297dc3a59307060c1c39d7e4f5765066f38372"
 
 proc-log@^1.0.0:
   version "1.0.0"
