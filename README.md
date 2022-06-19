@@ -1,3 +1,8 @@
+# Deprecated
+
+I wrote a public bot with similar functionality. If you want to try it, it's available at https://tsuwari.tk
+
+
 # Yakui twitch bot
 
 ![](https://img.shields.io/github/workflow/status/satont/yakui/Publish%20Docker/master?label=docker&style=for-the-badge) ![](https://img.shields.io/github/workflow/status/Satont/yakui/Build%20Web%20and%20Bot/master?style=for-the-badge) ![](https://img.shields.io/david/satont/yakui?style=for-the-badge) ![](https://discord.gg/a5XFNKq)
